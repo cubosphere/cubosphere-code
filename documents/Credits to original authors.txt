@@ -1,0 +1,257 @@
+CREDITS TO THE ORIGINAL AUTHORS (not complete yet!)
+
+Everything is listed chronologically according to the episodes of the game
+
+
+-------------
+I. Textures / Skyboxes
+
+
+1.
+Egypt:
+Promitheas
+
+2.
+Arctican:
+Promitheas
+
+3.
+Storm:
+Helix, skybox: "Stormy Days" by Hipshot - hipshot@zfight.com
+
+4.
+Canyon: 
+Brutalis, skybox: "Hourglass" by Hazel.H - Hazel Skyboxpack 3 hazelwhorley.com
+
+5.
+Sunset:
+Helix, skybok: "Violent Days" by Hipshot - hipshot@zfight.com
+
+6.
+Inca:
+Promitheas
+
+7.
+Cloudy:
+Helix, skybox: "Miramar" by Hipshot - hipshot@zfight.com
+
+8.
+Dark:
+Helix, skybox: "Grimm Night" by Hipshot - hipshot@zfight.com
+
+9.
+Outer Space:
+Helix, skybox by Promitheas
+
+10.
+Chess:
+Helix, skybox: "Islands" by Hazel.H - Hazel Skyboxpack 3 hazelwhorley.com
+
+11.
+Pure:
+Helix
+
+12.
+Greece:
+Helix, skybox by Promitheas
+ 
+13.
+Far East:
+Helix, skybox: "Mystic" by Hazel.H - Hazel Skyboxpack 2 - hazelwhorley.com
+
+14.
+Persia:
+Helix, skybox: "Redsky" by Hazel.H - Hazel Skyboxpack 2 - hazelwhorley.com
+
+15.
+Frost:
+Brutalis, skybox: "Snow" by shadow
+
+16.
+Mars:
+Helix
+
+17.
+Ancient:
+MyNameIsSteve, skybox: "Lost Valley" by Hazel.H - Hazel Skyboxpack 3 hazelwhorley.com
+
+18.
+Valley:
+Brutalis, skybox: "Distant Sunset" by Cuinn (Cuinnton) Herrick
+
+19.
+Hell:
+Promitheas
+
+20.
+Hyperspace / Hyper Boss:
+Helix
+
+
+Final 1.
+Sahara:
+Brutalis, skybox: "Sahara" by Hazel.H - Hazel Skyboxpack 2 - hazelwhorley.com
+
+Final 2.
+Night:
+Brutalis, skybox: "Night Sky" by Hazel.H - Hazel Skyboxpack 3 - hazelwhorley.com
+
+Final 3.
+Arabia:
+Brutalis, skybox: "Arabian Nights" by Nedim Husic
+
+Final 4.
+Insolitus:
+Brutalis, skybox: "Crimson Dawn" by Cubed 3 - cubed.shadowpuppet.net
+
+Final 5.
+Midnight:
+Brutalis, skybox: "Night Sky" by Hazel.H - Hazel Skyboxpack 3 - hazelwhorley.com
+
+___________________________________________
+
+II. Music (all tracks are from the Audioportal at Newgrounds - newgrounds.com/audio)
+
+1.Egypt:
+
+".:Ziggurat:." by xenith800
+
+
+2.Arctican:
+"Arctican [Craton Mix]" by DjPolahBaerz
+
+
+3.Stormy:
+"Ruin" by Lucas Paakh (Kajenx)
+
+
+4.Canyon:
+"Everything is Floating Upward" by Jonathan Gjertsen (SBB)
+
+
+5.Sunset:
+"Rose At Meridiem" by NemesisTheory
+
+
+6.Inca:
+"Jungle Bed" by Soundshifter
+
+
+7.Cloudy:
+"Thatianne and the Sylph" by Timraband and Cuzone (Cuzone)
+
+
+8.Dark:
+"Orchestral Theme" by Gravey
+
+
+9.Space:
+"Triumphant Returns" by Derek Huelsman (SasquaMox)
+
+
+10.Chess:
+"Escape from the Citadel" by dtrace
+
+
+11.Pure:
+"Never Stop" / "Solace of the Armageddon" by soulblud
+
+
+12.Greece:
+"Running through Greece" by SkyStormKuja
+
+
+13.Far East:
+"Journey to the East ~P~" by HalcyonicFalconX
+
+
+
+14.Persia:
+"Persian Invasion: Full Song" by iori22
+
+
+15.Mars:
+"Melodies de Mars" by Cutting-Christ
+
+
+16.Frost:
+"Perfect Morning" by Jonathan Gjertsen (SBB)
+
+
+17.Mecha
+"At the Speed of Light" by Dimrain47
+
+18.Azure:
+"Heretical Mysticism" by Rekuiem
+
+
+19.Ancient:
+"Sun and Rainfall" by HexMonkey
+
+
+20.Valley:
+"The Sun Will Come" by Timraband and Cuzone (Cuzone)
+
+
+21.Deep Space:
+"Corridors" by F4LLOUT
+
+
+22.Green:
+"Space_Forest" by Kassich
+
+
+23.Hell:
+"==(Mindmangler)==" by SBB
+
+
+24.Dream:
+"Stellar" by Mugrunty
+
+
+25.Data World:
+"Data Empire" by GameBalance
+
+
+26.Hyperspace:
+"ShadowWingz - Hyperspace" by ShadowWingz
+"Rose At Twilight" by NemesisTheory
+
+
+
+Final 1.Sahara:
+"Deep Man" by Jonathan Gjertsen (SBB)
+
+
+Final 2.Night:
+"Cave Ambient 2" by Timraband and Cuzone (Cuzone)
+
+
+Final 3.Arabia:
+".:Arabic Desert:." by neoloconick
+
+
+Final 4.Insolitus:
+"Endless Day of Grass Field" by Jonathan Gjertsen (SBB)
+
+
+Final 5.Midnight:
+"~SW~ Cavern of Memory" by SkyeWintrest (SWINT)
+
+
+MISC:
+
+Aqua:
+"Aquatopia" by DJProspect
+
+Retro Warpzone:
+"Core of the Storm" by UnderPolaris
+
+
+III. Levels
+
+Carma001
+Helix
+Steve
+Brutalis
+

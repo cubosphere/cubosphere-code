@@ -1,0 +1,68 @@
+Hello,
+
+with the new Cubosphere Beta 0.3 it is possible to create user episodes, i.e. a bunch of user levels, that can be played in Cubosphere instead of Cubosphere's main episode. Thus, you play the Arcade-Mode or the Explore-Mode with your own levels.
+
+To do so, you have to create some user levels first. Please make sure, that you set the "Next Level"-variable of your all your exit-tiles to the keyword "nextlevel", which is default by now. 
+In this tutorial, we assume, that we want to create an episode called "my_user_episode".
+When you have completed your episode in the editor, you have to copy the levels into the Cubosphere data directory. For each chapter in your episode, create a folder in
+<cubosphere-install-dir>/data/levels (create the level subdirectory if not present) and call them "my_user_episode_XX" where XX is a number which runs consecutively. Copy the appropriate user levels and the corresponding JPG-files from your user-directory ( <cubosphere-install-dir>\user\levels on Windows, $HOME/.cubosphere/levels on Linux ) into the folders. Please name the levels in a consecutive way within each folder. We assume here for simplicity that you have two chapters of each 5 Levels in your episode. Thus, in your <cubosphere-install-dir>/data/levels directory, you have to have the following structure:
+
+------------------------------
+my_user_episode_01
+	Level01.ldef
+	Level01.jpg
+	Level02.ldef
+	Level02.jpg
+	Level03.ldef
+	Level03.jpg
+	Level04.ldef
+	Level04.jpg
+	Level05.ldef
+	Level05.jpg
+
+my_user_episode_02
+	Level01.ldef
+	Level01.jpg
+	Level02.ldef
+	Level02.jpg
+	Level03.ldef
+	Level03.jpg
+	Level04.ldef
+	Level04.jpg
+	Level05.ldef
+	Level05.jpg
+------------------------------
+
+You will now have to create an episode file to declare your episode. Within the <cubosphere-install-dir>/data/levels directory, create a file called "my_user_episode.epi" and insert the following content into the file:
+
+------------------------------
+GLOBAL_SetVar("InsideFinal",0);
+GLOBAL_SetVar("InsideTutorial",0);
+
+TRANS_Add("theme:my_user_episode_01","First User Chapter");
+TRANS_Add("theme:my_user_episode_02","Second User Chapter");
+
+AddEpisodePart("my_user_episode_01","my_user_episode_01");
+AddEpisodePart("my_user_episode_02","my_user_episode_02");
+
+	--you can add more chapters in the same way
+
+AddSingleLevel("win");
+------------------------------
+
+Now, everything is prepared to start your episode. You just have to start Cubosphere with the commandline argument "-episode my_user_episode", i.e. starting 
+
+on Windows (at best create a shortcut to cubosphere.exe and modify the command):
+	cubosphere.exe -episode my_user_episode 
+
+on Linux
+	cubosphere -episode my_user_episode
+
+Now, you can play your custom episode in the Arcade-Mode (allowing a save after each 5 levels) oder in the Explore-Mode the the renowned way.
+Of course, you can create more than one user episode that way by simply exchanging the string "my_user_episode" in this whole HowTo. In order to avoid problems with the standard episodes, do not use the names "main_episode", "tutorial", "final" and "two_player".
+
+Have fun creating episodes!
+If there are questions or other issues concerning this, don't hesitate to post in the Cubosphere forums of SourceForge, on the Cubosphere Facebook page or to write a mail to cubosphere@web.de
+
+Best regards,
+Exosphere 

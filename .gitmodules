@@ -1,0 +1,4 @@
+[submodule "data"]
+	path = data
+	url = https://github.com/cubosphere/cubosphere-data.git
+	branch = master

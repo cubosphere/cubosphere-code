@@ -1,0 +1,78 @@
+Cubosphere Beta 0.3a Unix installation
+########################################
+
+As usual, you will have to compile it from source. 
+This will take place in two steps:
+
+	1. Get the needed libraries
+	2. Call make install (as root)
+
+1. Get the needed libraries
+###########################
+Cubosphere uses the following libraries:
+	
+	OpenGL		 			//Make sure, you have installed a valid 3d accelerated driver
+	Lua 5.1		(liblua5.1)
+	GLEW 1.5	(libglew1.5)
+	SDL 1.2		(libsdl1.2)	
+	SDL_ttf 2.0	(libsdl-ttf2.0)
+	SDL_mixer 1.2	(libsdl_mixer1.2)
+	JPEG 6.2 	(libjpeg6.2)		//Version 8 should also work
+
+Since the compilation process also needs the header files, please install the relating development packages, too. 
+	
+Depending on your Linux installation there are different ways to install those libraries.
+I.e. with Debian/Ubuntu you can use "apt-get".
+
+Install all dependencies, too.
+
+If I missed listing a libraries needed to compile or if you have another Linux distribution 
+and you managed it to compile Cubosphere successfully on your system please send a mail to
+
+	cubosphere@web.de
+
+with a simple way to install it on your system.
+
+
+2. Call make
+############
+
+Change into the src-subdirectory.
+
+If you simply call
+
+	make
+
+g++ will compile the source.
+
+
+The command
+
+	make install
+
+Will install Cubosphere. Please execute this command as root.
+
+
+If Cubosphere does not compile on your system please send me the output of make to
+
+	cubosphere@web.de
+
+Otherwise - if "make install" returns without any error - try entering 
+
+	cubosphere
+
+to start Cubosphere.
+
+Have Fun!
+
+
+3. Troubleshooting
+##################
+
+If you have trouble to compile or run Cubosphere simply mail me at:
+
+	cubosphere@web.de
+
+or look out for a new version at
+
+	cubosphere.sourceforge.net
