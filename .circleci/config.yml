@@ -5,13 +5,16 @@ jobs:
       - image: "ubuntu:latest"
       - image: "ubuntu:rolling"
     steps:
+      - run:
+          name: Reloading apt indexes
+          command: 'apt-get update'
+      - run:
+          name: Installing git
+          command: 'apt-get install -y git'
       - checkout
       - run:
           name: Downloading submodules
           command: 'git submodule update --init --recursive'
-      - run:
-          name: Reloading apt indexes
-          command: 'apt-get update'
       - run:
           name: Installing Clang
           command: 'apt-get install -y clang'
