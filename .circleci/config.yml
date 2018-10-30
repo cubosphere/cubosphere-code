@@ -7,8 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Reloading apt indexes
-        command: 'apt-get update'
+          name: Reloading apt indexes
+          command: 'apt-get update'
       - run:
           name: Installing Clang
           command: 'apt-get install -y clang'
