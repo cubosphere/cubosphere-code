@@ -34,6 +34,7 @@ sudo make install
 ```
 ## Some useful CMake arguments:
 * `-DCMAKE_INSTALL_PREFIX=` — set intallation prefix.
-* `-G ninja` — use `ninja` generator instead of `Unix makefiles` (generally better). Replace `make` with `ninja` in 3rd and 4th commands.
+* `-DCMAKE_CXX_COMPILER=` — set C++ compiler to use (`g++`/`clang++`/etc.).
+* `-G Ninja` — use `ninja` generator instead of `Unix makefiles` (generally better). Replace `make` with `ninja` in 3rd and 4th commands.
 * `-DDATADIR=` — custom place to install all game data (overrides `-DCMAKE_INSTALL_PREFIX` for data).
 * `-DRUNTIME_DATADIR=` — where game will look up for data (overrides both `-DCMAKE_INSTALL_PREFIX` and `-DDATADIR` for runtime).

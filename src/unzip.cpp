@@ -36,7 +36,7 @@ typedef unsigned short WORD;
 
 
 // THIS FILE is almost entirely based upon code by Jean-loup Gailly
-// and Mark Adler. It has been modified by Lucian Wischik, and by Chriddo.
+// and Mark Adler. It has been modified by Lucian Wischik, Chriddo and Valeri Ochinski.
 // The modifications were: incorporate the bugfixes of 1.1.4, allow
 // unzipping to/from handles/pipes/files/memory, encryption, unicode,
 // a windowsish api, and putting everything into a single .cpp file.

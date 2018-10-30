@@ -1,3 +1,6 @@
+### THIS DOCUMENT IS OUTDATED AND SOULD BE REPLACED
+### IF YOU SEE IT, OPEN GitHub ISSUE
+
 Hello,
 
 with the new Cubosphere Beta 0.3 it is possible to create user episodes, i.e. a bunch of user levels, that can be played in Cubosphere instead of Cubosphere's main episode. Thus, you play the Arcade-Mode or the Explore-Mode with your own levels.

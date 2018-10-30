@@ -3,9 +3,13 @@
  * [x] Separate data to another repo
 
 # Soon after upload [in progress]
- * [ ] Update credits/links
- * [ ] Update license
+ * [ ] Replace header guards with `#pragma once`
+ * [x] Update credits/links
+ * [x] Update license
  * [ ] Update various Readme's
+ * [ ] Improve modding support with CMake
+ * [ ] Create icon
+ * [ ] Add .dekstop to menu
  * [x] Fix warnings (some are bugs-related) and C++17 errors…
  * [x] …and build with C++17 standard
  * [x] Setup CI build [Circle CI done, Travis CI cancelled].
@@ -14,7 +18,7 @@
  * [x] Stop using std!
  * [ ] Add Russian transation
  * [ ] Make .deb package…
- * [ ] …and post it to PPA
+ * [ ] …and post it to PPA (or other storage)
  * [ ] Invite people for testing
 
 # Meanwhile
