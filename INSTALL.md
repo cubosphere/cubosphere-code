@@ -4,7 +4,8 @@ After picking up this great project it use CMake for better compatiblity and eas
 
 # Requiments
 You will need (with headers, which often stored in `-dev` packages):
-* OpenGL (hardware accelerated driver for better results)
+
+* OpenGL (use hardware accelerated driver for better results)
 * Lua 5.1 (library)
 * GLEW
 * SDL 1.2

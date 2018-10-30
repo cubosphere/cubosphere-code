@@ -8,7 +8,7 @@
  * [ ] Update various Readme's
  * [x] Fix warnings (some are bugs-related) and C++17 errors…
  * [x] …and build with C++17 standard
- * [ ] Setup CI build [Circle CI done, Travis CI in progress].
+ * [x] Setup CI build [Circle CI done, Travis CI cancelled].
 
 # After base setup
  * [x] Stop using std!
