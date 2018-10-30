@@ -72,9 +72,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-using namespace std;
-
-
 TCuboGame game;
 
 
@@ -111,18 +108,18 @@ int main(int argc, char *argv[])
 	SetCmdLine(argc,argv);
 	char *dc;
 	dc=strdup(argv[0]);
-	string dir=dirname(dc);
+	std::string dir=dirname(dc);
 	free(dc);
 	SetBaseDir(dir);
 
 
 //Patch from Vincent Petry - Thanks!
 #ifndef WIN32
-	string configDir( getenv("HOME") );
-	string configSubDir;
+	std::string configDir( getenv("HOME") );
+	std::string configSubDir;
 	configDir.append("/.cubosphere");
 	configSubDir = configDir + "/levels";
-	string SaveDir = configDir + "/saves";
+	std::string SaveDir = configDir + "/saves";
 	// check whether config folder exists
 	struct stat s;
 	if (stat(configSubDir.c_str(), &s) != 0)
@@ -153,8 +150,8 @@ int main(int argc, char *argv[])
 
 	MakeConsole();
 
-	cout << "STARTING in basedir: " << dir << endl << "SDL_Init returns: "<<
-			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << endl;
+	std::cout << "STARTING in basedir: " << dir << std::endl << "SDL_Init returns: "<<
+			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << std::endl;
 
 	//SDL_Init( SDL_INIT_EVERYTHING) << endl;
 

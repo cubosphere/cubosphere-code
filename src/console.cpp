@@ -22,8 +22,6 @@
 #include <iostream>
 #include "game.hpp"
 
-using namespace std;
-
 TCuboConsole gCuboConsole;
 TCuboConsole * g_CuboConsole() {return &gCuboConsole; }
 
@@ -64,7 +62,7 @@ void TCuboConsole::Init()
 			{
 			char *c=(char*)cscript->GetData(0);
 			c[cscript->GetSize()]='\0';
-			vector<string> lines;
+			std::vector<std::string> lines;
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
 			for (unsigned int i=0; i<lines.size(); i++) if (lines[i]!="") ParseCmdLine(lines[i]);
 			delete cscript;
@@ -72,9 +70,9 @@ void TCuboConsole::Init()
 	}
 
 
-void TCuboConsole::AddLine(string s,int typ)
+void TCuboConsole::AddLine(std::string s,int typ)
 	{
-	vector<string> toks;
+	std::vector<std::string> toks;
 	Tokenize(s,toks,"\n");
 
 	for (unsigned int i=0; i<toks.size(); i++)
@@ -112,10 +110,10 @@ int TCuboConsole::CheckBindKey(int ident,int down,int toggle)
 	return 0;
 	}
 
-int TCuboConsole::Bind(vector<string> & extratoks,int unbind)
+int TCuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 	{
 	if (!extratoks.size()) {coutlog("Key expected!",2); return 0;}
-	string key=extratoks[0];
+	std::string key=extratoks[0];
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(key);
 	if (!k) {coutlog("Unknown key: "+key,2); return 0;}
 
@@ -128,7 +126,7 @@ int TCuboConsole::Bind(vector<string> & extratoks,int unbind)
 			}
 	else {
 			if (bindex==-1) bindex=binds.size(); binds.push_back(TConsoleBinding());
-			string cmd="";
+			std::string cmd="";
 
 			for (unsigned int i=1; i<extratoks.size(); i++) cmd+=extratoks[i]+" ";
 
@@ -140,9 +138,9 @@ int TCuboConsole::Bind(vector<string> & extratoks,int unbind)
 	return 1;
 	}
 
-void TCuboConsole::ParseCmdLine(string cmdl)
+void TCuboConsole::ParseCmdLine(std::string cmdl)
 	{
-	string cmdline=history.back();
+	std::string cmdline=history.back();
 	if (cmdl!="") cmdline=cmdl;
 	else hisindex=0;
 
@@ -151,7 +149,7 @@ void TCuboConsole::ParseCmdLine(string cmdl)
 	if (cmdline=="") {coutlog(" ",0); history.back()="";  return; }
 
 
-	vector<string> parts;
+	std::vector<std::string> parts;
 
 	/*int instring=0;int inlua=0;
 
@@ -168,21 +166,21 @@ void TCuboConsole::ParseCmdLine(string cmdl)
 			{
 
 
-			string cmdlinepart=parts[p];
+			std::string cmdlinepart=parts[p];
 			if (cmdl=="") coutlog(cmdlinepart,3);
 
 
-			vector<string> toks;
+			std::vector<std::string> toks;
 			Tokenize(cmdlinepart,toks," ");
 
-			vector<string> extratoks; for (unsigned int i=1; i<toks.size(); i++) extratoks.push_back(toks[i]);
+			std::vector<std::string> extratoks; for (unsigned int i=1; i<toks.size(); i++) extratoks.push_back(toks[i]);
 
 			int validcmd=1;
 
 			if (cmdlinepart=="quit" || cmdlinepart=="exit")  g_Game()->Quit();
 
 			else if (toks[0]=="lua") {
-					string s=""; for (unsigned int i=1; i<toks.size(); i++) s+=(toks[i]+" "); lua.ExecString(s);
+					std::string s=""; for (unsigned int i=1; i<toks.size(); i++) s+=(toks[i]+" "); lua.ExecString(s);
 					}
 			else if (toks[0]=="reload") {  g_Game()->Reload(extratoks);  }
 
@@ -210,10 +208,10 @@ void TCuboConsole::ParseCmdLine(string cmdl)
 			else if (toks[0]=="lsvars") {
 					if (!extratoks.size()) g_Vars()->ListToConsole();
 					else {
-							string what=extratoks[0];
+							std::string what=extratoks[0];
 							if (extratoks.size()<2) coutlog("need an index: "+cmdline,2);
 							else {
-									istringstream iss(extratoks[1]); int index; iss >> index;
+									std::istringstream iss(extratoks[1]); int index; iss >> index;
 									if (index<0) coutlog("index negative: "+extratoks[1],2);
 									else {
 											if (what=="actor") {

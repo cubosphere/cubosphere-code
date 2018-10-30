@@ -18,8 +18,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <cmath>
 
-using namespace std;
-
 //typedef float tfloat;
 #define tfloat float
 
@@ -52,7 +50,7 @@ class T2dVector
 		int normalizeCheck(); //VECTOR_OK if we could normalize, VECTOR_NORMALIZE_ERROR otherwise
 		void normalize(); //Normalize without checking division by zero
 		tfloat Arg() {return atan2(v,u);}
-		string toString(); //Gives out "(u, v)"
+		std::string toString(); //Gives out "(u, v)"
 	};
 
 class T3dVector
@@ -82,7 +80,7 @@ class T3dVector
 		void Maximize(const T3dVector tomax);
 		void Minimize(const T3dVector tomin);
 		void normalize(); //Normalize without checking division by zero
-		const string toString(); //Gives out "(x, y, z)"
+		const std::string toString(); //Gives out "(x, y, z)"
 		tfloat MaxAbsValue();
 		tfloat MinValue();
 		tfloat MaxValue();
@@ -107,7 +105,7 @@ class T4dVector
 		tfloat sqrlength(); //length²
 		int normalizeCheck(); //VECTOR_OK if we could normalize, VECTOR_NORMALIZE_ERROR otherwise
 		void normalize(); //Normalize without checking division by zero
-		const string toString(); //Gives out "(x, y, z)"
+		const std::string toString(); //Gives out "(x, y, z)"
 	};
 
 ////////////// MATRICES ///////////////////
@@ -144,7 +142,7 @@ class T3dMatrix
 		const T3dMatrix transpose();
 		tfloat det();
 		tfloat* getValueMem() {return &(m[0]);}
-		const string toString(); //Gives out The Matrix
+		const std::string toString(); //Gives out The Matrix
 	};
 
 class T4dMatrix

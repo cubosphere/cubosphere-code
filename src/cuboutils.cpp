@@ -24,11 +24,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "vectors.hpp"
 
-using namespace std;
-
-
-
-
 std::string IntToString(const int& t)
 	{
 	std::stringstream ss;
@@ -46,22 +41,22 @@ inline std::string TrimStr(const std::string& Src, const std::string& c = " \r\n
 	return Src.substr(p1, (p2-p1)+1);
 	}
 
-void TrimSpaces( string& str)
+void TrimSpaces( std::string& str)
 	{
 	str=TrimStr(str);
 	}
 
 
-void Tokenize(const string& str,
-		vector<string>& tokens,
-		const string& delimiters)
+void Tokenize(const std::string& str,
+		std::vector<std::string>& tokens,
+		const std::string& delimiters)
 	{
 	// Skip delimiters at beginning.
-	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	auto lastPos = str.find_first_not_of(delimiters, 0);
 	// Find first "non-delimiter".
-	string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	auto pos     = str.find_first_of(delimiters, lastPos);
 
-	while (string::npos != pos || string::npos != lastPos)
+	while (std::string::npos != pos || std::string::npos != lastPos)
 			{
 			// Found a token, add it to the vector.
 			tokens.push_back(str.substr(lastPos, pos - lastPos));
@@ -72,15 +67,15 @@ void Tokenize(const string& str,
 			}
 	}
 
-void TokenizeFull(const string& str,
-		vector<string>& tokens,
-		const string& delimiters)
+void TokenizeFull(const std::string& str,
+		std::vector<std::string>& tokens,
+		const std::string& delimiters)
 	{
 	// Skip delimiters at beginning.
-	string::size_type lastPos = 0;
+	std::string::size_type lastPos = 0;
 	// Find first "non-delimiter".
-	string::size_type pos     = str.find_first_of(delimiters, lastPos);
-	while (string::npos != pos || string::npos != lastPos)
+	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	while (std::string::npos != pos || std::string::npos != lastPos)
 			{
 			// Found a token, add it to the vector.
 			tokens.push_back(str.substr(lastPos, pos - lastPos));
@@ -93,9 +88,9 @@ void TokenizeFull(const string& str,
 
 
 
-bool BeginsWith(const string& str,const string& with)
+bool BeginsWith(const std::string& str,const std::string& with)
 	{
-	string t(str,0,with.length());
+	std::string t(str,0,with.length());
 	return (t==with);
 	}
 

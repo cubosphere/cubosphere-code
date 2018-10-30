@@ -99,11 +99,7 @@ extern "C"
 
 #endif
 
-
-
-using namespace std;
-
-vector<TLuaAccess*> TLuaAccess::gAllLuaStates;
+std::vector<TLuaAccess*> TLuaAccess::gAllLuaStates;
 
 static TLuaAccess *CallAccess=NULL;
 
@@ -146,7 +142,7 @@ int lua_doCuboFile(lua_State *state, TCuboFile *f)
 				coutlog("Strange Lua Error without error message...",1);
 
 			// get the top of the stack as the error and pop it off
-			string str = lua_tostring(state, lua_gettop(state));
+			std::string str = lua_tostring(state, lua_gettop(state));
 			coutlog("LUA-ERROR in File "+f->GetNameForLog()+" :  "+str,1);
 
 			}
@@ -217,7 +213,7 @@ bool TLuaAccess::LoadFile(TCuboFile *finfo,int t,int id)
 
 	typ=t;
 
-	string fname=finfo->GetNameForLog();
+	std::string fname=finfo->GetNameForLog();
 //  g_MomAccess=this;
 	if (g_VerboseMode()) coutlog("Loading Lua script: "+fname);
 
@@ -239,7 +235,7 @@ bool TLuaAccess::LoadFile(TCuboFile *finfo,int t,int id)
 	int res=lua_doCuboFile(state, finfo);
 	if (res)
 			{
-			ostringstream os;
+			std::ostringstream os;
 			os << "ERROR "<< " -> " << lua_tostring(state, -1);
 			coutlog(os.str(),1);
 			}
@@ -256,7 +252,7 @@ char *g_luareaderblock=NULL;
 const char * g_luareader(lua_State *L,void *data,size_t *size)
 	{
 	if (g_luareaderblock) free(g_luareaderblock);
-	vector<string> * inp=(vector<string> *)data;
+	std::vector<std::string> * inp=(std::vector<std::string> *)data;
 
 	if (!inp->size()) {(*size)=0; return NULL;}
 
@@ -270,14 +266,14 @@ const char * g_luareader(lua_State *L,void *data,size_t *size)
 			}
 
 	(*size)=(*inp)[0].length()+1;
-	string res=(*inp)[0]+'\n';
+	std::string res=(*inp)[0]+'\n';
 	inp->erase(inp->begin());
 
 	g_luareaderblock=strdup(res.c_str());
 	return g_luareaderblock;
 	}
 
-bool TLuaAccess::ExecStrings(vector<string> & inp)
+bool TLuaAccess::ExecStrings(std::vector<std::string> & inp)
 	{
 	if (!state) return false;
 	typ=-1;
@@ -286,7 +282,7 @@ bool TLuaAccess::ExecStrings(vector<string> & inp)
 	if (!res) res=lua_pcall(state, 0, LUA_MULTRET, 0);
 	if (res)
 			{
-			ostringstream os;
+			std::ostringstream os;
 			os << "ERROR "<< " -> " << lua_tostring(state, -1);
 			coutlog(os.str(),1);
 			return false;
@@ -296,7 +292,7 @@ bool TLuaAccess::ExecStrings(vector<string> & inp)
 	}
 
 
-bool TLuaAccess::ExecString(string s)
+bool TLuaAccess::ExecString(std::string s)
 	{
 	if (!state) return false;
 	typ=-1;
@@ -304,7 +300,7 @@ bool TLuaAccess::ExecString(string s)
 	int res=luaL_dostring(state,s.c_str());
 	if (res)
 			{
-			ostringstream os;
+			std::ostringstream os;
 			os << "ERROR "<< " -> " << lua_tostring(state, -1);
 			coutlog(os.str(),1);
 			return false;
@@ -339,14 +335,14 @@ double TLuaAccess::PopFloat()
 	return f;
 	}
 
-void TLuaAccess::PushString(string s)
+void TLuaAccess::PushString(std::string s)
 	{
 	lua_pushstring(state, s.c_str());
 	}
 
-string TLuaAccess::PopString()
+std::string TLuaAccess::PopString()
 	{
-	string s = lua_tostring(state, -1);
+	std::string s = lua_tostring(state, -1);
 	lua_pop(state,1);
 	//string s=cp;
 	return s;
@@ -410,7 +406,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 						goto endwhile;
 
 					default:
-						ostringstream os;
+						std::ostringstream os;
 						os << "ERROR "<< " ->  Calling '"<<func << "' : invalid option ("<< "" << *(sig - 1) <<")";
 						coutlog(os.str(),1);
 					}
@@ -422,7 +418,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 	nres = strlen(sig);  /* number of expected results */
 	if (lua_pcall(state, narg, nres, 0) != 0)  /* do the call */
 			{
-			ostringstream os;
+			std::ostringstream os;
 			os << "ERROR (in calling '"<<func <<"')"<< " -> " << lua_tostring(state, -1);
 			coutlog(os.str(),1);
 			}
@@ -434,7 +430,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 					case 'd':  /* double result */
 						if (!lua_isnumber(state, nres))
 								{
-								ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
+								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
 
 								}
 						*va_arg(vl, double *) = lua_tonumber(state, nres);
@@ -444,7 +440,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 					case 'i':  /* int result */
 						if (!lua_isnumber(state, nres))
 								{
-								ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
+								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
 
 								}
 						*va_arg(vl, int *) = (int)lua_tonumber(state, nres);
@@ -454,7 +450,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 					case 's':  /* string result */
 						if (!lua_isstring(state, nres))
 								{
-								ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
+								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
 
 								}
 						*va_arg(vl, const char **) = lua_tostring(state, nres);
@@ -479,7 +475,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 
 						while(lua_next(state, -2)) {  // <== here is your mistake
 								if(lua_isnumber(state, -1)) {
-										string kompo = (char *)lua_tostring(state, -2);
+										std::string kompo = (char *)lua_tostring(state, -2);
 										float v = (float)lua_tonumber(state, -1);
 										if (kompo=="x") p.x=v;
 										else if (kompo=="y") p.y=v;
@@ -502,7 +498,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 
 					default:
 							{
-							ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
+							std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
 
 							}
 					}
@@ -538,7 +534,7 @@ void TLuaCFunctions::RegisterToState(lua_State *state)
 			}
 	}
 
-void TLuaCFunctions::AddFunc(string name, lua_CFunction func)
+void TLuaCFunctions::AddFunc(std::string name, lua_CFunction func)
 	{
 	TLuaCFunc nf;
 	nf.name=name;
@@ -583,14 +579,14 @@ int TLuaCuboLib::LOG_Mode(lua_State *state)
 	*(g_LogMode())=LUA_GET_INT;
 	if ((!prior) && (*(g_LogMode())))
 			{
-			string s=g_ProfileDir()+"/logfile.txt";
+			std::string s=g_ProfileDir()+"/logfile.txt";
 
 			s=PlattformFilename(s);
-			cout << "Start logging to " << s << endl;
+			std::cout << "Start logging to " << s << std::endl;
 			g_logfile=fopen(s.c_str(),"w");
 			if (!g_logfile)
 					{
-					cout << "Could not write to logfile " << s << endl;
+					std::cout << "Could not write to logfile " << s << std::endl;
 					*(g_LogMode())=0;
 					}
 			else {
@@ -607,8 +603,8 @@ int TLuaCuboLib::LOG_Mode(lua_State *state)
 
 int LUA_ExecInState(lua_State *state)
 	{
-	string cmd=LUA_GET_STRING;
-	string statename=LUA_GET_STRING;
+	std::string cmd=LUA_GET_STRING;
+	std::string statename=LUA_GET_STRING;
 	for (unsigned int i=0; i<TLuaAccess::gAllLuaStates.size(); i++)
 			{
 			// coutlog("Comparing "+statename+" and "+TLuaAccess::gAllLuaStates[i]->GetFileName());
@@ -624,9 +620,9 @@ int LUA_ExecInState(lua_State *state)
 	return 1;
 	}
 
-void coutlog(string s,int typ)
+void coutlog(std::string s,int typ)
 	{
-	cout << s << endl;
+	std::cout << s << std::endl;
 
 	if (*(g_LogMode()))
 			{
@@ -634,7 +630,7 @@ void coutlog(string s,int typ)
 			//  FILE *f=fopen(fn.c_str(),"a");
 			if (!g_logfile)
 					{
-					cout << "Could not write to logfile " << s << endl;
+					std::cout << "Could not write to logfile " << s << std::endl;
 					*(g_LogMode())=0;
 					}
 			else {
@@ -651,7 +647,7 @@ int TLuaCuboLib::mycout(lua_State *state)
 	{
 	int typ=0;
 	int argc=lua_gettop(state);
-	string s;
+	std::string s;
 	if (argc==2)
 			{
 			typ=lua_tonumber(state, -1);
@@ -796,7 +792,7 @@ int TLuaCuboLib::DEBUG(lua_State *state)
 	{
 	GLfloat v[4];
 	glGetMaterialfv(GL_FRONT,GL_AMBIENT,v);
-	cout << "Ambient : " << v[0] << "  " << v[1] << "  "<< v[2] << "  " << v[3] << endl;
+	std::cout << "Ambient : " << v[0] << "  " << v[1] << "  "<< v[2] << "  " << v[3] << std::endl;
 	return 0;
 	}
 
@@ -804,7 +800,7 @@ int TLuaCuboLib::DEBUG(lua_State *state)
 int TLuaCuboLib::GLOBAL_StartDeveloperMode(lua_State *state)
 	{
 
-	string consolekey=LUA_GET_STRING;
+	std::string consolekey=LUA_GET_STRING;
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(consolekey);
 	g_CuboConsole()->SetToggleKey(k);
 	return 0;
@@ -849,7 +845,7 @@ int TLuaCuboLib::GLOBAL_SetMaxFrames(lua_State *state)
 
 int TLuaCuboLib::GLOBAL_VarDefined(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	int t=g_Vars()->VarDefined(s);
 	LUA_SET_INT(t);
 	return 1;
@@ -894,7 +890,7 @@ int TLuaCuboLib::GLOBAL_SetVar(lua_State *state)
 
 int TLuaCuboLib::SCORE_VarDefined(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	int t=g_HighScores()->VarDefined(s);
 	LUA_SET_INT(t);
 	return 1;
@@ -917,7 +913,7 @@ int TLuaCuboLib::SCORE_SetVar(lua_State *state)
 
 int TLuaCuboLib::SCORE_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	TCuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_INT(0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_INT(0); return 1 ; }
@@ -937,7 +933,7 @@ int TLuaCuboLib::SCORE_Load(lua_State *state)
 
 int TLuaCuboLib::SAVE_Open(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_INT(0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
@@ -949,7 +945,7 @@ int TLuaCuboLib::SAVE_Open(lua_State *state)
 
 int TLuaCuboLib::SAVE_Write(lua_State *state)
 	{
-	string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING;
 	unsigned long int c=LUA_GET_ULINT;
 	FILE *f=(FILE *)c;
 	//string s="SCORE_SetVar(\""+k+"\","+g_HighScores()->GetVarString(k)+");\n";
@@ -967,7 +963,7 @@ int TLuaCuboLib::SAVE_Close(lua_State *state)
 
 int TLuaCuboLib::SAVE_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 
 	TCuboFile *finfo=GetFileName(s,FILE_SAVEGAME,".sdef");
 	if (!finfo) {
@@ -995,7 +991,7 @@ int TLuaCuboLib::SAVE_Load(lua_State *state)
 
 int TLuaCuboLib::SCORE_Open(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_INT(0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
@@ -1007,10 +1003,10 @@ int TLuaCuboLib::SCORE_Open(lua_State *state)
 
 int TLuaCuboLib::SCORE_Write(lua_State *state)
 	{
-	string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING;
 	unsigned long int c=LUA_GET_ULINT;
 	FILE *f=(FILE *)c;
-	string s="SCORE_SetVar(\""+k+"\","+g_HighScores()->GetVarString(k)+");\n";
+	std::string s="SCORE_SetVar(\""+k+"\","+g_HighScores()->GetVarString(k)+");\n";
 	fprintf(f,"%s",s.c_str());
 	return 0;
 	}
@@ -1032,7 +1028,7 @@ int TLuaCuboLib::MOD_ClearBlacklist(lua_State *state)
 */
 int TLuaCuboLib::MOD_SetName(lua_State *state)
 	{
-	string nm=LUA_GET_STRING;
+	std::string nm=LUA_GET_STRING;
 	SetCurrentMod(nm);
 	return 0;
 	}
@@ -1048,7 +1044,7 @@ int TLuaCuboLib::MOD_AddDirToBlackList(lua_State *state)
 
 int TLuaCuboLib::MOD_GetName(lua_State *state)
 	{
-	string nm=CurrentMod();
+	std::string nm=CurrentMod();
 	lua_pushstring(state,nm.c_str());
 	return 1;
 	}
@@ -1109,7 +1105,7 @@ T4dVector Vector4FromStack(lua_State *state)
 
 int TLuaCuboLib::USING(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 
 	if (s=="GL") g_GLLib()->RegisterToState(state);
 	else if (s=="PATH")
@@ -1122,12 +1118,12 @@ int TLuaCuboLib::USING(lua_State *state)
 
 int TLuaCuboLib::INCLUDEABSOLUTE(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	TCuboFile *finfo=g_BaseFileSystem()->GetFileForReading(s);
 	if (!finfo) {coutlog("Cannot include script "+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING;
 
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
@@ -1139,9 +1135,9 @@ int TLuaCuboLib::INCLUDEABSOLUTE(lua_State *state)
 
 int TLuaCuboLib::INCLUDE(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	lua_getglobal(state,"LUA_DEF_DIRNAME");
-	string dn=LUA_GET_STRING;
+	std::string dn=LUA_GET_STRING;
 	lua_getglobal(state,"LUA_DEF_TYPE");
 	int typ=LUA_GET_INT;
 
@@ -1153,7 +1149,7 @@ int TLuaCuboLib::INCLUDE(lua_State *state)
 	if (!finfo) {coutlog("Cannot include script "+dn+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING;
 
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
@@ -1164,7 +1160,7 @@ int TLuaCuboLib::INCLUDE(lua_State *state)
 
 int TLuaCuboLib::CONFIG_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	TCuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_INT(0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_INT(0); return 1 ; }
@@ -1184,7 +1180,7 @@ int TLuaCuboLib::CONFIG_Load(lua_State *state)
 
 int TLuaCuboLib::CONFIG_Open(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	/* string dir=g_ProfileDir();
 	 s=dir+s;
 	 s=PlattformFilename(s);
@@ -1209,10 +1205,10 @@ int TLuaCuboLib::CONFIG_Open(lua_State *state)
 
 int TLuaCuboLib::CONFIG_Write(lua_State *state)
 	{
-	string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING;
 	unsigned long int c=LUA_GET_ULINT;
 	FILE *f=(FILE *)c;
-	string s="GLOBAL_SetVar(\""+k+"\","+g_Vars()->GetVarString(k)+");\n";
+	std::string s="GLOBAL_SetVar(\""+k+"\","+g_Vars()->GetVarString(k)+");\n";
 	fprintf(f,"%s",s.c_str());
 	return 0;
 	}
@@ -1227,7 +1223,7 @@ int TLuaCuboLib::CONFIG_Close(lua_State *state)
 
 
 
-vector<string> lsfiles;
+std::vector<std::string> lsfiles;
 /*
 int TLuaCuboLib::DIR_GetFiles(lua_State *state)
 {
@@ -1268,14 +1264,14 @@ int TLuaCuboLib::DIR_GetFile(lua_State *state)
 
 
 
-TLuaBaseVar **TLuaVarHolder::Ref(string name)
+TLuaBaseVar **TLuaVarHolder::Ref(std::string name)
 	{
 	for (unsigned int i=0; i<vars.size(); i++)
 		if (vars[i]) if (vars[i]->GetName()==name) return &(vars[i]);
 	return NULL;
 	}
 
-TLuaBaseVar **TLuaVarHolder::RefForStore(string name)
+TLuaBaseVar **TLuaVarHolder::RefForStore(std::string name)
 	{
 	TLuaBaseVar **ref;
 	ref=Ref(name);
@@ -1291,7 +1287,7 @@ TLuaBaseVar **TLuaVarHolder::RefForStore(string name)
 			}
 	}
 
-TLuaBaseVar **TLuaVarHolder::RefForRead(string name)
+TLuaBaseVar **TLuaVarHolder::RefForRead(std::string name)
 	{
 	TLuaBaseVar **ref=Ref(name);
 	if (!ref) {
@@ -1305,14 +1301,14 @@ TLuaBaseVar **TLuaVarHolder::RefForRead(string name)
 	}
 
 
-void TLuaVarHolder::SetVar(string vname,string value)
+void TLuaVarHolder::SetVar(std::string vname,std::string value)
 	{
 	TLuaBaseVar **ref=RefForStore(vname);
 	(*ref)=new TLuaStringVar(value);
 	(*ref)->SetName(vname);
 	}
 
-void TLuaVarHolder::SetVar(string vname,double value)
+void TLuaVarHolder::SetVar(std::string vname,double value)
 	{
 	TLuaBaseVar **ref=RefForStore(vname);
 	(*ref)=new TLuaNumberVar(value);
@@ -1324,14 +1320,14 @@ void TLuaVarHolder::ListToConsole()
 	{
 	for (unsigned int i=0; i<vars.size(); i++)
 			{
-			string s=vars[i]->GetName()+"   =   "+vars[i]->GetVarString();
+			std::string s=vars[i]->GetName()+"   =   "+vars[i]->GetVarString();
 			coutlog(s,4);
 			}
 	}
 
 void TLuaVarHolder::StoreVar(lua_State *fromstate)
 	{
-	string varname=lua_tostring(fromstate,1);
+	std::string varname=lua_tostring(fromstate,1);
 	lua_remove(fromstate,1);
 	int t=lua_type(fromstate,1);
 	TLuaBaseVar **ref=RefForStore(varname);
@@ -1358,7 +1354,7 @@ void TLuaVarHolder::StoreVar(lua_State *fromstate)
 //stackDump(fromstate);
 	}
 
-int TLuaVarHolder::VarDefined(string vn)
+int TLuaVarHolder::VarDefined(std::string vn)
 	{
 	if (!Ref(vn)) return 0;
 	else return 1;
@@ -1367,24 +1363,24 @@ int TLuaVarHolder::VarDefined(string vn)
 void TLuaVarHolder::GetVar(lua_State *state)
 	{
 
-	string varname=lua_tostring(state,1);
+	std::string varname=lua_tostring(state,1);
 	lua_remove(state,1);
 
 	TLuaBaseVar **ref=RefForRead(varname);
 	if (!ref) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING;
 
-			ostringstream os; os << "WARNING in " << f << ": Can't get member variable " << varname; coutlog(os.str(),2); return;
+			std::ostringstream os; os << "WARNING in " << f << ": Can't get member variable " << varname; coutlog(os.str(),2); return;
 			}
 	(*ref)->WriteInState(state);
 	}
 
-string TLuaVarHolder::GetVarString(string varname,int forscript)
+std::string TLuaVarHolder::GetVarString(std::string varname,int forscript)
 	{
 	TLuaBaseVar **ref=RefForRead(varname);
 	if (!ref)
-			{     ostringstream os; os << "WARNING : Can't get member variable " << varname; coutlog(os.str(),2); return "";}
+			{     std::ostringstream os; os << "WARNING : Can't get member variable " << varname; coutlog(os.str(),2); return "";}
 	return (*ref)->GetVarString(forscript);
 	}
 
@@ -1430,7 +1426,7 @@ int TLuaCuboLib::TRANS_Add(lua_State *state)
 
 int TLuaCuboLib::TRANS_Str(lua_State *state)
 	{
-	string varname=lua_tostring(state,1);
+	std::string varname=lua_tostring(state,1);
 	if (g_Translation()->VarDefined(varname))
 			{
 			g_Translation()->GetVar(state);
@@ -1444,8 +1440,8 @@ int TLuaCuboLib::TRANS_Str(lua_State *state)
 
 int TLuaCuboLib::TRANS_StrD(lua_State *state)
 	{
-	string def=LUA_GET_STRING;
-	string varname=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING;
+	std::string varname=LUA_GET_STRING;
 	if (g_Translation()->VarDefined(varname))
 			{
 			LUA_SET_STRING(varname);
@@ -1459,7 +1455,7 @@ int TLuaCuboLib::TRANS_StrD(lua_State *state)
 			}
 	}
 
-string g_languagefile="";
+std::string g_languagefile="";
 
 
 
@@ -1478,7 +1474,7 @@ void ReloadLanguage()
 
 int TLuaCuboLib::TRANS_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	TLuaAccess lua;
 	TCuboFile *finfo=GetFileName(s,FILE_LANGDEF,".ldef");
 	if (!finfo) {coutlog("Cannot load translation "+s+ ", since it was not found!",1); return 0;}

@@ -6,9 +6,6 @@
 #include <string>
 #include <vector>
 
-
-using namespace std;
-
 class TSpriteEmitter;
 
 
@@ -38,7 +35,7 @@ class TSpriteEnvironment
 		int attachedid; //For sides etc...
 		T3dVector vup,vdir,vside,vpos;
 		T3dMatrix base;
-		vector<TSpriteEmitter*> emitters;
+		std::vector<TSpriteEmitter*> emitters;
 		int died;
 		void RefreshBasis();
 	public:
@@ -83,7 +80,7 @@ class TSpriteEmitter
 		TSpriteEnvironment *env;
 		int defindex;
 		int died;
-		vector<TSprite> sprites;
+		std::vector<TSprite> sprites;
 		int activesprites;
 		int relpos;
 		T3dVector pos;
@@ -199,11 +196,11 @@ class TSpriteDef
 class TParticleDef : public TBaseLuaDef
 	{
 	protected:
-		vector<TSpriteDef*> spritedefs;
+		std::vector<TSpriteDef*> spritedefs;
 		virtual int SendIDWhenPrecache() {return 1;}
 	public:
 		virtual int GetType() {return FILE_PARTICLEDEF;}
-		vector<TSpriteDef*> & GetSpriteDefs() {return spritedefs;}
+		std::vector<TSpriteDef*> & GetSpriteDefs() {return spritedefs;}
 		virtual ~TParticleDef();
 		void Call_EmitterConstructor(int eid);
 		void Call_EmitterThink(int eid,double elapsed);
@@ -220,8 +217,8 @@ extern TParticleDefServer * g_ParticleDefs();
 class TSpriteEnvironments
 	{
 	protected:
-		vector<TSpriteEnvironment*> envs;
-		vector<TSpriteEmitter*> renderemitters; //Storing all emitters, that are in the current frustum
+		std::vector<TSpriteEnvironment*> envs;
+		std::vector<TSpriteEmitter*> renderemitters; //Storing all emitters, that are in the current frustum
 		double timescale;
 	public:
 		TSpriteEnvironments() : timescale(1) {}

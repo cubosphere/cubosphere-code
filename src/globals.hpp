@@ -21,9 +21,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "filesystem.hpp"
 #include "luautils.hpp"
 
-using namespace std;
-
-
 #ifdef WIN32
 #define STD_DIR_SEP "\\"
 #else
@@ -37,40 +34,40 @@ extern int mkdir(string d);
 
 
 
-extern void RecursiveMKDir(string dir,string dirsep=STD_DIR_SEP,int mode=0755);
+extern void RecursiveMKDir(std::string dir,std::string dirsep=STD_DIR_SEP,int mode=0755);
 
 extern int g_VerboseMode();
 extern void g_VerboseMode(int i);
 
 extern int g_CmdLineCount();
-extern string g_CmdLineKey(int i);
-extern string g_CmdLineVal(int i);
+extern std::string g_CmdLineKey(int i);
+extern std::string g_CmdLineVal(int i);
 
 extern void SetCmdLine(int argc,char *argv[]);
-extern string g_DataDir();
-extern string g_ProfileDir();
+extern std::string g_DataDir();
+extern std::string g_ProfileDir();
 
-extern void SetBaseDir(string bd);
-extern void SetProfileDir(string dir);
-extern void SetDataDir(string dir);
+extern void SetBaseDir(std::string bd);
+extern void SetProfileDir(std::string dir);
+extern void SetDataDir(std::string dir);
 
 //Remember: File is seeked at first in modstack[0], modstack[1] ... and at last in the base cubo dir
 //extern int AddModToStack(string nm);
 //extern void ClearModStack();
-extern string CurrentMod();
-extern void SetCurrentMod(string s);
+extern std::string CurrentMod();
+extern void SetCurrentMod(std::string s);
 
 extern void ClearModDirBlacklist();
-extern void AddToDirBlacklist(string dn);
+extern void AddToDirBlacklist(std::string dn);
 
-extern vector <string> LSCuboSubDir(string which);
+extern std::vector <std::string> LSCuboSubDir(std::string which);
 
-extern string PlattformFilename(string in);
+extern std::string PlattformFilename(std::string in);
 //extern string GetFileName(string subname,int type,string ext);
-extern TCuboFile* GetFileName(string subname,int type,string ext);
-extern TCuboFile* GetCuboFileFromRelativeName(string relname);
+extern TCuboFile* GetFileName(std::string subname,int type,std::string ext);
+extern TCuboFile* GetCuboFileFromRelativeName(std::string relname);
 
-extern int FileTypeFromString(string which,string *exte=NULL);
+extern int FileTypeFromString(std::string which,std::string *exte=NULL);
 
 
 
@@ -99,14 +96,14 @@ extern int FileTypeFromString(string which,string *exte=NULL);
 #define FILE_POSTEFFECTDEF 21
 #define FILE_PARTICLEDEF 22
 
-static const string g_SubDirs[] = {"textures","texdefs","blockdefs","skyboxes","shaders",">>>skydefs<<<","levels","mdldefs","mdls","itemdefs","actordefs","menudefs","levels","themedefs","sounds","music","language","fonts","saves","enemydefs","editor","posteffects","particles"};
+static const std::string g_SubDirs[] = {"textures","texdefs","blockdefs","skyboxes","shaders",">>>skydefs<<<","levels","mdldefs","mdls","itemdefs","actordefs","menudefs","levels","themedefs","sounds","music","language","fonts","saves","enemydefs","editor","posteffects","particles"};
 
 static const int g_SubDirUsesTheme[] = {1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,0,1,1};
 
 
 extern TLuaCFunctions* g_FileSysLib();
 
-extern bool StartBootScript(string name="boot.lua");
+extern bool StartBootScript(std::string name="boot.lua");
 extern cls_FileSystem * g_BaseFileSystem();
 
 #endif

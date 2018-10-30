@@ -21,9 +21,6 @@
 
 #endif
 
-
-using namespace std;
-
 typedef struct
 	{
 	GLuint tindex;
@@ -36,7 +33,7 @@ class TPostEffect : public TBaseLuaDef
 	{
 	protected:
 		//TLuaAccess lua;
-		vector<TTempTexture> ttexts;
+		std::vector<TTempTexture> ttexts;
 		int isprecached;
 		//virtual int SendIDWhenPrecache() {return -1;}
 	public:
@@ -51,12 +48,12 @@ class TPostEffect : public TBaseLuaDef
 		void DrawQuad();
 		void Precache();
 		void UnPrecache();
-		void CallDefaultSpecialRender(string nam,string what,int index);
+		void CallDefaultSpecialRender(std::string nam,std::string what,int index);
 	};
 
 
 extern TPostEffect *g_PostEffect();
-extern void LoadPostEffect(string name);
+extern void LoadPostEffect(std::string name);
 
 extern void LUA_EFFECT_RegisterLib();
 

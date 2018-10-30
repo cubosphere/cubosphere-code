@@ -12,7 +12,7 @@ class TLuaGLLib : public TLuaCFunctions
 
 		static int LglBegin(lua_State *state)
 			{
-			string s=LUA_GET_STRING;
+			std::string s=LUA_GET_STRING;
 			GLuint t;
 
 			if (s=="GL_POINTS") t=GL_POINTS;
@@ -127,7 +127,7 @@ class TLuaGLLib : public TLuaCFunctions
 
 		static int LglFogMode(lua_State *state)
 			{
-			string arg=LUA_GET_STRING;
+			std::string arg=LUA_GET_STRING;
 
 			if (arg=="LINEAR") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_LINEAR); }
 			else  if (arg=="EXP") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_EXP); }
@@ -333,8 +333,8 @@ void LUA_DEPTH_RegisterLib()
 
 ////////////////////////////
 
-static vector<int> videowidths;
-static vector<int> videoheights;
+static std::vector<int> videowidths;
+static std::vector<int> videoheights;
 
 int GetModes(int hw,int fs)
 	{
@@ -450,7 +450,7 @@ int DEVICE_SaveFramePic(lua_State *state)
 	{
 	int h=LUA_GET_INT;
 	int w=LUA_GET_INT;
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) return 0;
 	if (!fw->IsHDDFile()) return 0;

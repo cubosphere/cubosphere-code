@@ -26,29 +26,25 @@
 
 #include "filesystem.hpp"
 
-
-using namespace std;
-
-
 class TSoundContainer
 	{
 	protected:
 		Mix_Chunk *sound;
-		string fname;
+		std::string fname;
 	public:
 		TSoundContainer() : sound(NULL), fname("") {}
 		~TSoundContainer();
 		Mix_Chunk *GetSound() {return sound;}
 		int Load(TCuboFile *finfo);
 		void Reload();
-		string Filename() {return fname;}
+		std::string Filename() {return fname;}
 	};
 
 class TMusicContainer
 	{
 	protected:
 		Mix_Music *music;
-		string fname;
+		std::string fname;
 		bool hasloop;
 		double loopfrom;
 		double loopto;
@@ -63,21 +59,21 @@ class TMusicContainer
 		int Load(TCuboFile *finfo);
 		void Reload();
 		Mix_Music *GetMusic() {return music;}
-		string Filename() {return fname;}
+		std::string Filename() {return fname;}
 	};
 
 class TSoundServer
 	{
 	protected:
-		static string currenteffect;
-		static vector<int> effectbuffer;
+		static std::string currenteffect;
+		static std::vector<int> effectbuffer;
 		static int effectpos;
 		static int bitsps;
 		static double postmixparam[3];
 		int initialized;
-		vector<TSoundContainer*> sounds;
-		vector<TMusicContainer*> musics;
-		vector<int> playchannels;
+		std::vector<TSoundContainer*> sounds;
+		std::vector<TMusicContainer*> musics;
+		std::vector<int> playchannels;
 		TSoundContainer *GetSound(int i);
 		TMusicContainer *GetMusic(int i);
 		static void EchoEffect(void *udata, Uint8 *stream, int len);
@@ -101,7 +97,7 @@ class TSoundServer
 		void SetPosition(int channel,float norm_dist,float angl);
 		int SetNumChannels(int nchan);
 		int SoundPlayedByChannel(int i);
-		void SetPostMix(string what,double p1,double p2,double p3);
+		void SetPostMix(std::string what,double p1,double p2,double p3);
 		void Reload();
 		void Think(double elapsed);
 	};

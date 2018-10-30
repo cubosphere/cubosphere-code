@@ -57,10 +57,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <omp.h>
 #endif
 
-
-using namespace std;
-
-
 static TCuboGame *TheGame=NULL;
 
 TCuboGame *g_Game() {return TheGame;}
@@ -117,14 +113,14 @@ void TGame::CheckNeededExtensions()
 
 	if ((const char *) glGetString(GL_VERSION))
 			{
-			string version = (const char *) glGetString(GL_VERSION);
+			std::string version = (const char *) glGetString(GL_VERSION);
 			coutlog("INIT: OpenGL version "+version);
 			}
 	else   coutlog("INIT: unknown OpenGL version ");
 
 	if (glewIsSupported("GL_VERSION_2_0"))
 			{
-			string slangvers=((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+			std::string slangvers=((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
 			coutlog("      Shaders with the GLSL version "+slangvers+" found");
 			float vers=atof(slangvers.c_str());
 			//  ostringstream oss; oss << vers;
@@ -343,7 +339,7 @@ int TGame::Init()
 	return 0;
 	}
 
-void TGame::SetGameLoopSource(string s)
+void TGame::SetGameLoopSource(std::string s)
 	{
 	if (s=="") GameLoopSource="-"; //stdin
 	else GameLoopSource=s;
@@ -362,15 +358,15 @@ void TGame::Start()
 //Prepare Looper
 	if (GameLoopSource!="")
 			{
-			string line;
-			istream * inp=NULL;
-			ifstream file;
+			std::string line;
+			std::istream * inp=NULL;
+			std::ifstream file;
 			if (GameLoopSource=="-") inp=&std::cin;
 			else {
 					file.open(GameLoopSource.c_str());
 					inp=&file;
 					}
-			vector<string> cmds;
+			std::vector<std::string> cmds;
 			while (inp->good())
 					{
 					getline((*inp), line);
@@ -380,7 +376,7 @@ void TGame::Start()
 			}
 	if (GameLoopSource=="")
 			{
-			vector<string> defaultcmds;
+			std::vector<std::string> defaultcmds;
 			defaultcmds.push_back("function GameLoop()");
 			defaultcmds.push_back(" GAME_HandleEvents();");
 			defaultcmds.push_back(" GAME_HandleInput();");
@@ -403,7 +399,7 @@ void TGame::Start()
 
 ////////////////////////////////////////////////////////////////7
 
-void TCuboGame::SaveFramePic(string fname, int nw,int nh)
+void TCuboGame::SaveFramePic(std::string fname, int nw,int nh)
 	{
 
 	GLint viewport[4];
@@ -436,7 +432,7 @@ void TCuboGame::SaveFramePic(string fname, int nw,int nh)
 			nSize=nSize2;
 			}
 
-	string ext=fname.substr(fname.find_last_of(".") + 1);
+	std::string ext=fname.substr(fname.find_last_of(".") + 1);
 	if (ext=="tga")
 			{
 			//convert to BGR format
@@ -503,14 +499,14 @@ void TCuboGame::SaveFramePic(string fname, int nw,int nh)
 void TCuboGame::ScreenShot(void)
 	{
 
-	string ext="jpg";
+	std::string ext="jpg";
 
 	char cFileName[64];
-	string fname;
+	std::string fname;
 	int nShot=1;
 	while (nShot < 128)
 			{
-			string form="screenshot%03d."+ext;
+			std::string form="screenshot%03d."+ext;
 			sprintf(cFileName,form.c_str(),nShot);
 			fname=cFileName;
 			cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting("/user/"+fname);
@@ -545,13 +541,13 @@ void TCuboGame::JoyAxisHandle(int joys,int axis,float val,float pval)
 		lvl.JoyAxisChange(joys,axis,val,pval);
 	}
 
-int TCuboGame::StartLevel(string lname,int normal_user_edit)
+int TCuboGame::StartLevel(std::string lname,int normal_user_edit)
 	{
 
 	if (normal_user_edit!=2 || lname!="")
 			{
 			TCuboFile * finfo=GetFileName(lname,normal_user_edit!=0 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
-			if (!finfo) {string uls=(normal_user_edit!=0 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+lname,2); return 0 ;}
+			if (!finfo) {std::string uls=(normal_user_edit!=0 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+lname,2); return 0 ;}
 			delete finfo;
 			}
 
@@ -624,7 +620,7 @@ void TCuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle
 	}
 
 
-int TCuboGame::AddActor(string aname)
+int TCuboGame::AddActor(std::string aname)
 	{
 	int res=move.size();
 	move.resize(move.size()+1);
@@ -644,7 +640,7 @@ void TCuboGame::DeleteActor(int index)
 	}
 
 
-int TCuboGame::AddEnemy(string aname)
+int TCuboGame::AddEnemy(std::string aname)
 	{
 	int res=move.size();
 	move.resize(move.size()+1);
@@ -706,7 +702,7 @@ int TCuboGame::Init()
 	}
 
 
-void TCuboGame::LoadSky(string name)
+void TCuboGame::LoadSky(std::string name)
 	{
 // sky.LoadTextures(name,&textures);
 	sky.LoadSkybox(name);
@@ -931,7 +927,7 @@ void TCuboGame::RenderPass()
 			}
 	}
 
-void TCuboGame::SpecialRenderPass(string nam,int defrender)
+void TCuboGame::SpecialRenderPass(std::string nam,int defrender)
 	{
 	if (GameActive)
 			{
@@ -943,7 +939,7 @@ void TCuboGame::SpecialRenderPass(string nam,int defrender)
 			}
 	}
 
-void TCuboGame::Reload(vector<string> & extratoks)
+void TCuboGame::Reload(std::vector<std::string> & extratoks)
 	{
 	int all=0; // Implicits => All
 	int lua=0; // Implicits =>
@@ -1235,7 +1231,7 @@ int GAME_Render(lua_State *state)
 
 int GAME_SetGameLoopSource(lua_State *state)
 	{
-	string s;
+	std::string s;
 	s=LUA_GET_STRING;
 	g_Game()->SetGameLoopSource(s);
 	return 0;

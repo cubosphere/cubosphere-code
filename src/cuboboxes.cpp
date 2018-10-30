@@ -44,18 +44,16 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboactors.hpp"
 #include "cuboenemies.hpp"
 
-using namespace std;
-
 //Specifies a function inside the given LuaState.
 //Params: In: x,y,z -> Out: Alpha Value
 static TLuaAccess* s_AlphaAccess=NULL;
-static string s_AlphaFunc="";
+static std::string s_AlphaFunc="";
 
 static float s_LastDiffuse[4];
 
 void g_LastDiffuse(float * ld) {for (int c=0; c<4; c++) s_LastDiffuse[c]=ld[c];}
 
-void g_SetAlphaFunc(TLuaAccess *acc,string func)
+void g_SetAlphaFunc(TLuaAccess *acc,std::string func)
 	{
 	s_AlphaAccess=acc;
 	s_AlphaFunc=func;
@@ -74,7 +72,7 @@ void SideAlpha(float &x,float &y,float &z)
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,   s_LastDiffuse);
 	}
 
-void TCuboBlockSide::SetSideItem(string n)
+void TCuboBlockSide::SetSideItem(std::string n)
 	{
 	//First remove all Items of this side
 	g_Game()->GetLevel()->RemoveItemFromSide(this);
@@ -113,7 +111,7 @@ void TCuboBlockSide::Render()
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_RenderSide(GetID());
 	}
 
-void TCuboBlockSide::SpecialRender(string nam,int defrender)
+void TCuboBlockSide::SpecialRender(std::string nam,int defrender)
 	{
 	if ( g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SpecialRender(nam,GetID())) {}
 	else
@@ -134,7 +132,7 @@ void TCuboBlockSide::Call_CollisionCheck(int plr)
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_CollisionCheck(plr,GetID());
 	}
 
-void TCuboBlockSide::Call_VarChanged(string var) //To observe changes done by editor
+void TCuboBlockSide::Call_VarChanged(std::string var) //To observe changes done by editor
 	{
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SideVarChanged(var,GetID());
 	}
@@ -174,7 +172,7 @@ T3dVector TCuboBlockSide::GetMidpoint()
 	return res;
 	}
 
-string TCuboBlockSide::GetTypeName()
+std::string TCuboBlockSide::GetTypeName()
 	{
 	return g_Game()->GetLevel()->GetBlockDef(sidetype)->GetName();
 	}
@@ -203,12 +201,12 @@ void TCuboBlockSide::RenderQuad()
 
 
 
-string TCuboBlockSide::GetEditorInfo(string what,string def)
+std::string TCuboBlockSide::GetEditorInfo(std::string what,std::string def)
 	{
 	return ((g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_GetEditorInfo(what,def)));
 	}
 
-string TCuboBlock::GetEditorInfo(string what,string def)
+std::string TCuboBlock::GetEditorInfo(std::string what,std::string def)
 	{
 	return ((g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_GetEditorInfo(what,def)));
 	}
@@ -275,7 +273,7 @@ void TCuboItem::Think()
 
 	}
 
-string TCuboItem::GetEditorInfo(string what,string def)
+std::string TCuboItem::GetEditorInfo(std::string what,std::string def)
 	{
 	return ((g_Game()->GetLevel()->GetItemDef(this->itemtype)->Call_GetEditorInfo(what,def)));
 	}
@@ -378,7 +376,7 @@ int TCuboBlock::GetNeighbor(T3dVector norm)
 void TCuboBlock::WriteLevelData(FILE *f)
 	{
 	//First add the Block by adding:
-	string typen=g_Game()->GetLevel()->GetBlockDef(blocktype)->GetName();
+	std::string typen=g_Game()->GetLevel()->GetBlockDef(blocktype)->GetName();
 	fprintf(f,"\n  LEVEL_AddBlock(%d,%d,%d,\"%s\");\n",(int)(pos.x/(2*CUBO_SCALE)),(int)(pos.y/(2*CUBO_SCALE)),(int)(pos.z/(2*CUBO_SCALE)),typen.c_str());
 
 	//Block only block vars
@@ -387,12 +385,12 @@ void TCuboBlock::WriteLevelData(FILE *f)
 
 			if (GetBlockSide(0)->GetEditorInfo("NumVars","") != "")  //Get the exported variables
 					{
-					string nvs=GetBlockSide(0)->GetEditorInfo("NumVars","0");
+					std::string nvs=GetBlockSide(0)->GetEditorInfo("NumVars","0");
 					int sidevars=atoi(nvs.c_str());
 					for (int sv=1; sv<=sidevars; sv++)
 							{
-							string svarname=GetBlockSide(0)->GetEditorInfo("Var"+IntToString(sv),"");
-							string svarval=GetVarHolder()->GetVarString(svarname,1);
+							std::string svarname=GetBlockSide(0)->GetEditorInfo("Var"+IntToString(sv),"");
+							std::string svarval=GetVarHolder()->GetVarString(svarname,1);
 							fprintf(f,"    BLOCK_SetVar(LEVEL_LastBlock(), \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
 
 							}
@@ -402,7 +400,7 @@ void TCuboBlock::WriteLevelData(FILE *f)
 	//Now we apply the side changes
 	for (int s=0; s<6; s++)
 			{
-			string stypen=GetBlockSide(s)->GetTypeName();
+			std::string stypen=GetBlockSide(s)->GetTypeName();
 			if (stypen!=typen)
 				fprintf(f,"    LEVEL_ChangeSide(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),stypen.c_str());
 
@@ -412,12 +410,12 @@ void TCuboBlock::WriteLevelData(FILE *f)
 
 					if (GetBlockSide(s)->GetEditorInfo("NumVars","") != "")  //Get the exported variables
 							{
-							string nvs=GetBlockSide(s)->GetEditorInfo("NumVars","0");
+							std::string nvs=GetBlockSide(s)->GetEditorInfo("NumVars","0");
 							int sidevars=atoi(nvs.c_str());
 							for (int sv=1; sv<=sidevars; sv++)
 									{
-									string svarname=GetBlockSide(s)->GetEditorInfo("Var"+IntToString(sv),"");
-									string svarval=GetBlockSide(s)->GetVarHolder()->GetVarString(svarname,1);
+									std::string svarname=GetBlockSide(s)->GetEditorInfo("Var"+IntToString(sv),"");
+									std::string svarval=GetBlockSide(s)->GetVarHolder()->GetVarString(svarname,1);
 									fprintf(f,"      SIDE_SetVar(LEVEL_LastBlock()*6+%d, \"%s\", %s);\n",s,svarname.c_str(),svarval.c_str());
 
 									}
@@ -443,12 +441,12 @@ void TCuboBlock::WriteLevelData(FILE *f)
 
 					if (item->GetEditorInfo("NumVars","") != "")  //Get the exported variables
 							{
-							string nvs=item->GetEditorInfo("NumVars","0");
+							std::string nvs=item->GetEditorInfo("NumVars","0");
 							int itemvars=atoi(nvs.c_str());
 							for (int iv=1; iv<=itemvars; iv++)
 									{
-									string ivarname=item->GetEditorInfo("Var"+IntToString(iv),"");
-									string ivarval=item->GetVarHolder()->GetVarString(ivarname,1);
+									std::string ivarname=item->GetEditorInfo("Var"+IntToString(iv),"");
+									std::string ivarval=item->GetVarHolder()->GetVarString(ivarname,1);
 									fprintf(f,"      ITEM_SetVar(item, \"%s\", %s);\n",ivarname.c_str(),ivarval.c_str());
 
 									}
@@ -486,12 +484,12 @@ void TCuboBlock::WriteLevelData(FILE *f)
 							fprintf(f,"      ACTOR_SetStart(enemy,6*LEVEL_LastBlock()+%d,%d);\n",s,e->GetStartRotation());
 							if (e->GetEditorInfo("NumVars","") != "")  //Get the exported variables
 									{
-									string nvs=e->GetEditorInfo("NumVars","0");
+									std::string nvs=e->GetEditorInfo("NumVars","0");
 									int sidevars=atoi(nvs.c_str());
 									for (int sv=1; sv<=sidevars; sv++)
 											{
-											string svarname=e->GetEditorInfo("Var"+IntToString(sv),"");
-											string svarval=e->GetVarHolder()->GetVarString(svarname,1);
+											std::string svarname=e->GetEditorInfo("Var"+IntToString(sv),"");
+											std::string svarval=e->GetVarHolder()->GetVarString(svarname,1);
 											fprintf(f,"      ACTOR_SetVar(enemy, \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
 
 											}
@@ -534,7 +532,7 @@ void TCuboBlockSide::Call_OnSideEvent(int actorid)
 	}
 
 
-int TCuboBlockSide::Call_MayMove(int actorid,string movestr)
+int TCuboBlockSide::Call_MayMove(int actorid,std::string movestr)
 	{
 	//Get the LUA script
 	return g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_MayMove(GetID(),actorid,movestr);
@@ -616,7 +614,7 @@ T3dVector TCuboItem::GetPos()
 	return pos;
 	}
 
-void TCuboItem::SpecialRender(string nam,int defrender)
+void TCuboItem::SpecialRender(std::string nam,int defrender)
 	{
 	if ( g_Game()->GetLevel()->GetItemDef(itemtype)->Call_SpecialRender(nam,myid)) {}
 	else
@@ -637,7 +635,7 @@ void TCuboItem::DistRender()
 	g_Game()->GetLevel()->GetItemDef(itemtype)->Call_DistRender(myid);
 	}
 
-string TCuboItem::GetName()
+std::string TCuboItem::GetName()
 	{
 	return g_Game()->GetLevel()->GetItemDef(itemtype)->GetName();
 	}
@@ -691,7 +689,7 @@ T3dVector TCuboBlock::GetBBMin()
 	}
 
 
-string TCuboBlock::GetName()
+std::string TCuboBlock::GetName()
 	{
 	return g_Game()->GetLevel()->GetBlockDef(blocktype)->GetName();
 	}
@@ -702,19 +700,19 @@ string TCuboBlock::GetName()
 
 
 void TBlockDef::Call_CollisionCheck(int actorid, int itemid) {    COND_LUA_CALL("SideCollisionCheck",,"ii",actorid,itemid);}
-string TBlockDef::Call_GetEditorInfo(string what,string std) {char *res;  COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res);  return res; }
+std::string TBlockDef::Call_GetEditorInfo(std::string what,std::string std) {char *res;  COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res);  return res; }
 void TBlockDef::Call_RenderSide(int sideid) { COND_LUA_CALL("RenderSide",,"i",sideid);}
 void TBlockDef::Call_DistRenderSide(int sideid) {COND_LUA_CALL("DistRenderSide",,"i",sideid);}
 void TBlockDef::Call_OnBlockEvent(int blockid,int actorid) { COND_LUA_CALL("Event_OnBlock",,"ii",blockid,actorid);}
 void TBlockDef::Call_OnSideEvent(int sideid,int actorid) { COND_LUA_CALL("Event_OnSide",,"ii",sideid,actorid);}
-int TBlockDef::Call_MayMove(int sideid,int actorid,string movetype) { int res; COND_LUA_CALL("MayMove",1,"iis>i",sideid,actorid,movetype.c_str(),&res); return res;}
+int TBlockDef::Call_MayMove(int sideid,int actorid,std::string movetype) { int res; COND_LUA_CALL("MayMove",1,"iis>i",sideid,actorid,movetype.c_str(),&res); return res;}
 int TBlockDef::Call_HasTransparency(int blockid) { int res; COND_LUA_CALL("HasTransparency",0,"i>i",blockid,&res); return res;}
 int TBlockDef::Call_IsPassable(int blockid) { int res; COND_LUA_CALL("IsPassable",0,"i>i",blockid,&res); return res;}
 int TBlockDef::Call_IsMoving(int blockid) { int res; COND_LUA_CALL("IsMoving",0,"i>i",blockid,&res); return res;}
 void TBlockDef::Call_BlockThink(int blockid) {COND_LUA_CALL("BlockThink",,"i",blockid);}
-int TBlockDef::Call_SpecialRender(string nam,int index) { COND_LUA_CALL("SpecialRender",0,"si",nam.c_str(),index); return 1;}
+int TBlockDef::Call_SpecialRender(std::string nam,int index) { COND_LUA_CALL("SpecialRender",0,"si",nam.c_str(),index); return 1;}
 void TBlockDef::Call_SideThink(int sideid) {COND_LUA_CALL("SideThink",,"i",sideid);}
-void TBlockDef::Call_SideVarChanged(string var,int sideid) {COND_LUA_CALL("SideVarChanged",,"si",var.c_str(),sideid);}
+void TBlockDef::Call_SideVarChanged(std::string var,int sideid) {COND_LUA_CALL("SideVarChanged",,"si",var.c_str(),sideid);}
 int TBlockDef::Call_MaySlideDown(int sideid,int actorid) {int res; COND_LUA_CALL("MaySlideDown",0,"ii>i",sideid,actorid,&res); return res;}
 int TBlockDef::Call_MayCull(int sideid) { int res; COND_LUA_CALL("MayCull",1,"i>i",sideid,&res); return res;}
 void TBlockDef::Call_BlockConstructor(int id) {COND_LUA_CALL("BlockConstructor",,"i",id);}
@@ -723,8 +721,8 @@ void TBlockDef::Call_SideConstructor(int id) {COND_LUA_CALL("SideConstructor",,"
 
 
 void TItemDef::Call_Think(int itemid) { COND_LUA_CALL("Think",,"i",itemid);}
-int TItemDef::Call_SpecialRender(string nam,int index) {   COND_LUA_CALL("SpecialRender",0,"i",nam.c_str(),index); return 1;}
-string TItemDef::Call_GetEditorInfo(string what,string std) {char *res; COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res); return res;}
+int TItemDef::Call_SpecialRender(std::string nam,int index) {   COND_LUA_CALL("SpecialRender",0,"i",nam.c_str(),index); return 1;}
+std::string TItemDef::Call_GetEditorInfo(std::string what,std::string std) {char *res; COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res); return res;}
 void TItemDef::Call_Render(int itemindex) {   COND_LUA_CALL("Render",,"i",itemindex);}
 void TItemDef::Call_CollisionCheck(int actorid, int itemid) {  COND_LUA_CALL("CollisionCheck",,"ii",actorid,itemid);}
 void TItemDef::Call_DistRender(int itemindex) {   COND_LUA_CALL("DistRender",,"i",itemindex);}
@@ -758,18 +756,18 @@ int ITEM_GetVar(lua_State *state)
 int ITEM_GetType(lua_State *state)
 	{
 	int ind=LUA_GET_INT;
-	string res=g_Game()->GetLevel()->GetItem(ind)->GetName();
+	std::string res=g_Game()->GetLevel()->GetItem(ind)->GetName();
 	LUA_SET_STRING(res);
 	return 1;
 	}
 
 int ITEM_GetEditorInfo(lua_State *state)
 	{
-	string def=LUA_GET_STRING;
-	string what=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING;
+	std::string what=LUA_GET_STRING;
 
 	int b=LUA_GET_INT;
-	string v=g_Game()->GetLevel()->GetItem(b)->GetEditorInfo(what,def);
+	std::string v=g_Game()->GetLevel()->GetItem(b)->GetEditorInfo(what,def);
 	LUA_SET_STRING(v);
 	return 1;
 	}
@@ -861,7 +859,7 @@ int SIDE_FindOfType(lua_State *state)
 	{
 	int offs=LUA_GET_INT;
 	int start=LUA_GET_INT;
-	string tn=LUA_GET_STRING;
+	std::string tn=LUA_GET_STRING;
 	int res=g_Game()->GetLevel()->GetSideOfType(tn,start,offs);
 	LUA_SET_INT(res);
 	return 1;
@@ -871,7 +869,7 @@ int SIDE_FindOfType(lua_State *state)
 
 int SIDE_SetAlphaFunc(lua_State *state)
 	{
-	string f=LUA_GET_STRING;
+	std::string f=LUA_GET_STRING;
 
 	if (f=="") g_SetAlphaFunc(NULL,"");
 	else g_SetAlphaFunc(g_CallAccess(),f);
@@ -901,14 +899,14 @@ int SIDE_GetBlock(lua_State *state)
 int SIDE_GetType(lua_State *state)
 	{
 	int s=LUA_GET_INT;
-	string str=g_Game()->GetLevel()->GetBlockSide(s)->GetTypeName();
+	std::string str=g_Game()->GetLevel()->GetBlockSide(s)->GetTypeName();
 	LUA_SET_STRING(str);
 	return 1;
 	}
 
 int SIDE_CallVarChanged(lua_State *state)
 	{
-	string vn=LUA_GET_STRING;
+	std::string vn=LUA_GET_STRING;
 	int s=LUA_GET_INT;
 	g_Game()->GetLevel()->GetBlockSide(s)->Call_VarChanged(vn);
 	return 0;
@@ -917,11 +915,11 @@ int SIDE_CallVarChanged(lua_State *state)
 
 int SIDE_GetEditorInfo(lua_State *state)
 	{
-	string def=LUA_GET_STRING;
-	string what=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING;
+	std::string what=LUA_GET_STRING;
 
 	int b=LUA_GET_INT;
-	string v=g_Game()->GetLevel()->GetBlockSide(b)->GetEditorInfo(what,def);
+	std::string v=g_Game()->GetLevel()->GetBlockSide(b)->GetEditorInfo(what,def);
 	LUA_SET_STRING(v);
 	return 1;
 	}
@@ -1021,11 +1019,11 @@ int BLOCK_GetPos(lua_State *state)
 
 int BLOCK_GetEditorInfo(lua_State *state)
 	{
-	string def=LUA_GET_STRING;
-	string what=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING;
+	std::string what=LUA_GET_STRING;
 
 	int b=LUA_GET_INT;
-	string v=g_Game()->GetLevel()->GetBlock(b)->GetEditorInfo(what,def);
+	std::string v=g_Game()->GetLevel()->GetBlock(b)->GetEditorInfo(what,def);
 	LUA_SET_STRING(v);
 	return 1;
 	}

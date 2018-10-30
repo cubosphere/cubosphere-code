@@ -4,10 +4,6 @@
 #include "cuboactors.hpp"
 //#include <iostream>
 
-using namespace std;
-
-
-
 class TEnemyDef : public TActorDef
 	{
 	public:
@@ -21,7 +17,7 @@ class TCuboEnemy : public TCuboMovement
 	{
 	public:
 		virtual int IsPlayer() {return 0;}
-		virtual void SetType(int mid,string name);
+		virtual void SetType(int mid,std::string name);
 	};
 
 

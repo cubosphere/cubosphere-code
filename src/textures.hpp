@@ -42,9 +42,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "filesystem.hpp"
 
-using namespace std;
-
-
 ////Texture Defs
 
 
@@ -129,7 +126,7 @@ class TTextureContainer
 	{
 	protected:
 		GLuint tind;
-		vector<TFontExtend> chars;
+		std::vector<TFontExtend> chars;
 		void AddChar(int x,int y,void *data,int width,int fsize);
 	public:
 		int duration1,duration2;
@@ -144,10 +141,10 @@ class TTextureContainer
 class TTextureServer
 	{
 	protected:
-		vector<TTextureContainer> Textures;
-		vector<string> filenames,alphanames;
-		vector<int> istemp;
-		vector<int> activetextures;
+		std::vector<TTextureContainer> Textures;
+		std::vector<std::string> filenames,alphanames;
+		std::vector<int> istemp;
+		std::vector<int> activetextures;
 		int timer1,timer2,timer3,numloads;
 		int maxsize;
 		int txtenabled;
@@ -172,8 +169,8 @@ class TTextureServer
 		int LoadTexture(TCuboFile *finfo,int asfont=0,unsigned int colorkey=0);
 		int LoadTextureAndAlpha(TCuboFile *finfo,TCuboFile *afinfo);
 
-		int LoadTempTexture(string tname, TCuboFile *finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
-		int TempTextureIndexFromName(string tname);
+		int LoadTempTexture(std::string tname, TCuboFile *finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
+		int TempTextureIndexFromName(std::string tname);
 		void ResetTimerCounters();
 		void CoutTimerString();
 	};

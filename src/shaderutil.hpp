@@ -53,13 +53,11 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL/SDL.h>
 
 #endif
-using namespace std;
-
 
 class TShaderUniformLocation
 	{
 	public:
-		string name;
+		std::string name;
 		GLint loc;
 	};
 
@@ -69,15 +67,15 @@ class TShaderServer;
 class TBaseShader
 	{
 	protected:
-		string filename; //Holds the base name
+		std::string filename; //Holds the base name
 		GLuint vertexref,fragmentref,programref;
-		vector<TShaderUniformLocation> ulocs;
-		vector<TShaderUniformLocation> alocs;
+		std::vector<TShaderUniformLocation> ulocs;
+		std::vector<TShaderUniformLocation> alocs;
 	public:
-		GLint GetUniformLocation(string s);
-		GLint GetAttributeLocation(string s);
-		string GetName() {return filename;}
-		void Load(TShaderServer* ss, string fname);
+		GLint GetUniformLocation(std::string s);
+		GLint GetAttributeLocation(std::string s);
+		std::string GetName() {return filename;}
+		void Load(TShaderServer* ss, std::string fname);
 		void Activate();
 		void Deactivate();
 		~TBaseShader();
@@ -88,7 +86,7 @@ class TBaseShader
 class TShaderServer
 	{
 	protected:
-		vector<TBaseShader*> shaderlist;
+		std::vector<TBaseShader*> shaderlist;
 		int momshader;
 	public:
 		TShaderServer() : momshader(-1) {};
@@ -103,19 +101,19 @@ class TShaderServer
 		// void PrintUniforms(const struct uniform_info uniforms[]);
 		//GLuint GetAttribs(GLuint program, struct attrib_info attribs[]);
 		//void PrintAttribs(const struct attrib_info attribs[]);
-		bool InitShaders(string dirname);
-		int GetShader(string name);
-		TBaseShader *GetShaderPtr(string name);
-		int AddShader(string name);
+		bool InitShaders(std::string dirname);
+		int GetShader(std::string name);
+		TBaseShader *GetShaderPtr(std::string name);
+		int AddShader(std::string name);
 		bool RegisterShader(TBaseShader *sh);
 		bool FreeShaders();
 		bool Activate(int index);
 		bool Deactivate();
-		void SetInt(string ref,int i);
-		void SetFloat(string ref,float f);
-		void SetVector3(string ref,T3dVector v);
-		void SetVector4(string ref,T4dVector v);
-		GLint GetAttributeLocation(string name);
+		void SetInt(std::string ref,int i);
+		void SetFloat(std::string ref,float f);
+		void SetVector3(std::string ref,T3dVector v);
+		void SetVector4(std::string ref,T4dVector v);
+		GLint GetAttributeLocation(std::string name);
 		void clear();
 	};
 

@@ -34,10 +34,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL/SDL_ttf.h>
 #endif
 
-
-
-using namespace std;
-
 class TSizedFont
 	{
 	protected:
@@ -47,7 +43,7 @@ class TSizedFont
 	public:
 		TSizedFont() : size(0), font(NULL) {}
 		~TSizedFont() {DestructFont();}
-		int Load(string fontname,int fontsize);
+		int Load(std::string fontname,int fontsize);
 		int Load(SDL_RWops *rwops,int fontsize);
 		int GetSize() {return size;}
 		TTF_Font *GetFont() {return font;}
@@ -59,17 +55,17 @@ const int g_FontSizes[NUM_FONT_SIZES]= {12,14,18,24,32,64};
 class TLoadedFont
 	{
 	protected:
-		string fname; //Name of the font
-		vector<TSizedFont*> sized; //Storing the sized fonts
+		std::string fname; //Name of the font
+		std::vector<TSizedFont*> sized; //Storing the sized fonts
 		TSizedFont* GetSized(int dessize);
 		int Prepare(); ///TODO: Load the std sizes
 	public:
 		void Clear();
 		TLoadedFont() {Clear();}
 		~TLoadedFont() {Clear();}
-		int Load(string fontname);
+		int Load(std::string fontname);
 		TSizedFont *GetBestFont(int pixelsize);
-		string GetName() {return fname;}
+		std::string GetName() {return fname;}
 	};
 
 //Stores a Surface with a text
@@ -77,8 +73,8 @@ class TFontCache
 	{
 	protected:
 		int mysize,fontsize;
-		string mytext;
-		string myfontname;
+		std::string mytext;
+		std::string myfontname;
 		SDL_Surface *surf;
 		GLuint texture;
 		int initialized;
@@ -86,10 +82,10 @@ class TFontCache
 		double TimeStamp; //Last used time
 	public:
 		int iw,ih,sw,sh; //Bad, but who cares
-		int IsTheSame(string fname,string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
+		int IsTheSame(std::string fname,std::string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
 		TFontCache() : initialized(0) {};
 		~TFontCache() {Clear();}
-		void Setup(TLoadedFont *font,string text, int size);
+		void Setup(TLoadedFont *font,std::string text, int size);
 		void SetTime(double T) {TimeStamp=T;}
 		double GetTime() {return TimeStamp;}
 		GLuint GetTexture() {return texture;}
@@ -102,26 +98,26 @@ class TFontCache
 class TFontCaches
 	{
 	protected:
-		vector<TFontCache*> caches;
+		std::vector<TFontCache*> caches;
 
 	public:
 		void Clear();
 		TFontCaches() {Clear();}
 		~TFontCaches() {Clear();}
-		TFontCache *GetCache(TLoadedFont *font,string text, int size);
+		TFontCache *GetCache(TLoadedFont *font,std::string text, int size);
 	};
 
 typedef struct
 	{
-	string oldc;
-	string newc;
+	std::string oldc;
+	std::string newc;
 	} TFontRemap;
 
 class TFont
 	{
 	protected:
-		string valign; //top, center, bottom
-		string halign; //left, center, right
+		std::string valign; //top, center, bottom
+		std::string halign; //left, center, right
 
 		//TTF_Font* font;
 		TLoadedFont font;
@@ -129,29 +125,29 @@ class TFont
 		///OLD
 		//   int tindex;
 
-		vector <TFontRemap> remaps;
+		std::vector <TFontRemap> remaps;
 		float xpos,ypos;
 		float scalex;
 		float scaley;
 		//  void Character(int s);
 		//  float TextHeight(string s); //Takes only a single line!
 		//  float TextWidth(string s); //dito
-		void RenderText(string text);
-		string RemapString(string text);
-		string cname;
+		void RenderText(std::string text);
+		std::string RemapString(std::string text);
+		std::string cname;
 	public:
-		string GetFontName() {return cname;}
+		std::string GetFontName() {return cname;}
 		void Init();
 		void SetSize(float s);
-		void TextOut(string s);
-		void Load(string textname);
+		void TextOut(std::string s);
+		void Load(std::string textname);
 		void Test();
 		void Begin();
 		void Goto(float cx,float cy) {xpos=cx; ypos=cy;}
 		void End();
-		void SetAlign(string ha,string va) {halign=ha; valign=va;}
+		void SetAlign(std::string ha,std::string va) {halign=ha; valign=va;}
 		void ClearRemaps();
-		void AddRemap(string oldc,string newc);
+		void AddRemap(std::string oldc,std::string newc);
 		void ClearCache();
 		void StopFontEngine();
 		// ~TFont() {if (font) TTF_CloseFont(font);}

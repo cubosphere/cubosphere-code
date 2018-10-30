@@ -33,8 +33,6 @@
 #include <iostream>
 #include <cmath>
 
-using namespace std;
-
 static TSoundServer soundserv;
 
 
@@ -59,8 +57,8 @@ void TSoundServer::ChannelFinished(int num)
 	}
 
 
-string TSoundServer::currenteffect="";
-vector<int> TSoundServer::effectbuffer;
+std::string TSoundServer::currenteffect="";
+std::vector<int> TSoundServer::effectbuffer;
 int TSoundServer::effectpos;
 double TSoundServer::postmixparam[3];
 int TSoundServer::bitsps;
@@ -101,7 +99,7 @@ void TSoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
 			}
 	}
 
-void TSoundServer::SetPostMix(string what,double p1,double p2,double p3)
+void TSoundServer::SetPostMix(std::string what,double p1,double p2,double p3)
 	{
 	if (!initialized) return;
 	postmixparam[0]=p1; postmixparam[1]=p2; postmixparam[2]=p3;
@@ -169,7 +167,7 @@ int TMusicContainer::Load(TCuboFile *finfo)
 		music = Mix_LoadMUS(finfo->GetHDDName().c_str());
 
 	if(music == NULL) {
-			ostringstream oss; oss << "Unable to load music file " << finfo->GetNameForLog().c_str() << Mix_GetError() ;
+			std::ostringstream oss; oss << "Unable to load music file " << finfo->GetNameForLog().c_str() << Mix_GetError() ;
 			coutlog(oss.str(),2);
 			return 0;
 			}
@@ -281,7 +279,7 @@ int TSoundServer::SetNumChannels(int nchan)
 			int oldsize=playchannels.size();
 			if (nchan<oldsize)  playchannels.resize(nchan);
 			else for (int i=oldsize; i<nchan; i++) playchannels.push_back(-1);
-			cout << "Channels are " << playchannels.size() << endl;
+			std::cout << "Channels are " << playchannels.size() << std::endl;
 			}
 	return Mix_AllocateChannels(nchan);
 	}
@@ -474,7 +472,7 @@ int SOUND_SetPostEffect(lua_State *state)
 	double p3=LUA_GET_DOUBLE;
 	double p2=LUA_GET_DOUBLE;
 	double p1=LUA_GET_DOUBLE;
-	string pe=LUA_GET_STRING ;
+	std::string pe=LUA_GET_STRING ;
 	g_Sounds()->SetPostMix(pe,p1,p2,p3);
 	return 0;
 	}
@@ -509,7 +507,7 @@ int SOUND_PlayedByChannel(lua_State *state)
 
 int SOUND_Load(lua_State *state)
 	{
-	string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING;
 	TCuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
 	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_INT(-1); return 1;}
 	int res=g_Sounds()->LoadSound(finfo);
@@ -520,7 +518,7 @@ int SOUND_Load(lua_State *state)
 
 int SOUND_LoadMusic(lua_State *state)
 	{
-	string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING;
 	TCuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
 	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_INT(-1); return 1;}
 //if (g_VerboseMode()) coutlog("Loading Music : "+fname);

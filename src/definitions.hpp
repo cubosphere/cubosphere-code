@@ -21,8 +21,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "luautils.hpp"
 
-using namespace std;
-
 /* Here we provide a parser for block and texture definitions */
 
 
@@ -32,8 +30,8 @@ using namespace std;
 class TBaseLuaDef
 	{
 	protected:
-		string name;
-		string fname;
+		std::string name;
+		std::string fname;
 		TLuaAccess lua;
 		int isloaded;
 		int myid;
@@ -42,8 +40,8 @@ class TBaseLuaDef
 		virtual ~TBaseLuaDef();
 		TBaseLuaDef() : name(""), isloaded(0), myid(-1) {}
 		virtual int GetType()=0;
-		void SetName(string cname) {name=cname;}
-		string GetName() {return name;}
+		void SetName(std::string cname) {name=cname;}
+		std::string GetName() {return name;}
 		int IsLoaded() {return isloaded;}
 		void SetID(int cid) {myid=cid;}
 		virtual void LoadDef();
@@ -53,7 +51,7 @@ class TBaseLuaDef
 template<typename T> class TBaseDefServer
 	{
 	protected:
-		vector<T*> defs;
+		std::vector<T*> defs;
 	public:
 		void clear()
 			{
@@ -64,7 +62,7 @@ template<typename T> class TBaseDefServer
 			{
 			clear();
 			}
-		int GetDef(string name)
+		int GetDef(std::string name)
 			{
 			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) return (i);
 			return -1;
@@ -73,7 +71,7 @@ template<typename T> class TBaseDefServer
 			{
 			for (unsigned int i=0; i<defs.size(); i++) defs[i]->Reload();
 			}
-		int AddDef(string name)
+		int AddDef(std::string name)
 			{
 			int def=GetDef(name);
 			if (def>-1) return def; //Have it already
@@ -93,11 +91,11 @@ class TMenu : public TBaseLuaDef
 	{
 	protected:
 		int change;
-		string nextname;
+		std::string nextname;
 	public:
 		virtual int GetType() {return FILE_MENUDEF;}
 		TMenu() : TBaseLuaDef(), change(0) {};
-		virtual void LoadDef(string cname);
+		virtual void LoadDef(std::string cname);
 		// virtual void Reload();
 		void Render();
 		void Think();

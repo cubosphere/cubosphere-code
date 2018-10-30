@@ -19,9 +19,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "luautils.hpp"
 
-using namespace std;
-
-
 ////////////////////////////// 2d Vectors ////////////////////////////
 T2dVector T2dVector::operator+(const T2dVector& other)
 	{
@@ -89,7 +86,7 @@ void T2dVector::normalize()
 	}
 
 
-string T2dVector::toString()
+std::string T2dVector::toString()
 	{
 	std::ostringstream floatStringHelper;
 
@@ -206,7 +203,7 @@ void T3dVector::normalize()
 	}
 
 
-const string T3dVector::toString()
+const std::string T3dVector::toString()
 	{
 	std::ostringstream floatStringHelper;
 
@@ -326,7 +323,7 @@ void T4dVector::normalize()
 	}
 
 
-const string T4dVector::toString()
+const std::string T4dVector::toString()
 	{
 	std::ostringstream floatStringHelper;
 
@@ -624,16 +621,16 @@ const T3dMatrix T3dMatrix::transpose()
 	return result2;
 	}
 
-const string T3dMatrix::toString()
+const std::string T3dMatrix::toString()
 	{
 	std::ostringstream floatStringHelper;
 	T3dVector v;
 	v=getRow(0);
-	floatStringHelper << v.toString() << endl;
+	floatStringHelper << v.toString() << std::endl;
 	v=getRow(1);
-	floatStringHelper << v.toString() << endl;
+	floatStringHelper << v.toString() << std::endl;
 	v=getRow(2);
-	floatStringHelper << v.toString() << endl;
+	floatStringHelper << v.toString() << std::endl;
 
 	return floatStringHelper.str();
 	}
@@ -869,7 +866,7 @@ int VECTOR_Sub(lua_State *state)
 int VECTOR_ToString(lua_State *state)
 	{
 	T3dVector v1=Vector3FromStack(state);
-	string s=v1.toString();
+	std::string s=v1.toString();
 	LUA_SET_STRING(s);
 	return 1;
 	}

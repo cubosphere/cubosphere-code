@@ -40,17 +40,11 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-
-
-
-
-using namespace std;
-
 void TBaseLuaDef::LoadDef()
 	{
 	isloaded=true;
 	int typ=GetType();
-	string ext;
+	std::string ext;
 	FileTypeFromString(g_SubDirs[typ],&ext);
 	TCuboFile *fileinfo=GetFileName(name,typ,"."+ext);
 
@@ -95,7 +89,7 @@ void TBaseLuaDef::Reload()
     TBaseLuaDef::LoadDef();
 }*/
 
-void  TMenu::LoadDef(string cname)
+void  TMenu::LoadDef(std::string cname)
 	{
 	if (isloaded)
 			{
@@ -193,7 +187,7 @@ void TMenu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
 
 int MENU_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	g_Game()->GetMenu()->LoadDef(s);
 	return 0;
 	}

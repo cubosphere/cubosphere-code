@@ -50,7 +50,7 @@ class TGame
 		int supportingShaders;
 		int glReady;
 		tfloat minframes,maxframes; //actually this arent the frames but it ensures that the time is slowed down if we are below
-		string GameLoopSource;
+		std::string GameLoopSource;
 		double time,elapsed,oldtime;
 		tfloat maxphyselapsed;
 		int FPS;
@@ -59,7 +59,7 @@ class TGame
 		virtual void CheckNeededExtensions();
 		TLuaAccess GameLua;
 	public:
-		virtual void SetGameLoopSource(string s);
+		virtual void SetGameLoopSource(std::string s);
 		TGame() :  AntiAliasing(0), maxframes(0), GameLoopSource("") {}
 		virtual ~TGame() {}
 		virtual void HandleInput();
@@ -101,9 +101,9 @@ class TCuboGame : public TGame
 	{
 	protected:
 		int freecam;
-		vector<TCuboMovement*> move;
-		vector<TCuboPlayer*> player;
-		vector<TCuboBasis> basis; //3d-Matrices
+		std::vector<TCuboMovement*> move;
+		std::vector<TCuboPlayer*> player;
+		std::vector<TCuboBasis> basis; //3d-Matrices
 		TCuboLevel lvl;
 		TSkyBox sky;
 		TMdlDefServer mdefs;
@@ -121,9 +121,9 @@ class TCuboGame : public TGame
 		~TCuboGame();
 		void SetFlushOrFinishBeforeSwap(int i) {FlushOrFinishBeforeSwap=i;}
 		int GetFlushOrFinishBeforeSwap() {return FlushOrFinishBeforeSwap;}
-		virtual int StartLevel(string lname,int normal_user_edit);
+		virtual int StartLevel(std::string lname,int normal_user_edit);
 		TSkyBox * GetSky() {return &sky;}
-		virtual void SaveFramePic(string fname, int nw=-1, int nh=-1);
+		virtual void SaveFramePic(std::string fname, int nw=-1, int nh=-1);
 		virtual void PreRender(int wo=-1,int ho=-1);
 		virtual void AfterRenderLevel();
 		virtual void Render();
@@ -144,9 +144,9 @@ class TCuboGame : public TGame
 		virtual TModelServer *GetModels() {return &mdls;}
 		virtual TActorDefServer *GetActorDefs() {return &adefs;}
 		virtual TMouse *GetMouse() {return &mouse;}
-		virtual void LoadSky(string name);
-		virtual int AddActor(string aname);
-		virtual int AddEnemy(string aname);
+		virtual void LoadSky(std::string name);
+		virtual int AddActor(std::string aname);
+		virtual int AddEnemy(std::string aname);
 		virtual void Clear();
 		virtual int AddBasis();
 		virtual void SetMenuActive(int m) {NewMenuActive=m;}
@@ -157,8 +157,8 @@ class TCuboGame : public TGame
 		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
 		virtual void FreeMedia();
 		virtual void RenderPass();
-		virtual void SpecialRenderPass(string nam,int defrender);
-		virtual void Reload(vector<string> & extratoks);
+		virtual void SpecialRenderPass(std::string nam,int defrender);
+		virtual void Reload(std::vector<std::string> & extratoks);
 		virtual int GetRenderPassID() const {return RenderPassID;}
 		//  virtual int GetGlobalVarInt(string name);
 	};

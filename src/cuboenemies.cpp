@@ -1,9 +1,7 @@
 #include "cuboenemies.hpp"
 #include "game.hpp"
 
-using namespace std;
-
-void TCuboEnemy::SetType(int mid,string name)
+void TCuboEnemy::SetType(int mid,std::string name)
 	{
 	id=mid;
 	defindex=g_Game()->GetActorDefs()->AddEDef(name);
@@ -16,7 +14,7 @@ void TCuboEnemy::SetType(int mid,string name)
 
 int ENEMY_New(lua_State *state)
 	{
-	string defname=LUA_GET_STRING;
+	std::string defname=LUA_GET_STRING;
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"enemy");
 	int res=g_Game()->AddEnemy(defname);
 	LUA_SET_INT(res);

@@ -79,7 +79,7 @@ class TMatrixObject
 		T4dGlutMatrix matrix;
 		unsigned char changed,usescale,usePYR,pyrOverFlip;
 		int numOps;
-		vector<TMatrixObject*> children;
+		std::vector<TMatrixObject*> children;
 		TMatrixObject *parent;
 		int mirr;
 		void PitchYawRollToBase();

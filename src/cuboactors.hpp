@@ -75,7 +75,7 @@ class TCuboPlayer
 		tfloat caminterpolation;
 		tfloat camspeed;
 		TLuaVarHolder varholder;
-		vector<int> actorids;
+		std::vector<int> actorids;
 		int activeact;
 		int lastact;
 		T3dVector pyr;
@@ -107,33 +107,33 @@ class TActorDef : public TBaseLuaDef
 		virtual int GetType() {return FILE_ACTORDEF;}
 		void Call_Constructor(int id);
 		void Call_Render(int id);
-		int Call_SpecialRender(string nam,int index);
+		int Call_SpecialRender(std::string nam,int index);
 		void Call_DistRender(int id);
 		void Call_Think(int id);
 		void Call_PostThink(int id);
 		void Call_ActorCollide(int id,int oid);
 		void Call_ActorCollidePlayer(int id,int oid);
-		void Call_ChangeMove(int id,string newmove);
-		void Call_Event(int id,string ev);
+		void Call_ChangeMove(int id,std::string newmove);
+		void Call_Event(int id,std::string ev);
 		int Call_CheckLandingOnSide(int id,int side);
 		void SendKey(int actor,int key,int down,int toggle);
 		void SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle);
 		virtual int IsPlayer() {return 1;}
-		string Call_GetEditorInfo(string what,string std);
+		std::string Call_GetEditorInfo(std::string what,std::string std);
 	};
 
 class TActorDefServer : public TBaseDefServer<TActorDef>
 	{
 	public:
-		int GetDef(string name, int forplayer=1);
-		int AddEDef(string name);
+		int GetDef(std::string name, int forplayer=1);
+		int AddEDef(std::string name);
 	};
 
 
 //Only the directions (for MayMove)
-const string s_CuboMoveStringsDir[]= {"none","forward","forward","rolldown","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumpahead","changegravity"};
+const std::string s_CuboMoveStringsDir[]= {"none","forward","forward","rolldown","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumpahead","changegravity"};
 //Full strings (for Animation)
-const string s_CuboMoveStringsMove[]= {"none","forward","up","down","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumphigh","changegravity"};
+const std::string s_CuboMoveStringsMove[]= {"none","forward","up","down","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumphigh","changegravity"};
 
 
 
@@ -176,7 +176,7 @@ class TCuboMovement
 		int onSide,startrot;
 		int laststaticside;
 		int movementcheck;
-		string jumptype;
+		std::string jumptype;
 		//  TCuboBlock *prevBlock;
 		int prevSide;
 		float moveInterpolate; //From 0 to 1... how far did we move on the blocks
@@ -210,10 +210,10 @@ class TCuboMovement
 			FORWARD_PRESS_TIME(FORWARD_PRESS_TIME_STD),FORWARD_PRESS_TIME_JUMP(FORWARD_PRESS_TIME_JUMP_STD), ROTATE_STOP_TIME(ROTATE_STOP_TIME_STD),
 			distance_normjump(2),distance_farjump(3),distance_highjump(1), startposset(0), lookpos(0),startrot(0), camzrot(0), cammirror(0),timemultiplicator(1.0),player(-1) {}
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
-		virtual void SetType(int mid,string name);
+		virtual void SetType(int mid,std::string name);
 		void SetID(int mid) {id=mid;}
 		void Render();
-		void SpecialRender(string nam,int defrender);
+		void SpecialRender(std::string nam,int defrender);
 		void SetRotateStopTime(double current,double def) {rotatestoptime=current; ROTATE_STOP_TIME=def;}
 		void InterpolateMove(double elapsed);
 		void FinalizeMove();
@@ -246,7 +246,7 @@ class TCuboMovement
 		void SetJumpDistances(float uv,float faruv,float highuv) {distance_normjump=uv; distance_farjump=faruv; distance_highjump=highuv;}
 		void SetJumpTiming(float fwpt,float fwptj,float lateforward) {FORWARD_PRESS_TIME=fwpt; FORWARD_PRESS_TIME_JUMP=fwptj;  LATE_FORWARD_JUMP_TIME=lateforward; }
 		void SetForwardPressTime(float fpt) {forwardpresstime=fpt;}
-		void SetCamParams(string what,T3dVector params);
+		void SetCamParams(std::string what,T3dVector params);
 		void SetCamZRotation(tfloat zr,int mirror);
 		float s_MoveSpeed(int move);
 		void HighJump();
@@ -272,12 +272,12 @@ class TCuboMovement
 		virtual int IsPlayer() {return 1;}
 		float GetUpVel() {return yvel;}
 		void SetUpVel(double v) {yvel=v;}
-		string GetMoveType();
+		std::string GetMoveType();
 		void CheckEnemyCollision(TCuboMovement * other);
 		void CheckPlayerCollision(TCuboMovement * other);
-		string GetType();
+		std::string GetType();
 		int GetStartRotation() {return startrot;}
-		string GetEditorInfo(string what,string def);
+		std::string GetEditorInfo(std::string what,std::string def);
 		void SetRotSpeed(float v);
 		void SendJoyButton(int stick,int button,int dir,int down,int toggle);
 		void Rebounce(TCuboMovement *other);

@@ -6,12 +6,12 @@
  * [ ] Update credits/links
  * [ ] Update license
  * [ ] Update various Readme's
- * [ ] Fix warnings (some are bugs-related) and C++17 errors…
+ * [x] Fix warnings (some are bugs-related) and C++17 errors…
  * [ ] …and build with C++17 standart
  * [ ] Setup CI build
 
 # After base setup
- * [ ] Stop using std!
+ * [x] Stop using std!
  * [ ] Add Russian transation
  * [ ] Make .deb package…
  * [ ] …and post it to PPA

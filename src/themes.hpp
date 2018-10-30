@@ -17,13 +17,11 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-using namespace std;
-
-extern string ThemeFileName(string dir,string fname,string ext);
-extern string GetThemeName();
+extern std::string ThemeFileName(std::string dir,std::string fname,std::string ext);
+extern std::string GetThemeName();
 extern void ThemeClear();
-extern void ThemeAddDir(string subdir);
-extern void ThemeLoad(string n);
+extern void ThemeAddDir(std::string subdir);
+extern void ThemeLoad(std::string n);
 
 extern void LUA_THEME_RegisterLib();
 

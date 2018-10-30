@@ -47,7 +47,7 @@ void TSkyBox::Render()
 
 	}
 
-void TSkyBox::SpecialRender(string nam,int defrender)
+void TSkyBox::SpecialRender(std::string nam,int defrender)
 	{
 	if (lua.FuncExists("SpecialRender"))
 			{
@@ -61,7 +61,7 @@ void TSkyBox::SpecialRender(string nam,int defrender)
 
 	}
 
-void TSkyBox::LoadSkybox(string basename)
+void TSkyBox::LoadSkybox(std::string basename)
 	{
 	if (basename=="") basename="skybox";
 	SetName(basename);

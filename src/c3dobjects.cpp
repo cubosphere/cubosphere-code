@@ -38,8 +38,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-using namespace std;
-
 void TMatrixObject::CopyBasis(TMatrixObject *other)
 	{
 	OnBaseWillChange();

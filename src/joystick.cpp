@@ -32,8 +32,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "luautils.hpp"
 
-using namespace std;
-
 void TJoystick::AxisMotionEvent(int axis,int value)
 	{
 	if (axis>=(int)(axisvals.size())) return ;
@@ -52,7 +50,7 @@ void TJoystick::AxisMotionEvent(int axis,int value)
 	}
 
 
-string TJoystick::Name()
+std::string TJoystick::Name()
 	{
 	return SDL_JoystickName(index);
 	}
@@ -170,7 +168,7 @@ void TJoystickServer::ResetButtons()
 
 void TJoystickServer::Initialize()
 	{
-	ostringstream oss;
+	std::ostringstream oss;
 	int ns=NumJoysticks();
 	if (!ns) oss << "no joystick found";
 	else if (ns==1) oss << "detected a joystick";

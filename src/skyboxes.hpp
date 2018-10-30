@@ -20,21 +20,15 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "textures.hpp"
 #include <vector>
 
-
-
-using namespace std;
-
-
-
 class TSkyBox : public TBaseLuaDef
 	{
 
 	public:
 		virtual ~TSkyBox() {};
 		virtual int GetType() {return FILE_SKYBOX;}
-		void  LoadSkybox(string basename);
+		void  LoadSkybox(std::string basename);
 		void Render();
-		void SpecialRender(string nam,int defrender);
+		void SpecialRender(std::string nam,int defrender);
 	};
 
 

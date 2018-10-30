@@ -23,6 +23,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Migrated to CMake
 * Separated data and code repos with auto ZIP
 * Fixed few warnings
+* Removed `using namespace std;`
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!

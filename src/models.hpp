@@ -43,14 +43,11 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "vectors.hpp"
 
-using namespace std;
-
-
 class TMdlDef : public TBaseLuaDef
 	{
 	protected:
 		GLuint totalrenderlist;
-		vector<GLuint> grenderlists;
+		std::vector<GLuint> grenderlists;
 	public:
 		TMdlDef() : TBaseLuaDef(), totalrenderlist(0) {};
 		virtual ~TMdlDef();
@@ -73,24 +70,24 @@ typedef struct
 class TTextFileReader
 	{
 	protected:
-		vector<string> lines;
-		vector<int> linenums;
+		std::vector<std::string> lines;
+		std::vector<int> linenums;
 		int linenr;
 	public:
-		void RemoveComments(string commentindicator="#",bool trim=true,bool cutempty=true);
+		void RemoveComments(std::string commentindicator="#",bool trim=true,bool cutempty=true);
 		bool LoadFile(TCuboFile * finfo);
 		void OutToTTY();
 		int GetLineNr();
-		string NextLine();
+		std::string NextLine();
 		bool isEoF();
-		bool ExtractIntVect(string s,TIntVect &intv,string *ress=NULL,string sep=" ");
-		bool ExtractIntVectFace(string s,TIntVect &intv,string *ress=NULL,string sep=" ");
+		bool ExtractIntVect(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
+		bool ExtractIntVectFace(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
 
-		bool ExtractIntVect0(string s,TIntVect &intv,string *ress=NULL,string sep=" ");
-		bool Extract3dVector(string s,T3dVector &intv,int offs);
-		bool Extract2dVector(string s,T2dVector &intv,int offs);
-		void ReplaceChar(string &str,char which,char with);
-		vector<string> Seperate(string s,string sep=" ");
+		bool ExtractIntVect0(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
+		bool Extract3dVector(std::string s,T3dVector &intv,int offs);
+		bool Extract2dVector(std::string s,T2dVector &intv,int offs);
+		void ReplaceChar(std::string &str,char which,char with);
+		std::vector<std::string> Seperate(std::string s,std::string sep=" ");
 	};
 
 
@@ -98,13 +95,13 @@ class TTextFileReader
 class TBaseModel
 	{
 	protected:
-		string name;
+		std::string name;
 		virtual void Clear() {}
 	public:
 		virtual ~TBaseModel() {}
-		virtual void DrawGroupWithTangent(int g, string TangentNameInShader) {}
+		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader) {}
 		virtual void DrawGroup(int g) {}
-		virtual string GetName() {return name;}
+		virtual std::string GetName() {return name;}
 		virtual bool LoadFromFile(TCuboFile *finfo) {name=finfo->GetName(); return true;}
 		virtual void RenderByDef(int defindex) {}
 		virtual void Reload();
@@ -120,8 +117,8 @@ typedef struct
 
 typedef struct
 	{
-	string name,materialname;
-	vector<TOBJFace> faces;
+	std::string name,materialname;
+	std::vector<TOBJFace> faces;
 	GLuint renderlist;
 	int userenderlist;
 	} TOBJGroup;
@@ -129,16 +126,16 @@ typedef struct
 class TOBJModel : public TBaseModel
 	{
 	protected:
-		vector<T3dVector> verts,normals,tangents;
-		vector<T2dVector> texcoords;
-		vector<TOBJGroup> groups;
+		std::vector<T3dVector> verts,normals,tangents;
+		std::vector<T2dVector> texcoords;
+		std::vector<TOBJGroup> groups;
 		// GLuint completerenderlist;
 		virtual void Clear();
 		virtual void SmoothSimplify();
 		virtual T3dVector GetTangent(int g,int f);
 	public:
 		virtual void DrawGroup(int g);
-		virtual void DrawGroupWithTangent(int g, string TangentNameInShader);
+		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader);
 		virtual bool LoadFromFile(TCuboFile *finfo);
 		// virtual void RenderAll();
 		virtual void RenderByDef(int defindex);
@@ -148,8 +145,8 @@ class TOBJModel : public TBaseModel
 class TModelServer
 	{
 	protected:
-		vector<TBaseModel*> mdls;
-		virtual int GetModel(string fname);
+		std::vector<TBaseModel*> mdls;
+		virtual int GetModel(std::string fname);
 	public:
 		virtual void Clear();
 		TModelServer();

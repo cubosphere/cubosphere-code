@@ -3,12 +3,10 @@
 #include "luautils.hpp"
 #include "game.hpp"
 
-using namespace std;
-
 TPostEffect *gPostEffect=NULL;
 TPostEffect *g_PostEffect() {return gPostEffect;}
 
-void LoadPostEffect(string name)
+void LoadPostEffect(std::string name)
 	{
 	if (gPostEffect) delete gPostEffect;
 	gPostEffect=NULL;
@@ -18,7 +16,7 @@ void LoadPostEffect(string name)
 	gPostEffect->LoadDef();
 	}
 
-void TPostEffect::CallDefaultSpecialRender(string nam,string what,int index)
+void TPostEffect::CallDefaultSpecialRender(std::string nam,std::string what,int index)
 	{
 	if (!isprecached) Precache();
 	if (lua.FuncExists("DefaultSpecialRender"))
@@ -63,7 +61,7 @@ int TPostEffect::CreateTempTexture(int w, int h,int withdepth)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,  0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 	///TODO: Set Active Texture
 	glBindTexture(GL_TEXTURE_2D, 0);
-	cout << "Currently CreateTempTexture not supported" << endl;
+	std::cout << "Currently CreateTempTexture not supported" << std::endl;
 	GLuint depth=0;
 	if (withdepth)
 			{
@@ -162,7 +160,7 @@ void TPostEffect::DepthToStage(int ttex,int stage)
 	if (!isprecached) Precache();
 	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) return;
 
-	cout << "Temp Depth to Stage not defined" << endl;
+	std::cout << "Temp Depth to Stage not defined" << std::endl;
 ///TODO: Set the active Texture g_lastActiveTexture
 	// if (g_Game()->HasGLSL())
 	//glActiveTexture(GL_TEXTURE0+stage);
@@ -173,7 +171,7 @@ void TPostEffect::TempTextureToStage(int ttex,int stage)
 	{
 	if (!isprecached) Precache();
 	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) return;
-	cout << "Temp Texture to Stage not defined" << endl;
+	std::cout << "Temp Texture to Stage not defined" << std::endl;
 ///TODO: Set the active Texture g_lastActiveTexture
 	//if (g_Game()->HasGLSL())
 //    glActiveTexture(GL_TEXTURE0+stage);
@@ -194,7 +192,7 @@ int EFFECT_RenderPass(lua_State *state)
 int EFFECT_SpecialRenderPass(lua_State *state)
 	{
 	int defaultrender=LUA_GET_INT;
-	string nam=LUA_GET_STRING;
+	std::string nam=LUA_GET_STRING;
 
 	g_Game()->SpecialRenderPass(nam,defaultrender);
 	return 0;
@@ -204,7 +202,7 @@ int EFFECT_SpecialRenderPass(lua_State *state)
 int EFFECT_DoRenderPart(lua_State *state)
 	{
 	int index=LUA_GET_INT;
-	string tname=LUA_GET_STRING;
+	std::string tname=LUA_GET_STRING;
 	if (tname=="sky") {g_Game()->GetSky()->Render(); }
 	else if (tname=="item") {g_Game()->GetLevel()->GetItem(index)->Render();}
 	else if (tname=="side") {g_Game()->GetLevel()->GetBlockSide(index)->Render();}
@@ -256,7 +254,7 @@ int EFFECT_DrawQuad(lua_State *state)
 
 int EFFECT_Load(lua_State *state)
 	{
-	string name=LUA_GET_STRING;
+	std::string name=LUA_GET_STRING;
 	LoadPostEffect(name);
 	return 0;
 	}

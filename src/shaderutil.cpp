@@ -58,10 +58,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include "game.hpp"
 
-using namespace std;
-
-
-GLboolean ExtensionSupported(string name)
+GLboolean ExtensionSupported(std::string name)
 	{
 	char *extensions = (char *)glGetString(GL_EXTENSIONS);
 // Check your extension
@@ -74,7 +71,7 @@ GLboolean ExtensionSupported(string name)
 
 
 
-GLint TBaseShader::GetUniformLocation(string name)
+GLint TBaseShader::GetUniformLocation(std::string name)
 	{
 	for (unsigned int i=0; i<ulocs.size(); i++) {if(ulocs[i].name==name) return ulocs[i].loc;}
 
@@ -85,7 +82,7 @@ GLint TBaseShader::GetUniformLocation(string name)
 	return loc;
 	}
 
-GLint TBaseShader::GetAttributeLocation(string name)
+GLint TBaseShader::GetAttributeLocation(std::string name)
 	{
 	for (unsigned int i=0; i<alocs.size(); i++) {if(alocs[i].name==name) return alocs[i].loc;}
 
@@ -97,7 +94,7 @@ GLint TBaseShader::GetAttributeLocation(string name)
 	}
 
 
-void TBaseShader::Load(TShaderServer *ss,string fname)
+void TBaseShader::Load(TShaderServer *ss,std::string fname)
 	{
 	this->filename=fname;
 	TCuboFile *temp1=GetFileName(fname,FILE_SHADER,".vert");
@@ -151,7 +148,7 @@ TShaderServer::CompileShaderText(GLenum shaderType, const char *text)
 			GLchar log[1000];
 			GLsizei len;
 			glGetShaderInfoLog(shader, 1000, &len, log);
-			string lg=log;
+			std::string lg=log;
 			coutlog("Error: problem compiling shader: "+ lg+"\n",1);
 			// exit(1);
 			}
@@ -172,7 +169,7 @@ TShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
 	FILE *f;
 	f = fopen(filename, "r");
 	if (!f) {
-			string lg=filename;
+			std::string lg=filename;
 			coutlog("Error: Unable to open shader file: "+ lg+"\n",1);
 			return 0;
 			}
@@ -225,7 +222,7 @@ TShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
 				GLchar log[1000];
 				GLsizei len;
 				glGetProgramInfoLog(program, 1000, &len, log);
-				string lg=log;
+				std::string lg=log;
 				coutlog("Shader link error: "+ lg+"\n",1);
 				return 0;
 				}
@@ -246,7 +243,7 @@ TShaderServer::ValidateShaderProgram(GLuint program)
 			GLchar log[1000];
 			GLsizei len;
 			glGetProgramInfoLog(program, 1000, &len, log);
-			string lg=log;
+			std::string lg=log;
 			coutlog("Shader program validation error:"+ lg+"\n");
 			return 0;
 			}
@@ -258,7 +255,7 @@ TShaderServer::ValidateShaderProgram(GLuint program)
 
 
 
-TBaseShader *TShaderServer::GetShaderPtr(string name)
+TBaseShader *TShaderServer::GetShaderPtr(std::string name)
 	{
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
@@ -267,7 +264,7 @@ TBaseShader *TShaderServer::GetShaderPtr(string name)
 	return NULL;
 	}
 
-int TShaderServer::GetShader(string name)
+int TShaderServer::GetShader(std::string name)
 	{
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
@@ -287,7 +284,7 @@ bool TShaderServer::FreeShaders()
 	return true;
 	}
 
-int TShaderServer::AddShader(string name)
+int TShaderServer::AddShader(std::string name)
 	{
 	int f=GetShader(name);
 	if (f>-1) return f;
@@ -316,32 +313,32 @@ bool TShaderServer::Deactivate()
 	return true;
 	}
 
-void TShaderServer::SetInt(string ref,int i)
+void TShaderServer::SetInt(std::string ref,int i)
 	{
 	if (momshader<0) return;
 	glUniform1i(shaderlist[momshader]->GetUniformLocation(ref), i);
 	}
 
-void TShaderServer::SetFloat(string ref,float f)
+void TShaderServer::SetFloat(std::string ref,float f)
 	{
 
 	if (momshader<0) return;
 	glUniform1f(shaderlist[momshader]->GetUniformLocation(ref), f);
 	}
 
-void TShaderServer::SetVector3(string ref,T3dVector v)
+void TShaderServer::SetVector3(std::string ref,T3dVector v)
 	{
 	if (momshader<0) return;
 	glUniform3f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z);
 	}
 
-void TShaderServer::SetVector4(string ref,T4dVector v)
+void TShaderServer::SetVector4(std::string ref,T4dVector v)
 	{
 	if (momshader<0) return;
 	glUniform4f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z,v.w);
 	}
 
-GLint TShaderServer::GetAttributeLocation(string name)
+GLint TShaderServer::GetAttributeLocation(std::string name)
 	{
 	return shaderlist[momshader]->GetAttributeLocation(name);
 	}
@@ -368,7 +365,7 @@ int SHADER_Load(lua_State *state)
 	{
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
-	string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING;
 
 	//string Texturename=GetFileName(name,FILE_TEXTURE)+".jpg";
 	int r=g_Game()->GetShaders()->AddShader(name);
@@ -395,7 +392,7 @@ int SHADER_Deactivate(lua_State *state)
 int SHADER_SetInt(lua_State *state)
 	{
 	int i=LUA_GET_INT;
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 
 	g_Game()->GetShaders()->SetInt(s,i);
 	return 0;
@@ -404,7 +401,7 @@ int SHADER_SetInt(lua_State *state)
 int SHADER_SetFloat(lua_State *state)
 	{
 	float f=LUA_GET_DOUBLE;
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 
 	g_Game()->GetShaders()->SetFloat(s,f);
 	return 0;
@@ -417,7 +414,7 @@ int SHADER_SetVector3(lua_State *state)
 
 //stackDump(state); return 0;
 	T3dVector v=Vector3FromStack(state);
-	string s;
+	std::string s;
 	s=LUA_GET_STRING;
 
 	g_Game()->GetShaders()->SetVector3(s,v);
@@ -429,7 +426,7 @@ int SHADER_SetVector4(lua_State *state)
 
 //stackDump(state); return 0;
 	T4dVector v=Vector4FromStack(state);
-	string s;
+	std::string s;
 	s=LUA_GET_STRING;
 
 	g_Game()->GetShaders()->SetVector4(s,v);

@@ -22,8 +22,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "luautils.hpp"
 
-using namespace std;
-
 //A node indexing a block-side and its neighbours, which can be reached by the movement into the four directions
 class TCuboPathNode
 	{
@@ -49,20 +47,20 @@ class TCuboPathGraph
 	{
 	protected:
 		lua_State *cstate;
-		string callbfunc;
+		std::string callbfunc;
 		TCuboPathNode * AddNode(int sindex);
-		vector<TCuboPathNode> nodes;
-		vector<int> path,next;
+		std::vector<TCuboPathNode> nodes;
+		std::vector<int> path,next;
 		int GetNodeIDFromSideID(int ID);
 		int EdgeBetween(int i,int j);
-		string GetPath(int i,int j);
+		std::string GetPath(int i,int j);
 		int MayAddNode(int from,int to);
 	public:
-		void GraphFromSide(int startindex,lua_State *state,string addcb);
-		string GetPathFromTo(int startbs,int endbs);
-		string GetNextMove(int startbs,int startrot,int endbs);
-		string GetRandomMove(int startbs,int startrot);
-		string GetEscapeMove(int startbs,int startrot,int endbs);
+		void GraphFromSide(int startindex,lua_State *state,std::string addcb);
+		std::string GetPathFromTo(int startbs,int endbs);
+		std::string GetNextMove(int startbs,int startrot,int endbs);
+		std::string GetRandomMove(int startbs,int startrot);
+		std::string GetEscapeMove(int startbs,int startrot,int endbs);
 		int GetNumNodes() {return nodes.size();}
 		int GetNodeSideID(int n);
 		int GetDistance(int startbs,int endbs);
@@ -72,10 +70,10 @@ class TCuboPathGraph
 class TCuboPathGraphServer
 	{
 	protected:
-		vector<TCuboPathGraph> pgs;
+		std::vector<TCuboPathGraph> pgs;
 	public:
 		void Clear();
-		int New(int startside,lua_State *state,string addcb);
+		int New(int startside,lua_State *state,std::string addcb);
 		TCuboPathGraph * GetGraph(int i);
 	};
 

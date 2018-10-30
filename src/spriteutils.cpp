@@ -5,8 +5,6 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace std;
-
 T3dVector v_camside,v_camdir,v_camup;
 T3dVector v_corner1,v_corner2;
 
@@ -149,7 +147,7 @@ void TSpriteEmitter::RenderAfterLevel()
 	if (colmultiply.w<=0  || (!sprites.size())) return;// Invisble
 
 
-	vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
+	std::vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
 
 	int firstsprite=-1;
 	for (unsigned int i=0; i<sprites.size(); i++)
@@ -233,7 +231,7 @@ void TSpriteEmitter::Think()
 	T3dVector maxpos=-minpos;
 	double maxscale=0;
 
-	vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
+	std::vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
 	int counter=0;
 	for (unsigned int i=0; i<sprites.size(); i++) if (sprites[i].timeleft>0)
 				{
@@ -501,7 +499,7 @@ int PARTICLE_CreateEnvOnSide(lua_State *state)
 
 int PARTICLE_LoadDef(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	int r=gParticleDefs.AddDef(s);
 	LUA_SET_INT(r);
 	return 1;
@@ -654,7 +652,7 @@ TInterpolationFunction * CreateInterFunc(lua_State *state)
 	double p3=LUA_GET_DOUBLE;
 	double p2=LUA_GET_DOUBLE;
 	double p1=LUA_GET_DOUBLE;
-	string typ=LUA_GET_STRING;
+	std::string typ=LUA_GET_STRING;
 	TInterpolationFunction *result;
 	if (typ=="const") result=new TInterpolationFunctionConst(p1);
 	else if (typ=="linear") result=new TInterpolationFunctionLinear();
@@ -684,7 +682,7 @@ int SPRITETYPE_SetScaleFunction(lua_State *state)
 int SPRITETYPE_SetColorFunction(lua_State *state)
 	{
 	TInterpolationFunction *ifunc=CreateInterFunc(state);
-	string col=LUA_GET_STRING;
+	std::string col=LUA_GET_STRING;
 	TSpriteDef * st=LUA_GET_SPRITETYPE;
 	if (col=="r") st->SetColorRf(ifunc);
 	else if (col=="g") st->SetColorGf(ifunc);

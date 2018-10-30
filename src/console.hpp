@@ -18,35 +18,33 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include "luautils.hpp"
 
-using namespace std;
-
 #define CUBO_CONSOLE_MAX_LINES 512
 
 typedef struct
 	{
 	int k;
-	string cmd;
+	std::string cmd;
 	} TConsoleBinding;
 
 class TCuboConsole
 	{
 	protected:
 		bool isactive;
-		vector<string> lines;
-		vector<string> history;
-		string hisbackup;
+		std::vector<std::string> lines;
+		std::vector<std::string> history;
+		std::string hisbackup;
 		int hisindex;
 		int was_mouse_snapped;
-		vector<int> types; //Error, warning, normal
+		std::vector<int> types; //Error, warning, normal
 		int currentline; //Used, when lines.size() has reached CUBO_CONSOLE_MAX_LINES
 		int scrolloffs;
 		int screenlines;
 		double lowerline_ypos;
 		int togglekey;
-		void ParseCmdLine(string cmdl="");
+		void ParseCmdLine(std::string cmdl="");
 		TLuaAccess lua;
-		vector <TConsoleBinding> binds;
-		int Bind(vector<string> & extratoks,int unbind);
+		std::vector <TConsoleBinding> binds;
+		int Bind(std::vector<std::string> & extratoks,int unbind);
 	public:
 		void Init();
 		int CheckBindKey(int ident,int down,int toggle);
@@ -56,7 +54,7 @@ class TCuboConsole
 		int Toggle();
 		int IsActive();
 		TCuboConsole();
-		void AddLine(string s,int typ=0);
+		void AddLine(std::string s,int typ=0);
 		~TCuboConsole();
 		void Render();
 		void KeyHandle(int ident,int down,int toggle);

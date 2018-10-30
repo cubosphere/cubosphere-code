@@ -34,8 +34,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "events.hpp"
 #include <iostream>
 
-using namespace std;
-
 void TEventManager::HandleEvents()
 	{
 	SDL_Event event;

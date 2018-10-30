@@ -19,18 +19,16 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include "vectors.hpp"
 
-using namespace std;
-
 extern std::string IntToString(const int& t);
-extern bool BeginsWith(const string &str, const string &with);
-extern void Tokenize(const string& str,
-		vector<string>& tokens,
-		const string& delimiters = " ");
+extern bool BeginsWith(const std::string &str, const std::string &with);
+extern void Tokenize(const std::string& str,
+		std::vector<std::string>& tokens,
+		const std::string& delimiters = " ");
 
-extern void TokenizeFull(const string& str,
-		vector<string>& tokens,
-		const string& delimiters = " ");
-extern void TrimSpaces( string& str);
+extern void TokenizeFull(const std::string& str,
+		std::vector<std::string>& tokens,
+		const std::string& delimiters = " ");
+extern void TrimSpaces( std::string& str);
 
 
 

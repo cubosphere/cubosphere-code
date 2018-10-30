@@ -49,9 +49,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #define FONT_SIZE 40
 #define V_DIST_FACTOR 1.2
 
-using namespace std;
-
-
 void TSizedFont::DestructFont()
 	{
 	if (font) {
@@ -75,7 +72,7 @@ int TSizedFont::Load(SDL_RWops *rwops,int fontsize)
 	return 1;
 	}
 
-int TSizedFont::Load(string fontname,int fontsize)
+int TSizedFont::Load(std::string fontname,int fontsize)
 	{
 	DestructFont();
 	TCuboFile * finfo=GetFileName(fontname,FILE_FONT,".ttf");
@@ -85,7 +82,7 @@ int TSizedFont::Load(string fontname,int fontsize)
 			}
 
 	if(!(font = TTF_OpenFontRW(finfo->GetAsRWops(1),1, fontsize))) {
-			ostringstream os;
+			std::ostringstream os;
 			os<<"Error loading font: "<<TTF_GetError();
 			coutlog(os.str(),1);
 			font=NULL;
@@ -117,7 +114,7 @@ TSizedFont* TLoadedFont::GetSized(int dessize)
 	return n;
 	}
 
-int TLoadedFont::Load(string fontname)
+int TLoadedFont::Load(std::string fontname)
 	{
 	if (fontname==fname) return 1;
 	Clear();
@@ -188,7 +185,7 @@ int nextpoweroftwo(int x)
 	return (int)round(pow(2,ceil(logbase2)));
 	}
 
-void TFontCache::Setup(TLoadedFont *font,string text,int size)
+void TFontCache::Setup(TLoadedFont *font,std::string text,int size)
 	{
 	Clear();
 	mysize=size;
@@ -259,7 +256,7 @@ void TFontCaches::Clear()
 	caches.resize(0);
 	}
 
-TFontCache *TFontCaches::GetCache(TLoadedFont *font,string text,int size)
+TFontCache *TFontCaches::GetCache(TLoadedFont *font,std::string text,int size)
 	{
 
 	for (unsigned int i=0; i<caches.size(); i++)
@@ -294,7 +291,7 @@ TFontCache *TFontCaches::GetCache(TLoadedFont *font,string text,int size)
 
 	}
 
-void TFont::RenderText(string text)
+void TFont::RenderText(std::string text)
 	{
 	TFontCache* c=cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
 
@@ -347,7 +344,7 @@ void TFont::Init()
 	{
 	if(TTF_Init())
 			{
-			ostringstream os;
+			std::ostringstream os;
 			os <<"FONT ERROR: " << TTF_GetError();
 			coutlog(os.str(),1);
 			}
@@ -356,7 +353,7 @@ void TFont::Init()
 
 	}
 
-void TFont::Load(string textname)
+void TFont::Load(std::string textname)
 	{
 	if (textname!=cname)
 			{
@@ -386,11 +383,11 @@ void TFont::End()
 
 	}
 
-void TFont::TextOut(string s)
+void TFont::TextOut(std::string s)
 	{
 
 	s=RemapString(s);
-	vector<string> lines;
+	std::vector<std::string> lines;
 	Tokenize(s,lines,"\n");
 
 	float hoffs=scaley*(lines.size()-1)*(V_DIST_FACTOR);
@@ -413,7 +410,7 @@ void TFont::TextOut(string s)
 			}
 	}
 
-string TFont::RemapString(string s)
+std::string TFont::RemapString(std::string s)
 	{
 
 	///SENSELESS
@@ -424,18 +421,18 @@ string TFont::RemapString(string s)
 
 	while (1)
 			{
-			size_t minpos=string::npos;
+			size_t minpos=std::string::npos;
 			unsigned int minind=0;
 			for (unsigned int r=0; r<remaps.size(); r++)
 					{
 					size_t p=s.find(remaps[r].oldc,pos);
-					if (p!=string::npos)
+					if (p!=std::string::npos)
 							{
 							minpos=p;
 							minind=r;
 							}
 					}
-			if (minpos==string::npos)
+			if (minpos==std::string::npos)
 					{
 					//Finished
 					return s;
@@ -476,7 +473,7 @@ void TFont::ClearRemaps()
 	remaps.resize(0);
 	}
 
-void TFont::AddRemap(string oldc,string newc)
+void TFont::AddRemap(std::string oldc,std::string newc)
 	{
 	TFontRemap nr;
 	nr.oldc=oldc;
@@ -503,8 +500,8 @@ int FONT_ClearRemaps(lua_State *state)
 
 int FONT_AddRemap(lua_State *state)
 	{
-	string to=LUA_GET_STRING;
-	string from=LUA_GET_STRING;
+	std::string to=LUA_GET_STRING;
+	std::string from=LUA_GET_STRING;
 	g_Game()->GetFont()->AddRemap(from,to);
 	return 0;
 	}
@@ -532,7 +529,7 @@ int FONT_Goto(lua_State *state)
 
 int FONT_Load(lua_State *state)
 	{
-	string n=LUA_GET_STRING;
+	std::string n=LUA_GET_STRING;
 
 	g_Game()->GetFont()->Load(n);
 	return 0;
@@ -540,15 +537,15 @@ int FONT_Load(lua_State *state)
 
 int FONT_SetAlign(lua_State *state)
 	{
-	string v=LUA_GET_STRING;
-	string h=LUA_GET_STRING;
+	std::string v=LUA_GET_STRING;
+	std::string h=LUA_GET_STRING;
 	g_Game()->GetFont()->SetAlign(h,v);
 	return 0;
 	}
 
 int FONT_TextOut(lua_State *state)
 	{
-	string n=LUA_GET_STRING;
+	std::string n=LUA_GET_STRING;
 	g_Game()->GetFont()->TextOut(n);
 	return 0;
 	}

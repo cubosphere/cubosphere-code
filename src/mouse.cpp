@@ -38,11 +38,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "console.hpp"
 #include <iostream>
 
-using namespace std;
-
 TMouse *g_Mouse;
-
-
 
 void TMouse::BeginDispatch()
 	{

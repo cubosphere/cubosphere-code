@@ -30,8 +30,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "cuboutils.hpp"
 
-using namespace std;
-
 class TJoystickServer;
 
 class TJoystick
@@ -40,14 +38,14 @@ class TJoystick
 		TJoystickServer *server;
 		int index;
 		SDL_Joystick *stick;
-		vector<float> axisvals,axisovals;
-		vector<int> buttons,obuttons;
+		std::vector<float> axisvals,axisovals;
+		std::vector<int> buttons,obuttons;
 		float SDLAxisToFloat(int sa);
 	public:
 		TJoystick(int mindex,TJoystickServer *serv);
 		~TJoystick();
 		SDL_Joystick * GetSDLJoystick() { return stick;}
-		string Name();
+		std::string Name();
 		int NumAxes();
 		int NumButtons();
 
@@ -67,7 +65,7 @@ typedef void(*TJoystickButtonFunc)(int,int,int,int,int) ;
 class TJoystickServer
 	{
 	protected:
-		vector<TJoystick*> sticks;
+		std::vector<TJoystick*> sticks;
 		TJoystickAxisFunc axishandler;
 		TJoystickButtonFunc buttonhandler;
 		friend class TJoystick;

@@ -36,11 +36,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-using namespace std;
-
-
-
-
 // (IDENT-CODE, PRESS or RELEASE, First-Time-Down (toggle)
 typedef void(*TKeyboardFunc)(int,int,int) ;
 
@@ -55,8 +50,8 @@ class TKeyboard
 	protected:
 		int keynum;
 		Uint8 *keydown;
-		vector<Uint8> downbefore;
-		vector<double> pressedtime;
+		std::vector<Uint8> downbefore;
+		std::vector<double> pressedtime;
 		TKeyboardFunc handler;
 		double rep_start_time;
 		double rep_rep_time;
@@ -72,13 +67,13 @@ class TKeyboard
 		double & GetPressedTime(int ident) {return pressedtime[ident];}
 		int IsPressed(int ident) {return keydown[ident];}
 		int DownBefore(int ident) {return downbefore[ident];}
-		SDLKey GetKeyConstFor(string keyname);
+		SDLKey GetKeyConstFor(std::string keyname);
 		void SetHandler(TKeyboardFunc h) {handler=h;}
 //    void RegisterKey(SDLKey key,int ident,TKeyboardFunc func, int toggle);
 		void DispatchEvent(SDL_Event *ev);
 		void HandleKeys();
 		void Init();
-		string GetKeyName(int key);
+		std::string GetKeyName(int key);
 	};
 
 extern void LUA_KEYB_RegisterLib();

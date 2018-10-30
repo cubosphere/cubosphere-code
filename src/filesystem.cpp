@@ -912,7 +912,7 @@ class cls_FileSystem_Info_
 			cls_FileReadable * vers= md->GetFileForReading(elems,dendumm);
 			if (vers)
 					{
-					char * conts=(char *)vers->GetData(0); string pversion=conts;
+					char * conts=(char *)vers->GetData(0); std::string pversion=conts;
 					std::string cversion=g_Vars()->GetVarString("CuboVersion",0);
 					float pfloat=atof(pversion.c_str());
 					float cfloat=atof(cversion.c_str());

@@ -136,7 +136,7 @@ void BaseInterpolate(TBasis *from1,TBasis *from2, float t,TBasis *to)
 			}
 	}
 
-string TCuboMovement::GetEditorInfo(string what,string def)
+std::string TCuboMovement::GetEditorInfo(std::string what,std::string def)
 	{
 	return (g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_GetEditorInfo(what,def));
 	}
@@ -248,7 +248,7 @@ void TCuboMovement::SetStartPos(TCuboBlockSide *sside,int srot)
 	startposset=1;
 	}
 
-void TCuboMovement::SetType(int mid,string name)
+void TCuboMovement::SetType(int mid,std::string name)
 	{
 
 	id=mid;
@@ -260,11 +260,11 @@ void TCuboMovement::SetType(int mid,string name)
 
 void TCuboMovement::Call_ChangeMove()
 	{
-	string movestr=s_CuboMoveStringsMove[inmove];
+	std::string movestr=s_CuboMoveStringsMove[inmove];
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_ChangeMove(id,movestr);
 	}
 
-void TCuboMovement::SpecialRender(string nam,int defrender)
+void TCuboMovement::SpecialRender(std::string nam,int defrender)
 	{
 	if (  g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_SpecialRender(nam,id)) {}
 	else
@@ -342,7 +342,7 @@ TCuboBlock *TCuboMovement::GetRelBlock(TCuboBlock *b,int side)
 int TCuboMovement::MayMove(int typ)
 	{
 	if (!BlockUnderMe) return 1;
-	string typstr=s_CuboMoveStringsDir[typ];
+	std::string typstr=s_CuboMoveStringsDir[typ];
 	return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_MayMove(id,typstr);
 	}
 
@@ -1052,7 +1052,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	BaseInterpolate(&oldbase,&newbase,bt,&base);
 	}
 
-string TCuboMovement::GetType()
+std::string TCuboMovement::GetType()
 	{
 	return g_Game()->GetActorDefs()->GetDefPtr(this->defindex)->GetName();
 	}
@@ -1097,7 +1097,7 @@ int TCuboMovement::TraceOnSideID()
 	}
 
 
-void TCuboMovement::SetCamParams(string what,T3dVector params)
+void TCuboMovement::SetCamParams(std::string what,T3dVector params)
 	{
 	if (what=="normal") camfloats=params;
 	else if (what=="lookup") lookupfloats=params;
@@ -1379,7 +1379,7 @@ void TCuboMovement::Jump()
 	}
 
 
-string TCuboMovement::GetMoveType()
+std::string TCuboMovement::GetMoveType()
 	{
 	switch (inmove)
 			{
@@ -1468,7 +1468,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 
 
 
-int TActorDefServer::AddEDef(string name)
+int TActorDefServer::AddEDef(std::string name)
 	{
 	int def=GetDef(name,0);
 	if (def>-1) return def; //Have it already
@@ -1480,7 +1480,7 @@ int TActorDefServer::AddEDef(string name)
 	return def;
 	}
 
-int TActorDefServer::GetDef(string name,int forplayer)
+int TActorDefServer::GetDef(std::string name,int forplayer)
 	{
 	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) return (i);
 	return -1;
@@ -1525,7 +1525,7 @@ void TActorDef::Call_Render(int id)
 
 	}
 
-int TActorDef::Call_SpecialRender(string nam,int index)
+int TActorDef::Call_SpecialRender(std::string nam,int index)
 	{
 	if (lua.FuncExists("SpecialRender"))
 			{
@@ -1579,7 +1579,7 @@ void TActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,in
 	}
 
 
-void TActorDef::Call_ChangeMove(int id,string newmove)
+void TActorDef::Call_ChangeMove(int id,std::string newmove)
 	{
 	if (lua.FuncExists("ChangeMove"))
 			{
@@ -1599,7 +1599,7 @@ int TActorDef::Call_CheckLandingOnSide(int id,int side)
 	return 1;
 	}
 
-void TActorDef::Call_Event(int id,string ev)
+void TActorDef::Call_Event(int id,std::string ev)
 	{
 	if (lua.FuncExists("Event"))
 			{
@@ -1608,14 +1608,14 @@ void TActorDef::Call_Event(int id,string ev)
 
 	}
 
-string TActorDef::Call_GetEditorInfo(string what,string std)
+std::string TActorDef::Call_GetEditorInfo(std::string what,std::string std)
 	{
 	if (lua.FuncExists("GetEditorInfo"))
 			{
 			char *res;
 			lua.CallVA("GetEditorInfo","ss>s",what.c_str(),std.c_str(),&res);
 
-			string sres=res;
+			std::string sres=res;
 
 			return sres;
 			}
@@ -1696,7 +1696,7 @@ int ACTOR_SendKey(lua_State *state)
 
 int ACTOR_New(lua_State *state)
 	{
-	string defname=LUA_GET_STRING;
+	std::string defname=LUA_GET_STRING;
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"actor");
 	int res=g_Game()->AddActor(defname);
 	LUA_SET_INT(res);
@@ -1725,7 +1725,7 @@ int ACTOR_GetStartRotation(lua_State *state)
 int ACTOR_GetType(lua_State *state)
 	{
 	int ind=LUA_GET_INT;
-	string res=g_Game()->GetActorMovement(ind)->GetType();
+	std::string res=g_Game()->GetActorMovement(ind)->GetType();
 	LUA_SET_STRING(res);
 	return 1;
 	}
@@ -1907,11 +1907,11 @@ int ACTOR_SetJumpDistances(lua_State *state)
 
 int ACTOR_GetEditorInfo(lua_State *state)
 	{
-	string def=LUA_GET_STRING;
-	string what=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING;
+	std::string what=LUA_GET_STRING;
 
 	int b=LUA_GET_INT;
-	string v=g_Game()->GetActorMovement(b)->GetEditorInfo(what,def);
+	std::string v=g_Game()->GetActorMovement(b)->GetEditorInfo(what,def);
 	LUA_SET_STRING(v);
 	return 1;
 	}
@@ -1919,7 +1919,7 @@ int ACTOR_GetEditorInfo(lua_State *state)
 int ACTOR_SetCamParams(lua_State *state)
 	{
 	T3dVector p=Vector3FromStack(state);
-	string what=LUA_GET_STRING;
+	std::string what=LUA_GET_STRING;
 	int actorid=LUA_GET_INT;
 	g_Game()->GetActorMovement(actorid)->SetCamParams(what,p);
 	return 0;
@@ -1985,7 +1985,7 @@ int ACTOR_InsideLevel(lua_State *state)
 int ACTOR_CurrentMove(lua_State *state)
 	{
 	int actorid=LUA_GET_INT;
-	string s=g_Game()->GetActorMovement(actorid)->GetMoveType();
+	std::string s=g_Game()->GetActorMovement(actorid)->GetMoveType();
 	LUA_SET_STRING(s);
 	return 1;
 	}
@@ -2035,7 +2035,7 @@ int ACTOR_SetUpVel(lua_State *state)
 
 int ACTOR_CallMove(lua_State *state)
 	{
-	string move=LUA_GET_STRING;
+	std::string move=LUA_GET_STRING;
 	int actorid=LUA_GET_INT;
 ///TODO: Get the right actor
 	TCuboMovement *mv=g_Game()->GetActorMovement(actorid);

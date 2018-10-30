@@ -20,24 +20,22 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-using namespace std;
+static std::vector<std::string> themedirs;
+static std::string momThemeName="";
 
-static vector<string> themedirs;
-static string momThemeName="";
-
-string GetThemeName()
+std::string GetThemeName()
 	{
 	return momThemeName;
 	}
 
 
-string ThemeFileName(string dir,string fname,string ext)
+std::string ThemeFileName(std::string dir,std::string fname,std::string ext)
 	{
 //Parsing all sub dirs... If no file is found return the normal dirname
 
 	for (unsigned int i=0; i<themedirs.size(); i++)
 			{
-			string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
+			std::string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
 			TCuboFile *finfo=GetCuboFileFromRelativeName(testname);
 			if (finfo) {
 					delete finfo;
@@ -51,12 +49,12 @@ void ThemeClear()
 	{
 	themedirs.clear();
 	}
-void ThemeAddDir(string subdir)
+void ThemeAddDir(std::string subdir)
 	{
 	themedirs.push_back(subdir);
 	}
 
-void ThemeLoad(string n)
+void ThemeLoad(std::string n)
 	{
 	if (n!=momThemeName)
 			{
@@ -86,20 +84,20 @@ int THEME_Clear(lua_State *state)
 	}
 int THEME_AddDir(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	ThemeAddDir(s);
 	return 0;
 	}
 int THEME_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	ThemeLoad(s);
 	return 0;
 	}
 
 int THEME_GetName(lua_State *state)
 	{
-	string s=GetThemeName();
+	std::string s=GetThemeName();
 	LUA_SET_STRING(s);
 	return 1;
 	}

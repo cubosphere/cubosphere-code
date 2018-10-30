@@ -34,17 +34,15 @@ cls_FileSystem gBaseFileSystem;
 
 cls_FileSystem * g_BaseFileSystem() {return &gBaseFileSystem;}
 
-using namespace std;
-
-string activemod="";
+std::string activemod="";
 //vector<string> modstack; //Activated Mods
 //vector<string> moddirblacklist;
 
 //Some patches from Vincent Petry - Thanks !
 
-string base_dir="";
-string data_dir="";
-string profile_dir="";
+std::string base_dir="";
+std::string data_dir="";
+std::string profile_dir="";
 
 int verbosemode=0;
 
@@ -59,20 +57,20 @@ void g_VerboseMode(int i)
 	}
 
 
-string g_DataDir() {
+std::string g_DataDir() {
 	return data_dir;
 	}
 
 
-string g_ProfileDir() {
+std::string g_ProfileDir() {
 	return profile_dir;
 	}
 
 
-int FileTypeFromString(string which,string *exte)
+int FileTypeFromString(std::string which,std::string *exte)
 	{
 	int d=-1;
-	string ext="";
+	std::string ext="";
 	if (which=="blockdefs")    { d=FILE_BLOCKDEF; ext="bdef";}
 	else if (which=="itemdefs")    { d=FILE_ITEMDEF; ext="idef";}
 	else if (which=="userlevels")  { d=FILE_USERLEVEL; ext="ldef";}
@@ -113,29 +111,29 @@ void ClearModStack()
 }
 */
 
-void SetCurrentMod(string s)
+void SetCurrentMod(std::string s)
 	{
 	activemod=s;
 	}
 
-string CurrentMod()
+std::string CurrentMod()
 	{
 	return activemod;
 // if (modstack.size()==0) return "";
 //else return modstack[0];
 	}
 
-void SetBaseDir(string bd)
+void SetBaseDir(std::string bd)
 	{
 	base_dir=bd;
 	}
 
-void SetProfileDir(string dir)
+void SetProfileDir(std::string dir)
 	{
 	profile_dir=dir;
 	}
 
-void SetDataDir(string dir)
+void SetDataDir(std::string dir)
 	{
 	data_dir=dir;
 	}
@@ -148,14 +146,14 @@ int mkdir(string d) {return _mkdir(d.c_str());}
 string dirname(string f) {return f.substr(0, f.find_last_of("/\\"));}
 #endif
 
-void RecursiveMKDir(string dir,string dirsep,int mode)
+void RecursiveMKDir(std::string dir,std::string dirsep,int mode)
 	{
-	vector<string> ds;
+	std::vector<std::string> ds;
 	TokenizeFull(dir,ds,dirsep);
 
 	int error=1;
 	int dirindex=ds.size();
-	string testname;
+	std::string testname;
 	while ((error) && (dirindex>=0))
 			{
 			testname=ds[0];
@@ -185,7 +183,7 @@ void RecursiveMKDir(string dir,string dirsep,int mode)
 
 
 
-string PlattformFilename(string in)
+std::string PlattformFilename(std::string in)
 	{
 #ifdef WIN32
 	for (unsigned int i=0; i<in.size(); i++) if (in[i]=='/') in[i]='\\';
@@ -194,7 +192,7 @@ string PlattformFilename(string in)
 	}
 
 
-string GetDirName(int type)
+std::string GetDirName(int type)
 	{
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
@@ -203,7 +201,7 @@ string GetDirName(int type)
 	return "";//To be handled
 	}
 
-string GetDirNameForMod(int type,string modstr="/")
+std::string GetDirNameForMod(int type,std::string modstr="/")
 	{
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
@@ -215,9 +213,9 @@ string GetDirNameForMod(int type,string modstr="/")
 			}
 	}
 
-string GetFileNameForMod(string subname,int type,string ext,string modstr="/")
+std::string GetFileNameForMod(std::string subname,int type,std::string ext,std::string modstr="/")
 	{
-	string res;
+	std::string res;
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
 			if (subname=="") res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]);
@@ -239,19 +237,19 @@ string GetFileNameForMod(string subname,int type,string ext,string modstr="/")
 	}
 
 
-TCuboFile* GetCuboFileFromRelativeName(string relname)
+TCuboFile* GetCuboFileFromRelativeName(std::string relname)
 	{
 	///TODO:Mod-Stuff
 	return gBaseFileSystem.GetFileForReading(relname);
 	}
 
-TCuboFile * GetFileName(string subname,int type,string ext)
+TCuboFile * GetFileName(std::string subname,int type,std::string ext)
 	{
 //   coutlog("GetFileName is not implemented yet!"); return NULL;
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
 			///TODO: Mod-Zeugs, Dir Getting
-			string res;
+			std::string res;
 			if (g_SubDirUsesTheme[type])
 				res=ThemeFileName(g_SubDirs[type],subname,ext);
 			else
@@ -259,7 +257,7 @@ TCuboFile * GetFileName(string subname,int type,string ext)
 			return gBaseFileSystem.GetFileForReading(res);
 			}
 	else {
-			string res="";
+			std::string res="";
 			if (type==FILE_USERLEVEL) res="/user/levels/"+subname+".ldef";
 			else if (type==FILE_SAVEGAME) res="/user/saves/"+subname+".sdef";
 			return gBaseFileSystem.GetFileForReading(res);
@@ -285,11 +283,11 @@ TCuboFile * GetFileName(string subname,int type,string ext)
 
 typedef struct
 	{
-	string spec;
-	string val;
+	std::string spec;
+	std::string val;
 	} TCommandLineEntry;
 
-vector<TCommandLineEntry> cmdlines;
+std::vector<TCommandLineEntry> cmdlines;
 
 void SetCmdLine(int argc,char *argv[])
 	{
@@ -298,7 +296,7 @@ void SetCmdLine(int argc,char *argv[])
 	TCommandLineEntry cmd;
 	for (int i=0; i<argc; i++)
 			{
-			string current=argv[i];
+			std::string current=argv[i];
 			if (!inswitch)
 					{
 					if (current[0]=='-')
@@ -491,9 +489,9 @@ int AddModToStack(string nm)
 int g_CmdLineCount()
 	{return cmdlines.size();}
 
-string g_CmdLineKey(int i)
+std::string g_CmdLineKey(int i)
 	{return cmdlines[i].spec;}
-string g_CmdLineVal(int i)
+std::string g_CmdLineVal(int i)
 	{return cmdlines[i].val;}
 
 
@@ -504,15 +502,15 @@ class TLuaFileSysLib : public TLuaCFunctions
 	protected:
 		static int FILESYS_PlatformFilename(lua_State *state)
 			{
-			string dironhdd=LUA_GET_STRING;
+			std::string dironhdd=LUA_GET_STRING;
 			dironhdd=PlattformFilename(dironhdd);
 			LUA_SET_STRING(dironhdd);
 			return 1;
 			}
 		static int FILESYS_MountHDDDir(lua_State *state)
 			{
-			string mountbase=LUA_GET_STRING;
-			string dironhdd=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING;
+			std::string dironhdd=LUA_GET_STRING;
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountHDDDir(dironhdd,mountbase);
 			LUA_SET_INT(res);
@@ -521,8 +519,8 @@ class TLuaFileSysLib : public TLuaCFunctions
 
 		static int FILESYS_MountWriteableHDDDir(lua_State *state)
 			{
-			string mountbase=LUA_GET_STRING;
-			string dironhdd=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING;
+			std::string dironhdd=LUA_GET_STRING;
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountWriteableHDDDir(dironhdd,mountbase);
 			LUA_SET_INT(res);
@@ -531,8 +529,8 @@ class TLuaFileSysLib : public TLuaCFunctions
 
 		static int FILESYS_MountZip(lua_State *state)
 			{
-			string mountbase=LUA_GET_STRING;
-			string zipf=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING;
+			std::string zipf=LUA_GET_STRING;
 			cls_FileReadable *zf=gBaseFileSystem.GetFileForReading(zipf);
 			int res;
 			if (!zf) { res=0; }
@@ -548,17 +546,17 @@ class TLuaFileSysLib : public TLuaCFunctions
 			return 0;
 			}
 
-		static vector<string> entries;
+		static std::vector<std::string> entries;
 
 		static int FILESYS_StartListDirectory(lua_State *state)
 			{
 			entries.clear();
-			string mask=LUA_GET_STRING;
+			std::string mask=LUA_GET_STRING;
 			bool fullpath=LUA_GET_BOOL;
 			bool recu=LUA_GET_BOOL;
 			bool lsdirs=LUA_GET_BOOL;
 			bool lsfiles=LUA_GET_BOOL;
-			string dir=LUA_GET_STRING;
+			std::string dir=LUA_GET_STRING;
 			int typ=(fullpath ? CLS_FILE_LIST_FULLPATH : 0) | (recu ? CLS_FILE_LIST_RECURSIVE : 0) | (lsdirs ? CLS_FILE_LIST_DIRS : 0) | (lsfiles ? CLS_FILE_LIST_FILES : 0);
 			gBaseFileSystem.ListDirectoryEntries(dir,entries,typ,mask);
 			typ=entries.size();
@@ -569,7 +567,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 		static int FILESYS_GetListDirectoryEntry(lua_State *state)
 			{
 			int index=LUA_GET_INT;
-			string res;
+			std::string res;
 			if (index<0 || index>=(int)entries.size()) res="";
 			else res=entries[index];
 			LUA_SET_STRING(res);
@@ -578,7 +576,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 
 		static int FILESYS_FileExists(lua_State *state)
 			{
-			string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING;
 			TCuboFile * cf=gBaseFileSystem.GetFileForReading(f);
 			if (cf)
 					{
@@ -591,7 +589,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 
 		static int FILESYS_WillOverwrite(lua_State *state)
 			{
-			string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING;
 			cls_FileWriteable * cf=gBaseFileSystem.GetFileForWriting(f,false);
 			if (cf)
 					{
@@ -606,7 +604,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 
 		static int FILESYS_Delete(lua_State *state)
 			{
-			string fname=LUA_GET_STRING;
+			std::string fname=LUA_GET_STRING;
 			cls_FileWriteable * f=gBaseFileSystem.GetFileForWriting(fname,false);
 			if (!f) {LUA_SET_INT(0); return 1;}
 			LUA_SET_INT(f->Delete());
@@ -619,7 +617,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 			bool recu=LUA_GET_BOOL;
 			bool read=LUA_GET_BOOL;
 			bool list=LUA_GET_BOOL;
-			string fname=LUA_GET_STRING;
+			std::string fname=LUA_GET_STRING;
 			int mode=(recu==true ? CLS_FILE_MASK_RECURSIVE : 0) |  (read==true ? CLS_FILE_MASK_READ : 0) | (list==true ? CLS_FILE_MASK_LIST : 0);
 			gBaseFileSystem.SetFileMask(fname,mode,-1);
 			return 0;
@@ -643,7 +641,7 @@ class TLuaFileSysLib : public TLuaCFunctions
 			}
 	};
 
-vector<string> TLuaFileSysLib::entries;
+std::vector<std::string> TLuaFileSysLib::entries;
 
 static TLuaFileSysLib fslib;
 
@@ -655,7 +653,7 @@ TLuaCFunctions* g_FileSysLib()
 
 
 
-bool StartBootScript(string name)
+bool StartBootScript(std::string name)
 	{
 	// gBaseFileSystem.MountZipFile(dir+"/data.zip");
 	gBaseFileSystem.MountHDDDir(g_DataDir(),"/");

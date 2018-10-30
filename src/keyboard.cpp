@@ -60,10 +60,7 @@ extern"C"
 #include"luautils.hpp"
 #include"game.hpp"
 
-using namespace std;
-
-
-SDLKey TKeyboard::GetKeyConstFor(string keyname)
+SDLKey TKeyboard::GetKeyConstFor(std::string keyname)
 	{
 	if (keyname=="return") return SDLK_RETURN;
 	else if (keyname=="space") return SDLK_SPACE;
@@ -271,9 +268,9 @@ void TKeyboard::DispatchEvent(SDL_Event *ev)
 			}
 	}
 
-string TKeyboard::GetKeyName(int key)
+std::string TKeyboard::GetKeyName(int key)
 	{
-	string result="";
+	std::string result="";
 	switch (key)
 			{
 			case SDLK_BACKSPACE : result="backspace"; break;
@@ -424,7 +421,7 @@ string TKeyboard::GetKeyName(int key)
 
 int KEYB_GetKeyConst(lua_State *state)
 	{
-	string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING;
 	SDLKey res=  g_Game()->GetKeyboard()->GetKeyConstFor(k);
 	LUA_SET_INT(res);
 	return 1;
@@ -433,7 +430,7 @@ int KEYB_GetKeyConst(lua_State *state)
 int KEYB_GetKeyName(lua_State *state)
 	{
 	int k=LUA_GET_INT;
-	string s=  g_Game()->GetKeyboard()->GetKeyName(k);
+	std::string s=  g_Game()->GetKeyboard()->GetKeyName(k);
 	LUA_SET_STRING(s);
 	return 1;
 	}

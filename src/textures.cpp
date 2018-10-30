@@ -59,8 +59,6 @@ typedef unsigned char boolean;
 #include "game.hpp"
 #include "luautils.hpp"
 
-using namespace std;
-
 ///////////////////////////////////////////////
 
 
@@ -162,7 +160,7 @@ bool TJPEGTexture::loadFromFile(TCuboFile *finfo)
 	{
 	//  coutlog("Jpegloading not implemented yet");
 
-	string fname=finfo->GetName();
+	std::string fname=finfo->GetName();
 
 	struct jpeg_decompress_struct cinfo;
 	struct my_error_mgr jerr;
@@ -195,7 +193,7 @@ bool TJPEGTexture::loadFromFile(TCuboFile *finfo)
 			infile = fopen( finfo->GetHDDName().c_str(), "rb" );
 			if ( !infile )
 					{
-					ostringstream os; os << "Error opening jpeg file " << fname ; coutlog(os.str(),2);
+					std::ostringstream os; os << "Error opening jpeg file " << fname ; coutlog(os.str(),2);
 					return false;
 					}
 			jpeg_stdio_src( &cinfo, infile );
@@ -261,7 +259,7 @@ static int iabs(int x)
 
 int TJPEGTexture::LoadAlphaTexture(TCuboFile *finfo)
 	{
-	string aname=finfo->GetName();
+	std::string aname=finfo->GetName();
 
 
 	TJPEGTexture *alp=new TJPEGTexture();
@@ -270,7 +268,7 @@ int TJPEGTexture::LoadAlphaTexture(TCuboFile *finfo)
 
 	if (alp->GetChannels()!=1) { coutlog("Alpha-Texture "+aname+" is not a grayscale jpeg",2); delete alp; return 0;}
 	if (alp->getWidth()!=this->getWidth() ||  alp->getHeight()!=this->getHeight())
-			{	ostringstream oss; oss <<"Alpha-Texture "+aname+" has wrong extents ("<< alp->getWidth()<< " x " <<alp->getHeight() <<")" << "! Must have " << getWidth() << " x " << getHeight();
+			{	std::ostringstream oss; oss <<"Alpha-Texture "+aname+" has wrong extents ("<< alp->getWidth()<< " x " <<alp->getHeight() <<")" << "! Must have " << getWidth() << " x " << getHeight();
 			coutlog(oss.str(),2);
 			delete alp; return 0;
 			}
@@ -587,14 +585,14 @@ TFontExtend TTextureServer::GetFontExtend(int index,int num)
 	return Textures[index].GetFontExtend(num);
 	}
 
-int TTextureServer::TempTextureIndexFromName(string tname)
+int TTextureServer::TempTextureIndexFromName(std::string tname)
 	{
 	for (unsigned int i=0; i<filenames.size(); i++) if ((tname==filenames[i]) && (istemp[i]) ) return i;
 	return -1;
 
 	}
 
-int TTextureServer::LoadTempTexture(string tname, TCuboFile *finfo,int asfont,unsigned int colorkey)
+int TTextureServer::LoadTempTexture(std::string tname, TCuboFile *finfo,int asfont,unsigned int colorkey)
 	{
 	int index=TempTextureIndexFromName(tname);
 	TTextureContainer *cont;
@@ -615,8 +613,8 @@ int TTextureServer::LoadTempTexture(string tname, TCuboFile *finfo,int asfont,un
 
 
 	TTexture *tex=NULL;
-	string ext;
-	string fname=finfo->GetName();
+	std::string ext;
+	std::string fname=finfo->GetName();
 	auto extind = fname.rfind('.');
 	if (extind != std::string::npos)
 			{
@@ -625,8 +623,8 @@ int TTextureServer::LoadTempTexture(string tname, TCuboFile *finfo,int asfont,un
 	else ext="";
 	if (ext=="jpg" || ext=="jpeg") tex=new TJPEGTexture;
 
-	if (!tex) { ostringstream os; os << "Cannot load Texture "<< fname << endl; coutlog(os.str(),2); return -1;}
-	if (!tex->loadFromFile(finfo)) { ostringstream os; os << "Cannot load Texture "<< fname << endl; coutlog(os.str(),2); return -1;}
+	if (!tex) { std::ostringstream os; os << "Cannot load Texture "<< fname << std::endl; coutlog(os.str(),2); return -1;}
+	if (!tex->loadFromFile(finfo)) { std::ostringstream os; os << "Cannot load Texture "<< fname << std::endl; coutlog(os.str(),2); return -1;}
 	if (colorkey)
 		((TJPEGTexture *)tex)->ColorKeyTransparency(colorkey);
 
@@ -639,13 +637,13 @@ int TTextureServer::LoadTempTexture(string tname, TCuboFile *finfo,int asfont,un
 
 int TTextureServer::LoadTextureAndAlpha(TCuboFile *finfo,TCuboFile *finfoa)
 	{
-	string fname=finfo->GetName();
-	string aname=finfoa->GetName();
+	std::string fname=finfo->GetName();
+	std::string aname=finfoa->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (fname==filenames[i] && aname==alphanames[i]) return i;
 	if (g_VerboseMode()) {coutlog("Loading Texture: "+finfo->GetNameForLog());   coutlog("  -> using AlphaTexture: "+finfoa->GetNameForLog());}
 //Find the right container Type
 	TTexture *tex=NULL;
-	string ext;
+	std::string ext;
 	auto extind = fname.rfind('.');
 	if (extind != std::string::npos)
 			{
@@ -653,10 +651,10 @@ int TTextureServer::LoadTextureAndAlpha(TCuboFile *finfo,TCuboFile *finfoa)
 			}
 	else ext="";
 	if (ext=="jpg" || ext=="jpeg") tex=new TJPEGTexture;
-	if (!tex) { ostringstream os; os << "Cannot load Texture "<< fname << endl; coutlog(os.str(),2); return -1;}
+	if (!tex) { std::ostringstream os; os << "Cannot load Texture "<< fname << std::endl; coutlog(os.str(),2); return -1;}
 	int clo=clock();
 	tex->loadFromFile(finfo);
-	if (!(((TJPEGTexture *)(tex))->LoadAlphaTexture(finfoa))) { ostringstream os; os << "Cannot load Alpha-Texture "<< aname << endl; coutlog(os.str(),2); delete tex; return -1;}
+	if (!(((TJPEGTexture *)(tex))->LoadAlphaTexture(finfoa))) { std::ostringstream os; os << "Cannot load Alpha-Texture "<< aname << std::endl; coutlog(os.str(),2); delete tex; return -1;}
 	timer1+=clock()-clo;
 	int res=addTexture(tex,0);
 	delete tex;
@@ -671,12 +669,12 @@ int TTextureServer::LoadTextureAndAlpha(TCuboFile *finfo,TCuboFile *finfoa)
 int TTextureServer::LoadTexture(TCuboFile *finfo,int asfont,unsigned int colorkey)
 	{
 //Is it loaded already?
-	string s=finfo->GetName();
+	std::string s=finfo->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (s==filenames[i] && alphanames[i]=="") return i;
 	if (g_VerboseMode()) coutlog("Loading Texture: "+finfo->GetNameForLog());
 //Find the right container Type
 	TTexture *tex=NULL;
-	string ext;
+	std::string ext;
 	auto extind = s.rfind('.');
 	if (extind != std::string::npos)
 			{
@@ -686,7 +684,7 @@ int TTextureServer::LoadTexture(TCuboFile *finfo,int asfont,unsigned int colorke
 	if (ext=="jpg" || ext=="jpeg") tex=new TJPEGTexture;
 
 
-	if (!tex) { ostringstream os; os << "Cannot load Texture "<< s << endl; coutlog(os.str(),2); return -1;}
+	if (!tex) { std::ostringstream os; os << "Cannot load Texture "<< s << std::endl; coutlog(os.str(),2); return -1;}
 	int clo=clock();
 	tex->loadFromFile(finfo);
 	timer1+=clock()-clo;
@@ -716,7 +714,7 @@ void TTextureServer::Reload()
 
 	Textures.clear();
 
-	vector<string> ofilenames;
+	std::vector<std::string> ofilenames;
 	for (unsigned int i=0; i<filenames.size(); i++) ofilenames.push_back(filenames[i]);
 	filenames.clear();
 
@@ -725,7 +723,7 @@ void TTextureServer::Reload()
 
 			TCuboFile* finfo;
 
-			string nam;
+			std::string nam;
 			if (istemp[i]) {
 					nam=alphanames[i];
 					}
@@ -801,11 +799,11 @@ void TTextureServer::CoutTimerString()
 	float t1=timer1/(float)CLOCKS_PER_SEC;
 	float t2=timer2/(float)CLOCKS_PER_SEC;
 	float t3=timer3/(float)CLOCKS_PER_SEC;
-	ostringstream os;
-	os << "Texture loading times: Loaded "<<numloads << " textures. " << endl;
-	os <<"             Durations: Loading files (" << t1 << " s)" << endl;
-	os <<"                        Resizing (" << t2 << " s)" << endl;
-	os <<"                        Uploading/Mipmaps (" << t3 << " s)" << endl;
+	std::ostringstream os;
+	os << "Texture loading times: Loaded "<<numloads << " textures. " << std::endl;
+	os <<"             Durations: Loading files (" << t1 << " s)" << std::endl;
+	os <<"                        Resizing (" << t2 << " s)" << std::endl;
+	os <<"                        Uploading/Mipmaps (" << t3 << " s)" << std::endl;
 	coutlog(os.str());
 	}
 
@@ -818,7 +816,7 @@ void TTextureServer::CoutTimerString()
 int TEXDEF_Load(lua_State *state)
 	{
 
-	string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING;
 
 
 	int r=g_Game()->GetLevel()->LoadTexDef(name);
@@ -861,7 +859,7 @@ int TEXDEF_Render2d(lua_State *state)
 
 int TEXDEF_GetLastRenderedType(lua_State *state)
 	{
-	string tn=g_Game()->GetLevel()->GetLastRendered();
+	std::string tn=g_Game()->GetLevel()->GetLastRendered();
 	LUA_SET_STRING(tn);
 	return 1;
 	}
@@ -890,7 +888,7 @@ void LUA_TEXDEF_RegisterLib()
 
 int TEXTURE_LoadSkyTexture(lua_State *state)
 	{
-	string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING;
 	TCuboFile* finfo=GetFileName(name,FILE_SKYBOX,".jpg");
 	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
@@ -914,7 +912,7 @@ int TEXTURE_Load(lua_State *state)
 	{
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
-	string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING;
 
 	TCuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
 	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
@@ -929,8 +927,8 @@ int TEXTURE_Load(lua_State *state)
 
 int TEXTURE_LoadWithAlpha(lua_State *state)
 	{
-	string aname = LUA_GET_STRING;
-	string name = LUA_GET_STRING;
+	std::string aname = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING;
 
 	TCuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
 	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
@@ -946,7 +944,7 @@ int TEXTURE_LoadWithAlpha(lua_State *state)
 
 int TEXTURE_GetTempTexture(lua_State *state)
 	{
-	string tname=LUA_GET_STRING;
+	std::string tname=LUA_GET_STRING;
 	int r=g_Game()->GetTextures()->TempTextureIndexFromName(tname);
 	LUA_SET_INT(r);
 	return 1;
@@ -957,8 +955,8 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
 
-	string fname = LUA_GET_STRING;
-	string tname= LUA_GET_STRING;
+	std::string fname = LUA_GET_STRING;
+	std::string tname= LUA_GET_STRING;
 	TCuboFile *cf=GetCuboFileFromRelativeName(fname);
 	int r=0;
 	if (cf)

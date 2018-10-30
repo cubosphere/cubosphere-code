@@ -49,9 +49,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <dirent.h>
 #endif
 
-using namespace std;
-
-
 void TDistRenderObj::DistRender(TCamera *cam)
 	{
 	if (CullRadius>0) {
@@ -78,7 +75,7 @@ void TDistRenderObj::DistRender(TCamera *cam)
 			lua_pushnumber(callstate, id);
 			if (lua_pcall(callstate, 1, 0, 0) != 0)  /* do the call */
 					{
-					ostringstream os;
+					std::ostringstream os;
 					os << "ERROR (in calling CustomDistanceRender')"<< " -> " << lua_tostring(callstate, -1);
 					coutlog(os.str(),1);
 					}
@@ -107,7 +104,7 @@ void TDistRenderObj::Render(TCamera *cam)
 			}
 	}
 
-void TDistRenderObj::SpecialRender(TCamera *cam,string nam,int defrender)
+void TDistRenderObj::SpecialRender(TCamera *cam,std::string nam,int defrender)
 	{
 	if (type==DIST_RENDER_ITEM)
 			{
@@ -141,7 +138,7 @@ void TCuboLevel::clear()
 	{
 	if (g_VerboseMode())
 			{
-			ostringstream oss;
+			std::ostringstream oss;
 			oss << "Clearing level! Release " << blocks.size() << " blocks from their neighbors";
 			coutlog(oss.str());
 			}
@@ -167,7 +164,7 @@ void TCuboLevel::clearAll()
 	idefs.clear();
 	}
 
-static int SideStringToSideInt(string s)
+static int SideStringToSideInt(std::string s)
 	{
 	if (s=="up") return CUBO_UP;
 	else if (s=="down") return CUBO_DOWN;
@@ -178,7 +175,7 @@ static int SideStringToSideInt(string s)
 	else return -1;
 	}
 
-void TCuboLevel::AddBlock(int x,int y,int z,string bdefname)
+void TCuboLevel::AddBlock(int x,int y,int z,std::string bdefname)
 	{
 	blocks.push_back(new TCuboBlock());
 	LastBlock()->SetID(blocks.size()-1);
@@ -235,7 +232,7 @@ void TCuboLevel::DeleteBlock(int i)
 			}
 	}
 
-void TCuboLevel::ChangeSide(int block, string sidestr,string sdefname)
+void TCuboLevel::ChangeSide(int block, std::string sidestr,std::string sdefname)
 	{
 	TCuboBlock *b=GetBlock(block);
 	int side=SideStringToSideInt(sidestr);
@@ -245,7 +242,7 @@ void TCuboLevel::ChangeSide(int block, string sidestr,string sdefname)
 	}
 
 
-void TCuboLevel::ChangeBlock(int block, string sdefname)
+void TCuboLevel::ChangeBlock(int block, std::string sdefname)
 	{
 	TCuboBlock *b=GetBlock(block);
 	b->SetBlockType(bdefs.AddDef(sdefname));
@@ -253,7 +250,7 @@ void TCuboLevel::ChangeBlock(int block, string sdefname)
 	}
 
 
-int TCuboLevel::AddItem(int block, string sidestr,string idefname)
+int TCuboLevel::AddItem(int block, std::string sidestr,std::string idefname)
 	{
 	TCuboBlock *b=GetBlock(block);
 	int side=SideStringToSideInt(sidestr);
@@ -265,12 +262,12 @@ int TCuboLevel::AddItem(int block, string sidestr,string idefname)
 	return iid;
 	}
 
-void TCuboLevel::LoadSky(string skyname)
+void TCuboLevel::LoadSky(std::string skyname)
 	{
 	g_Game()->LoadSky(skyname);
 	}
 
-int TCuboLevel::NumItemsOfType(string itemname)
+int TCuboLevel::NumItemsOfType(std::string itemname)
 	{
 	if (itemname=="") return items.size();
 	int num=0;
@@ -402,7 +399,7 @@ void TCuboLevel::Reload()
 	LoadFromLua(filename);
 	}
 
-bool TCuboLevel::LoadFromLua(string fname)
+bool TCuboLevel::LoadFromLua(std::string fname)
 	{
 	//docollisions=1;
 	g_Game()->GetTextures()->ResetTimerCounters();
@@ -415,7 +412,7 @@ bool TCuboLevel::LoadFromLua(string fname)
 
 	filename=fname;
 	TCuboFile * finfo=GetFileName(fname,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
-	if (!finfo) {string uls=(nextleveluserlevel==1 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+fname,2); return false;}
+	if (!finfo) {std::string uls=(nextleveluserlevel==1 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+fname,2); return false;}
 	bool lief=lua.LoadFile(finfo,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,-1);
 	delete finfo;
 	if (!lief) return false;
@@ -436,7 +433,7 @@ bool TCuboLevel::LoadFromLua(string fname)
 	leveltime=0;
 	//timescale=1;
 	g_Game()->GetTextures()->CoutTimerString();
-	ostringstream os;
+	std::ostringstream os;
 	os << ((clock()-clo)/(float)CLOCKS_PER_SEC) ;
 	coutlog("Loading level (and data) took "+ os.str()+" seconds");
 	return true;
@@ -454,7 +451,7 @@ TCuboBlock* TCuboLevel::GetBlock(int i)
 	return blocks[i];
 	}
 
-TCuboBlock *TCuboLevel::GetBlockFromType(string name,int i)
+TCuboBlock *TCuboLevel::GetBlockFromType(std::string name,int i)
 	{
 	for (unsigned int b=i; b<blocks.size(); b++)
 		if (blocks[b]->GetName()==name) return blocks[b];
@@ -565,7 +562,7 @@ void TCuboLevel::PostThink()
 			bool res=this->LoadFromLua(nextlevel);
 			if (!res)
 					{
-					string s="levelnotexisting";
+					std::string s="levelnotexisting";
 					SetNewLevel(s,0);
 					}
 			}
@@ -656,7 +653,7 @@ void TCuboLevel::Render(TCamera *cam)
 	}
 
 
-void TCuboLevel::SpecialRender(TCamera *cam,string nam,int defrender)
+void TCuboLevel::SpecialRender(TCamera *cam,std::string nam,int defrender)
 	{
 	glEnable(GL_LIGHTING);
 
@@ -787,14 +784,14 @@ void TCuboLevel::BindBlocksToNext()
 			}
 	}
 
-string TCuboLevel::GetErrorString()
+std::string TCuboLevel::GetErrorString()
 	{
 	if (errorline==-1) return "";
 	return ">LEVEL("+filename+" : "+IntToString(errorline)+"): \n     "+errorstring;
 	}
 
 
-int TCuboLevel::LoadTexDef(string name)
+int TCuboLevel::LoadTexDef(std::string name)
 	{
 	return tdefs.AddDef(name);
 	}
@@ -864,9 +861,9 @@ TTraceResult TCuboLevel::TraceLine(T3dVector start,T3dVector dir,int onlyblockin
 	}
 
 
-int TCuboLevel::GetSideOfType(string tname,int startside,int offs)
+int TCuboLevel::GetSideOfType(std::string tname,int startside,int offs)
 	{
-	vector<int> lookup;
+	std::vector<int> lookup;
 	for (unsigned int i=0; i<blocks.size(); i++)
 			{
 			for (unsigned int s=0; s<6; s++)
@@ -894,7 +891,7 @@ int TCuboLevel::GetSideOfType(string tname,int startside,int offs)
 	return lookup[index];
 	}
 
-string TCuboLevel::CheckDefExchange(string defname,string deftype)
+std::string TCuboLevel::CheckDefExchange(std::string defname,std::string deftype)
 	{
 	if (lua.FuncExists("CheckDefExchange"))
 			{
@@ -937,12 +934,12 @@ int LEVEL_Clear(lua_State *state)
 
 int LEVEL_AddBlock(lua_State *state)
 	{
-	string bdefname=LUA_GET_STRING;
+	std::string bdefname=LUA_GET_STRING;
 	int z=LUA_GET_INT;
 	int y=LUA_GET_INT;
 	int x=LUA_GET_INT;
 
-	string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
+	std::string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
 
 	if (g_VerboseMode()) { T3dVector v(x,y,z); coutlog("  Adding block "+nbdefname+" ("+bdefname+") at "+v.toString()); }
 
@@ -959,11 +956,11 @@ int LEVEL_DeleteBlock(lua_State *state)
 
 int LEVEL_ChangeSide(lua_State *state)
 	{
-	string bdefname=LUA_GET_STRING;
-	string sidestr=LUA_GET_STRING;
+	std::string bdefname=LUA_GET_STRING;
+	std::string sidestr=LUA_GET_STRING;
 	int blockid=LUA_GET_INT;
-	string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"side");
-	if (g_VerboseMode()) { ostringstream oss; oss<<blockid<<" - " << sidestr; coutlog("  Changing block side to "+nbdefname+" ("+bdefname+") of block"+oss.str()); }
+	std::string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"side");
+	if (g_VerboseMode()) { std::ostringstream oss; oss<<blockid<<" - " << sidestr; coutlog("  Changing block side to "+nbdefname+" ("+bdefname+") of block"+oss.str()); }
 
 	g_Game()->GetLevel()->ChangeSide(blockid,sidestr,nbdefname);
 	return 0;
@@ -971,7 +968,7 @@ int LEVEL_ChangeSide(lua_State *state)
 
 int LEVEL_ChangeBlock(lua_State *state)
 	{
-	string bdefname=LUA_GET_STRING;
+	std::string bdefname=LUA_GET_STRING;
 	int blockid=LUA_GET_INT;
 	bdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
 	g_Game()->GetLevel()->ChangeBlock(blockid,bdefname);
@@ -1008,13 +1005,13 @@ int LEVEL_Deactivate(lua_State *state)
 
 int LEVEL_AddItem(lua_State *state)
 	{
-	string idefname=LUA_GET_STRING;
-	string sidestr=LUA_GET_STRING;
+	std::string idefname=LUA_GET_STRING;
+	std::string sidestr=LUA_GET_STRING;
 	int blockid=LUA_GET_INT;
-	string nidefname=g_Game()->GetLevel()->CheckDefExchange(idefname,"item");
+	std::string nidefname=g_Game()->GetLevel()->CheckDefExchange(idefname,"item");
 	int res;
 //cout <<"Idefname |" << idefname << "| " << endl;
-	if (g_VerboseMode()) { ostringstream oss; oss<<blockid<<" - " << sidestr; coutlog("  Adding item "+nidefname+" ("+idefname+") of block"+oss.str()); }
+	if (g_VerboseMode()) { std::ostringstream oss; oss<<blockid<<" - " << sidestr; coutlog("  Adding item "+nidefname+" ("+idefname+") of block"+oss.str()); }
 	if (nidefname=="") res=-1;
 	else
 		res=g_Game()->GetLevel()->AddItem(blockid,sidestr,nidefname);
@@ -1036,14 +1033,14 @@ int LEVEL_LoadSky(lua_State *state)
 
 int LEVEL_Load(lua_State *state)
 	{
-	string lname=LUA_GET_STRING;
+	std::string lname=LUA_GET_STRING;
 	g_Game()->GetLevel()->SetNewLevel(lname,0);
 	return 0;
 	}
 
 int LEVEL_LoadUserLevel(lua_State *state)
 	{
-	string lname=LUA_GET_STRING;
+	std::string lname=LUA_GET_STRING;
 	g_Game()->GetLevel()->SetNewLevel(lname,1);
 
 	return 0;
@@ -1098,7 +1095,7 @@ int LEVEL_Restart(lua_State *state)
 
 int LEVEL_NumItems(lua_State *state)
 	{
-	string iname=LUA_GET_STRING;
+	std::string iname=LUA_GET_STRING;
 	int num=g_Game()->GetLevel()->NumItemsOfType(iname);
 	LUA_SET_INT(num);
 	return 1;
@@ -1136,7 +1133,7 @@ int LEVEL_GetElapsed(lua_State *state)
 
 int LEVEL_SetSideItem(lua_State *state)
 	{
-	string iname=LUA_GET_STRING;
+	std::string iname=LUA_GET_STRING;
 	int s=LUA_GET_INT;
 	iname=g_Game()->GetLevel()->CheckDefExchange(iname,"item");
 	g_Game()->GetLevel()->GetBlockSide(s)->SetSideItem(iname);
@@ -1161,7 +1158,7 @@ int LEVEL_FileBegin(lua_State *state)
 	{
 	g_Game()->GetLevel()->CreateBBox(); //For creating the picture
 
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) {LUA_SET_INT(0); return 1;}
 	if (!fw->IsHDDFile()) {LUA_SET_INT(0); return 1;}
@@ -1171,7 +1168,7 @@ int LEVEL_FileBegin(lua_State *state)
 
 	char dirs[2048] ;
 	sprintf(dirs,"%s",s.c_str());
-	string thedir=dirname(dirs);
+	std::string thedir=dirname(dirs);
 	//coutlog("Trying to create the dir: "+thedir);
 	RecursiveMKDir(thedir);
 
@@ -1183,7 +1180,7 @@ int LEVEL_FileBegin(lua_State *state)
 
 int LEVEL_FileWrite(lua_State *state)
 	{
-	string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING;
 	unsigned long int c=LUA_GET_ULINT;
 	FILE *f=(FILE *)c;
 	fprintf(f,"%s\n",k.c_str());

@@ -24,9 +24,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "textures.hpp"
 
-using namespace std;
-
-
 #define DIST_RENDER_SIDE 0
 #define DIST_RENDER_ITEM 1
 #define DIST_RENDER_ACTOR 2
@@ -48,7 +45,7 @@ class TDistRenderObj
 		float dist;
 		int id; //The id to the object
 		int type; //Blockside, Item etc.
-		string myhint;
+		std::string myhint;
 		lua_State *callstate;
 		double CullRadius;
 		T3dVector CullCenter;
@@ -58,34 +55,34 @@ class TDistRenderObj
 		const float GetDist() const {return dist;}
 		const int GetID() const {return id;}
 		const int GetType() const {return type;}
-		const string GetHint() const {return myhint;}
-		void SetHint(string h) {myhint=h;}
+		const std::string GetHint() const {return myhint;}
+		void SetHint(std::string h) {myhint=h;}
 		void SetCulling(T3dVector cc,double cr) {CullCenter=cc; CullRadius=cr;}
 		bool operator < (TDistRenderObj b ) const {return dist > b.dist;}
 		void DistRender(TCamera *cam);
 		void Render(TCamera *cam);
-		void SpecialRender(TCamera *cam,string nam,int defrender);
+		void SpecialRender(TCamera *cam,std::string nam,int defrender);
 	};
 
 class TCuboLevel
 	{
 	protected:
-		vector<TCuboBlock*> blocks;
-		vector<TCuboItem*> items;
-		vector<TDistRenderObj> distrenderlist; //Used for Blending stuff
-		vector<TDistRenderObj> rlist;
+		std::vector<TCuboBlock*> blocks;
+		std::vector<TCuboItem*> items;
+		std::vector<TDistRenderObj> distrenderlist; //Used for Blending stuff
+		std::vector<TDistRenderObj> rlist;
 		T3dVector bbmax,bbmin; //Sizes of the bounding box
 //    TTextFileReader tr;
 		TLuaAccess lua;
 		TBlockDefServer bdefs;
 		TTextureDefServer tdefs;
 		TItemDefServer idefs;
-		string errorstring;
-		string filename;
+		std::string errorstring;
+		std::string filename;
 		float timescale;
 		float leveltime;
-		string lastrenderedtype;
-		string nextlevel;
+		std::string lastrenderedtype;
+		std::string nextlevel;
 		int loadnextlevel;
 		int nextleveluserlevel;
 
@@ -97,30 +94,30 @@ class TCuboLevel
 		TBlockDefServer * GetBlockDefs() {return  &bdefs;}
 		TTextureDefServer *GetTexDefs() {return  &tdefs;}
 		TItemDefServer *GetItemDefs() {return  &idefs;}
-		string GetLastRendered() const {return lastrenderedtype;}
-		void SetLastRendered(const string &s) {lastrenderedtype=s;}
+		std::string GetLastRendered() const {return lastrenderedtype;}
+		void SetLastRendered(const std::string &s) {lastrenderedtype=s;}
 		TCuboBlock* LastBlock();
 		void clear();
 		void clearAll(); ///TODO: add a function to clear all the data between episodes
 		void CreateBBox();
 		void Reload();
 		//  bool LoadFromFile(string fname);
-		void SetNewLevel(string nfname,int ulevel) {nextlevel=nfname; loadnextlevel=1; if (ulevel>=0) nextleveluserlevel=ulevel;}
-		bool LoadFromLua(string fname);
+		void SetNewLevel(std::string nfname,int ulevel) {nextlevel=nfname; loadnextlevel=1; if (ulevel>=0) nextleveluserlevel=ulevel;}
+		bool LoadFromLua(std::string fname);
 		void Think();
 		void CheckCollides();
 		void PostThink();
 		void Render(TCamera *cam);
-		void SpecialRender(TCamera *cam,string nam,int defrender);
+		void SpecialRender(TCamera *cam,std::string nam,int defrender);
 		void DistRender(TCamera *cam);
 		void LastDistanceRenderCull(T3dVector center,double rad);
-		void SpecialDistRender(string nam,int defrender);
+		void SpecialDistRender(std::string nam,int defrender);
 		void FrameRenderStart();
 		void FrameRenderEnd();
 		void DrawHUD();
 		T3dVector GetCenter();
 		tfloat GetRadius();
-		int LoadTexDef(string name);
+		int LoadTexDef(std::string name);
 		TBlockDef *GetBlockDef(int i) {return bdefs.GetDefPtr(i);}
 		TTextureDef *GetTexDef(int i) {return tdefs.GetDefPtr(i);}
 		TItemDef *GetItemDef(int i) {return idefs.GetDefPtr(i);}
@@ -128,19 +125,19 @@ class TCuboLevel
 		TCuboBlock *GetBlockAtIPos(int x,int y,int z);
 		TCuboBlock *GetBlockAtPos(T3dVector p);
 		TCuboBlock *GetBlock(int i);
-		TCuboBlock *GetBlockFromType(string name,int i);
+		TCuboBlock *GetBlockFromType(std::string name,int i);
 		TTraceResult TraceLine(T3dVector start,T3dVector dir, int onlyblocking=0);
 		TCuboBlockSide *GetBlockSide(int id);
-		string GetErrorString();
+		std::string GetErrorString();
 		void AddDistRenderItem(int id,int type,float dist,lua_State *callstate);
-		void AddBlock(int x,int y,int z,string bdefname);
+		void AddBlock(int x,int y,int z,std::string bdefname);
 		void DeleteBlock(int i);
-		void ChangeSide(int block, string sidestr,string sdefname);
-		int AddItem(int block, string sidestr,string idefname);
-		void LoadSky(string skyname);
-		int NumItemsOfType(string itemname);
+		void ChangeSide(int block, std::string sidestr,std::string sdefname);
+		int AddItem(int block, std::string sidestr,std::string idefname);
+		void LoadSky(std::string skyname);
+		int NumItemsOfType(std::string itemname);
 		int PointInBBox(T3dVector cp,float extrasize=40*CUBO_SCALE);
-		string GetLevelFileName() {return filename;}
+		std::string GetLevelFileName() {return filename;}
 		void SendKey(int key,int down,int toggle);
 		void SendJoyButton(int joy,int button,int dir,int down,int toggle);
 		void JoyAxisChange(int joys,int axis,double val,double pval);
@@ -148,16 +145,16 @@ class TCuboLevel
 		double Time() {return leveltime;}
 		void SetTimeScale(double ts) {timescale=ts;}
 		double GetTimeScale() {return timescale;}
-		void ChangeBlock(int block, string sdefname);
+		void ChangeBlock(int block, std::string sdefname);
 		void WriteLevelData(FILE *f);
 		void RemoveItemFromSide(TCuboBlockSide *s);
 		int GetNumBlocks() {return blocks.size();}
 		TCuboItem *GetItemOnSide(TCuboBlockSide *s);
-		int GetSideOfType(string tname,int startside,int offs);
+		int GetSideOfType(std::string tname,int startside,int offs);
 		void SortDistRenderList();
 		void SetCollisionChecksActive(int i) {docollisions=i;}
 		int GetCollisionChecksActive() {return docollisions;}
-		string CheckDefExchange(string defname,string deftype);
+		std::string CheckDefExchange(std::string defname,std::string deftype);
 	};
 
 extern void LUA_LEVEL_RegisterLib();

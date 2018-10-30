@@ -7,8 +7,6 @@
 
 #define PATH_INFINITY 1000000
 
-using namespace std;
-
 static TCuboPathGraphServer gpgs;
 
 TCuboPathGraphServer * g_PathGraphs() {return &gpgs;}
@@ -107,7 +105,7 @@ int TCuboPathGraph::EdgeBetween(int i,int j)
 	return 0;
 	}
 
-void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,string addcb)
+void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string addcb)
 	{
 	nodes.clear(); path.clear(); next.clear();
 	if (startindex<0) return;
@@ -165,7 +163,7 @@ void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,string addcb)
 					}
 	}
 
-string TCuboPathGraph::GetPath(int i,int j)
+std::string TCuboPathGraph::GetPath(int i,int j)
 	{
 	int N=nodes.size();
 	if (path[i+N*j]>=PATH_INFINITY)
@@ -176,7 +174,7 @@ string TCuboPathGraph::GetPath(int i,int j)
 		return " <-> ";   /* there is an edge from i to j, with no vertices between */
 	else
 			{
-			ostringstream oss; oss << nodes[intermediate].GetSideID();
+			std::ostringstream oss; oss << nodes[intermediate].GetSideID();
 			return GetPath(i,intermediate)+" "+oss.str()+" " + GetPath(intermediate,j);
 			}
 	}
@@ -191,7 +189,7 @@ int TCuboPathGraph::MayAddNode(int from,int to)
 			lua_pushnumber(cstate, to);
 			if (lua_pcall(cstate, 2, 1, 0) != 0)  /* do the call */
 					{
-					ostringstream os;
+					std::ostringstream os;
 					os << "ERROR (in calling '"<<callbfunc <<"')"<< " -> " << lua_tostring(cstate, -1);
 					coutlog(os.str());
 					return 1;
@@ -199,7 +197,7 @@ int TCuboPathGraph::MayAddNode(int from,int to)
 			//Get the result
 			if (!lua_isnumber(cstate, -1))
 					{
-					ostringstream os; os << "Error running function '" << callbfunc << "' : wrong result type" ; coutlog(os.str(),1);
+					std::ostringstream os; os << "Error running function '" << callbfunc << "' : wrong result type" ; coutlog(os.str(),1);
 					return 1;
 					}
 			int res = (int)lua_tonumber(cstate, -1);
@@ -249,7 +247,7 @@ int TCuboPathGraph::GetNodeIDFromSideID(int ID)
 	}
 
 
-string TCuboPathGraph::GetPathFromTo(int startbs,int endbs)
+std::string TCuboPathGraph::GetPathFromTo(int startbs,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -271,7 +269,7 @@ int TCuboPathGraph::GetDistance(int startbs,int endbs)
 	return path[si+N*ei];
 	}
 
-string TCuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
+std::string TCuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -318,7 +316,7 @@ string TCuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 
 
 
-string TCuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
+std::string TCuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -409,9 +407,9 @@ string TCuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 
 
 
-string TCuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rotation move for the Random Mover to rotate into a possible direction
+std::string TCuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rotation move for the Random Mover to rotate into a possible direction
 	{
-	string rmoves[3]= {"f","r","l"};
+	std::string rmoves[3]= {"f","r","l"};
 	int si=GetNodeIDFromSideID(startbs);
 	if (si==-1) return rmoves[rand() % 3];
 	int numways=0;
@@ -448,7 +446,7 @@ void TCuboPathGraphServer::Clear()
 	pgs.clear();
 	}
 
-int TCuboPathGraphServer::New(int startside,lua_State *state,string addcb)
+int TCuboPathGraphServer::New(int startside,lua_State *state,std::string addcb)
 	{
 	int res=pgs.size();
 	pgs.push_back(TCuboPathGraph());
@@ -475,7 +473,7 @@ int TLuaPathfindingLib::PATH_GetNextMove(lua_State *state)
 	int rot=LUA_GET_INT;
 	int startside=LUA_GET_INT;
 	int graph=LUA_GET_INT;
-	string res=g_PathGraphs()->GetGraph(graph)->GetNextMove(startside,rot,endside);
+	std::string res=g_PathGraphs()->GetGraph(graph)->GetNextMove(startside,rot,endside);
 	LUA_SET_STRING(res);
 	return 1;
 	}
@@ -486,7 +484,7 @@ int TLuaPathfindingLib::PATH_GetEscapeMove(lua_State *state)
 	int rot=LUA_GET_INT;
 	int startside=LUA_GET_INT;
 	int graph=LUA_GET_INT;
-	string res=g_PathGraphs()->GetGraph(graph)->GetEscapeMove(startside,rot,endside);
+	std::string res=g_PathGraphs()->GetGraph(graph)->GetEscapeMove(startside,rot,endside);
 	LUA_SET_STRING(res);
 	return 1;
 	}
@@ -496,14 +494,14 @@ int TLuaPathfindingLib::PATH_GetRandomMove(lua_State *state)
 	int rot=LUA_GET_INT;
 	int startside=LUA_GET_INT;
 	int graph=LUA_GET_INT;
-	string res=g_PathGraphs()->GetGraph(graph)->GetRandomMove(startside,rot);
+	std::string res=g_PathGraphs()->GetGraph(graph)->GetRandomMove(startside,rot);
 	LUA_SET_STRING(res);
 	return 1;
 	}
 
 int TLuaPathfindingLib::PATH_NewGraph(lua_State *state)
 	{
-	string cbfunc=LUA_GET_STRING;
+	std::string cbfunc=LUA_GET_STRING;
 	int startside=LUA_GET_INT;
 	int res=g_PathGraphs()->New(startside,state,cbfunc);
 	LUA_SET_INT(res);

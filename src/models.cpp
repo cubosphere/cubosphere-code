@@ -47,20 +47,16 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define RENDERLISTS
 
-using namespace std;
-
-
-
-void Tokenize0(const string& str,
-		vector<string>& tokens,
-		const string& delimiters = " ")
+void Tokenize0(const std::string& str,
+		std::vector<std::string>& tokens,
+		const std::string& delimiters = " ")
 	{
 	// Skip delimiters at beginning.
-	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
 	// Find first "non-delimiter".
-	string::size_type pos     =lastPos+1;// str.find_first_of(delimiters, lastPos);
+	std::string::size_type pos     =lastPos+1;// str.find_first_of(delimiters, lastPos);
 
-	while (string::npos != pos || string::npos != lastPos)
+	while (std::string::npos != pos || std::string::npos != lastPos)
 			{
 			// Found a token, add it to the vector.
 			tokens.push_back(str.substr(lastPos, pos - lastPos));
@@ -71,9 +67,9 @@ void Tokenize0(const string& str,
 			}
 	}
 
-string Untokenize(const vector<string>& tokens, int pos, const string &delimiter)
+std::string Untokenize(const std::vector<std::string>& tokens, int pos, const std::string &delimiter)
 	{
-	string res="";
+	std::string res="";
 	while ((unsigned int)pos<tokens.size())
 			{
 			res=res+tokens[pos];
@@ -84,12 +80,12 @@ string Untokenize(const vector<string>& tokens, int pos, const string &delimiter
 	}
 
 
-void TTextFileReader::RemoveComments(string commentindicator,bool trim,bool cutempty)
+void TTextFileReader::RemoveComments(std::string commentindicator,bool trim,bool cutempty)
 	{
 	unsigned int i=0;
 	while (i<lines.size())
 			{
-			string line=lines[i];
+			std::string line=lines[i];
 			TrimSpaces(line);
 			if (cutempty && (line=="")) { lines.erase(lines.begin()+i); linenums.erase(linenums.begin()+i); continue;}
 			if ((commentindicator!="") && (BeginsWith(line,commentindicator))) { lines.erase(lines.begin()+i); linenums.erase(linenums.begin()+i); continue;}
@@ -111,7 +107,7 @@ bool TTextFileReader::LoadFile(TCuboFile *finfo)
 			linenr=1;
 			char buff[2048];
 			while(fgets(buff, 2000, f)!=NULL) {
-					string line=buff;
+					std::string line=buff;
 					lines.push_back(line);
 					linenums.push_back(linenr);
 					linenr++;
@@ -139,7 +135,7 @@ bool TTextFileReader::LoadFile(TCuboFile *finfo)
 
 void TTextFileReader::OutToTTY()
 	{
-	for(unsigned i=0; i<lines.size(); i++) cout << lines[i] << endl;
+	for(unsigned i=0; i<lines.size(); i++) std::cout << lines[i] << std::endl;
 	}
 
 
@@ -150,7 +146,7 @@ int TTextFileReader::GetLineNr()
 	return linenums[linenr];
 	}
 
-string TTextFileReader::NextLine()
+std::string TTextFileReader::NextLine()
 	{
 	linenr++;
 	if (linenr>=(int)lines.size()) return "";
@@ -163,9 +159,9 @@ bool TTextFileReader::isEoF()
 	}
 
 
-bool TTextFileReader::ExtractIntVect(string s,TIntVect &intv,string *ress,string sep)
+bool TTextFileReader::ExtractIntVect(std::string s,TIntVect &intv,std::string *ress,std::string sep)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
 	if (tokens.size()<3) return false;
 	intv.x=atoi(tokens[0].c_str()); ///TODO: Errorchecking
@@ -175,9 +171,9 @@ bool TTextFileReader::ExtractIntVect(string s,TIntVect &intv,string *ress,string
 	return true;
 	}
 
-bool TTextFileReader::ExtractIntVectFace(string s,TIntVect &intv,string *ress,string sep)
+bool TTextFileReader::ExtractIntVectFace(std::string s,TIntVect &intv,std::string *ress,std::string sep)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
 	if (tokens.size()<3)
 			{
@@ -196,9 +192,9 @@ bool TTextFileReader::ExtractIntVectFace(string s,TIntVect &intv,string *ress,st
 	}
 
 
-bool TTextFileReader::ExtractIntVect0(string s,TIntVect &intv,string *ress,string sep)
+bool TTextFileReader::ExtractIntVect0(std::string s,TIntVect &intv,std::string *ress,std::string sep)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize0(s,tokens,sep);
 
 	if (tokens.size()<3) return false;
@@ -209,9 +205,9 @@ bool TTextFileReader::ExtractIntVect0(string s,TIntVect &intv,string *ress,strin
 	return true;
 	}
 
-bool TTextFileReader::Extract3dVector(string s,T3dVector &intv,int offs)
+bool TTextFileReader::Extract3dVector(std::string s,T3dVector &intv,int offs)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
 	if (tokens.size()-offs<3) return false;
 	intv.x=atof(tokens[offs+0].c_str()); ///TODO: Errorchecking
@@ -221,9 +217,9 @@ bool TTextFileReader::Extract3dVector(string s,T3dVector &intv,int offs)
 	return true;
 	}
 
-bool TTextFileReader::Extract2dVector(string s,T2dVector &intv,int offs)
+bool TTextFileReader::Extract2dVector(std::string s,T2dVector &intv,int offs)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
 	if (tokens.size()-offs<2) return false;
 	intv.u=atof(tokens[offs+0].c_str()); ///TODO: Errorchecking
@@ -233,15 +229,15 @@ bool TTextFileReader::Extract2dVector(string s,T2dVector &intv,int offs)
 	}
 
 
-void TTextFileReader::ReplaceChar(string &str,char which,char with)
+void TTextFileReader::ReplaceChar(std::string &str,char which,char with)
 	{
 	for (unsigned int i=0; i<str.length(); i++) if (str[i]==which) str[i]=with;
 	}
 
 
-vector<string> TTextFileReader::Seperate(string s,string sep)
+std::vector<std::string> TTextFileReader::Seperate(std::string s,std::string sep)
 	{
-	vector<string> tokens;
+	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
 	return tokens;
 	}
@@ -250,7 +246,7 @@ vector<string> TTextFileReader::Seperate(string s,string sep)
 
 void TBaseModel::Reload()
 	{
-	string fna=name;
+	std::string fna=name;
 	Clear();
 	TCuboFile * finfo =g_BaseFileSystem()->GetFileForReading(name);
 	if (!finfo) {coutlog("Cannot reload model "+name,2); }
@@ -273,7 +269,7 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 	int groupindex=-1;
 	while (!tr.isEoF())
 			{
-			string line=tr.NextLine();
+			std::string line=tr.NextLine();
 //   int linenr=tr.GetLineNr(); //For Error handling
 
 			if (BeginsWith(line,"v "))
@@ -320,7 +316,7 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 							groupindex=0;
 							}
 					//Parse a face
-					vector<string> outertokens;
+					std::vector<std::string> outertokens;
 					outertokens=tr.Seperate(line," ");
 					if (outertokens.size()<4) return false;
 					int faceindex=groups[groupindex].faces.size();
@@ -426,7 +422,7 @@ void TOBJModel::RenderByDef(int defindex)
 void TOBJModel::SmoothSimplify()
 	{
 //Check if doublicate Verts are defined and simplify them
-	vector<int> mapper;
+	std::vector<int> mapper;
 	for (unsigned int i=0; i<verts.size(); i++)
 			{
 			mapper.push_back(i); //Load identity in the mapper
@@ -470,7 +466,7 @@ T3dVector TOBJModel::GetTangent(int g,int f)
 	return tangent;
 	}
 
-void TOBJModel::DrawGroupWithTangent(int g, string TangentNameInShader)
+void TOBJModel::DrawGroupWithTangent(int g, std::string TangentNameInShader)
 	{
 	if (tangents.size()==0) //BUILD THE TANGENTS FOR THIS MODEL
 			{
@@ -534,7 +530,7 @@ void TModelServer::Reload()
 			}
 	}
 
-int TModelServer::GetModel(string fname)
+int TModelServer::GetModel(std::string fname)
 	{
 	for (unsigned int i=0; i<mdls.size(); i++)
 			{
@@ -547,7 +543,7 @@ int TModelServer::AddOBJ(TCuboFile * finfo)
 	{
 
 //TCuboFile * finfo=GetFileName(fname,FILE_MDL,".obj")
-	string fname=finfo->GetName();
+	std::string fname=finfo->GetName();
 
 	int res=GetModel(fname);
 	if (res!=-1) return res;
@@ -631,7 +627,7 @@ void TMdlDef::Call_RenderGroup(int g)
 
 int MDLDEF_Load(lua_State *state)
 	{
-	string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING;
 	int r=g_Game()->GetModelDefs()->AddDef(s);
 	LUA_SET_INT(r);
 	return 1;
@@ -678,7 +674,7 @@ int MODEL_Render(lua_State *state)
 
 int MODEL_LoadOBJ(lua_State *state)
 	{
-	string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING;
 	TCuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
 	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_INT(-1) ; return 1;}
 	int r=g_Game()->GetModels()->AddOBJ(finfo);
@@ -697,7 +693,7 @@ int MODEL_DrawGroup(lua_State *state)
 
 int MODEL_DrawGroupWithTangent(lua_State *state)
 	{
-	string TangentNameInShader=LUA_GET_STRING;
+	std::string TangentNameInShader=LUA_GET_STRING;
 	int group=LUA_GET_INT;
 	int model=LUA_GET_INT;
 	g_Game()->GetModels()->GetModelPtr(model)->DrawGroupWithTangent(group,TangentNameInShader);
