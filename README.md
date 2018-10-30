@@ -24,6 +24,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Separated data and code repos with auto ZIP
 * Fixed few warnings
 * Removed `using namespace std;`
+* Made code C++17 compatible (no either warnings or errors)
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!
