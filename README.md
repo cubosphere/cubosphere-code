@@ -1,4 +1,5 @@
 # Cubosphere [reborn]
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code.svg)](https://circleci.com/gh/cubosphere/cubosphere-code)
 ## A little story behind it
 One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will become great.
 
@@ -25,6 +26,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Fixed few warnings
 * Removed `using namespace std;`
 * Made code C++17 compatible (no either warnings or errors)
+* Configured Cricle CI
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!
