@@ -45,33 +45,34 @@ if not, see <http://www.gnu.org/licenses/>.
 typedef void(*TMouseButtonFunc)(int,int,int,int);
 
 typedef struct
-{
- int pressed;
- int lastx,lasty,relx,rely;
-} TMouseButton;
+	{
+	int pressed;
+	int lastx,lasty,relx,rely;
+	} TMouseButton;
 
 class TMouse
-{
-  protected:
-    int snapping;
-    int x,y,dx,dy,WarpMode;
-    TMouseButtonFunc buttonfunc;
-    TMouseButton buttons[NUM_BUTTONS];
-  public:
-    void Initialize();
-    void BeginDispatch(); //Set the Relative motion to 0
-    void HandleMotion(int cx, int cy, int cpassive);
-    void CenterPointer();
-    void SetCursor(int curs);
-    void SetButtonHandler(TMouseButtonFunc f);
-    void HandleClick(int butt,int press,int x,int y);
-    TMouseButton GetButton(int i);
-    T2dVector getRelativeMotion();
-    void DispatchEvent(SDL_Event *ev);
-    void Snap(int active);
-    int IsSnapped() {return snapping;}
-};
+	{
+	protected:
+		int snapping;
+		int x,y,dx,dy,WarpMode;
+		TMouseButtonFunc buttonfunc;
+		TMouseButton buttons[NUM_BUTTONS];
+	public:
+		void Initialize();
+		void BeginDispatch(); //Set the Relative motion to 0
+		void HandleMotion(int cx, int cy, int cpassive);
+		void CenterPointer();
+		void SetCursor(int curs);
+		void SetButtonHandler(TMouseButtonFunc f);
+		void HandleClick(int butt,int press,int x,int y);
+		TMouseButton GetButton(int i);
+		T2dVector getRelativeMotion();
+		void DispatchEvent(SDL_Event *ev);
+		void Snap(int active);
+		int IsSnapped() {return snapping;}
+	};
 
 extern void LUA_MOUSE_RegisterLib();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

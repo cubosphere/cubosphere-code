@@ -69,225 +69,226 @@ if not, see <http://www.gnu.org/licenses/>.
 #define CUBO_FALL_TILL_LOOKDOWN 0.4
 
 class TCuboPlayer
-{
- protected:
-    int id;
-    tfloat caminterpolation;
-    tfloat camspeed;
-    TLuaVarHolder varholder;
-    vector<int> actorids;
-    int activeact;
-    int lastact;
-    T3dVector pyr;
-    TMatrixObject old_mo,new_mo;
-    void CamMove(int newactor);
- public:
-    TCuboPlayer(int mid) : id(mid), caminterpolation(1.0),camspeed(3),activeact(0), lastact(0) {}
-    void SetCamSpeed(tfloat cs) {camspeed=cs;}
-    bool InCameraPan() {return caminterpolation<1.0;}
-    void SetCameraPos(tfloat elapsed,TMatrixObject *cam);
-    TLuaVarHolder  *GetVarHolder() {return &varholder;}
-    void AddActor(int i);
-    int GetActiveActor() {if ((activeact<0) || (activeact>=(int)actorids.size())) return -1; else return actorids[activeact];}
-    void RemoveActor(int i);
-    int NumActors() {return actorids.size();}
-    int GetActor(int i) {return actorids[i];}
-    int NextActor() ;
-    tfloat GetCamInterpolation() {return caminterpolation;}
-    int GetLastActiveActor() {return actorids[lastact];}
-    int SelectActor(int actorind);
-};
+	{
+	protected:
+		int id;
+		tfloat caminterpolation;
+		tfloat camspeed;
+		TLuaVarHolder varholder;
+		vector<int> actorids;
+		int activeact;
+		int lastact;
+		T3dVector pyr;
+		TMatrixObject old_mo,new_mo;
+		void CamMove(int newactor);
+	public:
+		TCuboPlayer(int mid) : id(mid), caminterpolation(1.0),camspeed(3),activeact(0), lastact(0) {}
+		void SetCamSpeed(tfloat cs) {camspeed=cs;}
+		bool InCameraPan() {return caminterpolation<1.0;}
+		void SetCameraPos(tfloat elapsed,TMatrixObject *cam);
+		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		void AddActor(int i);
+		int GetActiveActor() {if ((activeact<0) || (activeact>=(int)actorids.size())) return -1; else return actorids[activeact];}
+		void RemoveActor(int i);
+		int NumActors() {return actorids.size();}
+		int GetActor(int i) {return actorids[i];}
+		int NextActor() ;
+		tfloat GetCamInterpolation() {return caminterpolation;}
+		int GetLastActiveActor() {return actorids[lastact];}
+		int SelectActor(int actorind);
+	};
 
 
 
 class TActorDef : public TBaseLuaDef
-{
-  public:
-     virtual ~TActorDef() {}
-     virtual int GetType() {return FILE_ACTORDEF;}
-     void Call_Constructor(int id);
-     void Call_Render(int id);
-     int Call_SpecialRender(string nam,int index);
-     void Call_DistRender(int id);
-     void Call_Think(int id);
-     void Call_PostThink(int id);
-     void Call_ActorCollide(int id,int oid);
-     void Call_ActorCollidePlayer(int id,int oid);
-     void Call_ChangeMove(int id,string newmove);
-     void Call_Event(int id,string ev);
-     int Call_CheckLandingOnSide(int id,int side);
-     void SendKey(int actor,int key,int down,int toggle);
-     void SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle);
-     virtual int IsPlayer() {return 1;}
-     string Call_GetEditorInfo(string what,string std);
-};
+	{
+	public:
+		virtual ~TActorDef() {}
+		virtual int GetType() {return FILE_ACTORDEF;}
+		void Call_Constructor(int id);
+		void Call_Render(int id);
+		int Call_SpecialRender(string nam,int index);
+		void Call_DistRender(int id);
+		void Call_Think(int id);
+		void Call_PostThink(int id);
+		void Call_ActorCollide(int id,int oid);
+		void Call_ActorCollidePlayer(int id,int oid);
+		void Call_ChangeMove(int id,string newmove);
+		void Call_Event(int id,string ev);
+		int Call_CheckLandingOnSide(int id,int side);
+		void SendKey(int actor,int key,int down,int toggle);
+		void SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle);
+		virtual int IsPlayer() {return 1;}
+		string Call_GetEditorInfo(string what,string std);
+	};
 
 class TActorDefServer : public TBaseDefServer<TActorDef>
-{
-  public:
-    int GetDef(string name, int forplayer=1);
-    int AddEDef(string name);
-};
+	{
+	public:
+		int GetDef(string name, int forplayer=1);
+		int AddEDef(string name);
+	};
 
 
 //Only the directions (for MayMove)
-const string s_CuboMoveStringsDir[]={"none","forward","forward","rolldown","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumpahead","changegravity"};
+const string s_CuboMoveStringsDir[]= {"none","forward","forward","rolldown","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumpahead","changegravity"};
 //Full strings (for Animation)
-const string s_CuboMoveStringsMove[]={"none","forward","up","down","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumphigh","changegravity"};
+const string s_CuboMoveStringsMove[]= {"none","forward","up","down","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumphigh","changegravity"};
 
 
 
 typedef T3dVector TBasis[3];
 
 class TCuboMovement
-{
-  protected:
-    int defindex;
-    int id;
-    int selectable;
-    int inmove,lastmove;
-    int resetview;
-    int inhighjump;
-    TBasis oldbase;
-    TBasis newbase;
-    TBasis base; //The basis, consist of side,up,dir
-    float falltime;
-    float j_heightoverground; //How far are we over the ground ///with respect to the last jumping height
-    float j_dist,j_desdist;//How far are we jumped forward and should we jump forward
-    float j_flytime;
-    T3dVector pos;
-    T3dVector newpos;
-    T3dVector oldpos;
-    TCuboLevel *lvl;
-    TCuboBlock *onBlock;
-    TCuboBlock *BlockUnderMe;
-    TLuaVarHolder varholder;
-    T3dVector camfloats;       //
-    T3dVector lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
-    T3dVector lookdownfloats;  //
-    float CUBO_MOVESPEED,CUBO_GROUND_DIST,CUBO_GROUND_DIST_OFFS,CUBO_JUMP_UPVEL,CUBO_FARJUMP_UPVEL,CUBO_HIGHJUMP_UPVEL,CUBO_GRAVITY_G,CUBO_MAX_FALLSPEED,CUBO_ROTSPEED,LATE_FORWARD_JUMP_TIME,FORWARD_PRESS_TIME,FORWARD_PRESS_TIME_JUMP,ROTATE_STOP_TIME;
-    float distance_normjump,distance_farjump,distance_highjump;
-    int startposset;
-    int BlockSideUnderMe;
-    int inAir;
-    float yvel,dvel;
-    float lookpos;
-    int lookdir;
-    int onSide,startrot;
-    int laststaticside;
-    int movementcheck;
-    string jumptype;
-  //  TCuboBlock *prevBlock;
-    int prevSide;
-    float moveInterpolate; //From 0 to 1... how far did we move on the blocks
-    float forwardpresstime; //How long is the last forward press away
-    float lateforwardjumptime; //How long do we have left to press forward after jumping to invoke forward jump
-    float rotatestoptime;
-    float camzrot;
-    int cammirror;
-      double timemultiplicator;
-    double gravitychangespeed;//For changing gravity
-    int grav180rot; //For upside down rotation
-    double tempmovespeedmultiply;
-   // float radius;
-    T3dVector AtBlockPos(TCuboBlock *b,int s);
-    int DirVectToSide(T3dVector dirvect);
-    TCuboBlock *GetRelBlock(TCuboBlock *b,T3dVector dir);
-    TCuboBlock *GetRelBlock(TCuboBlock *b,int side);
-    void AirMove(float elapsed);
-    int MayMove(int typ);
-    void Call_ChangeMove();
-    int player;
-  public:
-    void SetPlayer(int plr)  {player=plr;}
-    int GetPlayer() {return player;}
-    virtual ~TCuboMovement();
-    int IsSelectable() {return selectable;}
-    void SetSelectable(int s) {selectable=s;}
-    TCuboMovement() : selectable(1), camfloats(3,3.0/2.0,3.0/4.0), lookupfloats(0.01,3.355, 3.0/4.0), lookdownfloats(0.2,1.0/5.0,2.0), CUBO_MOVESPEED(CUBO_MOVESPEED_STD),
-                      CUBO_GROUND_DIST(CUBO_GROUND_DIST_STD), CUBO_GROUND_DIST_OFFS(0), CUBO_JUMP_UPVEL(CUBO_JUMP_UPVEL_STD), CUBO_FARJUMP_UPVEL(CUBO_FARJUMP_UPVEL_STD), CUBO_HIGHJUMP_UPVEL(CUBO_HIGHJUMP_UPVEL_STD), CUBO_GRAVITY_G(CUBO_GRAVITY_G_STD),
-                      CUBO_MAX_FALLSPEED(CUBO_MAX_FALLSPEED_STD),  CUBO_ROTSPEED(CUBO_ROTSPEED_STD), LATE_FORWARD_JUMP_TIME(LATE_FORWARD_JUMP_TIME_STD),
-                      FORWARD_PRESS_TIME(FORWARD_PRESS_TIME_STD),FORWARD_PRESS_TIME_JUMP(FORWARD_PRESS_TIME_JUMP_STD), ROTATE_STOP_TIME(ROTATE_STOP_TIME_STD),
-                      distance_normjump(2),distance_farjump(3),distance_highjump(1), startposset(0), lookpos(0),startrot(0), camzrot(0), cammirror(0),timemultiplicator(1.0),player(-1) {}
-    TLuaVarHolder  *GetVarHolder() {return &varholder;}
-    virtual void SetType(int mid,string name);
-    void SetID(int mid) {id=mid;}
-    void Render();
-    void SpecialRender(string nam,int defrender);
-    void SetRotateStopTime(double current,double def) {rotatestoptime=current; ROTATE_STOP_TIME=def;}
-    void InterpolateMove(double elapsed);
-     void FinalizeMove();
-     void PostLevelThink();
-    void Init(TCuboLevel *level);
-    void MoveForward();
-    void RotateRight();
-    void RotateLeft();
-    void SendKey(int key,int down,int toggle);
-    void LookUp();
-    void LookDown();
-    void LookReset();
-    void SetMovementCheck(int mvcheck) {movementcheck=mvcheck;}
-    int GetMovementCheck() {return movementcheck;}
-    float GetLookPos() {return lookpos;}
-    void SetLookPos(float v) {lookpos=v;}
-    void Jump();
-    int ChangeGravity(T3dVector newgrav,T3dVector newp,double changespeed,int do_at_same_gravity);
-    void SetTimeMultiplicator(double tm) {timemultiplicator=tm;}
+	{
+	protected:
+		int defindex;
+		int id;
+		int selectable;
+		int inmove,lastmove;
+		int resetview;
+		int inhighjump;
+		TBasis oldbase;
+		TBasis newbase;
+		TBasis base; //The basis, consist of side,up,dir
+		float falltime;
+		float j_heightoverground; //How far are we over the ground ///with respect to the last jumping height
+		float j_dist,j_desdist;//How far are we jumped forward and should we jump forward
+		float j_flytime;
+		T3dVector pos;
+		T3dVector newpos;
+		T3dVector oldpos;
+		TCuboLevel *lvl;
+		TCuboBlock *onBlock;
+		TCuboBlock *BlockUnderMe;
+		TLuaVarHolder varholder;
+		T3dVector camfloats;       //
+		T3dVector lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
+		T3dVector lookdownfloats;  //
+		float CUBO_MOVESPEED,CUBO_GROUND_DIST,CUBO_GROUND_DIST_OFFS,CUBO_JUMP_UPVEL,CUBO_FARJUMP_UPVEL,CUBO_HIGHJUMP_UPVEL,CUBO_GRAVITY_G,CUBO_MAX_FALLSPEED,CUBO_ROTSPEED,LATE_FORWARD_JUMP_TIME,FORWARD_PRESS_TIME,FORWARD_PRESS_TIME_JUMP,ROTATE_STOP_TIME;
+		float distance_normjump,distance_farjump,distance_highjump;
+		int startposset;
+		int BlockSideUnderMe;
+		int inAir;
+		float yvel,dvel;
+		float lookpos;
+		int lookdir;
+		int onSide,startrot;
+		int laststaticside;
+		int movementcheck;
+		string jumptype;
+		//  TCuboBlock *prevBlock;
+		int prevSide;
+		float moveInterpolate; //From 0 to 1... how far did we move on the blocks
+		float forwardpresstime; //How long is the last forward press away
+		float lateforwardjumptime; //How long do we have left to press forward after jumping to invoke forward jump
+		float rotatestoptime;
+		float camzrot;
+		int cammirror;
+		double timemultiplicator;
+		double gravitychangespeed;//For changing gravity
+		int grav180rot; //For upside down rotation
+		double tempmovespeedmultiply;
+		// float radius;
+		T3dVector AtBlockPos(TCuboBlock *b,int s);
+		int DirVectToSide(T3dVector dirvect);
+		TCuboBlock *GetRelBlock(TCuboBlock *b,T3dVector dir);
+		TCuboBlock *GetRelBlock(TCuboBlock *b,int side);
+		void AirMove(float elapsed);
+		int MayMove(int typ);
+		void Call_ChangeMove();
+		int player;
+	public:
+		void SetPlayer(int plr)  {player=plr;}
+		int GetPlayer() {return player;}
+		virtual ~TCuboMovement();
+		int IsSelectable() {return selectable;}
+		void SetSelectable(int s) {selectable=s;}
+		TCuboMovement() : selectable(1), camfloats(3,3.0/2.0,3.0/4.0), lookupfloats(0.01,3.355, 3.0/4.0), lookdownfloats(0.2,1.0/5.0,2.0), CUBO_MOVESPEED(CUBO_MOVESPEED_STD),
+			CUBO_GROUND_DIST(CUBO_GROUND_DIST_STD), CUBO_GROUND_DIST_OFFS(0), CUBO_JUMP_UPVEL(CUBO_JUMP_UPVEL_STD), CUBO_FARJUMP_UPVEL(CUBO_FARJUMP_UPVEL_STD), CUBO_HIGHJUMP_UPVEL(CUBO_HIGHJUMP_UPVEL_STD), CUBO_GRAVITY_G(CUBO_GRAVITY_G_STD),
+			CUBO_MAX_FALLSPEED(CUBO_MAX_FALLSPEED_STD),  CUBO_ROTSPEED(CUBO_ROTSPEED_STD), LATE_FORWARD_JUMP_TIME(LATE_FORWARD_JUMP_TIME_STD),
+			FORWARD_PRESS_TIME(FORWARD_PRESS_TIME_STD),FORWARD_PRESS_TIME_JUMP(FORWARD_PRESS_TIME_JUMP_STD), ROTATE_STOP_TIME(ROTATE_STOP_TIME_STD),
+			distance_normjump(2),distance_farjump(3),distance_highjump(1), startposset(0), lookpos(0),startrot(0), camzrot(0), cammirror(0),timemultiplicator(1.0),player(-1) {}
+		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		virtual void SetType(int mid,string name);
+		void SetID(int mid) {id=mid;}
+		void Render();
+		void SpecialRender(string nam,int defrender);
+		void SetRotateStopTime(double current,double def) {rotatestoptime=current; ROTATE_STOP_TIME=def;}
+		void InterpolateMove(double elapsed);
+		void FinalizeMove();
+		void PostLevelThink();
+		void Init(TCuboLevel *level);
+		void MoveForward();
+		void RotateRight();
+		void RotateLeft();
+		void SendKey(int key,int down,int toggle);
+		void LookUp();
+		void LookDown();
+		void LookReset();
+		void SetMovementCheck(int mvcheck) {movementcheck=mvcheck;}
+		int GetMovementCheck() {return movementcheck;}
+		float GetLookPos() {return lookpos;}
+		void SetLookPos(float v) {lookpos=v;}
+		void Jump();
+		int ChangeGravity(T3dVector newgrav,T3dVector newp,double changespeed,int do_at_same_gravity);
+		void SetTimeMultiplicator(double tm) {timemultiplicator=tm;}
 
-    float GetRadius() {return CUBO_GROUND_DIST;}
-    void SetRadius(float r) {CUBO_GROUND_DIST=r; }
+		float GetRadius() {return CUBO_GROUND_DIST;}
+		void SetRadius(float r) {CUBO_GROUND_DIST=r; }
 
-    float GetGroundOffset() {return CUBO_GROUND_DIST_OFFS;}
-    void SetGroundOffset(float d) {CUBO_GROUND_DIST_OFFS=d; }
+		float GetGroundOffset() {return CUBO_GROUND_DIST_OFFS;}
+		void SetGroundOffset(float d) {CUBO_GROUND_DIST_OFFS=d; }
 
-    float GetSpeed() {return CUBO_MOVESPEED;}
-    void SetSpeed(float v) {CUBO_MOVESPEED=v;}
-    void SetJumpParams(float uv,float faruv,float highuv, float g,float mspeed) {CUBO_JUMP_UPVEL=uv; CUBO_HIGHJUMP_UPVEL=highuv; CUBO_FARJUMP_UPVEL=faruv; CUBO_GRAVITY_G=g; CUBO_MAX_FALLSPEED=mspeed;}
-    void SetJumpDistances(float uv,float faruv,float highuv) {distance_normjump=uv; distance_farjump=faruv; distance_highjump=highuv;}
-    void SetJumpTiming(float fwpt,float fwptj,float lateforward) {FORWARD_PRESS_TIME=fwpt; FORWARD_PRESS_TIME_JUMP=fwptj;  LATE_FORWARD_JUMP_TIME=lateforward; }
-    void SetForwardPressTime(float fpt) {forwardpresstime=fpt;}
-    void SetCamParams(string what,T3dVector params);
-    void SetCamZRotation(tfloat zr,int mirror);
-    float s_MoveSpeed(int move);
-    void HighJump();
-    void FarJump(); //3 Blocks
-    void JumpUp(); //Ensures that we only jump up.. For callmove on onedir blocks
-    void SetCamPos(TMatrixObject *cam);
-    int GetID() {return id;}
-    T3dVector GetPos() {return pos;}
-    T3dVector GetOldPos() {return oldpos;}
-    T3dVector GetSide() {return base[CUBO_SIDEV];}
-    T3dVector GetUp() {return base[CUBO_UPV];}
-    T3dVector GetDir() {return base[CUBO_DIRV];}
-    int GetOnSideID();
-    int GetLastOnSideID();
-      int GetPrevOnSideID();
-    int TraceOnSideID();
-    void Think();
-    void DistRender();
-    void SetStartPos(TCuboBlockSide *sside,int srot);
-    int GetJumpDistBlocks();
-    void SetJumpDistBlocks(int d);
-    void ResetForwardPressTime() {forwardpresstime=0;}
-    virtual int IsPlayer() {return 1;}
-    float GetUpVel() {return yvel;}
-    void SetUpVel(double v) {yvel=v;}
-    string GetMoveType();
-    void CheckEnemyCollision(TCuboMovement * other);
-    void CheckPlayerCollision(TCuboMovement * other);
-    string GetType();
-    int GetStartRotation() {return startrot;}
-    string GetEditorInfo(string what,string def);
-    void SetRotSpeed(float v);
-    void SendJoyButton(int stick,int button,int dir,int down,int toggle);
-    void Rebounce(TCuboMovement *other);
-    void SetTemporaryMoveSpeedMultiplier(double mltp) {tempmovespeedmultiply=mltp;}
-     double GetTemporaryMoveSpeedMultiplier() {return tempmovespeedmultiply;}
-    void FrontSideRebounce();
-};
+		float GetSpeed() {return CUBO_MOVESPEED;}
+		void SetSpeed(float v) {CUBO_MOVESPEED=v;}
+		void SetJumpParams(float uv,float faruv,float highuv, float g,float mspeed) {CUBO_JUMP_UPVEL=uv; CUBO_HIGHJUMP_UPVEL=highuv; CUBO_FARJUMP_UPVEL=faruv; CUBO_GRAVITY_G=g; CUBO_MAX_FALLSPEED=mspeed;}
+		void SetJumpDistances(float uv,float faruv,float highuv) {distance_normjump=uv; distance_farjump=faruv; distance_highjump=highuv;}
+		void SetJumpTiming(float fwpt,float fwptj,float lateforward) {FORWARD_PRESS_TIME=fwpt; FORWARD_PRESS_TIME_JUMP=fwptj;  LATE_FORWARD_JUMP_TIME=lateforward; }
+		void SetForwardPressTime(float fpt) {forwardpresstime=fpt;}
+		void SetCamParams(string what,T3dVector params);
+		void SetCamZRotation(tfloat zr,int mirror);
+		float s_MoveSpeed(int move);
+		void HighJump();
+		void FarJump(); //3 Blocks
+		void JumpUp(); //Ensures that we only jump up.. For callmove on onedir blocks
+		void SetCamPos(TMatrixObject *cam);
+		int GetID() {return id;}
+		T3dVector GetPos() {return pos;}
+		T3dVector GetOldPos() {return oldpos;}
+		T3dVector GetSide() {return base[CUBO_SIDEV];}
+		T3dVector GetUp() {return base[CUBO_UPV];}
+		T3dVector GetDir() {return base[CUBO_DIRV];}
+		int GetOnSideID();
+		int GetLastOnSideID();
+		int GetPrevOnSideID();
+		int TraceOnSideID();
+		void Think();
+		void DistRender();
+		void SetStartPos(TCuboBlockSide *sside,int srot);
+		int GetJumpDistBlocks();
+		void SetJumpDistBlocks(int d);
+		void ResetForwardPressTime() {forwardpresstime=0;}
+		virtual int IsPlayer() {return 1;}
+		float GetUpVel() {return yvel;}
+		void SetUpVel(double v) {yvel=v;}
+		string GetMoveType();
+		void CheckEnemyCollision(TCuboMovement * other);
+		void CheckPlayerCollision(TCuboMovement * other);
+		string GetType();
+		int GetStartRotation() {return startrot;}
+		string GetEditorInfo(string what,string def);
+		void SetRotSpeed(float v);
+		void SendJoyButton(int stick,int button,int dir,int down,int toggle);
+		void Rebounce(TCuboMovement *other);
+		void SetTemporaryMoveSpeedMultiplier(double mltp) {tempmovespeedmultiply=mltp;}
+		double GetTemporaryMoveSpeedMultiplier() {return tempmovespeedmultiply;}
+		void FrontSideRebounce();
+	};
 
 
 extern void LUA_ACTOR_RegisterLib();
 extern void LUA_PLAYER_RegisterLib();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

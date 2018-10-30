@@ -26,52 +26,52 @@ static vector<string> themedirs;
 static string momThemeName="";
 
 string GetThemeName()
-{
- return momThemeName;
-}
+	{
+	return momThemeName;
+	}
 
 
 string ThemeFileName(string dir,string fname,string ext)
-{
- //Parsing all sub dirs... If no file is found return the normal dirname
+	{
+//Parsing all sub dirs... If no file is found return the normal dirname
 
- for (unsigned int i=0;i<themedirs.size();i++)
- {
-   string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
-   TCuboFile *finfo=GetCuboFileFromRelativeName(testname);
-   if (finfo) {
-     delete finfo;
-     return testname;
-   }
- }
- return dir+"/"+fname+ext;
-}
+	for (unsigned int i=0; i<themedirs.size(); i++)
+			{
+			string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
+			TCuboFile *finfo=GetCuboFileFromRelativeName(testname);
+			if (finfo) {
+					delete finfo;
+					return testname;
+					}
+			}
+	return dir+"/"+fname+ext;
+	}
 
 void ThemeClear()
-{
- themedirs.clear();
-}
+	{
+	themedirs.clear();
+	}
 void ThemeAddDir(string subdir)
-{
- themedirs.push_back(subdir);
-}
+	{
+	themedirs.push_back(subdir);
+	}
 
 void ThemeLoad(string n)
-{
-  if (n!=momThemeName)
-  {
-    //Make sure to clear everythink
-    g_Game()->FreeMedia();
-  }
-  momThemeName=n;
+	{
+	if (n!=momThemeName)
+			{
+			//Make sure to clear everythink
+			g_Game()->FreeMedia();
+			}
+	momThemeName=n;
 
-  TLuaAccess lua;
-  TCuboFile *finfo=GetFileName(n,FILE_THEMEDEF,".themedef");
-  if (!finfo) {coutlog("ERROR: Cannot load theme "+n,2); return;}
-  lua.Include(g_CuboLib());
-  lua.LoadFile(finfo,FILE_THEMEDEF,-1);
-  delete finfo;
-}
+	TLuaAccess lua;
+	TCuboFile *finfo=GetFileName(n,FILE_THEMEDEF,".themedef");
+	if (!finfo) {coutlog("ERROR: Cannot load theme "+n,2); return;}
+	lua.Include(g_CuboLib());
+	lua.LoadFile(finfo,FILE_THEMEDEF,-1);
+	delete finfo;
+	}
 
 
 
@@ -80,34 +80,35 @@ void ThemeLoad(string n)
 
 
 int THEME_Clear(lua_State *state)
-{
-    ThemeClear();
-    return 0;
-}
+	{
+	ThemeClear();
+	return 0;
+	}
 int THEME_AddDir(lua_State *state)
-{
-    string s=LUA_GET_STRING;
-    ThemeAddDir(s);
-    return 0;
-}
+	{
+	string s=LUA_GET_STRING;
+	ThemeAddDir(s);
+	return 0;
+	}
 int THEME_Load(lua_State *state)
-{
-  string s=LUA_GET_STRING;
-  ThemeLoad(s);
-  return 0;
-}
+	{
+	string s=LUA_GET_STRING;
+	ThemeLoad(s);
+	return 0;
+	}
 
 int THEME_GetName(lua_State *state)
-{
-  string s=GetThemeName();
-  LUA_SET_STRING(s);
-  return 1;
-}
+	{
+	string s=GetThemeName();
+	LUA_SET_STRING(s);
+	return 1;
+	}
 
 void LUA_THEME_RegisterLib()
-{
- g_CuboLib()->AddFunc("THEME_Clear",THEME_Clear);
- g_CuboLib()->AddFunc("THEME_AddDir",THEME_AddDir);
- g_CuboLib()->AddFunc("THEME_Load",THEME_Load);
- g_CuboLib()->AddFunc("THEME_GetName",THEME_GetName);
-}
+	{
+	g_CuboLib()->AddFunc("THEME_Clear",THEME_Clear);
+	g_CuboLib()->AddFunc("THEME_AddDir",THEME_AddDir);
+	g_CuboLib()->AddFunc("THEME_Load",THEME_Load);
+	g_CuboLib()->AddFunc("THEME_GetName",THEME_GetName);
+	}
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

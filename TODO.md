@@ -3,6 +3,7 @@
  * [x] Separate data to another repo
 
 # Soon after upload [in progress]
+ * [ ] Update credits/links
  * [ ] Update license
  * [ ] Update various Readme's
  * [ ] Fix warnings (some are bugs-related) and C++17 errors…
@@ -10,10 +11,12 @@
  * [ ] Setup CI build
 
 # After base setup
+ * [ ] Stop using std!
  * [ ] Add Russian transation
  * [ ] Make .deb package…
  * [ ] …and post it to PPA
  * [ ] Invite people for testing
+ * [ ] Do some TODO's from code
 
 # Meanwhile
  * [ ] Contact original developers for some hints (How to translate some secrets? I didn't solved them)

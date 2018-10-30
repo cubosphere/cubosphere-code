@@ -39,22 +39,23 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "joystick.hpp"
 
 class TEventManager
-{
-  protected:
-    int windowclose;
-    TKeyboard *keyb;
-    TMouse *mouse;
-    TJoystickServer *joy;
-  public:
-    TEventManager() : windowclose(0) {};
-    void HandleEvents();
-    void Close() {windowclose=1;}
-    int Closed() {return windowclose;}
-    void SetMouse(TMouse *m) {mouse=m;}
-    void SetKeyboard(TKeyboard *kb) {keyb=kb;}
-    void SetJoystick(TJoystickServer *ys) {joy=ys;}
-};
+	{
+	protected:
+		int windowclose;
+		TKeyboard *keyb;
+		TMouse *mouse;
+		TJoystickServer *joy;
+	public:
+		TEventManager() : windowclose(0) {};
+		void HandleEvents();
+		void Close() {windowclose=1;}
+		int Closed() {return windowclose;}
+		void SetMouse(TMouse *m) {mouse=m;}
+		void SetKeyboard(TKeyboard *kb) {keyb=kb;}
+		void SetJoystick(TJoystickServer *ys) {joy=ys;}
+	};
 
 
 #endif
 
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

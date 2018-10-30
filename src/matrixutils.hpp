@@ -41,23 +41,24 @@ class T4dGlutVector : public T4dVector
 */
 
 class T4dGlutMatrix: public T4dMatrix
-{
-  protected:
-  public:
-    int mode;
-    T4dGlutMatrix();
-    T4dGlutMatrix(tfloat scal);
-    void glPushMult();
-    void glMult();
-    void glPop();
-    void glPushLoad();
-    void glLoad();
-    const T3dVector getPos(); //Returns the last col
-    void setPos(const T3dVector&); //sets the last col
-    void assign(T4dMatrix* other);
-};
+	{
+	protected:
+	public:
+		int mode;
+		T4dGlutMatrix();
+		T4dGlutMatrix(tfloat scal);
+		void glPushMult();
+		void glMult();
+		void glPop();
+		void glPushLoad();
+		void glLoad();
+		const T3dVector getPos(); //Returns the last col
+		void setPos(const T3dVector&); //sets the last col
+		void assign(T4dMatrix* other);
+	};
 
 
 extern void LUA_MATRIX_RegisterLib();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

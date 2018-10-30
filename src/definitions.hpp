@@ -30,82 +30,82 @@ using namespace std;
 
 
 class TBaseLuaDef
-{
- protected:
-   string name;
-   string fname;
-   TLuaAccess lua;
-   int isloaded;
-   int myid;
-   virtual int SendIDWhenPrecache() {return 0;}
- public:
-  virtual ~TBaseLuaDef();
-  TBaseLuaDef() : name(""), isloaded(0), myid(-1) {}
-  virtual int GetType()=0;
-  void SetName(string cname) {name=cname;}
-  string GetName() {return name;}
-  int IsLoaded() {return isloaded;}
-  void SetID(int cid) {myid=cid;}
-  virtual void LoadDef();
-  virtual void Reload();
-};
+	{
+	protected:
+		string name;
+		string fname;
+		TLuaAccess lua;
+		int isloaded;
+		int myid;
+		virtual int SendIDWhenPrecache() {return 0;}
+	public:
+		virtual ~TBaseLuaDef();
+		TBaseLuaDef() : name(""), isloaded(0), myid(-1) {}
+		virtual int GetType()=0;
+		void SetName(string cname) {name=cname;}
+		string GetName() {return name;}
+		int IsLoaded() {return isloaded;}
+		void SetID(int cid) {myid=cid;}
+		virtual void LoadDef();
+		virtual void Reload();
+	};
 
 template<typename T> class TBaseDefServer
-{
-  protected:
-    vector<T*> defs;
-  public:
-    void clear()
-    {
-        for (unsigned int i=0; i<defs.size();i++) if (defs[i]) { delete defs[i]; defs[i]=NULL;}
-        defs.resize(0);
-    }
-    virtual ~TBaseDefServer()
-    {
-        clear();
-    }
-    int GetDef(string name)
-    {
-       for (unsigned int i=0; i<defs.size();i++) if (defs[i]->GetName()==name) return (i);
-       return -1;
-    }
-    void Reload()
-    {
-       for (unsigned int i=0; i<defs.size();i++) defs[i]->Reload();
-    }
-    int AddDef(string name)
-    {
-       int def=GetDef(name);
-       if (def>-1) return def; //Have it already
-       defs.push_back(new T());
-       defs.back()->SetName(name);
-       def=defs.size()-1;
-       defs[def]->SetID(def);
-       defs[def]->LoadDef();
-       return def;
-    }
-    T* GetDefPtr(int i) {return defs[i];}
-};
+	{
+	protected:
+		vector<T*> defs;
+	public:
+		void clear()
+			{
+			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]) { delete defs[i]; defs[i]=NULL;}
+			defs.resize(0);
+			}
+		virtual ~TBaseDefServer()
+			{
+			clear();
+			}
+		int GetDef(string name)
+			{
+			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) return (i);
+			return -1;
+			}
+		void Reload()
+			{
+			for (unsigned int i=0; i<defs.size(); i++) defs[i]->Reload();
+			}
+		int AddDef(string name)
+			{
+			int def=GetDef(name);
+			if (def>-1) return def; //Have it already
+			defs.push_back(new T());
+			defs.back()->SetName(name);
+			def=defs.size()-1;
+			defs[def]->SetID(def);
+			defs[def]->LoadDef();
+			return def;
+			}
+		T* GetDefPtr(int i) {return defs[i];}
+	};
 
 ////////////////////////////////////
 
 class TMenu : public TBaseLuaDef
-{
-  protected:
-     int change;
-     string nextname;
-  public:
-     virtual int GetType() {return FILE_MENUDEF;}
-     TMenu() : TBaseLuaDef(), change(0) {};
-     virtual void LoadDef(string cname);
-    // virtual void Reload();
-     void Render();
-     void Think();
-     void PostThink();
-     void SendKey(int key, int down, int toggle);
-     void SendJoyButton(int joy,int button,int dir,int down,int toggle);
-     void JoyAxisChange(int joys,int axis,double val,double pval);
-};
+	{
+	protected:
+		int change;
+		string nextname;
+	public:
+		virtual int GetType() {return FILE_MENUDEF;}
+		TMenu() : TBaseLuaDef(), change(0) {};
+		virtual void LoadDef(string cname);
+		// virtual void Reload();
+		void Render();
+		void Think();
+		void PostThink();
+		void SendKey(int key, int down, int toggle);
+		void SendJoyButton(int joy,int button,int dir,int down,int toggle);
+		void JoyAxisChange(int joys,int axis,double val,double pval);
+	};
 
 extern void LUA_MENU_RegisterLib();
 
@@ -113,3 +113,4 @@ extern void LUA_MENU_RegisterLib();
 
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

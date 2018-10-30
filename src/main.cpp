@@ -79,26 +79,26 @@ TCuboGame game;
 
 
 void MakeConsole()
-{
+	{
 #ifdef WIN32
 
- freopen("CON", "wb", stdout);
-    freopen("CON", "wb", stderr);
+	freopen("CON", "wb", stdout);
+	freopen("CON", "wb", stderr);
 
 #endif
-}
+	}
 
 void KillConsole()
-{
-    #ifdef WIN32
+	{
+#ifdef WIN32
 
-fflush(stdout);
-fflush(stderr);
- fclose(stdout);
-    fclose(stderr);
+	fflush(stdout);
+	fflush(stderr);
+	fclose(stdout);
+	fclose(stderr);
 
 #endif
-}
+	}
 
 
 
@@ -107,100 +107,101 @@ extern "C" {
 #endif
 
 int main(int argc, char *argv[])
-{
-    SetCmdLine(argc,argv);
-    char *dc;
-    dc=strdup(argv[0]);
-    string dir=dirname(dc);
-    free(dc);
-    SetBaseDir(dir);
+	{
+	SetCmdLine(argc,argv);
+	char *dc;
+	dc=strdup(argv[0]);
+	string dir=dirname(dc);
+	free(dc);
+	SetBaseDir(dir);
 
 
 //Patch from Vincent Petry - Thanks!
 #ifndef WIN32
-    string configDir( getenv("HOME") );
-    string configSubDir;
-    configDir.append("/.cubosphere");
-    configSubDir = configDir + "/levels";
-    string SaveDir = configDir + "/saves";
-    // check whether config folder exists
-    struct stat s;
-    if (stat(configSubDir.c_str(), &s) != 0)
-    {
-       // if not, create it
-       configSubDir = configDir;
-       mkdir(configSubDir.c_str(), S_IRWXU);
-       configSubDir += "/levels";
-       mkdir(configSubDir.c_str(), S_IRWXU);
-       printf("Creating dir: %s\n", configSubDir.c_str());
-    }
-    if (stat(SaveDir.c_str(), &s) != 0)
-    {
-       mkdir(SaveDir.c_str(), S_IRWXU);
-       printf("Creating dir: %s\n", SaveDir.c_str());
-    }
-    SetProfileDir(configDir);
-    printf("Using config dir: %s\n", configDir.c_str());
+	string configDir( getenv("HOME") );
+	string configSubDir;
+	configDir.append("/.cubosphere");
+	configSubDir = configDir + "/levels";
+	string SaveDir = configDir + "/saves";
+	// check whether config folder exists
+	struct stat s;
+	if (stat(configSubDir.c_str(), &s) != 0)
+			{
+			// if not, create it
+			configSubDir = configDir;
+			mkdir(configSubDir.c_str(), S_IRWXU);
+			configSubDir += "/levels";
+			mkdir(configSubDir.c_str(), S_IRWXU);
+			printf("Creating dir: %s\n", configSubDir.c_str());
+			}
+	if (stat(SaveDir.c_str(), &s) != 0)
+			{
+			mkdir(SaveDir.c_str(), S_IRWXU);
+			printf("Creating dir: %s\n", SaveDir.c_str());
+			}
+	SetProfileDir(configDir);
+	printf("Using config dir: %s\n", configDir.c_str());
 #else
-    SetProfileDir(dir+PlattformFilename("/user"));
+	SetProfileDir(dir+PlattformFilename("/user"));
 #endif
 
 #ifdef DATADIR
-    SetDataDir(DATADIR);
+	SetDataDir(DATADIR);
 #else
-    SetDataDir(dir+PlattformFilename("/data"));
+	SetDataDir(dir+PlattformFilename("/data"));
 #endif
 
-    MakeConsole();
+	MakeConsole();
 
-    cout << "STARTING in basedir: " << dir << endl << "SDL_Init returns: "<<
-    SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << endl;
+	cout << "STARTING in basedir: " << dir << endl << "SDL_Init returns: "<<
+			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << endl;
 
-  //SDL_Init( SDL_INIT_EVERYTHING) << endl;
+	//SDL_Init( SDL_INIT_EVERYTHING) << endl;
 
-    SDL_WM_SetCaption("Cubosphere","Cubosphere");
+	SDL_WM_SetCaption("Cubosphere","Cubosphere");
 
-SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
 //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
-SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 //SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
-SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 
 
 
 
-    atexit(closelog);
+	atexit(closelog);
 
 
 
-    game.Init();
-    game.Start();
-    game.FreeMedia();
+	game.Init();
+	game.Start();
+	game.FreeMedia();
 
-if (g_VerboseMode()) coutlog("Ending game engine");
-    game.End();
+	if (g_VerboseMode()) coutlog("Ending game engine");
+	game.End();
 
-if (g_VerboseMode()) coutlog("Stopping sound");
-    g_Sounds()->KillSound();
+	if (g_VerboseMode()) coutlog("Stopping sound");
+	g_Sounds()->KillSound();
 
-if (g_VerboseMode()) coutlog("SDL quit");
-    SDL_Quit();
+	if (g_VerboseMode()) coutlog("SDL quit");
+	SDL_Quit();
 
-if (g_VerboseMode()) coutlog("Umount console");
-    KillConsole();
+	if (g_VerboseMode()) coutlog("Umount console");
+	KillConsole();
 
- //   return 0;
+//   return 0;
 
-if (g_VerboseMode()) coutlog("-> Good bye!");
-    return EXIT_SUCCESS;
-}
+	if (g_VerboseMode()) coutlog("-> Good bye!");
+	return EXIT_SUCCESS;
+	}
 
 
 #ifdef __cplusplus
-}
+	}
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

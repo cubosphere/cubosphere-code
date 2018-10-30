@@ -24,15 +24,16 @@ using namespace std;
 extern std::string IntToString(const int& t);
 extern bool BeginsWith(const string &str, const string &with);
 extern void Tokenize(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters = " ");
+		vector<string>& tokens,
+		const string& delimiters = " ");
 
 extern void TokenizeFull(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters = " ");
+		vector<string>& tokens,
+		const string& delimiters = " ");
 extern void TrimSpaces( string& str);
 
 
 
 #endif
 
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

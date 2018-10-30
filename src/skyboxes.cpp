@@ -41,29 +41,30 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 void TSkyBox::Render()
-{
- if (lua.FuncExists("Render"))
-   lua.CallVA("Render","");
+	{
+	if (lua.FuncExists("Render"))
+		lua.CallVA("Render","");
 
-}
+	}
 
 void TSkyBox::SpecialRender(string nam,int defrender)
-{
- if (lua.FuncExists("SpecialRender"))
- {
-   lua.CallVA("SpecialRender","s",nam.c_str());
- }
- else
-  {
-   if (defrender==1) Render();
-   else if (defrender==0 && g_PostEffect())  g_PostEffect()->CallDefaultSpecialRender(nam,"sky",0);
-  }
+	{
+	if (lua.FuncExists("SpecialRender"))
+			{
+			lua.CallVA("SpecialRender","s",nam.c_str());
+			}
+	else
+			{
+			if (defrender==1) Render();
+			else if (defrender==0 && g_PostEffect())  g_PostEffect()->CallDefaultSpecialRender(nam,"sky",0);
+			}
 
-}
+	}
 
 void TSkyBox::LoadSkybox(string basename)
-{
-  if (basename=="") basename="skybox";
-  SetName(basename);
-  LoadDef();
-}
+	{
+	if (basename=="") basename="skybox";
+	SetName(basename);
+	LoadDef();
+	}
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

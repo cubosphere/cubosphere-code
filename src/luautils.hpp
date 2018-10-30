@@ -18,7 +18,7 @@ extern "C" {
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
-}
+	}
 
 #include <iostream>
 #include <string>
@@ -44,29 +44,29 @@ extern "C" {
 #define LUA_SET_STRING(s) lua_pushstring(state,s.c_str());
 
 #define LUA_SET_VECTOR3(v) lua_newtable(state);  \
-                           lua_pushstring(state, "x"); \
-                           lua_pushnumber(state, (double)(v.x));\
-                           lua_settable(state, -3);\
-                           lua_pushstring(state, "y");\
-                           lua_pushnumber(state, (double)(v.y));\
-                           lua_settable(state, -3);\
-                           lua_pushstring(state, "z");\
-                           lua_pushnumber(state, (double)(v.z));\
-                           lua_settable(state, -3);
+	lua_pushstring(state, "x"); \
+	lua_pushnumber(state, (double)(v.x));\
+	lua_settable(state, -3);\
+	lua_pushstring(state, "y");\
+	lua_pushnumber(state, (double)(v.y));\
+	lua_settable(state, -3);\
+	lua_pushstring(state, "z");\
+	lua_pushnumber(state, (double)(v.z));\
+	lua_settable(state, -3);
 
 #define LUA_SET_COLOR(v) lua_newtable(state);  \
-                           lua_pushstring(state, "r"); \
-                           lua_pushnumber(state, (double)(v.x));\
-                           lua_settable(state, -3);\
-                           lua_pushstring(state, "g");\
-                           lua_pushnumber(state, (double)(v.y));\
-                           lua_settable(state, -3);\
-                           lua_pushstring(state, "b");\
-                           lua_pushnumber(state, (double)(v.z));\
-                           lua_settable(state, -3); \
-                           lua_pushstring(state, "a");\
-                           lua_pushnumber(state, (double)(v.w));\
-                           lua_settable(state, -3);
+	lua_pushstring(state, "r"); \
+	lua_pushnumber(state, (double)(v.x));\
+	lua_settable(state, -3);\
+	lua_pushstring(state, "g");\
+	lua_pushnumber(state, (double)(v.y));\
+	lua_settable(state, -3);\
+	lua_pushstring(state, "b");\
+	lua_pushnumber(state, (double)(v.z));\
+	lua_settable(state, -3); \
+	lua_pushstring(state, "a");\
+	lua_pushnumber(state, (double)(v.w));\
+	lua_settable(state, -3);
 
 extern T3dVector Vector3FromStack(lua_State *state);
 extern T4dVector Vector4FromStack(lua_State *state);
@@ -77,108 +77,110 @@ using namespace std;
 class TLuaCFunctions;
 
 class TLuaBaseVar
-{
-  protected:
-    string myname;
-  public:
-    virtual ~TLuaBaseVar() {}
-    virtual void SetName(string name) {myname=name;}
-    virtual string GetName() {return myname;}
-    virtual void ReadFromState(lua_State *state) { lua_remove(state,1);}
-    virtual void WriteInState(lua_State *state) {}
-    virtual string GetVarString(int forscript=1) {return "";}
-};
+	{
+	protected:
+		string myname;
+	public:
+		virtual ~TLuaBaseVar() {}
+		virtual void SetName(string name) {myname=name;}
+		virtual string GetName() {return myname;}
+		virtual void ReadFromState(lua_State *state) { lua_remove(state,1);}
+		virtual void WriteInState(lua_State *state) {}
+		virtual string GetVarString(int forscript=1) {return "";}
+	};
 
 class TLuaNumberVar : public TLuaBaseVar
-{
-  protected:
-    double var;
-  public:
-    TLuaNumberVar() : var(0) {}
-    TLuaNumberVar(double n) : var(n) {}
-    virtual void ReadFromState(lua_State *state) { var=lua_tonumber(state,1); TLuaBaseVar::ReadFromState(state); }
-    virtual void WriteInState(lua_State *state) {lua_pushnumber(state,var);}
-    virtual string GetVarString(int forscript=1) {stringstream ns;
-                                   ns << var;
-                                   return ns.str(); }
-};
+	{
+	protected:
+		double var;
+	public:
+		TLuaNumberVar() : var(0) {}
+		TLuaNumberVar(double n) : var(n) {}
+		virtual void ReadFromState(lua_State *state) { var=lua_tonumber(state,1); TLuaBaseVar::ReadFromState(state); }
+		virtual void WriteInState(lua_State *state) {lua_pushnumber(state,var);}
+		virtual string GetVarString(int forscript=1) {
+			stringstream ns;
+			ns << var;
+			return ns.str();
+			}
+	};
 
 class TLuaStringVar : public TLuaBaseVar
-{
-  protected:
-    string var;
+	{
+	protected:
+		string var;
 
-  public:
-    TLuaStringVar() : var("") {}
-    TLuaStringVar(string n) : var(n) {}
-    virtual void ReadFromState(lua_State *state) { var=lua_tostring(state,1); TLuaBaseVar::ReadFromState(state); }
-    virtual void WriteInState(lua_State *state) {lua_pushstring(state,var.c_str());}
-    virtual string GetVarString(int forscript=1) {if (forscript) return "\""+var+"\""; else return var;}
-};
+	public:
+		TLuaStringVar() : var("") {}
+		TLuaStringVar(string n) : var(n) {}
+		virtual void ReadFromState(lua_State *state) { var=lua_tostring(state,1); TLuaBaseVar::ReadFromState(state); }
+		virtual void WriteInState(lua_State *state) {lua_pushstring(state,var.c_str());}
+		virtual string GetVarString(int forscript=1) {if (forscript) return "\""+var+"\""; else return var;}
+	};
 
 class TLuaVarHolder //Used to encapsulate member values for items etc.
-{
-  protected:
-    vector<TLuaBaseVar*> vars;
-    virtual TLuaBaseVar **RefForStore(string name);
-    virtual TLuaBaseVar **RefForRead(string name);
-    virtual TLuaBaseVar **Ref(string name);
-  public:
-    TLuaVarHolder() {}
-    virtual void clear() { for (unsigned int i=0;i<vars.size();i++) if (vars[i]) {delete vars[i]; vars[i]=NULL;} vars.resize(0); }
-    virtual ~TLuaVarHolder() {clear();}
-    virtual void StoreVar(lua_State *fromstate);
-    virtual void GetVar(lua_State *tostate);
-    virtual string GetVarString(string varname,int forscript=1);
-    virtual int VarDefined(string vn);
-    virtual void SetVar(string vname,string value);
-    virtual void SetVar(string vname,double value);
-    virtual void ListToConsole();
-};
+	{
+	protected:
+		vector<TLuaBaseVar*> vars;
+		virtual TLuaBaseVar **RefForStore(string name);
+		virtual TLuaBaseVar **RefForRead(string name);
+		virtual TLuaBaseVar **Ref(string name);
+	public:
+		TLuaVarHolder() {}
+		virtual void clear() { for (unsigned int i=0; i<vars.size(); i++) if (vars[i]) {delete vars[i]; vars[i]=NULL;} vars.resize(0); }
+		virtual ~TLuaVarHolder() {clear();}
+		virtual void StoreVar(lua_State *fromstate);
+		virtual void GetVar(lua_State *tostate);
+		virtual string GetVarString(string varname,int forscript=1);
+		virtual int VarDefined(string vn);
+		virtual void SetVar(string vname,string value);
+		virtual void SetVar(string vname,double value);
+		virtual void ListToConsole();
+	};
 
 
 extern TLuaVarHolder* g_Vars();
 
 class TLuaAccess
-{
- protected:
-   lua_State *state;
-   string errorstring;
-   int errorline;
-   int typ;
-   string lfname;
-   virtual void LoadStdLibs();
- public:
-   lua_State * GetLuaState() {return state;}
-   static vector<TLuaAccess*> gAllLuaStates;
-   TLuaAccess();
-   void Reset();
-   virtual ~TLuaAccess();
-   string GetFileName() {return lfname;}
-   bool LoadFile(TCuboFile *finfo,int t,int id);
-   void Include(TLuaCFunctions *funcs);
-   void CallVA (const char *func, const char *sig, ...);
-   bool FuncExists (const char *func);
-   void PushInt(int i);
-   int PopInt();
-   void PushFloat(double f);
-   double PopFloat();
-   void PushString(string s);
-   string PopString();
+	{
+	protected:
+		lua_State *state;
+		string errorstring;
+		int errorline;
+		int typ;
+		string lfname;
+		virtual void LoadStdLibs();
+	public:
+		lua_State * GetLuaState() {return state;}
+		static vector<TLuaAccess*> gAllLuaStates;
+		TLuaAccess();
+		void Reset();
+		virtual ~TLuaAccess();
+		string GetFileName() {return lfname;}
+		bool LoadFile(TCuboFile *finfo,int t,int id);
+		void Include(TLuaCFunctions *funcs);
+		void CallVA (const char *func, const char *sig, ...);
+		bool FuncExists (const char *func);
+		void PushInt(int i);
+		int PopInt();
+		void PushFloat(double f);
+		double PopFloat();
+		void PushString(string s);
+		string PopString();
 //   string GetDir() {return dir;}
-  // string GetStdDir();
-   int GetType() {return typ;}
-   bool ExecStrings(vector<string> & inp);
-   bool ExecString(string s);
-};
+		// string GetStdDir();
+		int GetType() {return typ;}
+		bool ExecStrings(vector<string> & inp);
+		bool ExecString(string s);
+	};
 
 
 
 typedef struct
-{
- string name;
- lua_CFunction func;
-} TLuaCFunc;
+	{
+	string name;
+	lua_CFunction func;
+	} TLuaCFunc;
 
 //Class holding a bunch of C-Functions exported to LUA
 //Should be declared Virtual, so that we can add our needed funcs by Inheritance
@@ -186,117 +188,117 @@ typedef struct
 
 
 class TLuaCFunctions
-{
- protected:
-   vector<TLuaCFunc> funcs;
-  // TLuaAccess *access;
- public:
-   void RegisterToState(lua_State *state);
-   void AddFunc(string name, lua_CFunction func);
-   //void SetAccess(TLuaAccess *acc) {access=acc;}
-};
+	{
+	protected:
+		vector<TLuaCFunc> funcs;
+		// TLuaAccess *access;
+	public:
+		void RegisterToState(lua_State *state);
+		void AddFunc(string name, lua_CFunction func);
+		//void SetAccess(TLuaAccess *acc) {access=acc;}
+	};
 
 
 
 
 class TLuaCuboLib : public TLuaCFunctions
-{
-  protected:
+	{
+	protected:
 
-     static int LOG_Mode(lua_State *state);
-     static int LOG_SetVerboseMode(lua_State *state);
-     static int LOG_GetVerboseMode(lua_State *state);
+		static int LOG_Mode(lua_State *state);
+		static int LOG_SetVerboseMode(lua_State *state);
+		static int LOG_GetVerboseMode(lua_State *state);
 
-     static int mycout(lua_State *state);
-
-
-
-
-
-
-     static int CONFIG_Load(lua_State *state);
-     static int CONFIG_Open(lua_State *state);
-     static int CONFIG_Write(lua_State *state);
-     static int CONFIG_Close(lua_State *state);
-
-
-     //Command Line
-     static int ARGS_Count(lua_State *state);
-     static int ARGS_Key(lua_State *state);
-     static int ARGS_Val(lua_State *state);
-
-
-     static int TRANS_Clear(lua_State *state);
-     static int TRANS_Add(lua_State *state);
-     static int TRANS_Str(lua_State *state);
-     static int TRANS_StrD(lua_State *state);
-     static int TRANS_Load(lua_State *state);
-
-
-
-
-     static int DEBUG(lua_State *state);
-
-     static int GLOBAL_StartDeveloperMode(lua_State *state);
-     static int GLOBAL_GetTime(lua_State *state);
-     static int GLOBAL_GetElapsed(lua_State *state);
-     static int GLOBAL_GetScale(lua_State *state);
-     static int GLOBAL_GetFPS(lua_State *state);
-     static int GLOBAL_SetVar(lua_State *state);
-     static int GLOBAL_GetVar(lua_State *state);
-     static int GLOBAL_VarDefined(lua_State *state);
-     static int GLOBAL_Quit(lua_State *state);
-     static int GLOBAL_SetMaxElapsed(lua_State *state);
-     static int GLOBAL_SetMaxFrames(lua_State *state);
-      static int GLOBAL_SetMinFrames(lua_State *state);
-
-     static int SCORE_SetVar(lua_State *state);
-     static int SCORE_GetVar(lua_State *state);
-     static int SCORE_VarDefined(lua_State *state);
-
-     static int SCORE_Load(lua_State *state);
-     static int SCORE_Open(lua_State *state);
-     static int SCORE_Write(lua_State *state);
-     static int SCORE_Close(lua_State *state);
-
-     static int SAVE_Load(lua_State *state);
-     static int SAVE_Open(lua_State *state);
-     static int SAVE_Write(lua_State *state);
-     static int SAVE_Close(lua_State *state);
-
-
-
- //    static int MOD_Clear(lua_State *state);
- //    static int MOD_Add(lua_State *state);
-   //  static int MOD_ClearBlacklist(lua_State *state);
-   //  static int MOD_AddDirToBlackList(lua_State *state);
-     static int MOD_GetName(lua_State *state);
-     static int MOD_SetName(lua_State *state);
+		static int mycout(lua_State *state);
 
 
 
 
 
 
-  //   static int DIR_GetFiles(lua_State *state);
-   //  static int DIR_GetFile(lua_State *state);
-     static int DIR_GetProfileDir(lua_State *state);
-     static int DIR_GetDataDir(lua_State *state);
-   //  static int DIR_FileExists(lua_State *state);
+		static int CONFIG_Load(lua_State *state);
+		static int CONFIG_Open(lua_State *state);
+		static int CONFIG_Write(lua_State *state);
+		static int CONFIG_Close(lua_State *state);
+
+
+		//Command Line
+		static int ARGS_Count(lua_State *state);
+		static int ARGS_Key(lua_State *state);
+		static int ARGS_Val(lua_State *state);
+
+
+		static int TRANS_Clear(lua_State *state);
+		static int TRANS_Add(lua_State *state);
+		static int TRANS_Str(lua_State *state);
+		static int TRANS_StrD(lua_State *state);
+		static int TRANS_Load(lua_State *state);
 
 
 
-     static int INCLUDE(lua_State *state); //Global Scope only!
-     static int INCLUDEABSOLUTE(lua_State *state); //Global Scope only!
-     static int USING(lua_State *state); //Load another internal library
+
+		static int DEBUG(lua_State *state);
+
+		static int GLOBAL_StartDeveloperMode(lua_State *state);
+		static int GLOBAL_GetTime(lua_State *state);
+		static int GLOBAL_GetElapsed(lua_State *state);
+		static int GLOBAL_GetScale(lua_State *state);
+		static int GLOBAL_GetFPS(lua_State *state);
+		static int GLOBAL_SetVar(lua_State *state);
+		static int GLOBAL_GetVar(lua_State *state);
+		static int GLOBAL_VarDefined(lua_State *state);
+		static int GLOBAL_Quit(lua_State *state);
+		static int GLOBAL_SetMaxElapsed(lua_State *state);
+		static int GLOBAL_SetMaxFrames(lua_State *state);
+		static int GLOBAL_SetMinFrames(lua_State *state);
+
+		static int SCORE_SetVar(lua_State *state);
+		static int SCORE_GetVar(lua_State *state);
+		static int SCORE_VarDefined(lua_State *state);
+
+		static int SCORE_Load(lua_State *state);
+		static int SCORE_Open(lua_State *state);
+		static int SCORE_Write(lua_State *state);
+		static int SCORE_Close(lua_State *state);
+
+		static int SAVE_Load(lua_State *state);
+		static int SAVE_Open(lua_State *state);
+		static int SAVE_Write(lua_State *state);
+		static int SAVE_Close(lua_State *state);
+
+
+
+//    static int MOD_Clear(lua_State *state);
+//    static int MOD_Add(lua_State *state);
+		//  static int MOD_ClearBlacklist(lua_State *state);
+		//  static int MOD_AddDirToBlackList(lua_State *state);
+		static int MOD_GetName(lua_State *state);
+		static int MOD_SetName(lua_State *state);
 
 
 
 
-  public:
-    TLuaCuboLib();
-    //void SetUsage(TTextureServer *ts);
-};
+
+
+		//   static int DIR_GetFiles(lua_State *state);
+		//  static int DIR_GetFile(lua_State *state);
+		static int DIR_GetProfileDir(lua_State *state);
+		static int DIR_GetDataDir(lua_State *state);
+		//  static int DIR_FileExists(lua_State *state);
+
+
+
+		static int INCLUDE(lua_State *state); //Global Scope only!
+		static int INCLUDEABSOLUTE(lua_State *state); //Global Scope only!
+		static int USING(lua_State *state); //Load another internal library
+
+
+
+
+	public:
+		TLuaCuboLib();
+		//void SetUsage(TTextureServer *ts);
+	};
 
 extern TLuaCuboLib* g_CuboLib();
 
@@ -312,3 +314,4 @@ extern void  ReloadLanguage();
 extern TLuaAccess* g_CallAccess();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

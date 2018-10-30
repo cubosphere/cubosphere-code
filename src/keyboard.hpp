@@ -51,36 +51,37 @@ typedef void(*TKeyboardFunc)(int,int,int) ;
 } TKeyInfo;
 */
 class TKeyboard
-{
-  protected:
-    int keynum;
-    Uint8 *keydown;
-    vector<Uint8> downbefore;
-    vector<double> pressedtime;
-    TKeyboardFunc handler;
-    double rep_start_time;
-    double rep_rep_time;
-    int textinputmode;
-    SDL_keysym lastkeysim;
-  public:
-    SDL_keysym GetLastKeySim() {return lastkeysim;}
-    void SetKeyRepeatTimes(double rstart,double rrep) {rep_start_time=rstart; rep_rep_time=rrep;}
-    void StartTextInput();
-    void StopTextInput();
-    //TKeyboard();
-   // void Initialize();
-    double & GetPressedTime(int ident) {return pressedtime[ident];}
-    int IsPressed(int ident) {return keydown[ident];}
-    int DownBefore(int ident) {return downbefore[ident];}
-    SDLKey GetKeyConstFor(string keyname);
-    void SetHandler(TKeyboardFunc h) {handler=h;}
+	{
+	protected:
+		int keynum;
+		Uint8 *keydown;
+		vector<Uint8> downbefore;
+		vector<double> pressedtime;
+		TKeyboardFunc handler;
+		double rep_start_time;
+		double rep_rep_time;
+		int textinputmode;
+		SDL_keysym lastkeysim;
+	public:
+		SDL_keysym GetLastKeySim() {return lastkeysim;}
+		void SetKeyRepeatTimes(double rstart,double rrep) {rep_start_time=rstart; rep_rep_time=rrep;}
+		void StartTextInput();
+		void StopTextInput();
+		//TKeyboard();
+		// void Initialize();
+		double & GetPressedTime(int ident) {return pressedtime[ident];}
+		int IsPressed(int ident) {return keydown[ident];}
+		int DownBefore(int ident) {return downbefore[ident];}
+		SDLKey GetKeyConstFor(string keyname);
+		void SetHandler(TKeyboardFunc h) {handler=h;}
 //    void RegisterKey(SDLKey key,int ident,TKeyboardFunc func, int toggle);
-    void DispatchEvent(SDL_Event *ev);
-    void HandleKeys();
-    void Init();
-    string GetKeyName(int key);
-};
+		void DispatchEvent(SDL_Event *ev);
+		void HandleKeys();
+		void Init();
+		string GetKeyName(int key);
+	};
 
 extern void LUA_KEYB_RegisterLib();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

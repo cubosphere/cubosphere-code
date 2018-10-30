@@ -57,68 +57,69 @@ using namespace std;
 
 
 class TShaderUniformLocation
-{
-    public:
-    string name;
-    GLint loc;
-};
+	{
+	public:
+		string name;
+		GLint loc;
+	};
 
 
 class TShaderServer;
 
 class TBaseShader
-{
-  protected:
-    string filename; //Holds the base name
-    GLuint vertexref,fragmentref,programref;
-    vector<TShaderUniformLocation> ulocs;
-    vector<TShaderUniformLocation> alocs;
-  public:
-     GLint GetUniformLocation(string s);
-     GLint GetAttributeLocation(string s);
-     string GetName() {return filename;}
-     void Load(TShaderServer* ss, string fname);
-     void Activate();
-     void Deactivate();
-     ~TBaseShader();
-     GLuint GetProgramRef() {return programref;}
-};
+	{
+	protected:
+		string filename; //Holds the base name
+		GLuint vertexref,fragmentref,programref;
+		vector<TShaderUniformLocation> ulocs;
+		vector<TShaderUniformLocation> alocs;
+	public:
+		GLint GetUniformLocation(string s);
+		GLint GetAttributeLocation(string s);
+		string GetName() {return filename;}
+		void Load(TShaderServer* ss, string fname);
+		void Activate();
+		void Deactivate();
+		~TBaseShader();
+		GLuint GetProgramRef() {return programref;}
+	};
 
 
 class TShaderServer
-{
- protected:
-   vector<TBaseShader*> shaderlist;
-   int momshader;
- public:
-  TShaderServer() : momshader(-1) {};
-  // GLboolean ShadersSupported(void);
-   GLuint CompileShaderText(GLenum shaderType, const char *text);
-   GLuint CompileShaderFile(GLenum shaderType, const char *filename);
-   GLuint CompileShaderCuboFile(GLenum shaderType, TCuboFile *finfo);
-   GLuint LinkShaders(GLuint vertShader, GLuint fragShader);
-   GLboolean ValidateShaderProgram(GLuint program);
+	{
+	protected:
+		vector<TBaseShader*> shaderlist;
+		int momshader;
+	public:
+		TShaderServer() : momshader(-1) {};
+		// GLboolean ShadersSupported(void);
+		GLuint CompileShaderText(GLenum shaderType, const char *text);
+		GLuint CompileShaderFile(GLenum shaderType, const char *filename);
+		GLuint CompileShaderCuboFile(GLenum shaderType, TCuboFile *finfo);
+		GLuint LinkShaders(GLuint vertShader, GLuint fragShader);
+		GLboolean ValidateShaderProgram(GLuint program);
 //   void SetUniformValues(GLuint program, struct uniform_info uniforms[]);
- //  GLuint GetUniforms(GLuint program, struct uniform_info uniforms[]);
-  // void PrintUniforms(const struct uniform_info uniforms[]);
-   //GLuint GetAttribs(GLuint program, struct attrib_info attribs[]);
-   //void PrintAttribs(const struct attrib_info attribs[]);
-   bool InitShaders(string dirname);
-   int GetShader(string name);
-   TBaseShader *GetShaderPtr(string name);
-   int AddShader(string name);
-   bool RegisterShader(TBaseShader *sh);
-   bool FreeShaders();
-   bool Activate(int index);
-   bool Deactivate();
-   void SetInt(string ref,int i);
-   void SetFloat(string ref,float f);
-   void SetVector3(string ref,T3dVector v);
-   void SetVector4(string ref,T4dVector v);
-   GLint GetAttributeLocation(string name);
-   void clear();
-};
+//  GLuint GetUniforms(GLuint program, struct uniform_info uniforms[]);
+		// void PrintUniforms(const struct uniform_info uniforms[]);
+		//GLuint GetAttribs(GLuint program, struct attrib_info attribs[]);
+		//void PrintAttribs(const struct attrib_info attribs[]);
+		bool InitShaders(string dirname);
+		int GetShader(string name);
+		TBaseShader *GetShaderPtr(string name);
+		int AddShader(string name);
+		bool RegisterShader(TBaseShader *sh);
+		bool FreeShaders();
+		bool Activate(int index);
+		bool Deactivate();
+		void SetInt(string ref,int i);
+		void SetFloat(string ref,float f);
+		void SetVector3(string ref,T3dVector v);
+		void SetVector4(string ref,T4dVector v);
+		GLint GetAttributeLocation(string name);
+		void clear();
+	};
 
 extern void LUA_SHADER_RegisterLib();
 
 #endif /* SHADER_UTIL_H */
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

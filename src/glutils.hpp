@@ -16,3 +16,4 @@ extern void LUA_MATERIAL_RegisterLib();
 extern void InvalidateMaterial();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -35,28 +35,28 @@ using namespace std;
 class TJoystickServer;
 
 class TJoystick
-{
- protected:
-   TJoystickServer *server;
-   int index;
-   SDL_Joystick *stick;
-   vector<float> axisvals,axisovals;
-   vector<int> buttons,obuttons;
-   float SDLAxisToFloat(int sa);
- public:
-   TJoystick(int mindex,TJoystickServer *serv);
-   ~TJoystick();
-   SDL_Joystick * GetSDLJoystick() { return stick;}
-   string Name();
-   int NumAxes();
-   int NumButtons();
+	{
+	protected:
+		TJoystickServer *server;
+		int index;
+		SDL_Joystick *stick;
+		vector<float> axisvals,axisovals;
+		vector<int> buttons,obuttons;
+		float SDLAxisToFloat(int sa);
+	public:
+		TJoystick(int mindex,TJoystickServer *serv);
+		~TJoystick();
+		SDL_Joystick * GetSDLJoystick() { return stick;}
+		string Name();
+		int NumAxes();
+		int NumButtons();
 
-   void AxisMotionEvent(int axis,int value);
-   void HandleKeys();
-   float GetAxis(int i);
-   int GetButton(int i);
-   void ResetButtons();
-};
+		void AxisMotionEvent(int axis,int value);
+		void HandleKeys();
+		float GetAxis(int i);
+		int GetButton(int i);
+		void ResetButtons();
+	};
 
 // (Stick-Index, Axis-Index, value, oldvalue
 typedef void(*TJoystickAxisFunc)(int,int,float,float) ;
@@ -65,23 +65,24 @@ typedef void(*TJoystickAxisFunc)(int,int,float,float) ;
 typedef void(*TJoystickButtonFunc)(int,int,int,int,int) ;
 
 class TJoystickServer
-{
-    protected:
-      vector<TJoystick*> sticks;
-      TJoystickAxisFunc axishandler;
-      TJoystickButtonFunc buttonhandler;
-      friend class TJoystick;
-    public:
-      void SetAxisHandler(TJoystickAxisFunc h) {axishandler=h;}
-      void SetDiscreteHandler(TJoystickButtonFunc b) {buttonhandler=b;}
-      int NumJoysticks();
-      void DispatchEvent(SDL_Event *ev);
-      void Initialize();
-      void Free();
-      void HandleKeys();
-      void ResetButtons();
-};
+	{
+	protected:
+		vector<TJoystick*> sticks;
+		TJoystickAxisFunc axishandler;
+		TJoystickButtonFunc buttonhandler;
+		friend class TJoystick;
+	public:
+		void SetAxisHandler(TJoystickAxisFunc h) {axishandler=h;}
+		void SetDiscreteHandler(TJoystickButtonFunc b) {buttonhandler=b;}
+		int NumJoysticks();
+		void DispatchEvent(SDL_Event *ev);
+		void Initialize();
+		void Free();
+		void HandleKeys();
+		void ResetButtons();
+	};
 
 
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

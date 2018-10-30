@@ -1,10 +1,10 @@
 # Cubosphere [reborn]
 ## A little story behind it
-One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will became great.
+One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will become great.
 
-And after a while he decided to pick it up and at least make look like modern project, so others will be able to contribute easily.
+And after a while he decided to pick it up and at least make look like a modern project, so others will be able to contribute easily.
 
-This is why this organisation do exist now.
+This is why this organisation exists now.
 
 # What is this game about?
 Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, Lua, GLSL-Shader.
@@ -19,9 +19,10 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * GLSL-Shaders
 * Joystick/Gamepad support
 
-# What have I already done?
+# What have I already done to improve the game?
 * Migrated to CMake
 * Separated data and code repos with auto ZIP
+* Fixed few warnings
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!
@@ -30,7 +31,7 @@ Check out [TODO list](TODO.md)!
 You can:
 
 * Fork repo and make pull request or
-* If you have made a lot of contributions and I trust you — ask for direct write access
+* If you have made a lot of contributions and I trust you then you can ask for direct write access
 
 # Ok, some credits
-You can find original homepage and developers here: https://sourceforge.net/projects/cubosphere.
+You can find original homepage, codebase and developers at https://sourceforge.net/projects/cubosphere.

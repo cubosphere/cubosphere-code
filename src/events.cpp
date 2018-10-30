@@ -37,39 +37,40 @@ if not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 void TEventManager::HandleEvents()
-{
-    SDL_Event event;
-   if (mouse) mouse->BeginDispatch();
-   while(SDL_PollEvent(&event)) {
+	{
+	SDL_Event event;
+	if (mouse) mouse->BeginDispatch();
+	while(SDL_PollEvent(&event)) {
 			//Und gehen diese durch
-			switch(event.type){
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-			//	case SDL_TEXTINPUT:
-		//		case SDL_TEXTEDITING:
-					//Send it to Keyboard
+			switch(event.type) {
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+						//	case SDL_TEXTINPUT:
+						//		case SDL_TEXTEDITING:
+						//Send it to Keyboard
 
-					 if (keyb) keyb->DispatchEvent(&event);
-					break;
-                case SDL_MOUSEMOTION:
-                case SDL_MOUSEBUTTONDOWN:
-                case SDL_MOUSEBUTTONUP:
-                    if (mouse) mouse->DispatchEvent(&event);
-                    break;
-                case SDL_JOYAXISMOTION:
-                case SDL_JOYBALLMOTION:
-                case SDL_JOYHATMOTION:
-                case SDL_JOYBUTTONDOWN:
-                case SDL_JOYBUTTONUP:
-                    if (joy) joy->DispatchEvent(&event);
-                   break;
-                case SDL_QUIT:
-					//Sollte das Fenster geschlossen werden, soll er auch der Loop beendet werden
-					windowclose=true;
-					break;
-				default:
-					break;
+						if (keyb) keyb->DispatchEvent(&event);
+						break;
+					case SDL_MOUSEMOTION:
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						if (mouse) mouse->DispatchEvent(&event);
+						break;
+					case SDL_JOYAXISMOTION:
+					case SDL_JOYBALLMOTION:
+					case SDL_JOYHATMOTION:
+					case SDL_JOYBUTTONDOWN:
+					case SDL_JOYBUTTONUP:
+						if (joy) joy->DispatchEvent(&event);
+						break;
+					case SDL_QUIT:
+						//Sollte das Fenster geschlossen werden, soll er auch der Loop beendet werden
+						windowclose=true;
+						break;
+					default:
+						break;
+					}
 			}
-		}
 
-}
+	}
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

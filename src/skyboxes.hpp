@@ -27,18 +27,19 @@ using namespace std;
 
 
 class TSkyBox : public TBaseLuaDef
-{
+	{
 
-  public:
-      virtual ~TSkyBox() {};
-     virtual int GetType() {return FILE_SKYBOX;}
-      void  LoadSkybox(string basename);
-      void Render();
-      void SpecialRender(string nam,int defrender);
-};
+	public:
+		virtual ~TSkyBox() {};
+		virtual int GetType() {return FILE_SKYBOX;}
+		void  LoadSkybox(string basename);
+		void Render();
+		void SpecialRender(string nam,int defrender);
+	};
 
 
 
 
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

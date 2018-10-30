@@ -30,72 +30,73 @@ using namespace std;
 
 
 std::string IntToString(const int& t)
-{
-std::stringstream ss;
-ss << t;
-return ss.str();
-}
+	{
+	std::stringstream ss;
+	ss << t;
+	return ss.str();
+	}
 
 
 inline std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
-{
-int p2 = Src.find_last_not_of(c);
-if (p2 == (int)std::string::npos) return std::string();
-int p1 = Src.find_first_not_of(c);
-if (p1 == (int)std::string::npos) p1 = 0;
-return Src.substr(p1, (p2-p1)+1);
-}
+	{
+	int p2 = Src.find_last_not_of(c);
+	if (p2 == (int)std::string::npos) return std::string();
+	int p1 = Src.find_first_not_of(c);
+	if (p1 == (int)std::string::npos) p1 = 0;
+	return Src.substr(p1, (p2-p1)+1);
+	}
 
 void TrimSpaces( string& str)
-{
-  str=TrimStr(str);
-}
+	{
+	str=TrimStr(str);
+	}
 
 
 void Tokenize(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters)
-{
-    // Skip delimiters at beginning.
-    string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-    // Find first "non-delimiter".
-    string::size_type pos     = str.find_first_of(delimiters, lastPos);
+		vector<string>& tokens,
+		const string& delimiters)
+	{
+	// Skip delimiters at beginning.
+	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
-    while (string::npos != pos || string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiters, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiters, lastPos);
-    }
-}
+	while (string::npos != pos || string::npos != lastPos)
+			{
+			// Found a token, add it to the vector.
+			tokens.push_back(str.substr(lastPos, pos - lastPos));
+			// Skip delimiters.  Note the "not_of"
+			lastPos = str.find_first_not_of(delimiters, pos);
+			// Find next "non-delimiter"
+			pos = str.find_first_of(delimiters, lastPos);
+			}
+	}
 
 void TokenizeFull(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters)
-{
-    // Skip delimiters at beginning.
-    string::size_type lastPos = 0;
-    // Find first "non-delimiter".
-     string::size_type pos     = str.find_first_of(delimiters, lastPos);
-    while (string::npos != pos || string::npos != lastPos)
-    {
-        // Found a token, add it to the vector.
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiters, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiters, lastPos);
-    }
-}
+		vector<string>& tokens,
+		const string& delimiters)
+	{
+	// Skip delimiters at beginning.
+	string::size_type lastPos = 0;
+	// Find first "non-delimiter".
+	string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	while (string::npos != pos || string::npos != lastPos)
+			{
+			// Found a token, add it to the vector.
+			tokens.push_back(str.substr(lastPos, pos - lastPos));
+			// Skip delimiters.  Note the "not_of"
+			lastPos = str.find_first_not_of(delimiters, pos);
+			// Find next "non-delimiter"
+			pos = str.find_first_of(delimiters, lastPos);
+			}
+	}
 
 
 
 bool BeginsWith(const string& str,const string& with)
-{
- string t(str,0,with.length());
- return (t==with);
-}
+	{
+	string t(str,0,with.length());
+	return (t==with);
+	}
 
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

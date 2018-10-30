@@ -25,9 +25,9 @@ using namespace std;
 
 
 #ifdef WIN32
-  #define STD_DIR_SEP "\\"
+#define STD_DIR_SEP "\\"
 #else
-  #define STD_DIR_SEP "/"
+#define STD_DIR_SEP "/"
 #endif
 
 #ifdef VCPP
@@ -110,3 +110,4 @@ extern bool StartBootScript(string name="boot.lua");
 extern cls_FileSystem * g_BaseFileSystem();
 
 #endif
+// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 
