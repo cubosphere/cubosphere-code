@@ -22,6 +22,7 @@
  * [ ] Migrate to SDL2 (seems not so hard)
  * [ ] Use modern C++ (17 or next one if ready)
  * [ ] Do some TODO's from code
+ * [ ] Introduce unit testing
  * [ ] Check/Add/Fix Lua 5.2/5.3(/5.4?) compatiblity
 
 # In far future (or probably never in fact… but I belive)
