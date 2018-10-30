@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Downloading submodules
+          command: 'git submodule update --init --recursive'
+      - run:
           name: Reloading apt indexes
           command: 'apt-get update'
       - run:
