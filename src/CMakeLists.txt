@@ -23,6 +23,8 @@ add_executable(cubosphere
 
 target_compile_definitions(cubosphere PRIVATE "DATADIR=\"${RUNTIME_DATADIR}\"")
 
+set_property(TARGET cubosphere PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(cubosphere PRIVATE
 # Various libs
 	${OPENGL_INCLUDE_DIR}
