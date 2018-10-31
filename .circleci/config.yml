@@ -79,7 +79,7 @@ jobs:
             ftp -inv "$FTP_SERVER" <<EOF
             user $FTP_USER $FTP_PASSWORD
             mdel *.deb
-            cd /tmp/artifacts
+            lcd /tmp/artifacts
             mput *.deb
             bye
             EOF
