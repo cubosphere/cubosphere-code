@@ -68,28 +68,21 @@ jobs:
   deploy:
     docker:
       - image: "ubuntu:rolling"
-    environment:
-      MNTDIR: '/tmp/ftp'
     steps:
       - run: apt-get update
-      - run: apt-get install -y curlftpfs
+      - run: apt-get install -y ftp
       - attach_workspace:
           at: /tmp/artifacts
       - run:
-          name: Creating mount point
-          command: 'mkdir "$MNTDIR"'
-      - run:
-          name: Mounting directory
-          command: 'curlftpfs "$FTP_SERVER" "$MNTDIR" -o "user=${FTP_USER}:${FTP_PASSWORD}"'
-      - run:
-          name: Cleaning old files
-          command: 'rm -r "${MNTDIR}/*"'
-      - run:
-          name: Uploading artifacts
-          command: 'cp -r /tmp/artifacts/* "$MNTDIR"'
-      - run:
-          name: Unmounting
-          command: 'fusermount -u "$MNTDIR"'
+          name: Working with FTP
+          command: |
+            ftp -inv "$FTP_SERVER" <<EOF
+            user $FTP_USER $FTP_PASSWORD
+            mdel *.deb
+            cd /tmp/artifacts
+            mput *.deb
+            bye
+            EOF
 
 workflows:
   version: 2
