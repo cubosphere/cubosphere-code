@@ -70,7 +70,7 @@ jobs:
       - image: "ubuntu:rolling"
     steps:
       - run: apt-get update
-      - run: apt-get install -y ftp
+      - run: apt-get install -y ca-certificates ftp
       - attach_workspace:
           at: /tmp/artifacts
       - run:
