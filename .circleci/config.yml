@@ -22,7 +22,7 @@ jobs:
           command: './.circleci/do-build.sh'
       - run:
           name: Preparing artifacts
-          command: './.circleci/do-build.sh'
+          command: './.circleci/prepare-artifacts.sh'
       - store_artifacts:
           path: /tmp/artifacts
 
@@ -48,7 +48,7 @@ jobs:
           command: './.circleci/do-build.sh'
       - run:
           name: Preparing artifacts
-          command: './.circleci/do-build.sh'
+          command: './.circleci/prepare-artifacts.sh'
       - store_artifacts:
           path: /tmp/artifacts
 
