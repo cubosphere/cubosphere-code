@@ -25,6 +25,7 @@ jobs:
           command: './.circleci/prepare-artifacts.sh'
       - persist_to_workspace:
           root: /tmp/artifacts
+          paths: './*.deb'
 
   build.rolling:
     docker:
@@ -51,6 +52,7 @@ jobs:
           command: './.circleci/prepare-artifacts.sh'
       - persist_to_workspace:
           root: /tmp/artifacts
+          paths: './*.deb'
 
   artifacts:
     docker:
