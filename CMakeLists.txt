@@ -6,8 +6,9 @@ include(GNUInstallDirs)
 
 project(cubosphere
 DESCRIPTION "3D puzzle, open source remake of Kula world"
-HOMEPAGE_URL "https://github.com/cubosphere"
 LANGUAGES CXX)
+
+set(PROJECT_HOMEPAGE_URL "https://github.com/cubosphere")
 
 if(NOT CMAKE_BUILD_TYPE)
 	message(STATUS "No build type specified, defaulting to Release")
@@ -54,5 +55,6 @@ Features:
 	
 	# DEB section
 	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJECT_HOMEPAGE_URL}")
 	include(CPack)
 endif()
