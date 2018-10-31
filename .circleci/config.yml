@@ -76,7 +76,7 @@ jobs:
       - run:
           name: Working with FTP
           command: |
-            ftp -inv "$FTP_SERVER" <<EOF
+            ftp -pinv "$FTP_SERVER" <<EOF
             user $FTP_USER $FTP_PASSWORD
             mdel *.deb
             lcd /tmp/artifacts
