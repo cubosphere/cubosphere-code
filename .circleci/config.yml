@@ -58,6 +58,8 @@ jobs:
     docker:
       - image: "ubuntu:rolling"
     steps:
+    run: apt-get update
+    run: apt-get install -y ca-certificates
       - attach_workspace:
           at: /tmp/artifacts
       - store_artifacts:
