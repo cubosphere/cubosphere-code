@@ -65,6 +65,31 @@ jobs:
       - store_artifacts:
           path: /tmp/artifacts
 
+  deploy:
+    docker:
+      - image: "ubuntu:rolling"
+    steps:
+      - run: 'MNTDIR=/tmp/ftp'
+      - run: apt-get update
+      - run: apt-get install -y curlftpfs
+      - attach_workspace:
+          at: /tmp/artifacts
+      - run:
+          name: Creating mount point
+          command: 'mkdir "$MNTDIR"'
+      - run:
+          name: Mounting directory
+          command: 'echo "$FTP_PASSWORD" | curlftpfs "$FTP_SERVER" "$MNTDIR" -o "user=$FTP_USER"'
+      - run:
+          name: Cleaning old files
+          command: 'rm -r "${MNTDIR}/*"'
+      - run:
+          name: Uploading artifacts
+          command: 'cp -r /tmp/artifacts/* "$MNTDIR"'
+      - run:
+          name: Unmounting
+          command: 'fusermount -u "$MNTDIR"'
+
 workflows:
   version: 2
   build-all:
@@ -75,3 +100,10 @@ workflows:
           requires:
             - build.lts
             - build.rolling
+      - deploy:
+          requires:
+            - build.lts
+            - build.rolling
+          filters:
+            branches:
+              only: master

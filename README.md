@@ -26,7 +26,15 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Fixed few warnings
 * Removed `using namespace std;`
 * Made code C++17 compatible (no either warnings or errors)
-* Configured Cricle CI
+* Configured Cricle CI with auto .deb build (private now)
+
+# How to download last git build for Ubuntu?
+Well, it's still in progress (contacted my hosting tech support for help). 
+It will most likely act like this:
+
+1. Go to cubosphere.vallua.ru/artifacts
+2. Download apporative package for you (naming is Cubosphere-timestamp+git-hash-distribution-Linux.deb)
+3. Install as normal (if you don't know how, just open file and click "Install" button or someting like it)
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!
