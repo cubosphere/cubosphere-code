@@ -68,8 +68,9 @@ jobs:
   deploy:
     docker:
       - image: "ubuntu:rolling"
+    environment:
+      MNTDIR: '/tmp/ftp'
     steps:
-      - run: 'MNTDIR=/tmp/ftp'
       - run: apt-get update
       - run: apt-get install -y curlftpfs
       - attach_workspace:
