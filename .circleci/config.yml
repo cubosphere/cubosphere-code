@@ -80,7 +80,7 @@ jobs:
           command: 'mkdir "$MNTDIR"'
       - run:
           name: Mounting directory
-          command: 'echo "$FTP_PASSWORD" | curlftpfs "$FTP_SERVER" "$MNTDIR" -o "user=$FTP_USER"'
+          command: 'curlftpfs "$FTP_SERVER" "$MNTDIR" -o "user=${FTP_USER}:${FTP_PASSWORD}"'
       - run:
           name: Cleaning old files
           command: 'rm -r "${MNTDIR}/*"'
