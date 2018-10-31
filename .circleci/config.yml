@@ -53,6 +53,9 @@ jobs:
           root: /tmp/artifacts
 
   artifacts:
+    docker:
+      - image: "ubuntu:rolling"
+    steps:
       - attach_workspace:
           at: /tmp/artifacts
       - store_artifacts:
