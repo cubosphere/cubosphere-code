@@ -23,8 +23,8 @@ jobs:
       - run:
           name: Preparing artifacts
           command: './.circleci/prepare-artifacts.sh'
-      - store_artifacts:
-          path: /tmp/artifacts
+      - persist_to_workspace:
+          root: /tmp/artifacts
 
   build.rolling:
     docker:
@@ -49,6 +49,12 @@ jobs:
       - run:
           name: Preparing artifacts
           command: './.circleci/prepare-artifacts.sh'
+      - persist_to_workspace:
+          root: /tmp/artifacts
+
+  artifacts:
+      - attach_workspace:
+          at: /tmp/artifacts
       - store_artifacts:
           path: /tmp/artifacts
 
@@ -58,3 +64,7 @@ workflows:
     jobs:
       - build.lts
       - build.rolling
+      - artifacts:
+          requires:
+            - build.lts
+            - build.rolling
