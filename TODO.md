@@ -15,6 +15,7 @@
  * [x] Setup CI build [Circle CI done, Travis CI cancelled].
 
 # After base setup [partially done]
+ * [ ] Use zlib instead of integrated copy (it will drop encryption, but it isn't important I think)
  * [x] Stop using std!
  * [ ] Add Russian transation
  * [x] Make .deb package… [done with CI]
