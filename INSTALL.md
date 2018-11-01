@@ -11,7 +11,7 @@ You will need (with headers, which often stored in `-dev` packages):
 * SDL 1.2
 * SDL_ttf 2.0
 * SDL_mixer 1.2
-* libjpeg
+* libjpeg (libturbojpeg is ok too)
 
 Also, you will need C++ compiler (`gcc/g++`, `clang` or another one), CMake and `make`/`ninja`.
 
@@ -38,3 +38,4 @@ sudo make install
 * `-G Ninja` — use `ninja` generator instead of `Unix makefiles` (generally better). Replace `make` with `ninja` in 3rd and 4th commands.
 * `-DDATADIR=` — custom place to install all game data (overrides `-DCMAKE_INSTALL_PREFIX` for data).
 * `-DRUNTIME_DATADIR=` — where game will look up for data (overrides both `-DCMAKE_INSTALL_PREFIX` and `-DDATADIR` for runtime).
+* `-DINSTALL_DESKTOP=` — install linux menu entery or not (defaults to `UNIX`, so on on linux and off on others)
