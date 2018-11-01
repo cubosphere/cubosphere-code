@@ -15,16 +15,10 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-if(NOT BINDIR)
-	set(BINDIR "${CMAKE_INSTALL_FULL_BINDIR}")
-endif()
+set(BINDIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE STRING "Where install binary")
 
-if(NOT DATADIR)
-	set(DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/cubosphere")
-	if((NOT RUNTIME_DATADIR) AND (NOT NO_DATADIR))
-		set(RUNTIME_DATADIR "${DATADIR}") # Nobody need it I guess, but let's keep…
-	endif()
-endif()
+set(DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/cubosphere" CACHE STRING "Data location (install-time)")
+set(RUNTIME_DATADIR "${DATADIR}" CACHE STRING "Data location (run-time)")
 
 add_subdirectory(src)
 add_subdirectory(data)

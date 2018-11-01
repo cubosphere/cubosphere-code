@@ -8,8 +8,8 @@
  * [x] Update license
  * [ ] Update various Readme's
  * [ ] Improve modding support with CMake
- * [ ] Create icon
- * [ ] Add .dekstop to menu
+ * [x] Create icon
+ * [x] Add .dekstop to menu
  * [x] Fix warnings (some are bugs-related) and C++17 errors…
  * [x] …and build with C++17 standard
  * [x] Setup CI build [Circle CI done, Travis CI cancelled].
