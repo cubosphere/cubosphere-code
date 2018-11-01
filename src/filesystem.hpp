@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CSL_FILE_SYSTEM_H_G
-#define CSL_FILE_SYSTEM_H_G
+#pragma once
 
 #include <string>
 #include <vector>
@@ -141,6 +140,4 @@ class cls_FileSystem
 		//TODO: ClearStack function, ReverseStack, PopTop, PopBottom
 	};
 
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CUBO_ACTORS_H_G
-#define CUBO_ACTORS_H_G
+#pragma once
 
 #include "vectors.hpp"
 #include "cuboboxes.hpp"
@@ -291,5 +290,4 @@ class TCuboMovement
 extern void LUA_ACTOR_RegisterLib();
 extern void LUA_PLAYER_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

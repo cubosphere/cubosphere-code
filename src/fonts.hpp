@@ -12,9 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef FONTS_H_G
-#define FONTS_H_G
-
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -156,5 +154,4 @@ class TFont
 
 extern void LUA_FONT_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

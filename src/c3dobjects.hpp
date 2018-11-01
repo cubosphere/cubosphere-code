@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef C3DOBJECS_H_G
-#define C3DOBJECS_H_G
+#pragma once
 
 #include <vector>
 #include "vectors.hpp"
@@ -206,5 +205,4 @@ class TWorldObject : public TMatrixObject
 
 extern void LUA_CAM_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -23,9 +23,7 @@ if not, see <http://www.gnu.org/licenses/>.
  Thanks!
  */
 
-#ifndef SHADER_UTIL_H
-#define SHADER_UTIL_H
-
+#pragma once
 
 #include <string>
 #include <vector>
@@ -118,5 +116,4 @@ class TShaderServer
 
 extern void LUA_SHADER_RegisterLib();
 
-#endif /* SHADER_UTIL_H */
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

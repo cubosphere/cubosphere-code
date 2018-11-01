@@ -12,10 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef MOUSE_H_G
-#define MOUSE_H_G
-
-
+#pragma once
 
 #ifdef WIN32
 
@@ -75,5 +72,4 @@ class TMouse
 
 extern void LUA_MOUSE_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CONSOLE_H_G
-#define CONSOLE_H_G
+#pragma once
 
 #include <vector>
 #include <string>
@@ -63,5 +62,4 @@ class TCuboConsole
 
 extern TCuboConsole * g_CuboConsole();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef GLOBALS_H_G
-#define GLOBALS_H_G
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -106,5 +105,4 @@ extern TLuaCFunctions* g_FileSysLib();
 extern bool StartBootScript(std::string name="boot.lua");
 extern cls_FileSystem * g_BaseFileSystem();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

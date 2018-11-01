@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CUBO_LEVELS_H_G
-#define CUBO_LEVELS_H_G
+#pragma once
 
 #include "cuboboxes.hpp"
 #include <vector>
@@ -159,5 +158,4 @@ class TCuboLevel
 
 extern void LUA_LEVEL_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

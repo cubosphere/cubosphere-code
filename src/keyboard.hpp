@@ -12,9 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef KEYBOARD_H_G
-#define KEYBOARD_H_G
-
+#pragma once
 
 #ifdef WIN32
 
@@ -79,5 +77,4 @@ class TKeyboard
 
 extern void LUA_KEYB_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef MATRIXUTILS_H_G
-#define MATRIXUTILS_H_G
+#pragma once
 
 #include "vectors.hpp"
 /*
@@ -60,5 +59,4 @@ class T4dGlutMatrix: public T4dMatrix
 
 extern void LUA_MATRIX_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

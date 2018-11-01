@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef DEFINITIONS_H_G
-#define DEFINITIONS_H_G
+#pragma once
 
 #include "globals.hpp"
 #include <iostream>
@@ -107,8 +106,4 @@ class TMenu : public TBaseLuaDef
 
 extern void LUA_MENU_RegisterLib();
 
-
-
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef GL_UTILS_H_G
-#define GL_UTILS_H_G
+#pragma once
 
 #include "luautils.hpp"
 
@@ -29,5 +28,4 @@ extern void LUA_MATERIAL_RegisterLib();
 
 extern void InvalidateMaterial();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef LUA_UTILS_H_G
-#define LUA_UTILS_H_G
+#pragma once
 
 extern "C" {
 #include "lua.h"
@@ -312,5 +311,4 @@ extern void  ReloadLanguage();
 
 extern TLuaAccess* g_CallAccess();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

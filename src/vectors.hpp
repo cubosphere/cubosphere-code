@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef VECTORS_H_G
-#define VECTORS_H_G
+#pragma once
 
 #include <string>
 #include <cmath>
@@ -196,6 +195,4 @@ static T4dVector g_4dVectorW(0,0,0,1);
 extern void LUA_VECTOR_RegisterLib();
 extern void LUA_COLOR_RegisterLib();
 
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

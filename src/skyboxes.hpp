@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef SKYBOXES_H_G
-#define SKYBOXES_H_G
+#pragma once
 
 #include "definitions.hpp"
 #include "vectors.hpp"
@@ -31,9 +30,4 @@ class TSkyBox : public TBaseLuaDef
 		void SpecialRender(std::string nam,int defrender);
 	};
 
-
-
-
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

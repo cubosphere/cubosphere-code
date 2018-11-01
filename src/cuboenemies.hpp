@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef ENEMIES_H_G
-#define ENEMIES_H_G
+#pragma once
 
 #include "cuboactors.hpp"
 //#include <iostream>
@@ -37,5 +36,4 @@ class TCuboEnemy : public TCuboMovement
 
 extern void LUA_ENEMY_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

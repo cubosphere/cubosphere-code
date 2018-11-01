@@ -12,9 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef POSTEFFECTS_H_G
-#define POSTEFFECTS_H_G
-
+#pragma once
 
 #include "definitions.hpp"
 #include <vector>
@@ -71,5 +69,4 @@ extern void LoadPostEffect(std::string name);
 
 extern void LUA_EFFECT_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

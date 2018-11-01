@@ -3,7 +3,7 @@
  * [x] Separate data to another repo
 
 # Soon after upload [in progress]
- * [ ] Replace header guards with `#pragma once`
+ * [x] Replace header guards with `#pragma once`
  * [x] Update credits/links
  * [x] Update license
  * [ ] Update various Readme's
@@ -14,7 +14,7 @@
  * [x] …and build with C++17 standard
  * [x] Setup CI build [Circle CI done, Travis CI cancelled].
 
-# After base setup
+# After base setup [partially done]
  * [x] Stop using std!
  * [ ] Add Russian transation
  * [x] Make .deb package… [done with CI]

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CUBO_BOXES_H_G
-#define CUBO_BOXES_H_G
+#pragma once
 
 #include <iostream>
 #include "vectors.hpp"
@@ -237,6 +236,4 @@ extern void LUA_ITEM_RegisterLib();
 extern void LUA_BLOCK_RegisterLib();
 extern void LUA_SIDE_RegisterLib();
 
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

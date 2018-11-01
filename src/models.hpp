@@ -12,9 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef MODELS_H_G
-#define MODELS_H_G
-
+#pragma once
 
 #ifdef WIN32
 
@@ -160,6 +158,4 @@ class TModelServer
 extern void LUA_MDLDEF_RegisterLib();
 extern void LUA_MODEL_RegisterLib();
 
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

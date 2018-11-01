@@ -12,9 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef GAME_H_G
-#define GAME_H_G
-
+#pragma once
 
 #include "c3dobjects.hpp"
 #include "mouse.hpp"
@@ -168,5 +166,4 @@ extern TCuboGame *g_Game();
 extern void LUA_BASIS_RegisterLib();
 extern void LUA_GAME_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

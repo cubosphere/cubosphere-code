@@ -1,6 +1,4 @@
-#ifndef _unzip_H
-#define _unzip_H
-//
+#pragma once
 
 #define DECLARE_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name
 #ifndef MAX_PATH
@@ -234,7 +232,4 @@ bool IsZipHandleU(HZIP hz);
 #define FormatZipMessage FormatZipMessageU
 #endif
 
-
-
-#endif // _unzip_H
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

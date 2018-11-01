@@ -12,12 +12,10 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CUBOPATHFIND_H_G
-#define CUBOPATHFIND_H_G
+#pragma once
 
 #include <vector>
 #include <string>
-
 
 #include "luautils.hpp"
 
@@ -98,6 +96,4 @@ class TLuaPathfindingLib : public TLuaCFunctions
 
 extern TLuaPathfindingLib* g_PathFindingLib();
 
-
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef CUBO_UTILS_H_G
-#define CUBO_UTILS_H_G
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -30,9 +29,5 @@ extern void TokenizeFull(const std::string& str,
 		std::vector<std::string>& tokens,
 		const std::string& delimiters = " ");
 extern void TrimSpaces( std::string& str);
-
-
-
-#endif
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

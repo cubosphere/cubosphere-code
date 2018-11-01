@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef EVENT_H_G
-#define EVENT_H_G
+#pragma once
 
 #ifdef WIN32
 
@@ -54,8 +53,5 @@ class TEventManager
 		void SetKeyboard(TKeyboard *kb) {keyb=kb;}
 		void SetJoystick(TJoystickServer *ys) {joy=ys;}
 	};
-
-
-#endif
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

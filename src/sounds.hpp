@@ -12,8 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifndef SOUNDS_H_G
-#define SOUNDS_H_G
+#pragma once
 
 #ifdef WIN32
 
@@ -120,5 +119,4 @@ extern TSoundServer *g_Sounds();
 
 extern void LUA_SOUND_RegisterLib();
 
-#endif
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 
