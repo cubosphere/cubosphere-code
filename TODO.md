@@ -17,8 +17,9 @@
 # After base setup
  * [x] Stop using std!
  * [ ] Add Russian transation
- * [ ] Make .deb package…
- * [ ] …and post it to PPA (or other storage)
+ * [x] Make .deb package… [done with CI]
+ * [x] …and post it to PPA (or other storage, <http://cubosphere.vallua.ru/artifacts>, becasue PPA need source packages)
+ * [ ] Make windows build (Circle CI with cross-build or AppVeyor)
  * [ ] Invite people for testing
 
 # Meanwhile
