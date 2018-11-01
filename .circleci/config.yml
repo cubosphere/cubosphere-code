@@ -78,7 +78,6 @@ jobs:
           command: |
             ftp -pinv "$FTP_SERVER" <<EOF
             user $FTP_USER $FTP_PASSWORD
-            mdel *.deb
             lcd /tmp/artifacts
             mput *.deb
             bye

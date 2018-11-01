@@ -32,7 +32,6 @@ add_subdirectory(data)
 if(INCLUDE_CPACK) # TODO: extend support for other distros, Windows™ and OS X.
 	set(CPACK_PACKAGE_NAME "Cubosphere")
 	set(CPACK_PACKAGE_VENDOR "Cubosphere team")
-	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "3D puzzle, open source remake of Kula world")
 	set(CPACK_PACKAGE_DESCRIPTION "Goal of this project is a freeware game similar to the PSX game Kula World. It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, Lua, GLSL-Shader.
 Features:
 
@@ -52,9 +51,12 @@ Features:
 	set(CPACK_PACKAGE_VERSION_MINOR "3")
 	set(CPACK_PACKAGE_VERSION_PATCH "3")
 	set(CPACK_STRIP_FILES TRUE)
-	
+
+	set(CPACK_PACKAGE_EXECUTABLES "cubosphere;Cubosphere")
+
 	# DEB section
 	set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${PROJECT_HOMEPAGE_URL}")
+	set(CPACK_DEBIAN_PACKAGE_SECTION "games")
 	include(CPack)
 endif()

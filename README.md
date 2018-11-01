@@ -29,10 +29,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Configured Cricle CI with auto .deb build (private now)
 
 # How to download last git build for Ubuntu?
-Well, it's still in progress (contacted my hosting tech support for help). 
-It will most likely act like this:
-
-1. Go to http://cubosphere.vallua.ru/artifacts
+1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last four artifacts are kept)
 2. Download apporative package for you (naming is Cubosphere-timestamp+git-hash-distribution-Linux.deb)
 3. Install as normal (if you don't know how, just open file and click "Install" button or someting like it)
 
