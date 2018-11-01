@@ -1,5 +1,5 @@
 # Cubosphere [reborn]
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code.svg)](https://circleci.com/gh/cubosphere/cubosphere-code)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://webchat.freenode.net/?channels=cubosphere)
 ## A little story behind it
 One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will become great.
 
