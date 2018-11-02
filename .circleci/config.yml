@@ -77,9 +77,13 @@ jobs:
       - attach_workspace:
           at: /tmp/artifacts
       - run:
+          name: Preppending login command to FTP script
+          command: |
+            printf 'user %s %s\n%s' "$FTP_USER" "$FTP_PASSWORD" "$(cat .circleci/ftpscript)" > .circleci/ftpscript
+      - run:
           name: Working with FTP
           command: |
-            lftp "$FTP_SERVER" -d -e "user $FTP_USER $FTP_PASSWORD" -f .circleci/ftpscript
+            lftp -d -f .circleci/ftpscript "$FTP_SERVER"
 
 workflows:
   version: 2
