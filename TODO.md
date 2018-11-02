@@ -12,7 +12,8 @@
  * [x] Add .dekstop to menu
  * [x] Fix warnings (some are bugs-related) and C++17 errors…
  * [x] …and build with C++17 standard
- * [x] Setup CI build [Circle CI done, Travis CI cancelled].
+ * [x] Setup CI build [Circle CI done, Travis CI cancelled]
+ * [ ] Separate bin and data packages (use data repo hashes for `-data` package)
 
 # After base setup [partially done]
  * [ ] Use zlib instead of integrated copy (it will drop encryption, but it isn't important I think)
