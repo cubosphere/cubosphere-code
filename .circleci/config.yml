@@ -77,13 +77,14 @@ jobs:
       - attach_workspace:
           at: /tmp/artifacts
       - run:
-          name: Preppending login command to FTP script
-          command: |
-            printf 'user %s %s\n%s' "$FTP_USER" "$FTP_PASSWORD" "$(cat .circleci/ftpscript)" > .circleci/ftpscript
-      - run:
           name: Working with FTP
           command: |
-            lftp -d -f .circleci/ftpscript "$FTP_SERVER"
+            lftp -d <<EOF
+            user $FTP_USER $FTP_PASSWORD
+            set ftp:ssl-allow no
+            mirror --reverse --only-missing --delete /tmp/artifacts /
+            bye
+            EOF
 
 workflows:
   version: 2
