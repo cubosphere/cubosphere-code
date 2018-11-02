@@ -1,0 +1,3 @@
+set ftp:ssl-allow no
+mirror --reverse --only-missing --delete /tmp/artifacts /
+bye

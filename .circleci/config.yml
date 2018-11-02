@@ -25,7 +25,7 @@ jobs:
           command: './.circleci/prepare-artifacts.sh'
       - persist_to_workspace:
           root: /tmp/artifacts
-          paths: './*.deb'
+          paths: './*'
 
   build.rolling:
     docker:
@@ -48,11 +48,14 @@ jobs:
           name: Building, installing, creating package
           command: './.circleci/do-build.sh'
       - run:
+          name: Building and creating .tar.gz archive
+          command: './.circleci/do-build.sh'
+      - run:
           name: Preparing artifacts
           command: './.circleci/prepare-artifacts.sh'
       - persist_to_workspace:
           root: /tmp/artifacts
-          paths: './*.deb'
+          paths: './*'
 
   artifacts:
     docker:
@@ -70,18 +73,13 @@ jobs:
       - image: "ubuntu:rolling"
     steps:
       - run: apt-get update
-      - run: apt-get install -y ca-certificates ftp
+      - run: apt-get install -y ca-certificates lftp
       - attach_workspace:
           at: /tmp/artifacts
       - run:
           name: Working with FTP
           command: |
-            ftp -pinv "$FTP_SERVER" <<EOF
-            user $FTP_USER $FTP_PASSWORD
-            lcd /tmp/artifacts
-            mput *.deb
-            bye
-            EOF
+            lftp "$FTP_SERVER" -d -e "user $FTP_USER $FTP_PASSWORD" -f .circleci/ftpscript
 
 workflows:
   version: 2
