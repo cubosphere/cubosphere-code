@@ -79,7 +79,7 @@ jobs:
       - run:
           name: Working with FTP
           command: |
-            lftp -d <<EOF
+            lftp -d $FTP_SERVER <<EOF
             user $FTP_USER $FTP_PASSWORD
             set ftp:ssl-allow no
             mirror --reverse --only-missing --delete /tmp/artifacts /
