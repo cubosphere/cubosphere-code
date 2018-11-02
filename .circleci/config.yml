@@ -49,7 +49,7 @@ jobs:
           command: './.circleci/do-build.sh'
       - run:
           name: Building and creating .tar.gz archive
-          command: './.circleci/do-build.sh'
+          command: './.circleci/pack-tgz.sh'
       - run:
           name: Preparing artifacts
           command: './.circleci/prepare-artifacts.sh'
