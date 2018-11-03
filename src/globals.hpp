@@ -31,8 +31,6 @@ extern string dirname(string s);
 extern int mkdir(string d);
 #endif
 
-
-
 extern void RecursiveMKDir(std::string dir,std::string dirsep=STD_DIR_SEP,int mode=0755);
 
 extern int g_VerboseMode();
@@ -46,7 +44,6 @@ extern void SetCmdLine(int argc,char *argv[]);
 extern std::string g_DataDir();
 extern std::string g_ProfileDir();
 
-extern void SetBaseDir(std::string bd);
 extern void SetProfileDir(std::string dir);
 extern void SetDataDir(std::string dir);
 
@@ -67,9 +64,6 @@ extern TCuboFile* GetFileName(std::string subname,int type,std::string ext);
 extern TCuboFile* GetCuboFileFromRelativeName(std::string relname);
 
 extern int FileTypeFromString(std::string which,std::string *exte=NULL);
-
-
-
 
 #define FILE_TEXTURE 0
 #define FILE_TEXTUREDEF 1

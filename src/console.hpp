@@ -24,9 +24,9 @@ typedef struct
 	{
 	int k;
 	std::string cmd;
-	} TConsoleBinding;
+	} ConsoleBinding;
 
-class TCuboConsole
+class CuboConsole
 	{
 	protected:
 		bool isactive;
@@ -43,9 +43,11 @@ class TCuboConsole
 		int togglekey;
 		void ParseCmdLine(std::string cmdl="");
 		TLuaAccess lua;
-		std::vector <TConsoleBinding> binds;
+		std::vector<ConsoleBinding> binds;
 		int Bind(std::vector<std::string> & extratoks,int unbind);
 	public:
+		static CuboConsole* getInstance();
+
 		void Init();
 		int CheckBindKey(int ident,int down,int toggle);
 		int GetToggleKey();
@@ -53,13 +55,11 @@ class TCuboConsole
 		int GetLineIndex(int offs);
 		int Toggle();
 		int IsActive();
-		TCuboConsole();
+		CuboConsole();
 		void AddLine(std::string s,int typ=0);
-		~TCuboConsole();
+		~CuboConsole();
 		void Render();
 		void KeyHandle(int ident,int down,int toggle);
 	};
-
-extern TCuboConsole * g_CuboConsole();
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

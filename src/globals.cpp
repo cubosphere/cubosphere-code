@@ -12,23 +12,14 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <iostream>
 #include <string>
 #include "globals.hpp"
-#include "luautils.hpp"
 #include "themes.hpp"
-#include <fstream>
-#include <sstream>
-#include <vector>
 #include "cuboutils.hpp"
-#include <fcntl.h>
-
 
 #include <dirent.h>
 
 #include <sys/stat.h>
-
-//#include "luautils.hpp"
 
 cls_FileSystem gBaseFileSystem;
 
@@ -40,7 +31,6 @@ std::string activemod="";
 
 //Some patches from Vincent Petry - Thanks !
 
-std::string base_dir="";
 std::string data_dir="";
 std::string profile_dir="";
 
@@ -121,11 +111,6 @@ std::string CurrentMod()
 	return activemod;
 // if (modstack.size()==0) return "";
 //else return modstack[0];
-	}
-
-void SetBaseDir(std::string bd)
-	{
-	base_dir=bd;
 	}
 
 void SetProfileDir(std::string dir)

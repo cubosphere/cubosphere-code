@@ -348,7 +348,7 @@ void TGame::SetGameLoopSource(std::string s)
 void TGame::Start()
 	{
 	TheGame=(TCuboGame*)this;
-	g_CuboConsole()->Init();
+	CuboConsole::getInstance()->Init();
 
 
 
@@ -533,7 +533,7 @@ void TCuboGame::ScreenShot(void)
 
 void TCuboGame::JoyAxisHandle(int joys,int axis,float val,float pval)
 	{
-	if (g_CuboConsole()->IsActive()) return ;
+	if (CuboConsole::getInstance()->IsActive()) return ;
 
 	if (MenuActive)
 		menu.JoyAxisChange(joys,axis,val,pval);
@@ -588,20 +588,20 @@ void TCuboGame::KeyHandle(int ident,int down,int toggle)
 	{
 	if (ident==-1) exit(0);
 //cout << ident << " " << down << " " << toggle << endl;
-	if ((ident==g_CuboConsole()->GetToggleKey() ) && down && toggle)
+	if ((ident==CuboConsole::getInstance()->GetToggleKey() ) && down && toggle)
 			{
-			g_CuboConsole()->Toggle();
+			CuboConsole::getInstance()->Toggle();
 			return;
 			}
 
-	if (g_CuboConsole()->IsActive())
+	if (CuboConsole::getInstance()->IsActive())
 			{
 			//Send key to console
-			g_CuboConsole()->KeyHandle(ident,down,toggle);
+			CuboConsole::getInstance()->KeyHandle(ident,down,toggle);
 			return;
 			}
 
-	if (g_CuboConsole()->CheckBindKey(ident,down,toggle)) {return;}
+	if (CuboConsole::getInstance()->CheckBindKey(ident,down,toggle)) {return;}
 
 	if (MenuActive)
 		menu.SendKey(ident,down,toggle);
@@ -611,7 +611,7 @@ void TCuboGame::KeyHandle(int ident,int down,int toggle)
 
 void TCuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle)
 	{
-	if (g_CuboConsole()->IsActive()) return;
+	if (CuboConsole::getInstance()->IsActive()) return;
 
 	if (MenuActive)
 		menu.SendJoyButton(joy,button,dir,down,toggle);
@@ -887,7 +887,7 @@ void TCuboGame::Render()
 	if (GameActive) lvl.DrawHUD();
 	if (MenuActive) menu.Render();
 
-	g_CuboConsole()->Render();
+	CuboConsole::getInstance()->Render();
 
 	if (FlushOrFinishBeforeSwap==1)
 		glFlush();

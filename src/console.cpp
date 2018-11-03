@@ -35,10 +35,12 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include "game.hpp"
 
-TCuboConsole gCuboConsole;
-TCuboConsole * g_CuboConsole() {return &gCuboConsole; }
+CuboConsole* CuboConsole::getInstance() { // TODO: return reference instead
+	static CuboConsole console;
+	return &console;
+}
 
-int TCuboConsole::Toggle()
+int CuboConsole::Toggle()
 	{
 	isactive=!isactive;
 	if (isactive) {
@@ -55,19 +57,19 @@ int TCuboConsole::Toggle()
 	return isactive;
 	}
 
-int TCuboConsole::IsActive()
+int CuboConsole::IsActive()
 	{
 	return isactive;
 	}
 
-TCuboConsole::TCuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  screenlines(23), lowerline_ypos(0.5),  togglekey(-2)
+CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  screenlines(23), lowerline_ypos(0.5),  togglekey(-2)
 	{
 	history.push_back("");
 	hisbackup=""; hisindex=0;
 	lua.Include(g_CuboLib());
 	}
 
-void TCuboConsole::Init()
+void CuboConsole::Init()
 	{
 	TCuboFile * cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
 	lua.Include(g_CuboLib());
@@ -83,7 +85,7 @@ void TCuboConsole::Init()
 	}
 
 
-void TCuboConsole::AddLine(std::string s,int typ)
+void CuboConsole::AddLine(std::string s,int typ)
 	{
 	std::vector<std::string> toks;
 	Tokenize(s,toks,"\n");
@@ -100,17 +102,17 @@ void TCuboConsole::AddLine(std::string s,int typ)
 			}
 	}
 
-void TCuboConsole::SetToggleKey(int tk) {togglekey=tk;}
-int TCuboConsole::GetToggleKey() {return togglekey;}
+void CuboConsole::SetToggleKey(int tk) {togglekey=tk;}
+int CuboConsole::GetToggleKey() {return togglekey;}
 
 
 
-TCuboConsole::~TCuboConsole()
+CuboConsole::~CuboConsole()
 	{
 
 	}
 
-int TCuboConsole::CheckBindKey(int ident,int down,int toggle)
+int CuboConsole::CheckBindKey(int ident,int down,int toggle)
 	{
 	for (unsigned int i=0; i<binds.size(); i++)
 			{
@@ -123,7 +125,7 @@ int TCuboConsole::CheckBindKey(int ident,int down,int toggle)
 	return 0;
 	}
 
-int TCuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
+int CuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 	{
 	if (!extratoks.size()) {coutlog("Key expected!",2); return 0;}
 	std::string key=extratoks[0];
@@ -138,7 +140,7 @@ int TCuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 			binds.erase(binds.begin()+bindex);
 			}
 	else {
-			if (bindex==-1) bindex=binds.size(); binds.push_back(TConsoleBinding());
+			if (bindex==-1) bindex=binds.size(); binds.push_back(ConsoleBinding());
 			std::string cmd="";
 
 			for (unsigned int i=1; i<extratoks.size(); i++) cmd+=extratoks[i]+" ";
@@ -151,7 +153,7 @@ int TCuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 	return 1;
 	}
 
-void TCuboConsole::ParseCmdLine(std::string cmdl)
+void CuboConsole::ParseCmdLine(std::string cmdl)
 	{
 	std::string cmdline=history.back();
 	if (cmdl!="") cmdline=cmdl;
@@ -255,7 +257,7 @@ void TCuboConsole::ParseCmdLine(std::string cmdl)
 			}
 	}
 
-void TCuboConsole::KeyHandle(int ident,int down,int toggle)
+void CuboConsole::KeyHandle(int ident,int down,int toggle)
 	{
 	if ((!toggle) || (!down)) return;
 
@@ -308,7 +310,7 @@ void TCuboConsole::KeyHandle(int ident,int down,int toggle)
 
 	}
 
-int TCuboConsole::GetLineIndex(int offs)
+int CuboConsole::GetLineIndex(int offs)
 	{
 	if (lines.size()>=CUBO_CONSOLE_MAX_LINES)
 			{
@@ -324,7 +326,7 @@ int TCuboConsole::GetLineIndex(int offs)
 			}
 	}
 
-void TCuboConsole::Render()
+void CuboConsole::Render()
 	{
 	if ((!isactive) && lowerline_ypos>=0.5) return;
 

@@ -640,7 +640,7 @@ void coutlog(std::string s,int typ)
 					}
 			}
 
-	g_CuboConsole()->AddLine(s,typ);
+	CuboConsole::getInstance()->AddLine(s,typ);
 	}
 
 int TLuaCuboLib::mycout(lua_State *state)
@@ -802,7 +802,7 @@ int TLuaCuboLib::GLOBAL_StartDeveloperMode(lua_State *state)
 
 	std::string consolekey=LUA_GET_STRING;
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(consolekey);
-	g_CuboConsole()->SetToggleKey(k);
+	CuboConsole::getInstance()->SetToggleKey(k);
 	return 0;
 	}
 

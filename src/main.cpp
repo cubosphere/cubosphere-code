@@ -85,7 +85,6 @@ int main(int argc, char *argv[])
 	{
 	SetCmdLine(argc,argv);
 	std::string dir = dirname(argv[0]);
-	SetBaseDir(dir);
 
 // Patch from Vincent Petry - Thanks! (It was messy…)
 #ifndef WIN32
