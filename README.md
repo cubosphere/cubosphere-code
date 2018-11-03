@@ -44,7 +44,7 @@ You can be confused by ubuntu packaging system, but it isn't hard in fact.
     2. Use `dpkg -i` from cmd to avoid this issues (google a bit )
 
 # What will/should be done?
-Check out [TODO list](TODO.md)!
+Check out [GitHub™ projects](https://github.com/cubosphere/cubosphere-code/projects)!
 
 # How can I take part in fun and make cubosphere great again?
 You can:
@@ -53,6 +53,7 @@ You can:
 * If you have made a lot of contributions and I trust you then you can ask for direct write access
 * Test game, report issues, tell friends about it
 * Join IRC (check badge) and talk to me, other players and (if they are here!) team members
+* Support development on [![Beerpay](https://beerpay.io/cubosphere/cubosphere-code/badge.svg?style=flat)](https://beerpay.io/cubosphere/cubosphere-code), motivate using [![Beerpay](https://beerpay.io/cubosphere/cubosphere-code/make-wish.svg?style=flat)](https://beerpay.io/cubosphere/cubosphere-code)
 
 # Ok, some credits
 You can find original homepage, codebase and developers at https://sourceforge.net/projects/cubosphere.
