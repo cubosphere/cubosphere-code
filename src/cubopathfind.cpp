@@ -54,7 +54,7 @@ int TCuboPathNode::GetNextSideID(int dir)
 	{
 	if (sideindex<0) return -1;
 	T3dVector t,n,d;
-	TCuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(sideindex);
+	CuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(sideindex);
 	if (!bs) return -1;
 	t= bs->GetTangent();
 	n= bs->GetNormal();
@@ -72,13 +72,13 @@ int TCuboPathNode::GetNextSideID(int dir)
 	checkvect=bs->GetBlock()->GetPos();
 	T3dVector rv=d+n;
 	checkvect=checkvect+rv*(2*CUBO_SCALE);
-	TCuboBlock *b;
+	CuboBlock *b;
 
 	b=g_Game()->GetLevel()->GetBlockAtPos(checkvect);
 	if (b && (b->Blocking())) //ROLL UPWARDS!
 			{
 			int si=DirVectToSide(-d);
-			TCuboBlockSide *nbs=b->GetBlockSide(si);
+			CuboBlockSide *nbs=b->GetBlockSide(si);
 			return nbs->GetID();
 			}
 	else
@@ -88,17 +88,17 @@ int TCuboPathNode::GetNextSideID(int dir)
 			if (b)
 					{
 					int si=DirVectToSide(n);
-					TCuboBlockSide *nbs=b->GetBlockSide(si);
+					CuboBlockSide *nbs=b->GetBlockSide(si);
 					return nbs->GetID();
 					}
 			else //The last possibility is a downward roll
 					{
 					b=bs->GetBlock()->GetNext(DirVectToSide(d.cross(n)));
-					TCuboBlock *b2=bs->GetBlock()->GetNext(DirVectToSide(n.cross(d)));
+					CuboBlock *b2=bs->GetBlock()->GetNext(DirVectToSide(n.cross(d)));
 					if ((!b) && (!b2))
 							{
 							int si=DirVectToSide(d);
-							TCuboBlockSide *nbs=bs->GetBlock()->GetBlockSide(si);
+							CuboBlockSide *nbs=bs->GetBlock()->GetBlockSide(si);
 							return nbs->GetID();
 							}
 					}
@@ -124,7 +124,7 @@ void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string a
 	nodes.clear(); path.clear(); next.clear();
 	if (startindex<0) return;
 
-	TCuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(startindex);
+	CuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(startindex);
 	if (!bs) return;
 
 	cstate=state;

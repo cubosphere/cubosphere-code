@@ -220,7 +220,7 @@ class TParticleDef : public TBaseLuaDef
 		int NewSpriteType(int tind);
 	};
 
-typedef TBaseDefServer<TParticleDef> TParticleDefServer;
+typedef BaseDefServer<TParticleDef> TParticleDefServer;
 
 extern TParticleDefServer * g_ParticleDefs();
 

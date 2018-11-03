@@ -65,7 +65,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define SPEED_MODE_LOCAL 1
 #define SPEED_MODE_LOCAL_AFTER_ROT 2
 
-class TMatrixObject
+class MatrixObject
 	{
 	protected:
 		T3dMatrix base;
@@ -78,8 +78,8 @@ class TMatrixObject
 		T4dGlutMatrix matrix;
 		unsigned char changed,usescale,usePYR,pyrOverFlip;
 		int numOps;
-		std::vector<TMatrixObject*> children;
-		TMatrixObject *parent;
+		std::vector<MatrixObject*> children;
+		MatrixObject *parent;
 		int mirr;
 		void PitchYawRollToBase();
 
@@ -91,13 +91,13 @@ class TMatrixObject
 
 		//usePRY has following values 0=nothing to do, 1=only getters were called, 2=setters were called
 	public:
-		TMatrixObject() : base(1), vPos(0,0,0), vScale(1,1,1), vSpeed(0,0,0), vAngleSpeed(0,0,0),speedMode(0), rotSpeedMode(0), matrix(1), changed(1),usescale(0),usePYR(0), pyrOverFlip(0),numOps(0), parent(NULL) {}
+		MatrixObject() : base(1), vPos(0,0,0), vScale(1,1,1), vSpeed(0,0,0), vAngleSpeed(0,0,0),speedMode(0), rotSpeedMode(0), matrix(1), changed(1),usescale(0),usePYR(0), pyrOverFlip(0),numOps(0), parent(NULL) {}
 //    TMatrixObject(const T3dVector& side,const T3dVector& up,const T3dVector& dir) : base(1),vScale(1,1,1),vSpeed(0,0,0), vAngleSpeed(0,0,0),speedMode(0), rotSpeedMode(0), changed(1),usescale(0) ,usePYR(0),pyrOverFlip(0),numOps(0),parent(NULL), mirr(0) {}
-		virtual ~TMatrixObject() {for (unsigned int i=0 ; i < children.size(); i++) if (children[i]) delete children[i]; }
+		virtual ~MatrixObject() {for (unsigned int i=0 ; i < children.size(); i++) if (children[i]) delete children[i]; }
 		// Setters
 		virtual void SetBasis(const T3dVector &s,const T3dVector &u,const T3dVector &d) {setSide(s); setUp(u); setDir(d);}
 		virtual void SetBasisAxisRotate(const T3dVector & axis,const tfloat angle);
-		virtual void CopyBasis(TMatrixObject *other);
+		virtual void CopyBasis(MatrixObject *other);
 		virtual void OnBaseChange() {} //Is called whenever the BaseMatrix is changed
 		virtual void OnPYRChange() {} //Called whenever PYR is changed
 		virtual void OnBaseWillChange() {} //Called whenever BaseMatrix is about to change... We can use the old matrix for some implementations
@@ -142,16 +142,16 @@ class TMatrixObject
 		virtual void goSide(tfloat dist) {T3dVector d=getSide(); vPos=vPos+d*dist; changed=1;}
 		virtual void goUp(tfloat dist) {T3dVector d=getUp(); vPos=vPos+d*dist; changed=1;}
 		virtual void TraverseTree(const tfloat timeelapsed);
-		virtual void addChild(TMatrixObject *other) {children.push_back(other); other->parent=this;}
+		virtual void addChild(MatrixObject *other) {children.push_back(other); other->parent=this;}
 		virtual int getChildNum() {return children.size();}
-		virtual TMatrixObject *getChild(const int i) {if (i<0 || i>=getChildNum()) return NULL; else return children[i];}
+		virtual MatrixObject *getChild(const int i) {if (i<0 || i>=getChildNum()) return NULL; else return children[i];}
 		virtual T3dMatrix *getBase() {return &base;}
 		virtual void Reset() {base.Identity(); vPos.xyz(0,0,0); changed=1;}
 		virtual void SetMirror(int m);
 		virtual int GetMirror();
 	};
 
-class TCamera : public TMatrixObject
+class Camera : public MatrixObject
 	{
 	protected:
 		T2dVector nearfar;
@@ -164,14 +164,14 @@ class TCamera : public TMatrixObject
 		unsigned char ortho,fovchanged;
 		void ExtractFrustum();
 	public:
-		TMatrixObject * distort;
-		TCamera() : TMatrixObject(), nearfar(2.0,8000.0), screenwh(800.0,600.0), fovxy(1.0,1.0), zoom(1.0), AttachedOnPlayer(-1),ortho(0),fovchanged(1),distort(NULL) {};
-		virtual ~TCamera() {}
+		MatrixObject * distort;
+		Camera() : MatrixObject(), nearfar(2.0,8000.0), screenwh(800.0,600.0), fovxy(1.0,1.0), zoom(1.0), AttachedOnPlayer(-1),ortho(0),fovchanged(1),distort(NULL) {};
+		virtual ~Camera() {}
 		virtual void CalcMatrix();
 		virtual void AttachToPlayer(int i) {AttachedOnPlayer=i;}
 		virtual int GetPlayer() {return AttachedOnPlayer;}
 		virtual void Invalidate() {fovchanged=1;}
-		virtual void think() {TMatrixObject::think(); matrix.glPushMult(); ExtractFrustum();}
+		virtual void think() {MatrixObject::think(); matrix.glPushMult(); ExtractFrustum();}
 		T2dVector getNearFar() {return nearfar;}
 		T2dVector getScreenWidthHeight() {return screenwh;}
 		T2dVector getFOVXY() {return fovxy;}
@@ -192,14 +192,14 @@ class TCamera : public TMatrixObject
 
 	};
 
-class TWorldObject : public TMatrixObject
+class WorldObject : public MatrixObject
 	{
 	protected:
 
 	public:
 		virtual void CalcMatrix();
-		virtual void think() {TMatrixObject::think(); matrix.glPushMult();}
-		virtual ~TWorldObject() {}
+		virtual void think() {MatrixObject::think(); matrix.glPushMult();}
+		virtual ~WorldObject() {}
 	};
 
 

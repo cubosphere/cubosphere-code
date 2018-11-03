@@ -46,7 +46,7 @@ class CuboConsole
 		std::vector<ConsoleBinding> binds;
 		int Bind(std::vector<std::string> & extratoks,int unbind);
 	public:
-		static CuboConsole* getInstance();
+		static CuboConsole* GetInstance();
 
 		void Init();
 		int CheckBindKey(int ident,int down,int toggle);

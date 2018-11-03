@@ -348,7 +348,7 @@ void TGame::SetGameLoopSource(std::string s)
 void TGame::Start()
 	{
 	TheGame=(TCuboGame*)this;
-	CuboConsole::getInstance()->Init();
+	CuboConsole::GetInstance()->Init();
 
 
 
@@ -533,7 +533,7 @@ void TCuboGame::ScreenShot(void)
 
 void TCuboGame::JoyAxisHandle(int joys,int axis,float val,float pval)
 	{
-	if (CuboConsole::getInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) return ;
 
 	if (MenuActive)
 		menu.JoyAxisChange(joys,axis,val,pval);
@@ -588,20 +588,20 @@ void TCuboGame::KeyHandle(int ident,int down,int toggle)
 	{
 	if (ident==-1) exit(0);
 //cout << ident << " " << down << " " << toggle << endl;
-	if ((ident==CuboConsole::getInstance()->GetToggleKey() ) && down && toggle)
+	if ((ident==CuboConsole::GetInstance()->GetToggleKey() ) && down && toggle)
 			{
-			CuboConsole::getInstance()->Toggle();
+			CuboConsole::GetInstance()->Toggle();
 			return;
 			}
 
-	if (CuboConsole::getInstance()->IsActive())
+	if (CuboConsole::GetInstance()->IsActive())
 			{
 			//Send key to console
-			CuboConsole::getInstance()->KeyHandle(ident,down,toggle);
+			CuboConsole::GetInstance()->KeyHandle(ident,down,toggle);
 			return;
 			}
 
-	if (CuboConsole::getInstance()->CheckBindKey(ident,down,toggle)) {return;}
+	if (CuboConsole::GetInstance()->CheckBindKey(ident,down,toggle)) {return;}
 
 	if (MenuActive)
 		menu.SendKey(ident,down,toggle);
@@ -611,7 +611,7 @@ void TCuboGame::KeyHandle(int ident,int down,int toggle)
 
 void TCuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle)
 	{
-	if (CuboConsole::getInstance()->IsActive()) return;
+	if (CuboConsole::GetInstance()->IsActive()) return;
 
 	if (MenuActive)
 		menu.SendJoyButton(joy,button,dir,down,toggle);
@@ -692,7 +692,7 @@ int TCuboGame::Init()
 	joysticks.SetDiscreteHandler(joyhandle);
 
 
-	player.push_back(new TCuboPlayer(0));
+	player.push_back(new CuboPlayer(0));
 
 	cam.goUp(2*CUBO_SCALE);
 	T2dVector nearfar(2.0,6000);
@@ -887,7 +887,7 @@ void TCuboGame::Render()
 	if (GameActive) lvl.DrawHUD();
 	if (MenuActive) menu.Render();
 
-	CuboConsole::getInstance()->Render();
+	CuboConsole::GetInstance()->Render();
 
 	if (FlushOrFinishBeforeSwap==1)
 		glFlush();

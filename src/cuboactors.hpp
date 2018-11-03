@@ -68,7 +68,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define CUBO_FALL_TILL_LOOKDOWN 0.4
 
-class TCuboPlayer
+class CuboPlayer
 	{
 	protected:
 		int id;
@@ -79,13 +79,13 @@ class TCuboPlayer
 		int activeact;
 		int lastact;
 		T3dVector pyr;
-		TMatrixObject old_mo,new_mo;
+		MatrixObject old_mo,new_mo;
 		void CamMove(int newactor);
 	public:
-		TCuboPlayer(int mid) : id(mid), caminterpolation(1.0),camspeed(3),activeact(0), lastact(0) {}
+		CuboPlayer(int mid) : id(mid), caminterpolation(1.0),camspeed(3),activeact(0), lastact(0) {}
 		void SetCamSpeed(tfloat cs) {camspeed=cs;}
 		bool InCameraPan() {return caminterpolation<1.0;}
-		void SetCameraPos(tfloat elapsed,TMatrixObject *cam);
+		void SetCameraPos(tfloat elapsed,MatrixObject *cam);
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
 		void AddActor(int i);
 		int GetActiveActor() {if ((activeact<0) || (activeact>=(int)actorids.size())) return -1; else return actorids[activeact];}
@@ -100,10 +100,10 @@ class TCuboPlayer
 
 
 
-class TActorDef : public TBaseLuaDef
+class ActorDef : public TBaseLuaDef
 	{
 	public:
-		virtual ~TActorDef() {}
+		virtual ~ActorDef() {}
 		virtual int GetType() {return FILE_ACTORDEF;}
 		void Call_Constructor(int id);
 		void Call_Render(int id);
@@ -122,7 +122,7 @@ class TActorDef : public TBaseLuaDef
 		std::string Call_GetEditorInfo(std::string what,std::string std);
 	};
 
-class TActorDefServer : public TBaseDefServer<TActorDef>
+class ActorDefServer : public BaseDefServer<ActorDef>
 	{
 	public:
 		int GetDef(std::string name, int forplayer=1);
@@ -159,8 +159,8 @@ class TCuboMovement
 		T3dVector newpos;
 		T3dVector oldpos;
 		TCuboLevel *lvl;
-		TCuboBlock *onBlock;
-		TCuboBlock *BlockUnderMe;
+		CuboBlock *onBlock;
+		CuboBlock *BlockUnderMe;
 		TLuaVarHolder varholder;
 		T3dVector camfloats;       //
 		T3dVector lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
@@ -190,10 +190,10 @@ class TCuboMovement
 		int grav180rot; //For upside down rotation
 		double tempmovespeedmultiply;
 		// float radius;
-		T3dVector AtBlockPos(TCuboBlock *b,int s);
+		T3dVector AtBlockPos(CuboBlock *b,int s);
 		int DirVectToSide(T3dVector dirvect);
-		TCuboBlock *GetRelBlock(TCuboBlock *b,T3dVector dir);
-		TCuboBlock *GetRelBlock(TCuboBlock *b,int side);
+		CuboBlock *GetRelBlock(CuboBlock *b,T3dVector dir);
+		CuboBlock *GetRelBlock(CuboBlock *b,int side);
 		void AirMove(float elapsed);
 		int MayMove(int typ);
 		void Call_ChangeMove();
@@ -252,7 +252,7 @@ class TCuboMovement
 		void HighJump();
 		void FarJump(); //3 Blocks
 		void JumpUp(); //Ensures that we only jump up.. For callmove on onedir blocks
-		void SetCamPos(TMatrixObject *cam);
+		void SetCamPos(MatrixObject *cam);
 		int GetID() {return id;}
 		T3dVector GetPos() {return pos;}
 		T3dVector GetOldPos() {return oldpos;}
@@ -265,7 +265,7 @@ class TCuboMovement
 		int TraceOnSideID();
 		void Think();
 		void DistRender();
-		void SetStartPos(TCuboBlockSide *sside,int srot);
+		void SetStartPos(CuboBlockSide *sside,int srot);
 		int GetJumpDistBlocks();
 		void SetJumpDistBlocks(int d);
 		void ResetForwardPressTime() {forwardpresstime=0;}

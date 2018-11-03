@@ -35,7 +35,7 @@ class TGame
 	protected:
 		//It owns a cam, a texture server and input devices
 		int AntiAliasing;
-		TCamera cam;
+		Camera cam;
 		TTextureServer textures;
 		TMouse mouse;
 		TKeyboard keyboard;
@@ -79,7 +79,7 @@ class TGame
 		virtual TShaderServer* GetShaders() {return &shaders;}
 		virtual double GetTime() {return time/1000.0;}
 		virtual double GetElapsed() {return elapsed;}
-		virtual TCamera *GetCam() {return &cam;}
+		virtual Camera *GetCam() {return &cam;}
 		virtual int GetFPS() {return FPS;}
 		virtual TKeyboard *GetKeyboard() {return &keyboard;}
 		virtual TJoystickServer *GetJoysticks() {return &joysticks;}
@@ -89,7 +89,7 @@ class TGame
 		virtual void SetMaxPhysElapsed(double t) {if (t>0) maxphyselapsed=t; else maxphyselapsed=100000;}
 	};
 
-class TCuboBasis : public TWorldObject
+class TCuboBasis : public WorldObject
 	{
 	public:
 		virtual void InvertMatrix();
@@ -100,13 +100,13 @@ class TCuboGame : public TGame
 	protected:
 		int freecam;
 		std::vector<TCuboMovement*> move;
-		std::vector<TCuboPlayer*> player;
+		std::vector<CuboPlayer*> player;
 		std::vector<TCuboBasis> basis; //3d-Matrices
 		TCuboLevel lvl;
 		TSkyBox sky;
 		TMdlDefServer mdefs;
 		TModelServer mdls;
-		TActorDefServer adefs;
+		ActorDefServer adefs;
 
 		TMenu menu;
 		int RenderPassID;
@@ -134,13 +134,13 @@ class TCuboGame : public TGame
 		virtual TCuboLevel *GetLevel() {return &lvl;}
 		virtual TCuboMovement *GetActorMovement(int i) {return (move[i]);}
 		virtual int GetNumActors() {return (move.size());}
-		virtual TCuboPlayer *GetPlayer(int i) {return (player[i]);}
+		virtual CuboPlayer *GetPlayer(int i) {return (player[i]);}
 		virtual int GetNumPlayers() {return (player.size());}
 		virtual void DeleteActor(int index);
 		virtual unsigned int NumActors() {return move.size();}
 		virtual TMdlDefServer *GetModelDefs() {return &mdefs;}
 		virtual TModelServer *GetModels() {return &mdls;}
-		virtual TActorDefServer *GetActorDefs() {return &adefs;}
+		virtual ActorDefServer *GetActorDefs() {return &adefs;}
 		virtual TMouse *GetMouse() {return &mouse;}
 		virtual void LoadSky(std::string name);
 		virtual int AddActor(std::string aname);

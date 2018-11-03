@@ -35,7 +35,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include "game.hpp"
 
-CuboConsole* CuboConsole::getInstance() { // TODO: return reference instead
+CuboConsole* CuboConsole::GetInstance() { // TODO: return reference instead
 	static CuboConsole console;
 	return &console;
 }

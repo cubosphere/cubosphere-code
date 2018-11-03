@@ -88,7 +88,7 @@ void TSpriteEnvironment::RefreshBasis()
 	if (attachtype==SPRITE_ENV_ATTACHED_TO_WORLD) return;
 	else if (attachtype==SPRITE_ENV_ATTACHED_TO_SIDE)
 			{
-			TCuboBlockSide *bs;
+			CuboBlockSide *bs;
 			bs=g_Game()->GetLevel()->GetBlockSide(attachedid);
 			if (!bs) return;
 			vpos=bs->GetMidpoint();

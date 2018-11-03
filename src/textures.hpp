@@ -53,12 +53,7 @@ class TTextureDef : public TBaseLuaDef
 		void Render2d();
 	};
 
-
-
-typedef TBaseDefServer<TTextureDef> TTextureDefServer;
-
-
-
+typedef BaseDefServer<TTextureDef> TTextureDefServer;
 
 //Inherited the different formats herefrom
 class TTexture

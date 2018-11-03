@@ -17,7 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboactors.hpp"
 //#include <iostream>
 
-class TEnemyDef : public TActorDef
+class TEnemyDef : public ActorDef
 	{
 	public:
 		virtual int GetType() {return FILE_ENEMYDEF;}

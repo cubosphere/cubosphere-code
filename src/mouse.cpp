@@ -69,7 +69,7 @@ TMouseButton TMouse::GetButton(int i)
 
 void TMouse::DispatchEvent(SDL_Event *ev)
 	{
-	if (CuboConsole::getInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) return ;
 
 	if (ev->type==SDL_MOUSEMOTION)
 			{
@@ -117,7 +117,7 @@ void TMouse::Initialize()
 
 void TMouse::HandleMotion(int cx,int cy,int cpassive)
 	{
-	if (CuboConsole::getInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) return ;
 
 	dx+=cx-x;
 	dy+=cy-y;

@@ -49,7 +49,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <dirent.h>
 #endif
 
-void TDistRenderObj::DistRender(TCamera *cam)
+void TDistRenderObj::DistRender(Camera *cam)
 	{
 	if (CullRadius>0) {
 			if (!(cam->SphereInFrustum(CullCenter,CullRadius))) { return; }
@@ -83,7 +83,7 @@ void TDistRenderObj::DistRender(TCamera *cam)
 	}
 
 
-void TDistRenderObj::Render(TCamera *cam)
+void TDistRenderObj::Render(Camera *cam)
 	{
 	if (type==DIST_RENDER_ITEM)
 			{
@@ -104,7 +104,7 @@ void TDistRenderObj::Render(TCamera *cam)
 			}
 	}
 
-void TDistRenderObj::SpecialRender(TCamera *cam,std::string nam,int defrender)
+void TDistRenderObj::SpecialRender(Camera *cam,std::string nam,int defrender)
 	{
 	if (type==DIST_RENDER_ITEM)
 			{
@@ -177,14 +177,14 @@ static int SideStringToSideInt(std::string s)
 
 void TCuboLevel::AddBlock(int x,int y,int z,std::string bdefname)
 	{
-	blocks.push_back(new TCuboBlock());
+	blocks.push_back(new CuboBlock());
 	LastBlock()->SetID(blocks.size()-1);
 	LastBlock()->SetIPos(x,y,z);
 	LastBlock()->SetBlockType(bdefs.AddDef(bdefname));
 	LastBlock()->Call_Constructor();
 	}
 
-void TCuboLevel::RemoveItemFromSide(TCuboBlockSide *s)
+void TCuboLevel::RemoveItemFromSide(CuboBlockSide *s)
 	{
 	for (unsigned int i=0; i<items.size(); i++)
 		if (items[i]->GetSide()==s)
@@ -201,7 +201,7 @@ void TCuboLevel::RemoveItemFromSide(TCuboBlockSide *s)
 			}
 	}
 
-TCuboItem *TCuboLevel::GetItemOnSide(TCuboBlockSide *s)
+CuboItem *TCuboLevel::GetItemOnSide(CuboBlockSide *s)
 	{
 	for (unsigned int i=0; i<items.size(); i++)
 		if (items[i]->GetSide()==s)
@@ -234,7 +234,7 @@ void TCuboLevel::DeleteBlock(int i)
 
 void TCuboLevel::ChangeSide(int block, std::string sidestr,std::string sdefname)
 	{
-	TCuboBlock *b=GetBlock(block);
+	CuboBlock *b=GetBlock(block);
 	int side=SideStringToSideInt(sidestr);
 	if (side==-1)  { errorstring="Wrong Side: "+sidestr; return; }
 	b->GetBlockSide(side)->SetSideType(bdefs.AddDef(sdefname));
@@ -244,7 +244,7 @@ void TCuboLevel::ChangeSide(int block, std::string sidestr,std::string sdefname)
 
 void TCuboLevel::ChangeBlock(int block, std::string sdefname)
 	{
-	TCuboBlock *b=GetBlock(block);
+	CuboBlock *b=GetBlock(block);
 	b->SetBlockType(bdefs.AddDef(sdefname));
 	b->Call_Constructor();
 	}
@@ -252,12 +252,12 @@ void TCuboLevel::ChangeBlock(int block, std::string sdefname)
 
 int TCuboLevel::AddItem(int block, std::string sidestr,std::string idefname)
 	{
-	TCuboBlock *b=GetBlock(block);
+	CuboBlock *b=GetBlock(block);
 	int side=SideStringToSideInt(sidestr);
 	if (side==-1)  { errorstring="Wrong Side: "+sidestr; return -1; }
 	int idef=idefs.AddDef(idefname);
 	int iid=items.size();
-	items.push_back(new TCuboItem(iid,idef, b->GetBlockSide(side)));
+	items.push_back(new CuboItem(iid,idef, b->GetBlockSide(side)));
 	items[iid]->Call_Constructor();
 	return iid;
 	}
@@ -439,19 +439,19 @@ bool TCuboLevel::LoadFromLua(std::string fname)
 	return true;
 	}
 
-TCuboBlock* TCuboLevel::LastBlock()
+CuboBlock* TCuboLevel::LastBlock()
 	{
 	if (blocks.size()==0) return NULL;
 	return blocks[blocks.size()-1];
 	}
 
-TCuboBlock* TCuboLevel::GetBlock(int i)
+CuboBlock* TCuboLevel::GetBlock(int i)
 	{
 	if ((unsigned int)i>=blocks.size()) return NULL;
 	return blocks[i];
 	}
 
-TCuboBlock *TCuboLevel::GetBlockFromType(std::string name,int i)
+CuboBlock *TCuboLevel::GetBlockFromType(std::string name,int i)
 	{
 	for (unsigned int b=i; b<blocks.size(); b++)
 		if (blocks[b]->GetName()==name) return blocks[b];
@@ -594,7 +594,7 @@ void TCuboLevel::FrameRenderStart()
 			}
 	}
 
-void TCuboLevel::Render(TCamera *cam)
+void TCuboLevel::Render(Camera *cam)
 	{
 	glEnable(GL_LIGHTING);
 
@@ -653,7 +653,7 @@ void TCuboLevel::Render(TCamera *cam)
 	}
 
 
-void TCuboLevel::SpecialRender(TCamera *cam,std::string nam,int defrender)
+void TCuboLevel::SpecialRender(Camera *cam,std::string nam,int defrender)
 	{
 	glEnable(GL_LIGHTING);
 
@@ -733,7 +733,7 @@ void TCuboLevel::LastDistanceRenderCull(T3dVector center,double rad)
 	distrenderlist.back().SetCulling(center,rad);
 	}
 
-void TCuboLevel::DistRender(TCamera *cam)
+void TCuboLevel::DistRender(Camera *cam)
 	{
 	SetLastRendered("");
 	glEnable(GL_BLEND);
@@ -745,7 +745,7 @@ void TCuboLevel::DistRender(TCamera *cam)
 	SetLastRendered("");
 	}
 
-TCuboBlock *TCuboLevel::GetBlockAtPos(T3dVector p)
+CuboBlock *TCuboLevel::GetBlockAtPos(T3dVector p)
 	{
 	for (unsigned int i=0; i<blocks.size(); i++)
 			{
@@ -761,7 +761,7 @@ TCuboBlock *TCuboLevel::GetBlockAtPos(T3dVector p)
 	}
 
 
-TCuboBlock *TCuboLevel::GetBlockAtIPos(int x,int y,int z)
+CuboBlock *TCuboLevel::GetBlockAtIPos(int x,int y,int z)
 	{
 	T3dVector p(2*CUBO_SCALE*x,2*CUBO_SCALE*y,2*CUBO_SCALE*z);
 	return GetBlockAtPos(p);
@@ -777,7 +777,7 @@ void TCuboLevel::BindBlocksToNext()
 					T3dVector p=blocks[i]->GetPos();
 					T3dVector n=s_CuboNormals[j];
 					p=p+(n*(2*CUBO_SCALE));
-					TCuboBlock *nb=GetBlockAtPos(p);
+					CuboBlock *nb=GetBlockAtPos(p);
 					if (!nb) continue;
 					blocks[i]->SetNext(j,nb);
 					}
@@ -797,7 +797,7 @@ int TCuboLevel::LoadTexDef(std::string name)
 	}
 
 
-TCuboBlockSide *TCuboLevel::GetBlockSide(int id)
+CuboBlockSide *TCuboLevel::GetBlockSide(int id)
 	{
 	//ok, we find the parent block by the division by 6
 	int p=id/6;
@@ -823,7 +823,7 @@ TTraceResult TCuboLevel::TraceLine(T3dVector start,T3dVector dir,int onlyblockin
 			//now shoot a ray at each side
 			for (unsigned int s=0; s<6; s++)
 					{
-					TCuboBlockSide *bs=blocks[b]->GetBlockSide(s);
+					CuboBlockSide *bs=blocks[b]->GetBlockSide(s);
 					T3dVector n=bs->GetNormal();
 					if (n*dir>-0.0000001) continue;
 					T3dVector t=bs->GetTangent();
@@ -918,7 +918,7 @@ std::string TCuboLevel::CheckDefExchange(std::string defname,std::string deftype
 
 int LEVEL_GetEditorSelector(lua_State *state)
 	{
-	TCuboBlock* b=g_Game()->GetLevel()->GetBlockFromType("_selection",0);
+	CuboBlock* b=g_Game()->GetLevel()->GetBlockFromType("_selection",0);
 	int i;
 	if (b) i=b->GetID(); else i=-1;
 	LUA_SET_INT(i);

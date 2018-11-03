@@ -47,7 +47,7 @@ class TBaseLuaDef
 		virtual void Reload();
 	};
 
-template<typename T> class TBaseDefServer
+template<typename T> class BaseDefServer
 	{
 	protected:
 		std::vector<T*> defs;
@@ -57,7 +57,7 @@ template<typename T> class TBaseDefServer
 			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]) { delete defs[i]; defs[i]=NULL;}
 			defs.resize(0);
 			}
-		virtual ~TBaseDefServer()
+		virtual ~BaseDefServer()
 			{
 			clear();
 			}

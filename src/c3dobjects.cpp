@@ -39,7 +39,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-void TMatrixObject::CopyBasis(TMatrixObject *other)
+void MatrixObject::CopyBasis(MatrixObject *other)
 	{
 	OnBaseWillChange();
 	base.Copy(other->base);
@@ -48,7 +48,7 @@ void TMatrixObject::CopyBasis(TMatrixObject *other)
 	OnBaseChange();
 	}
 
-void TMatrixObject::setBasis(const T3dVector side,const T3dVector up,const T3dVector dir)
+void MatrixObject::setBasis(const T3dVector side,const T3dVector up,const T3dVector dir)
 	{
 	OnBaseWillChange();
 	base.setCol(0,side);
@@ -60,7 +60,7 @@ void TMatrixObject::setBasis(const T3dVector side,const T3dVector up,const T3dVe
 	OnBaseChange();
 	}
 
-void TMatrixObject::setSide(const T3dVector& side)
+void MatrixObject::setSide(const T3dVector& side)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -71,7 +71,7 @@ void TMatrixObject::setSide(const T3dVector& side)
 	OnBaseChange();
 	}
 
-void TMatrixObject::setUp(const T3dVector& up)
+void MatrixObject::setUp(const T3dVector& up)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -82,7 +82,7 @@ void TMatrixObject::setUp(const T3dVector& up)
 	OnBaseChange();
 	}
 
-void TMatrixObject::setDir(const T3dVector& dir)
+void MatrixObject::setDir(const T3dVector& dir)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -93,14 +93,14 @@ void TMatrixObject::setDir(const T3dVector& dir)
 	OnBaseChange();
 	}
 
-void TMatrixObject::setPos(const T3dVector& pos)
+void MatrixObject::setPos(const T3dVector& pos)
 	{
 	vPos=pos;
 	changed=1;
 	numOps++;
 	}
 
-void TMatrixObject::orthonomalize()
+void MatrixObject::orthonomalize()
 	{
 	numOps=0;
 	return;
@@ -116,7 +116,7 @@ void TMatrixObject::orthonomalize()
 	*/
 	}
 
-void TMatrixObject::setScale(const T3dVector& scal)
+void MatrixObject::setScale(const T3dVector& scal)
 	{
 	vScale=scal;
 	T3dVector diff(1,1,1);
@@ -125,7 +125,7 @@ void TMatrixObject::setScale(const T3dVector& scal)
 	changed=1;
 	}
 
-void TMatrixObject::rotateX(const tfloat angle)
+void MatrixObject::rotateX(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -138,7 +138,7 @@ void TMatrixObject::rotateX(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateY(const tfloat angle)
+void MatrixObject::rotateY(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -151,7 +151,7 @@ void TMatrixObject::rotateY(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateZ(const tfloat angle)
+void MatrixObject::rotateZ(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -164,7 +164,7 @@ void TMatrixObject::rotateZ(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateSide(const tfloat angle)
+void MatrixObject::rotateSide(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -177,7 +177,7 @@ void TMatrixObject::rotateSide(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateUp(const tfloat angle)
+void MatrixObject::rotateUp(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -190,7 +190,7 @@ void TMatrixObject::rotateUp(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateDir(const tfloat angle)
+void MatrixObject::rotateDir(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -203,7 +203,7 @@ void TMatrixObject::rotateDir(const tfloat angle)
 	OnBaseChange();
 	}
 
-void TMatrixObject::rotateV(const tfloat angle, const T3dVector axis)
+void MatrixObject::rotateV(const tfloat angle, const T3dVector axis)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -218,13 +218,13 @@ void TMatrixObject::rotateV(const tfloat angle, const T3dVector axis)
 	OnBaseChange();
 	}
 
-void TMatrixObject::setMatrix(const T4dGlutMatrix& m)
+void MatrixObject::setMatrix(const T4dGlutMatrix& m)
 	{
 	matrix=m; //Think of setting the BASE! Base Change ETC
 	changed=0;
 	}
 
-void TMatrixObject::setBaseVector(int toSet,T3dVector val,int toKeep) //RIGHT SO?
+void MatrixObject::setBaseVector(int toSet,T3dVector val,int toKeep) //RIGHT SO?
 	{
 	if (toSet==toKeep) return; //So gehts nicht
 	val.normalize();
@@ -253,7 +253,7 @@ void TMatrixObject::setBaseVector(int toSet,T3dVector val,int toKeep) //RIGHT SO
 			}
 	}
 
-void TMatrixObject::lookAt(int withBaseVector,T3dVector pos,int toKeepFirst)
+void MatrixObject::lookAt(int withBaseVector,T3dVector pos,int toKeepFirst)
 	{
 	if (withBaseVector==toKeepFirst) return;
 	T3dVector diff=pos-vPos;
@@ -275,7 +275,7 @@ void TMatrixObject::lookAt(int withBaseVector,T3dVector pos,int toKeepFirst)
 	}
 
 
-void TMatrixObject::lookAtZWithWorldUp(T3dVector pos,T3dVector upVect)
+void MatrixObject::lookAtZWithWorldUp(T3dVector pos,T3dVector upVect)
 	{
 	upVect.normalize();
 	T3dVector diff=vPos-pos;
@@ -287,7 +287,7 @@ void TMatrixObject::lookAtZWithWorldUp(T3dVector pos,T3dVector upVect)
 	setBaseVector(BASE_DIR_DIR,diff,BASE_DIR_SIDE);
 	}
 
-T3dVector TMatrixObject::getPitchYawRoll()
+T3dVector MatrixObject::getPitchYawRoll()
 	{
 	if (!usePYR || pyrOverFlip)
 			{
@@ -298,7 +298,7 @@ T3dVector TMatrixObject::getPitchYawRoll()
 	return vPitchYawRoll;
 	}
 
-T3dVector TMatrixObject::getPitchYawRollOverflip()
+T3dVector MatrixObject::getPitchYawRollOverflip()
 	{
 	if (!usePYR || !pyrOverFlip)
 			{
@@ -321,7 +321,7 @@ T3dVector TMatrixObject::getPitchYawRollOverflip()
 	return vPitchYawRoll;
 	}
 
-void TMatrixObject::setPitchYawRoll(T3dVector pyr)
+void MatrixObject::setPitchYawRoll(T3dVector pyr)
 	{
 	usePYR=2;
 	vPitchYawRoll=pyr;
@@ -330,14 +330,14 @@ void TMatrixObject::setPitchYawRoll(T3dVector pyr)
 	OnPYRChange();
 	}
 
-void TMatrixObject::PitchYawRollToBase()
+void MatrixObject::PitchYawRollToBase()
 	{
 	base.setPitchYawRoll(vPitchYawRoll);
 	usePYR=1;
 	changed=1;
 	}
 
-void TMatrixObject::applySpeed(const tfloat elapsed)
+void MatrixObject::applySpeed(const tfloat elapsed)
 	{
 	if (!useSpeed && !useRotSpeed) return;
 	T3dVector s,as,p,a;
@@ -377,7 +377,7 @@ void TMatrixObject::applySpeed(const tfloat elapsed)
 			}
 	}
 
-void TMatrixObject::TraverseTree(const tfloat timeelapsed)
+void MatrixObject::TraverseTree(const tfloat timeelapsed)
 	{
 	applySpeed(timeelapsed);
 	think();
@@ -390,7 +390,7 @@ void TMatrixObject::TraverseTree(const tfloat timeelapsed)
 	}
 
 
-T3dVector TMatrixObject::transformToWorld(const T3dVector v)
+T3dVector MatrixObject::transformToWorld(const T3dVector v)
 	{
 	if (!parent) return v;
 	else
@@ -402,27 +402,27 @@ T3dVector TMatrixObject::transformToWorld(const T3dVector v)
 			}
 	}
 
-void TMatrixObject::SetMirror(int m)
+void MatrixObject::SetMirror(int m)
 	{
 	mirr=(m==0 ? 0 : 1);
 	if (mirr) glFrontFace(GL_CW); else  glFrontFace(GL_CCW);
 	}
 
-int TMatrixObject::GetMirror()
+int MatrixObject::GetMirror()
 	{
 	return mirr;
 	}
 
-void TMatrixObject::SetBasisAxisRotate(const T3dVector & axis,const tfloat angle)
+void MatrixObject::SetBasisAxisRotate(const T3dVector & axis,const tfloat angle)
 	{
 //TODO: Implement
 	}
 
 //////////CAM///////////////////////
 
-void TCamera::postthink()
+void Camera::postthink()
 	{
-	TMatrixObject::postthink();
+	MatrixObject::postthink();
 //Deactivate Mirror, so it has to be set each frame
 	SetMirror(0);
 	if (distort) { glPopMatrix(); distort=NULL;}
@@ -430,7 +430,7 @@ void TCamera::postthink()
 
 
 
-void TCamera::CalcMatrix()
+void Camera::CalcMatrix()
 	{
 	if (fovchanged || mirr)
 			{
@@ -510,7 +510,7 @@ void TCamera::CalcMatrix()
 
 #define FRUSTUM_EPSILON 0.0001
 
-int TCamera::PointInFrustum( T3dVector pos )
+int Camera::PointInFrustum( T3dVector pos )
 	{
 	int p;
 
@@ -525,7 +525,7 @@ int TCamera::PointInFrustum( T3dVector pos )
 	return 1;
 	}
 
-int TCamera::SphereInFrustum( T3dVector pos,float rad)
+int Camera::SphereInFrustum( T3dVector pos,float rad)
 	{
 	int p;
 
@@ -540,7 +540,7 @@ int TCamera::SphereInFrustum( T3dVector pos,float rad)
 	return 1;
 	}
 
-int TCamera::VertsVisible(  T3dVector *pt,int numpoints)
+int Camera::VertsVisible(  T3dVector *pt,int numpoints)
 	{
 
 
@@ -571,7 +571,7 @@ int TCamera::VertsVisible(  T3dVector *pt,int numpoints)
 
 
 
-T3dVector TCamera::PixelPosToDir(T2dVector ppos,int local)
+T3dVector Camera::PixelPosToDir(T2dVector ppos,int local)
 	{
 	if (usePYR==2) PitchYawRollToBase();
 	T3dVector res=getDir();
@@ -588,7 +588,7 @@ T3dVector TCamera::PixelPosToDir(T2dVector ppos,int local)
 	}
 
 
-void TCamera::ExtractFrustum()
+void Camera::ExtractFrustum()
 	{
 	float   proj[16];
 	float   modl[16];
@@ -705,7 +705,7 @@ void TCamera::ExtractFrustum()
 
 /////////// WORLD OBJECT /////////////////
 
-void TWorldObject::CalcMatrix()
+void WorldObject::CalcMatrix()
 	{
 	if (!changed) return;
 	if (usePYR==2) PitchYawRollToBase();

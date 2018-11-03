@@ -30,7 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 
-class TBlockDef : public TBaseLuaDef
+class BlockDef : public TBaseLuaDef
 	{
 	public:
 		virtual int GetType() {return FILE_BLOCKDEF;}
@@ -55,16 +55,12 @@ class TBlockDef : public TBaseLuaDef
 	};
 
 
-typedef TBaseDefServer<TBlockDef> TBlockDefServer;
+using BlockDefServer = BaseDefServer<BlockDef>;
 
-
-
-
-
-class TItemDef : public TBaseLuaDef
+class ItemDef : public TBaseLuaDef
 	{
 	public:
-		virtual ~TItemDef() {}
+		virtual ~ItemDef() {}
 		virtual int GetType() {return FILE_ITEMDEF;}
 		void Call_Render(int itemindex);
 		int Call_SpecialRender(std::string nam,int index);
@@ -76,11 +72,7 @@ class TItemDef : public TBaseLuaDef
 	};
 
 
-typedef TBaseDefServer<TItemDef> TItemDefServer;
-
-
-
-
+typedef BaseDefServer<ItemDef> TItemDefServer;
 
 #define CUBO_UP 0
 #define CUBO_DOWN 1
@@ -111,19 +103,19 @@ static const int s_CuboOpposingDir[6]= {1,0,3,2,5,4}; //Switches the direction t
 static const std::string s_CuboSideNames[6]= {"up","down","left","right","front","back"};
 
 
-class TCuboBlock;
-class TCuboItem;
+class CuboBlock;
+class CuboItem;
 
-class TCuboBlockSide
+class CuboBlockSide
 	{
 	protected:
 		int side;
 		int sidetype;
-		TCuboBlock *parent;
+		CuboBlock *parent;
 		TLuaVarHolder varholder;
 	public:
 		void SetSideType(int i) {sidetype=i;}
-		void Init(int cside,TCuboBlock *parent);
+		void Init(int cside,CuboBlock *parent);
 		int  GetID();
 		void Render();
 		void SpecialRender(std::string nam,int defrender);
@@ -145,23 +137,23 @@ class TCuboBlockSide
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
 		std::string GetTypeName();
 		void SetSideItem(std::string n);
-		TCuboItem *GetItem();
-		TCuboBlock *GetBlock() {return parent;}
+		CuboItem *GetItem();
+		CuboBlock *GetBlock() {return parent;}
 	};
 
-class TCuboItem
+class CuboItem
 	{
 	protected:
 		int itemtype;
 		int myid;
 		TLuaVarHolder varholder;
-		TCuboBlockSide *sideptr;
+		CuboBlockSide *sideptr;
 	public:
-		TCuboItem(int id, int type,TCuboBlockSide *side);
+		CuboItem(int id, int type,CuboBlockSide *side);
 		T3dVector GetPos();
 		void Render();
 		void SpecialRender(std::string nam,int defrender);
-		TCuboBlockSide *GetSide() {return sideptr;}
+		CuboBlockSide *GetSide() {return sideptr;}
 		void DistRender();
 		void Call_Constructor();
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
@@ -173,15 +165,15 @@ class TCuboItem
 		void SetID(int id) {myid=id;}
 	};
 
-class TCuboBlock
+class CuboBlock
 	{
 	protected:
 		int id;
 		T3dVector pos;
 		T3dVector oldpos;
 		tfloat scale;
-		std::vector<TCuboBlockSide> sides;
-		std::vector<TCuboBlock*> next;
+		std::vector<CuboBlockSide> sides;
+		std::vector<CuboBlock*> next;
 		TLuaVarHolder varholder;
 		float cullradius;
 		int blocktype;
@@ -193,23 +185,23 @@ class TCuboBlock
 		bool HasNoTransparency();
 		void ReleaseMeFromNext();
 		void ReAttachMeToNext();
-		TCuboBlock();
+		CuboBlock();
 		tfloat GetScale() {return scale;}
 		void SetScale(tfloat s) {scale=s;}
-		virtual ~TCuboBlock();
-		void Render(TCamera *cam);
+		virtual ~CuboBlock();
+		void Render(Camera *cam);
 		//void SpecialRender(string nam,int defrender);
-		void MustRenderSides(TCamera *cam,int  mustrender[]);
+		void MustRenderSides(Camera *cam,int  mustrender[]);
 		T3dVector GetPos();
 		int Moving();
 		void SetIPos(int x,int y,int z);
 		void SetPos(T3dVector p) {pos=p;}
-		void SetNext(int side,TCuboBlock *n);
-		TCuboBlock *GetNext(int side);
+		void SetNext(int side,CuboBlock *n);
+		CuboBlock *GetNext(int side);
 		void SetBlockType(int i);
 		void SetID(int i) {id=i;}
 		int GetID() {return id;}
-		TCuboBlockSide *GetBlockSide(int s) {return &(sides[s]);}
+		CuboBlockSide *GetBlockSide(int s) {return &(sides[s]);}
 		void Call_OnBlockEvent(int actorid);
 		void Call_Constructor();
 		int Blocking(); //Can we pass through it

@@ -56,7 +56,7 @@ class TMdlDef : public TBaseLuaDef
 		void Call_RenderGroup(int g);
 	};
 
-typedef TBaseDefServer<TMdlDef> TMdlDefServer;
+typedef BaseDefServer<TMdlDef> TMdlDefServer;
 
 
 

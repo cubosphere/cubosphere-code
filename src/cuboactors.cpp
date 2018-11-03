@@ -22,20 +22,20 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboenemies.hpp"
 
 
-void TCuboPlayer::AddActor(int i)
+void CuboPlayer::AddActor(int i)
 	{
 
 	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) return ; actorids.push_back(i);
 	g_Game()->GetActorMovement(actorids.back())->SetPlayer(id);
 	}
 
-void TCuboPlayer::RemoveActor(int i)
+void CuboPlayer::RemoveActor(int i)
 	{
 	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) { actorids.erase(actorids.begin()+j);  break; }
 	if (activeact<0 || activeact>=(int)actorids.size()) { if (actorids.empty()) activeact=0; else activeact=actorids.size()-1; }
 	}
 
-void TCuboPlayer::CamMove(int newactor)
+void CuboPlayer::CamMove(int newactor)
 	{
 	if (newactor!=activeact)
 			{
@@ -60,7 +60,7 @@ void TCuboPlayer::CamMove(int newactor)
 			}
 	}
 
-int TCuboPlayer::NextActor()
+int CuboPlayer::NextActor()
 	{
 	int newactor=activeact;
 	do { newactor=(newactor+1)%(actorids.size());  }
@@ -69,7 +69,7 @@ int TCuboPlayer::NextActor()
 	return GetActiveActor();
 	}
 
-int TCuboPlayer::SelectActor(int actorind)
+int CuboPlayer::SelectActor(int actorind)
 	{
 	int found=-1;
 	for (unsigned int i=0; i<actorids.size(); i++) if (actorids[i]==actorind)  {found=i; break;}
@@ -78,7 +78,7 @@ int TCuboPlayer::SelectActor(int actorind)
 	CamMove(found); return 1;
 	}
 
-void TCuboPlayer::SetCameraPos(tfloat elapsed,TMatrixObject *cam)
+void CuboPlayer::SetCameraPos(tfloat elapsed,MatrixObject *cam)
 	{
 
 //only call if in movement!
@@ -147,7 +147,7 @@ TCuboMovement::~TCuboMovement()
 	if (player>=0) g_Game()->GetPlayer(player)->RemoveActor(this->id);
 	}
 
-T3dVector TCuboMovement::AtBlockPos(TCuboBlock *b,int s)
+T3dVector TCuboMovement::AtBlockPos(CuboBlock *b,int s)
 	{
 	T3dVector res;
 	res=b->GetPos();
@@ -203,7 +203,7 @@ void TCuboMovement::Init(TCuboLevel *level)
 
 	}
 
-void TCuboMovement::SetStartPos(TCuboBlockSide *sside,int srot)
+void TCuboMovement::SetStartPos(CuboBlockSide *sside,int srot)
 	{
 
 	onBlock=sside->GetBlock();
@@ -330,11 +330,11 @@ void TCuboMovement::SetJumpDistBlocks(int d)
 	j_desdist=(((int)((j_dist+d*2*CUBO_SCALE)/(2*CUBO_SCALE))))*2*CUBO_SCALE;
 	}
 
-TCuboBlock *TCuboMovement::GetRelBlock(TCuboBlock *b,T3dVector dir)
+CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,T3dVector dir)
 	{
 	return GetRelBlock(b,DirVectToSide(dir));
 	}
-TCuboBlock *TCuboMovement::GetRelBlock(TCuboBlock *b,int side)
+CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,int side)
 	{
 	if (!b) return NULL;
 	return b->GetNext(side);
@@ -380,7 +380,7 @@ void TCuboMovement::MoveForward()
 	checkvect=onBlock->GetPos();
 	T3dVector rv=base[CUBO_DIRV]+base[CUBO_UPV];
 	checkvect=checkvect+rv*(2*CUBO_SCALE);
-	TCuboBlock *b;
+	CuboBlock *b;
 	b=lvl->GetBlockAtPos(checkvect);
 	if (b && (b->Blocking())) //ROLL UPWARDS!
 			{
@@ -422,7 +422,7 @@ void TCuboMovement::MoveForward()
 					{
 					//We may not have left or right neighbors
 					b=GetRelBlock(onBlock,base[CUBO_SIDEV]);
-					TCuboBlock *b2=GetRelBlock(onBlock,-base[CUBO_SIDEV]);
+					CuboBlock *b2=GetRelBlock(onBlock,-base[CUBO_SIDEV]);
 					if (b || b2 || (movementcheck && (!MayMove(CUBO_MOVE_DOWN))))
 							{
 							//Ok, check if we can slide down
@@ -617,7 +617,7 @@ void TCuboMovement::AirMove(float elapsed)
 	}*/
 //For forward moving we need to add the dir_speed
 //Check, if we hit the ground
-	TCuboBlock *b;
+	CuboBlock *b;
 	T3dVector checkpos;
 
 	if ((yvel<0))
@@ -691,7 +691,7 @@ void TCuboMovement::AirMove(float elapsed)
 
 					inhighjump=0;
 					yvel=-yvel*0.7;
-					TCuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_UPV])]);
+					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_UPV])]);
 					T3dVector hn=hs->GetNormal();
 					T3dVector hpd=hs->GetMidpoint();
 					if (j_desdist>0)
@@ -723,7 +723,7 @@ void TCuboMovement::AirMove(float elapsed)
 					{
 
 					inhighjump=0;
-					TCuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_DIRV])]);
+					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_DIRV])]);
 
 					T3dVector hn=hs->GetNormal();
 					T3dVector hpd=hn*CUBO_SCALE;
@@ -1111,7 +1111,7 @@ void TCuboMovement::SetCamZRotation(tfloat zr,int mirror)
 	camzrot=zr;
 	}
 
-void TCuboMovement::SetCamPos(TMatrixObject *cam)
+void TCuboMovement::SetCamPos(MatrixObject *cam)
 	{
 //Get the Position
 	T3dVector res;
@@ -1197,7 +1197,7 @@ void TCuboMovement::FarJump()
 	j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
 	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 			{
-			TCuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
+			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 			T3dVector mp=bs->GetMidpoint();
 			mp=pos-mp;
 			j_dist=mp*base[CUBO_DIRV];
@@ -1227,7 +1227,7 @@ void TCuboMovement::HighJump()
 	j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
 	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 			{
-			TCuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
+			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 			T3dVector mp=bs->GetMidpoint();
 			mp=pos-mp;
 			j_dist=mp*base[CUBO_DIRV];
@@ -1340,7 +1340,7 @@ void TCuboMovement::Jump()
 			j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
 			if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 					{
-					TCuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
+					CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 					T3dVector mp=bs->GetMidpoint();
 					mp=pos-mp;
 					j_dist=mp*base[CUBO_DIRV];
@@ -1469,7 +1469,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 
 
 
-int TActorDefServer::AddEDef(std::string name)
+int ActorDefServer::AddEDef(std::string name)
 	{
 	int def=GetDef(name,0);
 	if (def>-1) return def; //Have it already
@@ -1481,7 +1481,7 @@ int TActorDefServer::AddEDef(std::string name)
 	return def;
 	}
 
-int TActorDefServer::GetDef(std::string name,int forplayer)
+int ActorDefServer::GetDef(std::string name,int forplayer)
 	{
 	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) return (i);
 	return -1;
@@ -1489,7 +1489,7 @@ int TActorDefServer::GetDef(std::string name,int forplayer)
 
 
 
-void TActorDef::Call_Constructor(int id)
+void ActorDef::Call_Constructor(int id)
 	{
 	if (lua.FuncExists("Constructor"))
 			{
@@ -1498,7 +1498,7 @@ void TActorDef::Call_Constructor(int id)
 
 	}
 
-void TActorDef::Call_ActorCollide(int id,int oid)
+void ActorDef::Call_ActorCollide(int id,int oid)
 	{
 	if (lua.FuncExists("ActorCollide"))
 			{
@@ -1508,7 +1508,7 @@ void TActorDef::Call_ActorCollide(int id,int oid)
 	}
 
 
-void TActorDef::Call_ActorCollidePlayer(int id,int oid)
+void ActorDef::Call_ActorCollidePlayer(int id,int oid)
 	{
 	if (lua.FuncExists("ActorCollidePlayer"))
 			{
@@ -1517,7 +1517,7 @@ void TActorDef::Call_ActorCollidePlayer(int id,int oid)
 
 	}
 
-void TActorDef::Call_Render(int id)
+void ActorDef::Call_Render(int id)
 	{
 	if (lua.FuncExists("Render"))
 			{
@@ -1526,7 +1526,7 @@ void TActorDef::Call_Render(int id)
 
 	}
 
-int TActorDef::Call_SpecialRender(std::string nam,int index)
+int ActorDef::Call_SpecialRender(std::string nam,int index)
 	{
 	if (lua.FuncExists("SpecialRender"))
 			{
@@ -1536,7 +1536,7 @@ int TActorDef::Call_SpecialRender(std::string nam,int index)
 	return 0;
 	}
 
-void TActorDef::Call_DistRender(int id)
+void ActorDef::Call_DistRender(int id)
 	{
 	if (lua.FuncExists("DistRender"))
 			{
@@ -1545,7 +1545,7 @@ void TActorDef::Call_DistRender(int id)
 
 	}
 
-void TActorDef::Call_PostThink(int id)
+void ActorDef::Call_PostThink(int id)
 	{
 	if (lua.FuncExists("PostThink"))
 			{
@@ -1554,7 +1554,7 @@ void TActorDef::Call_PostThink(int id)
 
 	}
 
-void TActorDef::Call_Think(int id)
+void ActorDef::Call_Think(int id)
 	{
 	if (lua.FuncExists("Think"))
 			{
@@ -1563,7 +1563,7 @@ void TActorDef::Call_Think(int id)
 
 	}
 
-void TActorDef::SendKey(int actor,int key,int down,int toggle)
+void ActorDef::SendKey(int actor,int key,int down,int toggle)
 	{
 	if (lua.FuncExists("OnKeyPressed"))
 			{
@@ -1571,7 +1571,7 @@ void TActorDef::SendKey(int actor,int key,int down,int toggle)
 			}
 	}
 
-void TActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle)
+void ActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle)
 	{
 	if (lua.FuncExists("OnJoyButton"))
 			{
@@ -1580,7 +1580,7 @@ void TActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,in
 	}
 
 
-void TActorDef::Call_ChangeMove(int id,std::string newmove)
+void ActorDef::Call_ChangeMove(int id,std::string newmove)
 	{
 	if (lua.FuncExists("ChangeMove"))
 			{
@@ -1589,7 +1589,7 @@ void TActorDef::Call_ChangeMove(int id,std::string newmove)
 
 	}
 
-int TActorDef::Call_CheckLandingOnSide(int id,int side)
+int ActorDef::Call_CheckLandingOnSide(int id,int side)
 	{
 	if (lua.FuncExists("CheckLandingOnSide"))
 			{
@@ -1600,7 +1600,7 @@ int TActorDef::Call_CheckLandingOnSide(int id,int side)
 	return 1;
 	}
 
-void TActorDef::Call_Event(int id,std::string ev)
+void ActorDef::Call_Event(int id,std::string ev)
 	{
 	if (lua.FuncExists("Event"))
 			{
@@ -1609,7 +1609,7 @@ void TActorDef::Call_Event(int id,std::string ev)
 
 	}
 
-std::string TActorDef::Call_GetEditorInfo(std::string what,std::string std)
+std::string ActorDef::Call_GetEditorInfo(std::string what,std::string std)
 	{
 	if (lua.FuncExists("GetEditorInfo"))
 			{
