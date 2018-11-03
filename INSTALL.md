@@ -32,6 +32,7 @@ cmake ..
 make -j4
 sudo make install
 ```
+
 ## Some useful CMake arguments:
 * `-DCMAKE_INSTALL_PREFIX=` — set intallation prefix.
 * `-DCMAKE_CXX_COMPILER=` — set C++ compiler to use (`g++`/`clang++`/etc.).

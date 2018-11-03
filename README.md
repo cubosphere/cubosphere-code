@@ -30,9 +30,18 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Created icon and .desktop file
 
 # How to download last git build?
-1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last four artifacts are kept)
+1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last build artifacts are kept, some of them may be missing if build is uploading now)
 2. Download apporative package for you (naming is Cubosphere-timestamp+git-hash-…)
 3. Install as normal (if you don't know how, just open file and click "Install" button or someting like it)
+
+## Ubuntu packages
+You can be confused by ubuntu packaging system, but it isn't hard in fact.
+
+1. You need both `BIN` and `DATA` packages, they are `cubosphere` and `cubosphere-data` respectively.
+2. It is ok that their versions differ, data is stored in another repo and updates with it
+3. When updating, download only `BIN` package: download `DATA` only if deps can't be resolved
+    1. You'll probably be reqested to remove `cubosphere` when updating `cubosphere-data`, do so and install new version later
+    2. Use `dpkg -i` from cmd to avoid this issues (google a bit )
 
 # What will/should be done?
 Check out [TODO list](TODO.md)!

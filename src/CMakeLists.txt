@@ -53,4 +53,4 @@ target_link_libraries(cubosphere
 	${SDL_TTF_LIBRARIES}
 )
 
-install(TARGETS cubosphere DESTINATION "${BINDIR}")
+install(TARGETS cubosphere DESTINATION "${BINDIR}" COMPONENT BIN)
