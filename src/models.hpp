@@ -42,13 +42,13 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "vectors.hpp"
 
-class TMdlDef : public TBaseLuaDef
+class TMdlDef : public BaseLuaDef
 	{
 	protected:
 		GLuint totalrenderlist;
 		std::vector<GLuint> grenderlists;
 	public:
-		TMdlDef() : TBaseLuaDef(), totalrenderlist(0) {};
+		TMdlDef() : BaseLuaDef(), totalrenderlist(0) {};
 		virtual ~TMdlDef();
 		virtual int GetType() {return FILE_MDLDEF;}
 		void CreateRenderList(int gindex);

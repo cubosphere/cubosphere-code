@@ -26,7 +26,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define COND_LUA_CALL(nam,stret,pspec,...) if (!(lua.FuncExists(nam))) return stret; lua.CallVA(nam,pspec, ##__VA_ARGS__)
 
 
-class TBaseLuaDef
+class BaseLuaDef
 	{
 	protected:
 		std::string name;
@@ -36,8 +36,8 @@ class TBaseLuaDef
 		int myid;
 		virtual int SendIDWhenPrecache() {return 0;}
 	public:
-		virtual ~TBaseLuaDef();
-		TBaseLuaDef() : name(""), isloaded(0), myid(-1) {}
+		virtual ~BaseLuaDef();
+		BaseLuaDef() : name(""), isloaded(0), myid(-1) {}
 		virtual int GetType()=0;
 		void SetName(std::string cname) {name=cname;}
 		std::string GetName() {return name;}
@@ -86,14 +86,14 @@ template<typename T> class BaseDefServer
 
 ////////////////////////////////////
 
-class TMenu : public TBaseLuaDef
+class TMenu : public BaseLuaDef
 	{
 	protected:
 		int change;
 		std::string nextname;
 	public:
 		virtual int GetType() {return FILE_MENUDEF;}
-		TMenu() : TBaseLuaDef(), change(0) {};
+		TMenu() : BaseLuaDef(), change(0) {};
 		virtual void LoadDef(std::string cname);
 		// virtual void Reload();
 		void Render();

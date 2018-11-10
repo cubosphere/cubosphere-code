@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 
 //A node indexing a block-side and its neighbours, which can be reached by the movement into the four directions
-class TCuboPathNode
+class CuboPathNode
 	{
 	protected:
 		int sideindex; //Index to the side of this node
@@ -28,8 +28,8 @@ class TCuboPathNode
 		// 0 ~ t , 1 ~ txn , 2 ~ -t , 3 ~ -txn
 		int next[4];
 	public:
-		TCuboPathNode();
-		TCuboPathNode(int si);
+		CuboPathNode();
+		CuboPathNode(int si);
 		int GetNextSideID(int dir);
 		int GetSideID() const {return sideindex;}
 		//void SetNext(int m,TCuboPathNode *n) {next[m]=n;}
@@ -40,13 +40,13 @@ class TCuboPathNode
 	};
 
 //A graph of nodes (sides) and
-class TCuboPathGraph
+class CuboPathGraph
 	{
 	protected:
 		lua_State *cstate;
 		std::string callbfunc;
-		TCuboPathNode * AddNode(int sindex);
-		std::vector<TCuboPathNode> nodes;
+		CuboPathNode * AddNode(int sindex);
+		std::vector<CuboPathNode> nodes;
 		std::vector<int> path,next;
 		int GetNodeIDFromSideID(int ID);
 		int EdgeBetween(int i,int j);
@@ -64,23 +64,23 @@ class TCuboPathGraph
 	};
 
 
-class TCuboPathGraphServer
+class CuboPathGraphServer
 	{
 	protected:
-		std::vector<TCuboPathGraph> pgs;
+		std::vector<CuboPathGraph> pgs;
 	public:
 		void Clear();
 		int New(int startside,lua_State *state,std::string addcb);
-		TCuboPathGraph * GetGraph(int i);
+		CuboPathGraph * GetGraph(int i);
 	};
 
-extern TCuboPathGraphServer * g_PathGraphs();
+extern CuboPathGraphServer * g_PathGraphs();
 
 
 
 
 
-class TLuaPathfindingLib : public TLuaCFunctions
+class LuaPathfindingLib : public TLuaCFunctions
 	{
 	protected:
 		static int PATH_NewGraph(lua_State *state);
@@ -91,9 +91,9 @@ class TLuaPathfindingLib : public TLuaCFunctions
 		static int PATH_GetNode(lua_State *state);
 		static int PATH_GetDistance(lua_State *state);
 	public:
-		TLuaPathfindingLib();
+		LuaPathfindingLib();
 	};
 
-extern TLuaPathfindingLib* g_PathFindingLib();
+extern LuaPathfindingLib* g_PathFindingLib();
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

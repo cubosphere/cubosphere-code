@@ -36,9 +36,9 @@ typedef struct
 	tfloat dist;
 	int block;
 	int side;
-	} TTraceResult;
+	} TraceResult;
 
-class TDistRenderObj
+class DistRenderObj
 	{
 	protected:
 		float dist;
@@ -50,26 +50,26 @@ class TDistRenderObj
 		T3dVector CullCenter;
 
 	public:
-		TDistRenderObj(int tid,int ttype,float tdist,lua_State *ccallstate) : dist(tdist), id(tid), type(ttype), callstate(ccallstate), CullRadius(-1) {};
+		DistRenderObj(int tid,int ttype,float tdist,lua_State *ccallstate) : dist(tdist), id(tid), type(ttype), callstate(ccallstate), CullRadius(-1) {};
 		const float GetDist() const {return dist;}
 		const int GetID() const {return id;}
 		const int GetType() const {return type;}
 		const std::string GetHint() const {return myhint;}
 		void SetHint(std::string h) {myhint=h;}
 		void SetCulling(T3dVector cc,double cr) {CullCenter=cc; CullRadius=cr;}
-		bool operator < (TDistRenderObj b ) const {return dist > b.dist;}
+		bool operator < (DistRenderObj b ) const {return dist > b.dist;}
 		void DistRender(Camera *cam);
 		void Render(Camera *cam);
 		void SpecialRender(Camera *cam,std::string nam,int defrender);
 	};
 
-class TCuboLevel
+class CuboLevel
 	{
 	protected:
 		std::vector<CuboBlock*> blocks;
 		std::vector<CuboItem*> items;
-		std::vector<TDistRenderObj> distrenderlist; //Used for Blending stuff
-		std::vector<TDistRenderObj> rlist;
+		std::vector<DistRenderObj> distrenderlist; //Used for Blending stuff
+		std::vector<DistRenderObj> rlist;
 		T3dVector bbmax,bbmin; //Sizes of the bounding box
 //    TTextFileReader tr;
 		TLuaAccess lua;
@@ -125,7 +125,7 @@ class TCuboLevel
 		CuboBlock *GetBlockAtPos(T3dVector p);
 		CuboBlock *GetBlock(int i);
 		CuboBlock *GetBlockFromType(std::string name,int i);
-		TTraceResult TraceLine(T3dVector start,T3dVector dir, int onlyblocking=0);
+		TraceResult TraceLine(T3dVector start,T3dVector dir, int onlyblocking=0);
 		CuboBlockSide *GetBlockSide(int id);
 		std::string GetErrorString();
 		void AddDistRenderItem(int id,int type,float dist,lua_State *callstate);

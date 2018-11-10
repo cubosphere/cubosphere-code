@@ -41,7 +41,7 @@ typedef struct
 	int w,h;
 	} TTempTexture;
 
-class TPostEffect : public TBaseLuaDef
+class TPostEffect : public BaseLuaDef
 	{
 	protected:
 		//TLuaAccess lua;

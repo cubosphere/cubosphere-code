@@ -102,7 +102,7 @@ class TCuboGame : public TGame
 		std::vector<TCuboMovement*> move;
 		std::vector<CuboPlayer*> player;
 		std::vector<TCuboBasis> basis; //3d-Matrices
-		TCuboLevel lvl;
+		CuboLevel lvl;
 		TSkyBox sky;
 		TMdlDefServer mdefs;
 		TModelServer mdls;
@@ -131,7 +131,7 @@ class TCuboGame : public TGame
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval);
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle);
 		virtual int Init();
-		virtual TCuboLevel *GetLevel() {return &lvl;}
+		virtual CuboLevel *GetLevel() {return &lvl;}
 		virtual TCuboMovement *GetActorMovement(int i) {return (move[i]);}
 		virtual int GetNumActors() {return (move.size());}
 		virtual CuboPlayer *GetPlayer(int i) {return (player[i]);}

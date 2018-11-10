@@ -19,7 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "textures.hpp"
 #include <vector>
 
-class TSkyBox : public TBaseLuaDef
+class TSkyBox : public BaseLuaDef
 	{
 
 	public:

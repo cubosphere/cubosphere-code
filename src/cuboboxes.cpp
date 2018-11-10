@@ -455,14 +455,14 @@ void CuboBlock::WriteLevelData(FILE *f)
 					}
 
 			//And the one of an enemy
-			TCuboEnemy* e=NULL;
+			CuboEnemy* e=NULL;
 			for (int ind=0; ind<g_Game()->GetNumActors(); ind++)
 					{
 					TCuboMovement *en=g_Game()->GetActorMovement(ind);
 					if (en->IsPlayer()) continue;
 					if (en->GetOnSideID()==GetBlockSide(s)->GetID())
 							{
-							e=(TCuboEnemy*)en; //Found an enemy
+							e=(CuboEnemy*)en; //Found an enemy
 							break;
 							}
 					}

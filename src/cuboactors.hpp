@@ -100,7 +100,7 @@ class CuboPlayer
 
 
 
-class ActorDef : public TBaseLuaDef
+class ActorDef : public BaseLuaDef
 	{
 	public:
 		virtual ~ActorDef() {}
@@ -158,7 +158,7 @@ class TCuboMovement
 		T3dVector pos;
 		T3dVector newpos;
 		T3dVector oldpos;
-		TCuboLevel *lvl;
+		CuboLevel *lvl;
 		CuboBlock *onBlock;
 		CuboBlock *BlockUnderMe;
 		TLuaVarHolder varholder;
@@ -218,7 +218,7 @@ class TCuboMovement
 		void InterpolateMove(double elapsed);
 		void FinalizeMove();
 		void PostLevelThink();
-		void Init(TCuboLevel *level);
+		void Init(CuboLevel *level);
 		void MoveForward();
 		void RotateRight();
 		void RotateLeft();

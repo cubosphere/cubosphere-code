@@ -15,7 +15,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboenemies.hpp"
 #include "game.hpp"
 
-void TCuboEnemy::SetType(int mid,std::string name)
+void CuboEnemy::SetType(int mid,std::string name)
 	{
 	id=mid;
 	defindex=g_Game()->GetActorDefs()->AddEDef(name);

@@ -206,7 +206,7 @@ class TSpriteDef
 		void Render(TSprite &s);
 	};
 
-class TParticleDef : public TBaseLuaDef
+class TParticleDef : public BaseLuaDef
 	{
 	protected:
 		std::vector<TSpriteDef*> spritedefs;

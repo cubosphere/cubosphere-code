@@ -644,7 +644,7 @@ int TCuboGame::AddEnemy(std::string aname)
 	{
 	int res=move.size();
 	move.resize(move.size()+1);
-	move[res]=new TCuboEnemy();
+	move[res]=new CuboEnemy();
 	move[res]->Init(&lvl);
 	move[res]->SetType(res,aname);
 	return res;

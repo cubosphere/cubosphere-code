@@ -168,7 +168,7 @@ int TCuboMovement::DirVectToSide(T3dVector dirvect)
 	return -1;
 	}
 
-void TCuboMovement::Init(TCuboLevel *level)
+void TCuboMovement::Init(CuboLevel *level)
 	{
 //id=0; //Only one player for now
 	lvl=level;
@@ -1087,7 +1087,7 @@ int TCuboMovement::TraceOnSideID()
 	if (!inAir)
 			{
 
-			TTraceResult tr;
+			TraceResult tr;
 			T3dVector d=base[CUBO_UPV]*(-1.0);
 			tr=g_Game()->GetLevel()->TraceLine(pos,d,1);
 
@@ -1473,7 +1473,7 @@ int ActorDefServer::AddEDef(std::string name)
 	{
 	int def=GetDef(name,0);
 	if (def>-1) return def; //Have it already
-	defs.push_back(new TEnemyDef());
+	defs.push_back(new EnemyDef());
 	defs.back()->SetName(name);
 	def=defs.size()-1;
 	defs[def]->LoadDef();

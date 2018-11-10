@@ -21,17 +21,17 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define PATH_INFINITY 1000000
 
-static TCuboPathGraphServer gpgs;
+static CuboPathGraphServer gpgs;
 
-TCuboPathGraphServer * g_PathGraphs() {return &gpgs;}
+CuboPathGraphServer * g_PathGraphs() {return &gpgs;}
 
-TCuboPathNode::TCuboPathNode()
+CuboPathNode::CuboPathNode()
 	{
 	sideindex=-1;
 	next[0]=next[1]=next[2]=next[3]=-1;
 	}
 
-TCuboPathNode::TCuboPathNode(int si)
+CuboPathNode::CuboPathNode(int si)
 	{
 	sideindex=si;
 	next[0]=next[1]=next[2]=next[3]=-1;
@@ -50,7 +50,7 @@ int DirVectToSide(T3dVector dirvect)
 	}
 
 
-int TCuboPathNode::GetNextSideID(int dir)
+int CuboPathNode::GetNextSideID(int dir)
 	{
 	if (sideindex<0) return -1;
 	T3dVector t,n,d;
@@ -110,7 +110,7 @@ int TCuboPathNode::GetNextSideID(int dir)
 
 ////////////////////
 
-int TCuboPathGraph::EdgeBetween(int i,int j)
+int CuboPathGraph::EdgeBetween(int i,int j)
 	{
 	for (int m=0; m<4; m++)
 			{
@@ -119,7 +119,7 @@ int TCuboPathGraph::EdgeBetween(int i,int j)
 	return 0;
 	}
 
-void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string addcb)
+void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string addcb)
 	{
 	nodes.clear(); path.clear(); next.clear();
 	if (startindex<0) return;
@@ -177,7 +177,7 @@ void TCuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string a
 					}
 	}
 
-std::string TCuboPathGraph::GetPath(int i,int j)
+std::string CuboPathGraph::GetPath(int i,int j)
 	{
 	int N=nodes.size();
 	if (path[i+N*j]>=PATH_INFINITY)
@@ -194,7 +194,7 @@ std::string TCuboPathGraph::GetPath(int i,int j)
 	}
 
 
-int TCuboPathGraph::MayAddNode(int from,int to)
+int CuboPathGraph::MayAddNode(int from,int to)
 	{
 	if (cstate && callbfunc!="")
 			{
@@ -221,14 +221,14 @@ int TCuboPathGraph::MayAddNode(int from,int to)
 	else return 1;
 	}
 
-TCuboPathNode* TCuboPathGraph::AddNode(int sindex)
+CuboPathNode* CuboPathGraph::AddNode(int sindex)
 	{
 	int s=GetNodeIDFromSideID(sindex);
 	if (s==-1)
 			{
 			//   cout << "Adding " << sindex << endl;
 			int res=nodes.size();
-			nodes.push_back(TCuboPathNode(sindex));
+			nodes.push_back(CuboPathNode(sindex));
 			//Now we have to add all sides
 			for (int m=0; m<4; m++)
 					{
@@ -251,7 +251,7 @@ TCuboPathNode* TCuboPathGraph::AddNode(int sindex)
 	}
 
 
-int TCuboPathGraph::GetNodeIDFromSideID(int ID)
+int CuboPathGraph::GetNodeIDFromSideID(int ID)
 	{
 	for (unsigned int i=0; i<nodes.size(); i++)
 			{
@@ -261,7 +261,7 @@ int TCuboPathGraph::GetNodeIDFromSideID(int ID)
 	}
 
 
-std::string TCuboPathGraph::GetPathFromTo(int startbs,int endbs)
+std::string CuboPathGraph::GetPathFromTo(int startbs,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -270,7 +270,7 @@ std::string TCuboPathGraph::GetPathFromTo(int startbs,int endbs)
 	return GetPath(si,ei);
 	}
 
-int TCuboPathGraph::GetDistance(int startbs,int endbs)
+int CuboPathGraph::GetDistance(int startbs,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -283,7 +283,7 @@ int TCuboPathGraph::GetDistance(int startbs,int endbs)
 	return path[si+N*ei];
 	}
 
-std::string TCuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
+std::string CuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -330,7 +330,7 @@ std::string TCuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 
 
 
-std::string TCuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
+std::string CuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 	{
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
@@ -421,7 +421,7 @@ std::string TCuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 
 
 
-std::string TCuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rotation move for the Random Mover to rotate into a possible direction
+std::string CuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rotation move for the Random Mover to rotate into a possible direction
 	{
 	std::string rmoves[3]= {"f","r","l"};
 	int si=GetNodeIDFromSideID(startbs);
@@ -446,7 +446,7 @@ std::string TCuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a ro
 
 	}
 
-int TCuboPathGraph::GetNodeSideID(int n)
+int CuboPathGraph::GetNodeSideID(int n)
 	{
 	if (n<0 || n>=GetNumNodes()) return -1;
 	else return nodes[n].GetSideID();
@@ -455,20 +455,20 @@ int TCuboPathGraph::GetNodeSideID(int n)
 /////////////////////
 
 
-void TCuboPathGraphServer::Clear()
+void CuboPathGraphServer::Clear()
 	{
 	pgs.clear();
 	}
 
-int TCuboPathGraphServer::New(int startside,lua_State *state,std::string addcb)
+int CuboPathGraphServer::New(int startside,lua_State *state,std::string addcb)
 	{
 	int res=pgs.size();
-	pgs.push_back(TCuboPathGraph());
+	pgs.push_back(CuboPathGraph());
 	pgs[res].GraphFromSide(startside,state,addcb);
 	return res;
 	}
 
-TCuboPathGraph * TCuboPathGraphServer::GetGraph(int i)
+CuboPathGraph * CuboPathGraphServer::GetGraph(int i)
 	{
 	if (i<0 || i>=(int)(pgs.size())) return NULL;
 	return &(pgs[i]);
@@ -481,7 +481,7 @@ TCuboPathGraph * TCuboPathGraphServer::GetGraph(int i)
 
 
 
-int TLuaPathfindingLib::PATH_GetNextMove(lua_State *state)
+int LuaPathfindingLib::PATH_GetNextMove(lua_State *state)
 	{
 	int endside=LUA_GET_INT;
 	int rot=LUA_GET_INT;
@@ -492,7 +492,7 @@ int TLuaPathfindingLib::PATH_GetNextMove(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_GetEscapeMove(lua_State *state)
+int LuaPathfindingLib::PATH_GetEscapeMove(lua_State *state)
 	{
 	int endside=LUA_GET_INT;
 	int rot=LUA_GET_INT;
@@ -503,7 +503,7 @@ int TLuaPathfindingLib::PATH_GetEscapeMove(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_GetRandomMove(lua_State *state)
+int LuaPathfindingLib::PATH_GetRandomMove(lua_State *state)
 	{
 	int rot=LUA_GET_INT;
 	int startside=LUA_GET_INT;
@@ -513,7 +513,7 @@ int TLuaPathfindingLib::PATH_GetRandomMove(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_NewGraph(lua_State *state)
+int LuaPathfindingLib::PATH_NewGraph(lua_State *state)
 	{
 	std::string cbfunc=LUA_GET_STRING;
 	int startside=LUA_GET_INT;
@@ -522,7 +522,7 @@ int TLuaPathfindingLib::PATH_NewGraph(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_GetNumNodes(lua_State *state)
+int LuaPathfindingLib::PATH_GetNumNodes(lua_State *state)
 	{
 	int gr=LUA_GET_INT;
 	int res=g_PathGraphs()->GetGraph(gr)->GetNumNodes();
@@ -530,7 +530,7 @@ int TLuaPathfindingLib::PATH_GetNumNodes(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_GetNode(lua_State *state)
+int LuaPathfindingLib::PATH_GetNode(lua_State *state)
 	{
 	int n=LUA_GET_INT;
 	int gr=LUA_GET_INT;
@@ -539,7 +539,7 @@ int TLuaPathfindingLib::PATH_GetNode(lua_State *state)
 	return 1;
 	}
 
-int TLuaPathfindingLib::PATH_GetDistance(lua_State *state)
+int LuaPathfindingLib::PATH_GetDistance(lua_State *state)
 	{
 	int endside=LUA_GET_INT;
 	int startside=LUA_GET_INT;
@@ -550,7 +550,7 @@ int TLuaPathfindingLib::PATH_GetDistance(lua_State *state)
 	}
 
 
-TLuaPathfindingLib::TLuaPathfindingLib()
+LuaPathfindingLib::LuaPathfindingLib()
 	{
 	AddFunc("PATH_NewGraph",PATH_NewGraph);
 	AddFunc("PATH_GetNextMove",PATH_GetNextMove);
@@ -562,8 +562,8 @@ TLuaPathfindingLib::TLuaPathfindingLib()
 	}
 
 
-static TLuaPathfindingLib g_pflib;
-TLuaPathfindingLib* g_PathFindingLib() {return &g_pflib;}
+static LuaPathfindingLib g_pflib;
+LuaPathfindingLib* g_PathFindingLib() {return &g_pflib;}
 
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

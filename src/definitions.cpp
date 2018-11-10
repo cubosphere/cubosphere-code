@@ -40,7 +40,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-void TBaseLuaDef::LoadDef()
+void BaseLuaDef::LoadDef()
 	{
 	isloaded=true;
 	int typ=GetType();
@@ -70,15 +70,15 @@ void TBaseLuaDef::LoadDef()
 	//Otherwise no Precache-Call
 	}
 
-TBaseLuaDef::~TBaseLuaDef()
+BaseLuaDef::~BaseLuaDef()
 	{
 	COND_LUA_CALL("CleanUp",,"");
 	}
 
-void TBaseLuaDef::Reload()
+void BaseLuaDef::Reload()
 	{
 	lua.Reset();
-	TBaseLuaDef::LoadDef();
+	BaseLuaDef::LoadDef();
 	}
 
 /////////////////////////////////////
@@ -98,7 +98,7 @@ void  TMenu::LoadDef(std::string cname)
 			}
 	else {
 			SetName(cname);
-			TBaseLuaDef::LoadDef();
+			BaseLuaDef::LoadDef();
 			}
 	}
 

@@ -44,7 +44,7 @@ if not, see <http://www.gnu.org/licenses/>.
 ////Texture Defs
 
 
-class TTextureDef : public TBaseLuaDef
+class TTextureDef : public BaseLuaDef
 	{
 	public:
 		virtual int GetType() {return FILE_TEXTUREDEF;}

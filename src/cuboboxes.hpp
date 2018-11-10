@@ -30,7 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 
-class BlockDef : public TBaseLuaDef
+class BlockDef : public BaseLuaDef
 	{
 	public:
 		virtual int GetType() {return FILE_BLOCKDEF;}
@@ -57,7 +57,7 @@ class BlockDef : public TBaseLuaDef
 
 using BlockDefServer = BaseDefServer<BlockDef>;
 
-class ItemDef : public TBaseLuaDef
+class ItemDef : public BaseLuaDef
 	{
 	public:
 		virtual ~ItemDef() {}
