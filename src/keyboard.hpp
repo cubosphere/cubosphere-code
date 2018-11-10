@@ -36,14 +36,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 // (IDENT-CODE, PRESS or RELEASE, First-Time-Down (toggle)
-typedef void(*TKeyboardFunc)(int,int,int) ;
+using TKeyboardFunc = void(*)(int,int,int);
 
-/*typedef struct
-{
-  int isdown;
-  int downbefore;
-} TKeyInfo;
-*/
 class TKeyboard
 	{
 	protected:

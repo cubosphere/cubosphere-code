@@ -72,7 +72,7 @@ class cls_FileReadable : public cls_FileBaseClass
 	};
 
 ///Added for Cubo
-typedef cls_FileReadable TCuboFile;
+using TCuboFile = cls_FileReadable;
 
 class cls_FileWriteable : public cls_FileBaseClass
 	{

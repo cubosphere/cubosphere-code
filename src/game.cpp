@@ -738,7 +738,7 @@ void TCuboGame::Think()
 					{
 					numcalcs=(int)ceil(GetElapsed()/maxphyselapsed);
 
-					interpolelapsed=elapsed/(tfloat)numcalcs;
+					interpolelapsed=elapsed/(float)numcalcs;
 					}
 
 #ifdef PARALLELIZE
@@ -1057,7 +1057,7 @@ int BASIS_New(lua_State *state)
 int BASIS_SetAxisRotate(lua_State *state)
 	{
 	Vector3d pos=Vector3FromStack(state);
-	tfloat angle=LUA_GET_DOUBLE;
+	float angle=LUA_GET_DOUBLE;
 	Vector3d axis=Vector3FromStack(state);
 
 	int index=LUA_GET_INT;

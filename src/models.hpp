@@ -56,15 +56,12 @@ class TMdlDef : public BaseLuaDef
 		void Call_RenderGroup(int g);
 	};
 
-typedef BaseDefServer<TMdlDef> TMdlDefServer;
+using TMdlDefServer = BaseDefServer<TMdlDef>;
 
-
-
-
-typedef struct
+using TIntVect = struct
 	{
 	int x,y,z;
-	} TIntVect;
+	};
 
 class TTextFileReader
 	{
@@ -106,21 +103,19 @@ class TBaseModel
 		virtual void Reload();
 	};
 
-typedef struct
+using TOBJFace = struct
 	{
 	int vert[3],norm[3],texcoord[3];
 	int tangent;
-	} TOBJFace;
+	};
 
-//typedef TOBJVertex TOBJFace[3];
-
-typedef struct
+using TOBJGroup = struct
 	{
 	std::string name,materialname;
 	std::vector<TOBJFace> faces;
 	GLuint renderlist;
 	int userenderlist;
-	} TOBJGroup;
+	};
 
 class TOBJModel : public TBaseModel
 	{

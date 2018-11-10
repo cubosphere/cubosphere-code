@@ -266,11 +266,11 @@ TCuboFile * GetFileName(std::string subname,int type,std::string ext)
 	}
 
 
-typedef struct
+using TCommandLineEntry = struct
 	{
 	std::string spec;
 	std::string val;
-	} TCommandLineEntry;
+	};
 
 std::vector<TCommandLineEntry> cmdlines;
 

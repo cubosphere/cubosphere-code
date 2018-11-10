@@ -1071,7 +1071,7 @@ int BLOCK_SetPosf(lua_State *state)
 int BLOCK_GetScale(lua_State *state)
 	{
 	int b=LUA_GET_INT;
-	tfloat v=g_Game()->GetLevel()->GetBlock(b)->GetScale();
+	float v=g_Game()->GetLevel()->GetBlock(b)->GetScale();
 	LUA_SET_DOUBLE(v);
 	return 1;
 	}

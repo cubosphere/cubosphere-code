@@ -20,11 +20,11 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define CUBO_CONSOLE_MAX_LINES 512
 
-typedef struct
+using ConsoleBinding = struct
 	{
 	int k;
 	std::string cmd;
-	} ConsoleBinding;
+	};
 
 class CuboConsole
 	{

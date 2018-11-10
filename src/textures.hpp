@@ -44,7 +44,7 @@ if not, see <http://www.gnu.org/licenses/>.
 ////Texture Defs
 
 
-class TTextureDef : public BaseLuaDef
+class TextureDef : public BaseLuaDef
 	{
 	public:
 		virtual int GetType() {return FILE_TEXTUREDEF;}
@@ -53,7 +53,7 @@ class TTextureDef : public BaseLuaDef
 		void Render2d();
 	};
 
-typedef BaseDefServer<TTextureDef> TTextureDefServer;
+using TTextureDefServer = BaseDefServer<TextureDef>;
 
 //Inherited the different formats herefrom
 class TTexture
@@ -110,10 +110,10 @@ class TJPEGTexture: public TTexture
 
 
 
-typedef struct
+using TFontExtend = struct
 	{
 	float u1,v1,u2,v2;
-	} TFontExtend;
+	};
 
 
 class TTextureContainer

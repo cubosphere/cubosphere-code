@@ -106,11 +106,11 @@ class TFontCaches
 		TFontCache *GetCache(TLoadedFont *font,std::string text, int size);
 	};
 
-typedef struct
+using TFontRemap = struct
 	{
 	std::string oldc;
 	std::string newc;
-	} TFontRemap;
+	};
 
 class TFont
 	{

@@ -72,7 +72,7 @@ class ItemDef : public BaseLuaDef
 	};
 
 
-typedef BaseDefServer<ItemDef> TItemDefServer;
+using TItemDefServer = BaseDefServer<ItemDef>;
 
 #define CUBO_UP 0
 #define CUBO_DOWN 1
@@ -171,7 +171,7 @@ class CuboBlock
 		int id;
 		Vector3d pos;
 		Vector3d oldpos;
-		tfloat scale;
+		float scale;
 		std::vector<CuboBlockSide> sides;
 		std::vector<CuboBlock*> next;
 		TLuaVarHolder varholder;
@@ -186,8 +186,8 @@ class CuboBlock
 		void ReleaseMeFromNext();
 		void ReAttachMeToNext();
 		CuboBlock();
-		tfloat GetScale() {return scale;}
-		void SetScale(tfloat s) {scale=s;}
+		float GetScale() {return scale;}
+		void SetScale(float s) {scale=s;}
 		virtual ~CuboBlock();
 		void Render(Camera *cam);
 		//void SpecialRender(string nam,int defrender);

@@ -37,7 +37,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 T4dGlutMatrix::T4dGlutMatrix(): mode(GL_MODELVIEW) {}
-T4dGlutMatrix::T4dGlutMatrix(tfloat scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
+T4dGlutMatrix::T4dGlutMatrix(float scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
 
 
 void T4dGlutMatrix::glPushMult()
@@ -86,7 +86,7 @@ void T4dGlutMatrix::setPos(const Vector3d& v) //sets the last c
 
 void T4dGlutMatrix::assign(Matrix4d* other)
 	{
-	tfloat* mom=other->getValueMem();
+	float* mom=other->getValueMem();
 	for (int i=0; i<16; i++)
 			{
 			Matrix4d::m[i]=mom[i];

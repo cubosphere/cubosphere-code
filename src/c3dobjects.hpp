@@ -96,7 +96,7 @@ class MatrixObject
 		virtual ~MatrixObject() {for (unsigned int i=0 ; i < children.size(); i++) if (children[i]) delete children[i]; }
 		// Setters
 		virtual void SetBasis(const Vector3d &s,const Vector3d &u,const Vector3d &d) {setSide(s); setUp(u); setDir(d);}
-		virtual void SetBasisAxisRotate(const Vector3d & axis,const tfloat angle);
+		virtual void SetBasisAxisRotate(const Vector3d & axis,const float angle);
 		virtual void CopyBasis(MatrixObject *other);
 		virtual void OnBaseChange() {} //Is called whenever the BaseMatrix is changed
 		virtual void OnPYRChange() {} //Called whenever PYR is changed
@@ -104,13 +104,13 @@ class MatrixObject
 		virtual void setMatrix(const T4dGlutMatrix& m);
 		virtual void setScale(const Vector3d& scal);
 		virtual void setPos(const Vector3d& pos);
-		virtual void rotateX(const tfloat angle); //THIS ARE THE FIXES COORDS   (1,0,0)
-		virtual void rotateY(const tfloat angle); //                            (0,1,0)
-		virtual void rotateZ(const tfloat angle); //                            (0,0,1)
-		virtual void rotateV(const tfloat angle, const Vector3d axis);
-		virtual void rotateDir(const tfloat angle);
-		virtual void rotateUp(const tfloat angle);
-		virtual void rotateSide(const tfloat angle);
+		virtual void rotateX(const float angle); //THIS ARE THE FIXES COORDS   (1,0,0)
+		virtual void rotateY(const float angle); //                            (0,1,0)
+		virtual void rotateZ(const float angle); //                            (0,0,1)
+		virtual void rotateV(const float angle, const Vector3d axis);
+		virtual void rotateDir(const float angle);
+		virtual void rotateUp(const float angle);
+		virtual void rotateSide(const float angle);
 		virtual const Vector3d getSide() {if (usePYR==2) PitchYawRollToBase(); return base.getCol(0);}
 		virtual const Vector3d getUp() {if (usePYR==2) PitchYawRollToBase(); return base.getCol(1);}
 		virtual Vector3d getDir() {if (usePYR==2) PitchYawRollToBase(); return base.getCol(2);}
@@ -126,7 +126,7 @@ class MatrixObject
 		virtual void setSpeedMode(const int mode) {speedMode=mode;}
 		virtual int getAngleSpeedMode() {return rotSpeedMode;}
 		virtual void setAngleSpeedMode(const int mode) {rotSpeedMode=mode;}
-		virtual void applySpeed(const tfloat elapsed);
+		virtual void applySpeed(const float elapsed);
 		virtual void setBaseVector(int toSet,Vector3d val,int toKeep); //Sets the one Vector to the normalized input and keeps the other. Last is the cross
 		virtual void lookAt(int withBaseVector,Vector3d pos,int toKeepFirst); //Sets the one Vector to the normalized input and keeps the other. Last is the cross
 		virtual void lookAtZWithWorldUp(Vector3d pos,Vector3d upVect); //Sets the one Vector to the normalized input and keeps the other. Last is the cross
@@ -138,10 +138,10 @@ class MatrixObject
 		virtual void PushMult() {matrix.glPushMult();}
 		virtual void draw() {}
 		virtual void postthink() {matrix.glPop();}
-		virtual void goForward(tfloat dist) {Vector3d d=getDir(); vPos=vPos+d*dist; changed=1;}
-		virtual void goSide(tfloat dist) {Vector3d d=getSide(); vPos=vPos+d*dist; changed=1;}
-		virtual void goUp(tfloat dist) {Vector3d d=getUp(); vPos=vPos+d*dist; changed=1;}
-		virtual void TraverseTree(const tfloat timeelapsed);
+		virtual void goForward(float dist) {Vector3d d=getDir(); vPos=vPos+d*dist; changed=1;}
+		virtual void goSide(float dist) {Vector3d d=getSide(); vPos=vPos+d*dist; changed=1;}
+		virtual void goUp(float dist) {Vector3d d=getUp(); vPos=vPos+d*dist; changed=1;}
+		virtual void TraverseTree(const float timeelapsed);
 		virtual void addChild(MatrixObject *other) {children.push_back(other); other->parent=this;}
 		virtual int getChildNum() {return children.size();}
 		virtual MatrixObject *getChild(const int i) {if (i<0 || i>=getChildNum()) return NULL; else return children[i];}
@@ -158,9 +158,9 @@ class Camera : public MatrixObject
 		Vector2d screenwh;
 		Vector2d fovxy;
 		Matrix3d invbase;
-		tfloat zoom;
+		float zoom;
 		int AttachedOnPlayer;
-		tfloat frustum[6][4];
+		float frustum[6][4];
 		unsigned char ortho,fovchanged;
 		void ExtractFrustum();
 	public:
@@ -176,11 +176,11 @@ class Camera : public MatrixObject
 		Vector2d getScreenWidthHeight() {return screenwh;}
 		Vector2d getFOVXY() {return fovxy;}
 		int getOrtho() {return ortho;}
-		tfloat getZoom() {return zoom;}
+		float getZoom() {return zoom;}
 		void setNearFar(Vector2d v) {nearfar=v; fovchanged=1;}
 		void setScreenWidthHeight(Vector2d v) {screenwh=v; fovchanged=1;}
 		void setFOVXY(Vector2d v) {fovxy=v; fovchanged=1;}
-		void setZoom(const tfloat z) {zoom=z; fovchanged=1;}
+		void setZoom(const float z) {zoom=z; fovchanged=1;}
 		void setOrtho(const int on) {ortho=on; fovchanged=1;}
 		Vector3d PixelPosToDir(Vector2d ppos,int local=0);
 		int PointInFrustum( Vector3d pos );

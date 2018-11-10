@@ -40,13 +40,13 @@ if not, see <http://www.gnu.org/licenses/>.
 #define NUM_BUTTONS 6
 
 // BUTTON, CLICK OR RELEASE, x,y
-typedef void(*TMouseButtonFunc)(int,int,int,int);
+using TMouseButtonFunc = void(*)(int,int,int,int);
 
-typedef struct
+using TMouseButton = struct
 	{
 	int pressed;
 	int lastx,lasty,relx,rely;
-	} TMouseButton;
+	};
 
 class TMouse
 	{

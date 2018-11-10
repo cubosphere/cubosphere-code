@@ -550,7 +550,7 @@ Vector3d CuboLevel::GetCenter()
 	return res*0.5;
 	}
 
-tfloat CuboLevel::GetRadius()
+float CuboLevel::GetRadius()
 	{
 	Vector3d res=bbmin-bbmax;
 	return (res.length()*0.5);
@@ -616,7 +616,7 @@ void CuboLevel::Render(Camera *cam)
 
 			if (!(cam->SphereInFrustum(blocks[i]->GetPos(),blocks[i]->GetCullRadius()))) continue;
 			Vector3d diff=blocks[i]->GetPos()-cam->getPos();
-			tfloat dist=diff*diff;
+			float dist=diff*diff;
 			blocks[i]->MustRenderSides(cam,siderender);
 			for (unsigned int s=0; s<6; s++)
 					{
@@ -680,7 +680,7 @@ void CuboLevel::SpecialRender(Camera *cam,std::string nam,int defrender)
 
 			if (!(cam->SphereInFrustum(blocks[i]->GetPos(),blocks[i]->GetCullRadius()))) continue;
 			Vector3d diff=blocks[i]->GetPos()-cam->getPos();
-			tfloat dist=diff*diff;
+			float dist=diff*diff;
 			blocks[i]->MustRenderSides(cam,siderender); ///TODO: change to MustSpecialRender?
 			for (unsigned int s=0; s<6; s++)
 					{

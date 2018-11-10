@@ -33,13 +33,13 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-typedef struct
+using TTempTexture = struct
 	{
 	GLuint tindex;
 	GLuint fbo;
 	GLuint depth;
 	int w,h;
-	} TTempTexture;
+	};
 
 class TPostEffect : public BaseLuaDef
 	{

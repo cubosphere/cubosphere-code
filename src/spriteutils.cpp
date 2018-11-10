@@ -345,8 +345,8 @@ void TSpriteDef::Render(TSprite & s)
 			}
 	else
 			{
-			tfloat si=sin(s.rot)*scale;
-			tfloat co=cos(s.rot)*scale;
+			float si=sin(s.rot)*scale;
+			float co=cos(s.rot)*scale;
 			Vector3d c1=s.pos+(v_corner1*co+v_corner2*si);
 			Vector3d c2=s.pos+(v_corner2*co-v_corner1*si);
 			Vector3d c3=s.pos-(v_corner1*co+v_corner2*si);
@@ -480,9 +480,9 @@ int TParticleDef::NewSpriteType(int tind)
 
 
 
-TParticleDefServer gParticleDefs;
+ParticleDefServer gParticleDefs;
 
-TParticleDefServer * g_ParticleDefs() {return &gParticleDefs;}
+ParticleDefServer * g_ParticleDefs() {return &gParticleDefs;}
 
 
 ////////////////LUA-IMPLEMENT////////////////////

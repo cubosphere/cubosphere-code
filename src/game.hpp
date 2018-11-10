@@ -47,10 +47,10 @@ class TGame
 		int screenheight;
 		int supportingShaders;
 		int glReady;
-		tfloat minframes,maxframes; //actually this arent the frames but it ensures that the time is slowed down if we are below
+		float minframes,maxframes; //actually this arent the frames but it ensures that the time is slowed down if we are below
 		std::string GameLoopSource;
 		double time,elapsed,oldtime;
-		tfloat maxphyselapsed;
+		float maxphyselapsed;
 		int FPS;
 		virtual void GameLoop();
 		virtual void GameLoopFrame();
@@ -71,8 +71,8 @@ class TGame
 		virtual void KeyHandle(int ident,int down,int special) {}
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval) {}
 		virtual int Init();
-		virtual void SetMinFrames(tfloat t) {minframes=t;}
-		virtual void SetMaxFrames(tfloat t) {maxframes=t;}
+		virtual void SetMinFrames(float t) {minframes=t;}
+		virtual void SetMaxFrames(float t) {maxframes=t;}
 		virtual void Quit();
 		virtual void Start();
 		virtual TTextureServer* GetTextures() {return &textures;}

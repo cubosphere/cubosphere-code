@@ -30,13 +30,13 @@ if not, see <http://www.gnu.org/licenses/>.
 #define DIST_RENDER_CUSTOM 4
 
 
-typedef struct
+using TraceResult = struct
 	{
 	int hit;
-	tfloat dist;
+	float dist;
 	int block;
 	int side;
-	} TraceResult;
+	};
 
 class DistRenderObj
 	{
@@ -115,10 +115,10 @@ class CuboLevel
 		void FrameRenderEnd();
 		void DrawHUD();
 		Vector3d GetCenter();
-		tfloat GetRadius();
+		float GetRadius();
 		int LoadTexDef(std::string name);
 		BlockDef *GetBlockDef(int i) {return bdefs.GetDefPtr(i);}
-		TTextureDef *GetTexDef(int i) {return tdefs.GetDefPtr(i);}
+		TextureDef *GetTexDef(int i) {return tdefs.GetDefPtr(i);}
 		ItemDef *GetItemDef(int i) {return idefs.GetDefPtr(i);}
 		CuboItem *GetItem(int i) {return items[i];}
 		CuboBlock *GetBlockAtIPos(int x,int y,int z);

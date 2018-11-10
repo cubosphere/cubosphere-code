@@ -40,48 +40,48 @@ Vector2d Vector2d::operator-()
 	return newv;
 	}
 
-tfloat Vector2d::operator*(const Vector2d& other)
+float Vector2d::operator*(const Vector2d& other)
 	{
 	return (u*other.u + v*other.v);
 	}
 
-Vector2d Vector2d::operator*(const tfloat& scal)
+Vector2d Vector2d::operator*(const float& scal)
 	{
 	Vector2d newv(u*scal,v*scal);
 	return newv;
 	}
 
-Vector2d Vector2d::operator/(const tfloat& scal)
+Vector2d Vector2d::operator/(const float& scal)
 	{
 	Vector2d newv(u/scal,v/scal);
 	return newv;
 	}
 
 
-tfloat Vector2d::length()
+float Vector2d::length()
 	{
 	return(sqrt(u*u+v*v));
 	}
 
-tfloat Vector2d::sqrlength()
+float Vector2d::sqrlength()
 	{
 	return((u*u+v*v));
 	}
 
-int Vector2d::normalizeCheck()
+bool Vector2d::normalizeCheck()
 	{
-	tfloat denom=length();
-	if (denom<VECTOR_EPSILON) return VECTOR_NORMALIZE_ERROR;
+	float denom=length();
+	if (denom<VECTOR_EPSILON) return false;
 	else {
 			u/=denom;
 			v/=denom;
-			return VECTOR_OK;
+			return true;
 			}
 	}
 
 void Vector2d::normalize()
 	{
-	tfloat denom=length();
+	float denom=length();
 	u/=denom;
 	v/=denom;
 	}
@@ -132,35 +132,35 @@ const Vector3d Vector3d::operator-()
 
 
 
-tfloat Vector3d::operator*(const Vector3d& other)
+float Vector3d::operator*(const Vector3d& other)
 	{
 	return (x*other.x + y*other.y +z*other.z);
 	}
 
-tfloat Vector3d::operator*(Vector3d& other)
+float Vector3d::operator*(Vector3d& other)
 	{
 	return (x*other.x + y*other.y +z*other.z);
 	}
 
-const Vector3d Vector3d::operator*(const tfloat& scal)
+const Vector3d Vector3d::operator*(const float& scal)
 	{
 	Vector3d newv(x*scal,y*scal,z*scal);
 	return newv;
 	}
 
-Vector3d Vector3d::operator*( tfloat& scal)
+Vector3d Vector3d::operator*( float& scal)
 	{
 	Vector3d newv(x*scal,y*scal,z*scal);
 	return newv;
 	}
 
-const Vector3d Vector3d::operator/(const tfloat& scal)
+const Vector3d Vector3d::operator/(const float& scal)
 	{
 	Vector3d newv(x/scal,y/scal,z/scal);
 	return newv;
 	}
 
-Vector3d Vector3d::operator/(tfloat& scal)
+Vector3d Vector3d::operator/(float& scal)
 	{
 	Vector3d newv(x/scal,y/scal,z/scal);
 	return newv;
@@ -173,31 +173,31 @@ const Vector3d Vector3d::cross(const Vector3d& o)
 	return newv;
 	}
 
-tfloat Vector3d::length()
+float Vector3d::length()
 	{
 	return(sqrt(x*x+y*y+z*z));
 	}
 
-tfloat Vector3d::sqrlength()
+float Vector3d::sqrlength()
 	{
 	return((x*x+y*y+z*z));
 	}
 
-int Vector3d::normalizeCheck()
+bool Vector3d::normalizeCheck()
 	{
-	tfloat denom=length();
-	if (denom<VECTOR_EPSILON) return VECTOR_NORMALIZE_ERROR;
+	float denom=length();
+	if (denom<VECTOR_EPSILON) return false;
 	else {
 			x/=denom;
 			y/=denom;
 			z/=denom;
-			return VECTOR_OK;
+			return true;
 			}
 	}
 
 void Vector3d::normalize()
 	{
-	tfloat denom=length();
+	float denom=length();
 	x/=denom;
 	y/=denom;
 	z/=denom;
@@ -228,23 +228,23 @@ void Vector3d::Minimize(const Vector3d tomin)
 	}
 
 
-tfloat Vector3d::MinValue()
+float Vector3d::MinValue()
 	{
-	tfloat r=x;
+	float r=x;
 	if (r>y) r=y;
 	if (r>z) r=z;
 	return r;
 	}
 
-tfloat Vector3d::MaxValue()
+float Vector3d::MaxValue()
 	{
-	tfloat r=x;
+	float r=x;
 	if (r<y) r=y;
 	if (r<z) r=z;
 	return r;
 	}
 
-tfloat Vector3d::MaxAbsValue()
+float Vector3d::MaxAbsValue()
 	{
 	Vector3d cp(x,y,z);
 	Vector3d neg=cp*(-1);
@@ -274,49 +274,49 @@ const Vector4d Vector4d::operator-()
 	return newv;
 	}
 
-tfloat Vector4d::operator*(const Vector4d& other)
+float Vector4d::operator*(const Vector4d& other)
 	{
 	return (x*other.x + y*other.y +z*other.z +w*other.w);
 	}
 
-const Vector4d Vector4d::operator*(const tfloat& scal)
+const Vector4d Vector4d::operator*(const float& scal)
 	{
 	Vector4d newv(x*scal,y*scal,z*scal,w*scal);
 	return newv;
 	}
 
-const Vector4d Vector4d::operator/(const tfloat& scal)
+const Vector4d Vector4d::operator/(const float& scal)
 	{
 	Vector4d newv(x/scal,y/scal,z/scal,w/scal);
 	return newv;
 	}
 
-tfloat Vector4d::length()
+float Vector4d::length()
 	{
 	return(sqrt(x*x+y*y+z*z+w*w));
 	}
 
-tfloat Vector4d::sqrlength()
+float Vector4d::sqrlength()
 	{
 	return((x*x+y*y+z*z+w*w));
 	}
 
-int Vector4d::normalizeCheck()
+bool Vector4d::normalizeCheck()
 	{
-	tfloat denom=length();
-	if (denom<VECTOR_EPSILON) return VECTOR_NORMALIZE_ERROR;
+	float denom=length();
+	if (denom<VECTOR_EPSILON) return false;
 	else {
 			x/=denom;
 			y/=denom;
 			z/=denom;
 			w/=denom;
-			return VECTOR_OK;
+			return true;
 			}
 	}
 
 void Vector4d::normalize()
 	{
-	tfloat denom=length();
+	float denom=length();
 	x/=denom;
 	y/=denom;
 	z/=denom;
@@ -352,17 +352,17 @@ void Matrix3d::Identity()
 	for (int j=0; j<3; j++)
 		for (int i=0; i<3; i++)
 				{
-				m[i+3*j]= (tfloat)(i==j ? 1.0 : 0.0);
+				m[i+3*j]= (float)(i==j ? 1.0 : 0.0);
 				//m[i+3*j]=0;
 				}
 	}
 
-Matrix3d::Matrix3d(tfloat diag)
+Matrix3d::Matrix3d(float diag)
 	{
 	for (int j=0; j<3; j++)
 		for (int i=0; i<3; i++)
 				{
-				m[i+3*j]= (i==j ? diag : (tfloat)0.0);
+				m[i+3*j]= (i==j ? diag : (float)0.0);
 				//  m[i+3*j]=0;
 				}
 	}
@@ -394,7 +394,7 @@ const Matrix3d Matrix3d::operator-(const Matrix3d& o)
 
 	}
 
-const Matrix3d Matrix3d::operator*(const tfloat& s)
+const Matrix3d Matrix3d::operator*(const float& s)
 	{
 	Matrix3d newm;
 	for (int i=0; i<9; i++) newm.m[i]=m[i]*s;
@@ -482,21 +482,21 @@ void Matrix3d::setCol(const int i,const Vector3d& v)
 	m[3*i+2]=v.z;
 	}
 
-void Matrix3d::makeRotX(const tfloat angle)
+void Matrix3d::makeRotX(const float angle)
 	{
-	tfloat s=sin(angle);
-	tfloat c=cos(angle);
+	float s=sin(angle);
+	float c=cos(angle);
 	m[1+3]=c;
 	m[2+3]=-s;
 	m[1+2*3]=s;
 	m[2+2*3]=c;
 	}
 
-void Matrix3d::makeRotV(const tfloat angle,const Vector3d axis)
+void Matrix3d::makeRotV(const float angle,const Vector3d axis)
 	{
-	tfloat rcos = cos(angle);
-	tfloat rsin = sin(angle);
-	tfloat oneminuscos=1-rcos;
+	float rcos = cos(angle);
+	float rsin = sin(angle);
+	float oneminuscos=1-rcos;
 	m[0+3*0] =      rcos + axis.x*axis.x*oneminuscos;
 	m[1+3*0] =  axis.z * rsin + axis.y*axis.x*oneminuscos;
 	m[2+3*0] = -axis.y * rsin + axis.z*axis.x*oneminuscos;
@@ -528,7 +528,7 @@ const Vector3d Matrix3d::getPitchYawRoll()
 			//cout << "SPECIAL A  " << m[0+1*3]<< "  " << m[2+1*3] << endl;
 			return newv;
 			}
-	tfloat ic=((tfloat)1.0)/cos(newv.x);
+	float ic=((float)1.0)/cos(newv.x);
 	newv.y=atan2(m[0+2*3]*ic,m[2+2*3]*ic);
 	newv.z=atan2(m[1+0*3]*ic,m[1+1*3]*ic);
 	return newv;
@@ -539,7 +539,7 @@ const Vector3d Matrix3d::getPitchYawRoll()
 
 void Matrix3d::setPitchYawRoll(Vector3d pyr)
 	{
-	tfloat cx,sx,cy,sy,cz,sz;
+	float cx,sx,cy,sy,cz,sz;
 	cx=cos(pyr.x); sx=sin(pyr.x);
 	cy=cos(pyr.y); sy=sin(pyr.y);
 	cz=cos(pyr.z); sz=sin(pyr.z);
@@ -558,29 +558,29 @@ void Matrix3d::setPitchYawRoll(Vector3d pyr)
 	}
 
 
-void Matrix3d::makeRotY(const tfloat angle)
+void Matrix3d::makeRotY(const float angle)
 	{
-	tfloat s=sin(angle);
-	tfloat c=cos(angle);
+	float s=sin(angle);
+	float c=cos(angle);
 	m[0+3*0]=c;
 	m[0+3*2]=s;
 	m[2+3*0]=-s;
 	m[2+3*2]=c;
 	}
 
-void Matrix3d::makeRotZ(const tfloat angle)
+void Matrix3d::makeRotZ(const float angle)
 	{
-	tfloat s=sin(angle);
-	tfloat c=cos(angle);
+	float s=sin(angle);
+	float c=cos(angle);
 	m[0+0*3]=c;
 	m[0+1*3]=-s;
 	m[1+0*3]=s;
 	m[1+1*3]=c;
 	}
 
-tfloat Matrix3d::det()
+float Matrix3d::det()
 	{
-	tfloat d;
+	float d;
 	d=m[0+3*0]*m[1+3*1]*m[2+3*2]
 			+m[1+3*0]*m[2+3*1]*m[0+3*2]
 			+m[2+3*0]*m[0+3*1]*m[1+3*2]
@@ -593,13 +593,13 @@ tfloat Matrix3d::det()
 
 const Matrix3d Matrix3d::inverse()
 	{
-	tfloat d=det();
+	float d=det();
 	Matrix3d result2(0.0);
 	if (d*d < VECTOR_EPSILON)
 			{
 			return result2;
 			}
-	tfloat invdet=((tfloat)1.0)/d;
+	float invdet=((float)1.0)/d;
 	result2.m[0+3*0] =  (m[1+3*1]*m[2+3*2]-m[2+3*1]*m[1+3*2])*invdet;
 	result2.m[0+3*1] = -(m[0+3*1]*m[2+3*2]-m[0+3*2]*m[2+3*1])*invdet;
 	result2.m[0+3*2] =  (m[0+3*1]*m[1+3*2]-m[0+3*2]*m[1+3*1])*invdet;
@@ -658,7 +658,7 @@ void Matrix4d::getForODE(float* p, float* R)
 
 void Matrix4d::setSubMatrix(Matrix3d sub)
 	{
-	tfloat *mom=sub.getValueMem();
+	float *mom=sub.getValueMem();
 	for (int j=0; j<3; j++)
 		for (int i=0; i<3; i++)
 				{
@@ -670,7 +670,7 @@ void Matrix4d::setSubMatrix(Matrix3d sub)
 
 void Matrix4d::getSubMatrix(Matrix3d *sub)
 	{
-	tfloat *mom=sub->getValueMem();
+	float *mom=sub->getValueMem();
 	for (int j=0; j<3; j++)
 		for (int i=0; i<3; i++)
 				{
@@ -716,7 +716,7 @@ Matrix4d::Matrix4d()
 				}
 	}
 
-Matrix4d::Matrix4d(tfloat diag)
+Matrix4d::Matrix4d(float diag)
 	{
 	for (int j=0; j<4; j++)
 		for (int i=0; i<4; i++)
@@ -741,7 +741,7 @@ const Matrix4d Matrix4d::operator-(const Matrix4d& o)
 
 	}
 
-const Matrix4d Matrix4d::operator*(const tfloat& s)
+const Matrix4d Matrix4d::operator*(const float& s)
 	{
 	Matrix4d newm;
 	for (int i=0; i<16; i++) newm.m[i]=m[i]*s;
@@ -793,10 +793,10 @@ void Matrix4d::setCol(const int i,const Vector3d& v)
 	m[4*i+2]=v.z;
 	}
 
-void Matrix4d::makeRotX(const tfloat angle)
+void Matrix4d::makeRotX(const float angle)
 	{
-	tfloat s=sin(angle);
-	tfloat c=cos(angle);
+	float s=sin(angle);
+	float c=cos(angle);
 	m[5]=c;
 	m[6]=-s;
 	m[9]=s;

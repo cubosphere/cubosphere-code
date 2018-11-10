@@ -78,11 +78,11 @@ int CuboPlayer::SelectActor(int actorind)
 	CamMove(found); return 1;
 	}
 
-void CuboPlayer::SetCameraPos(tfloat elapsed,MatrixObject *cam)
+void CuboPlayer::SetCameraPos(float elapsed,MatrixObject *cam)
 	{
 
 //only call if in movement!
-	tfloat l=caminterpolation+elapsed*camspeed;
+	float l=caminterpolation+elapsed*camspeed;
 
 
 	if (l>1) l=1;
@@ -114,7 +114,7 @@ void BaseCp(TBasis *from,TBasis *to)
 void BaseDiscretize(TBasis *b)
 	{
 	for (int i=0; i<3; i++) {
-			tfloat absmax=(*b)[i].x*(*b)[i].x; int absmaxind=0; tfloat sign=((*b)[i].x>=0 ? 1 : -1);
+			float absmax=(*b)[i].x*(*b)[i].x; int absmaxind=0; float sign=((*b)[i].x>=0 ? 1 : -1);
 			if ((*b)[i].y*(*b)[i].y>absmax) {absmax=(*b)[i].y*(*b)[i].y; absmaxind=1; sign=((*b)[i].y>=0 ? 1 : -1);}
 			if ((*b)[i].z*(*b)[i].z>absmax) {absmax=(*b)[i].z*(*b)[i].z; absmaxind=2; sign=((*b)[i].z>=0 ? 1 : -1);}
 			(*b)[i].xyz(sign*(absmaxind==0 ? 1 : 0),sign*(absmaxind==1 ? 1 : 0),sign*(absmaxind==2 ? 1 : 0));
@@ -1105,7 +1105,7 @@ void TCuboMovement::SetCamParams(std::string what,Vector3d params)
 	else if (what=="lookdown") lookdownfloats=params;
 	}
 
-void TCuboMovement::SetCamZRotation(tfloat zr,int mirror)
+void TCuboMovement::SetCamZRotation(float zr,int mirror)
 	{
 	cammirror=mirror;
 	camzrot=zr;
@@ -1128,7 +1128,7 @@ void TCuboMovement::SetCamPos(MatrixObject *cam)
 	float lookdown=0;
 	if (lookpos<0) lookdown=-lookpos;
 
-	tfloat f=1-lookup-lookdown;
+	float f=1-lookup-lookdown;
 	Vector3d cp=camfloats*f;
 	Vector3d add1=lookdownfloats*lookdown;
 	Vector3d add2=lookupfloats*lookup;
@@ -2309,7 +2309,7 @@ int PLAYER_InCameraPan(lua_State *state)
 
 int PLAYER_SetCameraSpeed(lua_State *state)
 	{
-	tfloat speed=LUA_GET_DOUBLE;
+	float speed=LUA_GET_DOUBLE;
 	int plr=LUA_GET_INT;
 	g_Game()->GetPlayer(plr)->SetCamSpeed(speed);
 	return 0;

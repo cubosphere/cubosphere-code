@@ -23,9 +23,9 @@ if not, see <http://www.gnu.org/licenses/>.
 #ifndef JPEG_TURBO
 #include <jpeglib.h>
 #else
-#include <turbojpeg.h>
-typedef struct jpeg_decompress_struct * j_decompress_ptr;
-typedef unsigned char boolean;
+#include <turbojpeg.h> // TODO: test is it required
+using j_decompress_ptr = struct jpeg_decompress_struct*;
+using boolean = bool;
 #define TRUE true
 #endif
 
@@ -63,7 +63,7 @@ typedef unsigned char boolean;
 ///////////////////////////////////////////////
 
 
-void TTextureDef::Call_Render(int sideid)
+void TextureDef::Call_Render(int sideid)
 	{
 	if (lua.FuncExists("Render"))
 			{
@@ -71,7 +71,7 @@ void TTextureDef::Call_Render(int sideid)
 			}
 	}
 
-void TTextureDef::RenderPlane()
+void TextureDef::RenderPlane()
 	{
 //OPEN GL STUFF
 // glBegin(GL_QUADS);
@@ -85,7 +85,7 @@ void TTextureDef::RenderPlane()
 	glEnd();
 	}
 
-void TTextureDef::Render2d()
+void TextureDef::Render2d()
 	{
 //OPEN GL STUFF
 //glBegin(GL_QUADS);

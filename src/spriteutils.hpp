@@ -69,7 +69,7 @@ class TSpriteEnvironment
 	};
 
 
-typedef struct
+using TSprite = struct
 	{
 	int typ;
 	Vector3d pos,vel;
@@ -81,7 +81,7 @@ typedef struct
 	float  rotspeed;
 	float  rot;
 	float  rgbphase;
-	} TSprite;
+	};
 
 
 //: public TSprite :: EMITTER KEIN SPRITE... Notfalls einen ortsfesten SPRITE erstellen und adden
@@ -220,9 +220,9 @@ class TParticleDef : public BaseLuaDef
 		int NewSpriteType(int tind);
 	};
 
-typedef BaseDefServer<TParticleDef> TParticleDefServer;
+using ParticleDefServer = BaseDefServer<TParticleDef>;
 
-extern TParticleDefServer * g_ParticleDefs();
+extern ParticleDefServer * g_ParticleDefs();
 
 //////////////////
 

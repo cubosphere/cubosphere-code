@@ -174,11 +174,11 @@ class TLuaAccess
 
 
 
-typedef struct
+using TLuaCFunc = struct
 	{
 	std::string name;
 	lua_CFunction func;
-	} TLuaCFunc;
+	};
 
 //Class holding a bunch of C-Functions exported to LUA
 //Should be declared Virtual, so that we can add our needed funcs by Inheritance

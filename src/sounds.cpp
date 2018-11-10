@@ -646,7 +646,7 @@ int SOUND_Set3dFromCam(lua_State *state)
 	proj=up*pd;
 	proj=proj+rel;
 	// Now proj is in the cams plane
-	tfloat ang=0;
+	float ang=0;
 	if (proj.sqrlength()<0.01) {
 			ang=0;
 			}

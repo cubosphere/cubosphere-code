@@ -394,8 +394,8 @@ void CuboConsole::Render()
 
 
 //Lines
-	tfloat fontsize=0.015;
-	tfloat distfactor=2;
+	float fontsize=0.015;
+	float distfactor=2;
 
 	lowerline_ypos+=fontsize;
 
@@ -406,11 +406,11 @@ void CuboConsole::Render()
 
 	g_Game()->GetFont()->SetAlign("left","bottom");
 
-	tfloat linkrement=distfactor*fontsize;
+	float linkrement=distfactor*fontsize;
 
 	for (int c=0; c<screenlines; c++)
 			{
-			tfloat ypos=lowerline_ypos+(c+1.5)*linkrement;
+			float ypos=lowerline_ypos+(c+1.5)*linkrement;
 			if (ypos>0.5) break;
 			int lindex=GetLineIndex(c+scrolloffs);
 			if (lindex<0) break;

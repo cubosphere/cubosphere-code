@@ -72,8 +72,8 @@ class CuboPlayer
 	{
 	protected:
 		int id;
-		tfloat caminterpolation;
-		tfloat camspeed;
+		float caminterpolation;
+		float camspeed;
 		TLuaVarHolder varholder;
 		std::vector<int> actorids;
 		int activeact;
@@ -83,9 +83,9 @@ class CuboPlayer
 		void CamMove(int newactor);
 	public:
 		CuboPlayer(int mid) : id(mid), caminterpolation(1.0),camspeed(3),activeact(0), lastact(0) {}
-		void SetCamSpeed(tfloat cs) {camspeed=cs;}
+		void SetCamSpeed(float cs) {camspeed=cs;}
 		bool InCameraPan() {return caminterpolation<1.0;}
-		void SetCameraPos(tfloat elapsed,MatrixObject *cam);
+		void SetCameraPos(float elapsed,MatrixObject *cam);
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
 		void AddActor(int i);
 		int GetActiveActor() {if ((activeact<0) || (activeact>=(int)actorids.size())) return -1; else return actorids[activeact];}
@@ -93,7 +93,7 @@ class CuboPlayer
 		int NumActors() {return actorids.size();}
 		int GetActor(int i) {return actorids[i];}
 		int NextActor() ;
-		tfloat GetCamInterpolation() {return caminterpolation;}
+		float GetCamInterpolation() {return caminterpolation;}
 		int GetLastActiveActor() {return actorids[lastact];}
 		int SelectActor(int actorind);
 	};
@@ -136,8 +136,7 @@ const std::string s_CuboMoveStringsDir[]= {"none","forward","forward","rolldown"
 const std::string s_CuboMoveStringsMove[]= {"none","forward","up","down","left","right","jumpup","jumpahead","falling","slidedown","jumpfar","jumphigh","changegravity"};
 
 
-
-typedef Vector3d TBasis[3];
+using TBasis = Vector3d[3];
 
 class TCuboMovement
 	{
@@ -247,7 +246,7 @@ class TCuboMovement
 		void SetJumpTiming(float fwpt,float fwptj,float lateforward) {FORWARD_PRESS_TIME=fwpt; FORWARD_PRESS_TIME_JUMP=fwptj;  LATE_FORWARD_JUMP_TIME=lateforward; }
 		void SetForwardPressTime(float fpt) {forwardpresstime=fpt;}
 		void SetCamParams(std::string what,Vector3d params);
-		void SetCamZRotation(tfloat zr,int mirror);
+		void SetCamZRotation(float zr,int mirror);
 		float s_MoveSpeed(int move);
 		void HighJump();
 		void FarJump(); //3 Blocks

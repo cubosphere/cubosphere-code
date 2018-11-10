@@ -45,7 +45,7 @@ class T4dGlutMatrix: public Matrix4d
 	public:
 		int mode;
 		T4dGlutMatrix();
-		T4dGlutMatrix(tfloat scal);
+		T4dGlutMatrix(float scal);
 		void glPushMult();
 		void glMult();
 		void glPop();

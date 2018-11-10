@@ -53,11 +53,11 @@ class TJoystick
 		void ResetButtons();
 	};
 
-// (Stick-Index, Axis-Index, value, oldvalue
-typedef void(*TJoystickAxisFunc)(int,int,float,float) ;
+// Stick-Index, Axis-Index, value, oldvalue
+using TJoystickAxisFunc = void(*)(int,int,float,float);
 
-// (Stick-Index, Button-Index, dir(for axis), value, toggle
-typedef void(*TJoystickButtonFunc)(int,int,int,int,int) ;
+// Stick-Index, Button-Index, dir(for axis), value, toggle
+using TJoystickButtonFunc = void(*)(int,int,int,int,int);
 
 class TJoystickServer
 	{
