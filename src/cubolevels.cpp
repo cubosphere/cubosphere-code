@@ -371,22 +371,22 @@ void CuboLevel::CreateBBox()
 	bbmax=bbmin*(-1.0);
 	for (unsigned int i=0; i<blocks.size(); i++)
 			{
-			T3dVector t=blocks[i]->GetBBMax();
+			auto t=blocks[i]->GetBBMax();
 			bbmax.Maximize(t);
 			t=blocks[i]->GetBBMin();
 			bbmin.Minimize(t);
 			}
 //Expand it a bit
-	/*T3dVector expand;
+	/*Vector3d expand;
 	float extrasize=40*CUBO_SCALE;
 	expand.xyz(extrasize,extrasize,extrasize);
 	bbmin=bbmin-expand;
 	bbmax=bbmax+expand;*/
 	}
 
-int CuboLevel::PointInBBox(T3dVector cp,float extrasize)
+int CuboLevel::PointInBBox(Vector3d cp,float extrasize)
 	{
-	T3dVector diff=cp;
+	auto diff = cp;
 	diff=diff-bbmin;
 	if (diff.MinValue()<-extrasize) return 0;
 	diff=bbmax-cp;
@@ -544,15 +544,15 @@ void CuboLevel::JoyAxisChange(int joys,int axis,double val,double pval)
 
 	}
 
-T3dVector CuboLevel::GetCenter()
+Vector3d CuboLevel::GetCenter()
 	{
-	T3dVector res=bbmin+bbmax;
+	Vector3d res=bbmin+bbmax;
 	return res*0.5;
 	}
 
 tfloat CuboLevel::GetRadius()
 	{
-	T3dVector res=bbmin-bbmax;
+	Vector3d res=bbmin-bbmax;
 	return (res.length()*0.5);
 	}
 
@@ -615,7 +615,7 @@ void CuboLevel::Render(Camera *cam)
 			{
 
 			if (!(cam->SphereInFrustum(blocks[i]->GetPos(),blocks[i]->GetCullRadius()))) continue;
-			T3dVector diff=blocks[i]->GetPos()-cam->getPos();
+			Vector3d diff=blocks[i]->GetPos()-cam->getPos();
 			tfloat dist=diff*diff;
 			blocks[i]->MustRenderSides(cam,siderender);
 			for (unsigned int s=0; s<6; s++)
@@ -679,7 +679,7 @@ void CuboLevel::SpecialRender(Camera *cam,std::string nam,int defrender)
 			{
 
 			if (!(cam->SphereInFrustum(blocks[i]->GetPos(),blocks[i]->GetCullRadius()))) continue;
-			T3dVector diff=blocks[i]->GetPos()-cam->getPos();
+			Vector3d diff=blocks[i]->GetPos()-cam->getPos();
 			tfloat dist=diff*diff;
 			blocks[i]->MustRenderSides(cam,siderender); ///TODO: change to MustSpecialRender?
 			for (unsigned int s=0; s<6; s++)
@@ -728,7 +728,7 @@ void CuboLevel::SortDistRenderList()
 
 	}
 
-void CuboLevel::LastDistanceRenderCull(T3dVector center,double rad)
+void CuboLevel::LastDistanceRenderCull(Vector3d center,double rad)
 	{
 	distrenderlist.back().SetCulling(center,rad);
 	}
@@ -745,11 +745,11 @@ void CuboLevel::DistRender(Camera *cam)
 	SetLastRendered("");
 	}
 
-CuboBlock *CuboLevel::GetBlockAtPos(T3dVector p)
+CuboBlock *CuboLevel::GetBlockAtPos(Vector3d p)
 	{
 	for (unsigned int i=0; i<blocks.size(); i++)
 			{
-			T3dVector diff=p-blocks[i]->GetPos();
+			Vector3d diff=p-blocks[i]->GetPos();
 			//Now check if we are inside the block
 			if (diff.MaxAbsValue()<=CUBO_SCALE)
 					{
@@ -763,7 +763,7 @@ CuboBlock *CuboLevel::GetBlockAtPos(T3dVector p)
 
 CuboBlock *CuboLevel::GetBlockAtIPos(int x,int y,int z)
 	{
-	T3dVector p(2*CUBO_SCALE*x,2*CUBO_SCALE*y,2*CUBO_SCALE*z);
+	Vector3d p(2*CUBO_SCALE*x,2*CUBO_SCALE*y,2*CUBO_SCALE*z);
 	return GetBlockAtPos(p);
 	}
 
@@ -774,8 +774,8 @@ void CuboLevel::BindBlocksToNext()
 			{
 			for (int j=0; j<6; j++)
 					{
-					T3dVector p=blocks[i]->GetPos();
-					T3dVector n=s_CuboNormals[j];
+					Vector3d p=blocks[i]->GetPos();
+					Vector3d n=s_CuboNormals[j];
 					p=p+(n*(2*CUBO_SCALE));
 					CuboBlock *nb=GetBlockAtPos(p);
 					if (!nb) continue;
@@ -805,7 +805,7 @@ CuboBlockSide *CuboLevel::GetBlockSide(int id)
 	}
 
 
-TraceResult CuboLevel::TraceLine(T3dVector start,T3dVector dir,int onlyblocking)
+TraceResult CuboLevel::TraceLine(Vector3d start,Vector3d dir,int onlyblocking)
 	{
 	TraceResult res;
 	res.hit=0;
@@ -817,24 +817,24 @@ TraceResult CuboLevel::TraceLine(T3dVector start,T3dVector dir,int onlyblocking)
 			{
 			if (blocks[b]->IsEditorSelector()) continue;
 
-			T3dVector diff=blocks[b]->GetPos();
+			Vector3d diff=blocks[b]->GetPos();
 			diff=diff-start;
 			if (res.hit)  if (diff.length()-sqrt(3.0)*CUBO_SCALE>mindist) continue; //Early check
 			//now shoot a ray at each side
 			for (unsigned int s=0; s<6; s++)
 					{
 					CuboBlockSide *bs=blocks[b]->GetBlockSide(s);
-					T3dVector n=bs->GetNormal();
+					Vector3d n=bs->GetNormal();
 					if (n*dir>-0.0000001) continue;
-					T3dVector t=bs->GetTangent();
-					T3dVector bi=n.cross(t);
+					Vector3d t=bs->GetTangent();
+					Vector3d bi=n.cross(t);
 					//Enter them into a matrix
-					T3dMatrix M;
+					Matrix3d M;
 					M.setCol(0,t);
 					M.setCol(1,bi);
 					M.setCol(2,dir*(-1.0));
-					T3dMatrix invM=M.inverse();
-					T3dVector munulambda=start-bs->GetMidpoint();
+					Matrix3d invM=M.inverse();
+					Vector3d munulambda=start-bs->GetMidpoint();
 					munulambda=invM*munulambda;
 					if ( (abs(munulambda.x)>CUBO_SCALE) || (abs(munulambda.y)>CUBO_SCALE)) continue;
 					if ((mindist<munulambda.z) || (munulambda.z<0)) continue;
@@ -941,7 +941,7 @@ int LEVEL_AddBlock(lua_State *state)
 
 	std::string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
 
-	if (g_VerboseMode()) { T3dVector v(x,y,z); coutlog("  Adding block "+nbdefname+" ("+bdefname+") at "+v.toString()); }
+	if (g_VerboseMode()) { Vector3d v(x,y,z); coutlog("  Adding block "+nbdefname+" ("+bdefname+") at "+v.toString()); }
 
 	g_Game()->GetLevel()->AddBlock(x,y,z,nbdefname);
 	return 0;
@@ -987,7 +987,7 @@ int LEVEL_CustomDistanceRender(lua_State *state)
 int LEVEL_LastDistanceRenderCull(lua_State *state)
 	{
 	double rad=LUA_GET_DOUBLE;
-	T3dVector center=Vector3FromStack(state);
+	Vector3d center=Vector3FromStack(state);
 	g_Game()->GetLevel()->LastDistanceRenderCull(center,rad);
 	return 0;
 	}
@@ -1056,8 +1056,8 @@ int LEVEL_SetCollisionChecksActive(lua_State *state)
 
 int LEVEL_TraceLine(lua_State *state)
 	{
-	T3dVector dir=Vector3FromStack(state);
-	T3dVector start=Vector3FromStack(state);
+	Vector3d dir=Vector3FromStack(state);
+	Vector3d start=Vector3FromStack(state);
 	TraceResult tr=g_Game()->GetLevel()->TraceLine(start,dir);
 	lua_newtable(state);
 	lua_pushstring(state, "hit");
@@ -1112,7 +1112,7 @@ int LEVEL_NumBlocks(lua_State *state)
 
 int LEVEL_GetCenter(lua_State *state)
 	{
-	T3dVector c=g_Game()->GetLevel()->GetCenter();
+	Vector3d c=g_Game()->GetLevel()->GetCenter();
 	LUA_SET_VECTOR3(c);
 	return 1;
 	}

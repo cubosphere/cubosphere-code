@@ -205,7 +205,7 @@ bool TTextFileReader::ExtractIntVect0(std::string s,TIntVect &intv,std::string *
 	return true;
 	}
 
-bool TTextFileReader::Extract3dVector(std::string s,T3dVector &intv,int offs)
+bool TTextFileReader::Extract3dVector(std::string s,Vector3d &intv,int offs)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
@@ -217,7 +217,7 @@ bool TTextFileReader::Extract3dVector(std::string s,T3dVector &intv,int offs)
 	return true;
 	}
 
-bool TTextFileReader::Extract2dVector(std::string s,T2dVector &intv,int offs)
+bool TTextFileReader::Extract2dVector(std::string s,Vector2d &intv,int offs)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
@@ -275,14 +275,14 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 			if (BeginsWith(line,"v "))
 					{
 					//Vertex
-					T3dVector v;
+					Vector3d v;
 					tr.ReplaceChar(line,',','.');
 					if (!tr.Extract3dVector(line,v,1)) return false;
 					verts.push_back(v);
 					}
 			else if (BeginsWith(line,"vt "))
 					{
-					T2dVector v;
+					Vector2d v;
 					tr.ReplaceChar(line,',','.');
 					if (!tr.Extract2dVector(line,v,1)) return false;
 					texcoords.push_back(v);
@@ -290,7 +290,7 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 			else if (BeginsWith(line,"vn "))
 					{
 					//Norm
-					T3dVector v;
+					Vector3d v;
 					tr.ReplaceChar(line,',','.');
 					if (!tr.Extract3dVector(line,v,1)) return false;
 					normals.push_back(v);
@@ -338,7 +338,7 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 
 			}
 
-	T2dVector bla;
+	Vector2d bla;
 	if (texcoords.size()==0) texcoords.push_back(bla);
 	return true;
 	}
@@ -385,9 +385,9 @@ void TOBJModel::DrawGroup(int g)
 	for (unsigned int f=0; f<groups[g].faces.size(); f++)
 		for (unsigned int v=0; v<3; v++)
 				{
-				T2dVector tc=texcoords[groups[g].faces[f].texcoord[v]];
-				T3dVector n=normals[groups[g].faces[f].norm[v]];
-				T3dVector vect=verts[groups[g].faces[f].vert[v]];
+				Vector2d tc=texcoords[groups[g].faces[f].texcoord[v]];
+				Vector3d n=normals[groups[g].faces[f].norm[v]];
+				Vector3d vect=verts[groups[g].faces[f].vert[v]];
 				glTexCoord2f(tc.u,tc.v);
 				glNormal3f(n.x,n.y,n.z);
 				glVertex3f(vect.x,vect.y,vect.z);
@@ -430,10 +430,10 @@ void TOBJModel::SmoothSimplify()
 
 	for (unsigned int i=0; i<verts.size(); i++)
 			{
-			T3dVector v1=verts[i];
+			Vector3d v1=verts[i];
 			for (unsigned int j=i; j<verts.size(); j++)
 					{
-					T3dVector v2=verts[j];
+					Vector3d v2=verts[j];
 					v2=v2-v1;
 					if (v2.isZero())
 							{
@@ -447,21 +447,21 @@ void TOBJModel::SmoothSimplify()
 
 
 
-T3dVector TOBJModel::GetTangent(int g,int f)
+Vector3d TOBJModel::GetTangent(int g,int f)
 	{
-	T3dVector p1=verts[groups[g].faces[f].vert[0]];
-	T3dVector p2=verts[groups[g].faces[f].vert[1]];
-	T3dVector p3=verts[groups[g].faces[f].vert[2]];
+	Vector3d p1=verts[groups[g].faces[f].vert[0]];
+	Vector3d p2=verts[groups[g].faces[f].vert[1]];
+	Vector3d p3=verts[groups[g].faces[f].vert[2]];
 
-	T2dVector uv1=texcoords[groups[g].faces[f].texcoord[0]];
-	T2dVector uv2=texcoords[groups[g].faces[f].texcoord[1]];
-	T2dVector uv3=texcoords[groups[g].faces[f].texcoord[2]];
+	Vector2d uv1=texcoords[groups[g].faces[f].texcoord[0]];
+	Vector2d uv2=texcoords[groups[g].faces[f].texcoord[1]];
+	Vector2d uv3=texcoords[groups[g].faces[f].texcoord[2]];
 
-	T3dVector diff1=p2-p1;
-	T3dVector diff2=p3-p1;
+	Vector3d diff1=p2-p1;
+	Vector3d diff2=p3-p1;
 	diff1=(diff1 * (uv3.v-uv1.v));
 	diff2=(diff2 * (uv2.v-uv1.v));
-	T3dVector tangent=  diff1-diff2;
+	Vector3d tangent=  diff1-diff2;
 	tangent.normalize();
 	return tangent;
 	}
@@ -491,9 +491,9 @@ void TOBJModel::DrawGroupWithTangent(int g, std::string TangentNameInShader)
 			// glVertexAttrib3fNV(loc,tangents[groups[g].faces[f].tangent].x,tangents[groups[g].faces[f].tangent].y,tangents[groups[g].faces[f].tangent].z);
 			for (unsigned int v=0; v<3; v++)
 					{
-					T2dVector tc=texcoords[groups[g].faces[f].texcoord[v]];
-					T3dVector n=normals[groups[g].faces[f].norm[v]];
-					T3dVector vect=verts[groups[g].faces[f].vert[v]];
+					Vector2d tc=texcoords[groups[g].faces[f].texcoord[v]];
+					Vector3d n=normals[groups[g].faces[f].norm[v]];
+					Vector3d vect=verts[groups[g].faces[f].vert[v]];
 					glTexCoord2f(tc.u,tc.v);
 					glNormal3f(n.x,n.y,n.z);
 					glVertex3f(vect.x,vect.y,vect.z);

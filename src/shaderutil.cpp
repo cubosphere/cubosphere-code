@@ -324,13 +324,13 @@ void TShaderServer::SetFloat(std::string ref,float f)
 	glUniform1f(shaderlist[momshader]->GetUniformLocation(ref), f);
 	}
 
-void TShaderServer::SetVector3(std::string ref,T3dVector v)
+void TShaderServer::SetVector3(std::string ref,Vector3d v)
 	{
 	if (momshader<0) return;
 	glUniform3f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z);
 	}
 
-void TShaderServer::SetVector4(std::string ref,T4dVector v)
+void TShaderServer::SetVector4(std::string ref,Vector4d v)
 	{
 	if (momshader<0) return;
 	glUniform4f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z,v.w);
@@ -411,7 +411,7 @@ int SHADER_SetVector3(lua_State *state)
 	{
 
 //stackDump(state); return 0;
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	std::string s;
 	s=LUA_GET_STRING;
 
@@ -423,7 +423,7 @@ int SHADER_SetVector4(lua_State *state)
 	{
 
 //stackDump(state); return 0;
-	T4dVector v=Vector4FromStack(state);
+	Vector4d v=Vector4FromStack(state);
 	std::string s;
 	s=LUA_GET_STRING;
 

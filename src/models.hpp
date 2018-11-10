@@ -83,8 +83,8 @@ class TTextFileReader
 		bool ExtractIntVectFace(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
 
 		bool ExtractIntVect0(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
-		bool Extract3dVector(std::string s,T3dVector &intv,int offs);
-		bool Extract2dVector(std::string s,T2dVector &intv,int offs);
+		bool Extract3dVector(std::string s,Vector3d &intv,int offs);
+		bool Extract2dVector(std::string s,Vector2d &intv,int offs);
 		void ReplaceChar(std::string &str,char which,char with);
 		std::vector<std::string> Seperate(std::string s,std::string sep=" ");
 	};
@@ -125,13 +125,13 @@ typedef struct
 class TOBJModel : public TBaseModel
 	{
 	protected:
-		std::vector<T3dVector> verts,normals,tangents;
-		std::vector<T2dVector> texcoords;
+		std::vector<Vector3d> verts,normals,tangents;
+		std::vector<Vector2d> texcoords;
 		std::vector<TOBJGroup> groups;
 		// GLuint completerenderlist;
 		virtual void Clear();
 		virtual void SmoothSimplify();
-		virtual T3dVector GetTangent(int g,int f);
+		virtual Vector3d GetTangent(int g,int f);
 	public:
 		virtual void DrawGroup(int g);
 		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader);

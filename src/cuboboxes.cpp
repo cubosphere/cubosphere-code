@@ -139,33 +139,33 @@ void CuboBlockSide::Call_VarChanged(std::string var) //To observe changes done b
 
 
 
-T2dVector CuboBlockSide::GetUV(int i)
+Vector2d CuboBlockSide::GetUV(int i)
 	{
 	return s_CuboUV[i]; ///TODO: add rotation and mirroring
 	}
 
-T3dVector CuboBlockSide::GetTangent()
+Vector3d CuboBlockSide::GetTangent()
 	{
-	T3dVector p1=s_CuboVerts[side][0];
-	T3dVector p2=s_CuboVerts[side][1];
-	T3dVector p3=s_CuboVerts[side][2];
+	Vector3d p1=s_CuboVerts[side][0];
+	Vector3d p2=s_CuboVerts[side][1];
+	Vector3d p3=s_CuboVerts[side][2];
 
-	T2dVector uv1=GetUV(0);
-	T2dVector uv2=GetUV(1);
-	T2dVector uv3=GetUV(2);
+	Vector2d uv1=GetUV(0);
+	Vector2d uv2=GetUV(1);
+	Vector2d uv3=GetUV(2);
 
-	T3dVector diff1=p2-p1;
-	T3dVector diff2=p3-p1;
+	Vector3d diff1=p2-p1;
+	Vector3d diff2=p3-p1;
 	diff1=(diff1 * (uv3.v-uv1.v));
 	diff2=(diff2 * (uv2.v-uv1.v));
-	T3dVector tangent=  diff1-diff2;
+	Vector3d tangent=  diff1-diff2;
 	tangent.normalize();
 	return tangent;
 	}
 
-T3dVector CuboBlockSide::GetMidpoint()
+Vector3d CuboBlockSide::GetMidpoint()
 	{
-	T3dVector res;
+	Vector3d res;
 	res=s_CuboNormals[side];
 	res=res*CUBO_SCALE;
 	res=res+parent->GetPos();
@@ -180,7 +180,7 @@ std::string CuboBlockSide::GetTypeName()
 void CuboBlockSide::RenderQuad()
 	{
 // glColor3f(1,1,1);
-	T3dVector ps=parent->GetPos();
+	Vector3d ps=parent->GetPos();
 //  glBegin(GL_QUADS);
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(s_CuboNormals[side].x,s_CuboNormals[side].y,s_CuboNormals[side].z);
@@ -188,9 +188,9 @@ void CuboBlockSide::RenderQuad()
 			{
 			int texind=i;
 			glTexCoord2f(s_CuboUV[texind].u,s_CuboUV[texind].v);
-			T3dVector offs=s_CuboVerts[side][i];
+			Vector3d offs=s_CuboVerts[side][i];
 			offs=offs*parent->GetScale();
-			T3dVector p=ps+offs;
+			Vector3d p=ps+offs;
 			//Here we have to check whether we have to call a SetDiffuse for each Texture Coordinate
 			if ((s_AlphaAccess) && (s_AlphaFunc!=""))
 				SideAlpha(p.x,p.y,p.z);
@@ -303,7 +303,7 @@ void CuboBlock::Render(Camera *cam)
 	{
 	//Perform a precull
 	//Get the campos
-	T3dVector cp=cam->getPos();
+	Vector3d cp=cam->getPos();
 	cp=pos-cp;
 
 	for (unsigned int i=0; i<6; i++)
@@ -322,7 +322,7 @@ void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[])
 	{
 	//Perform a precull
 	//Get the campos
-	T3dVector cp=cam->getPos();
+	Vector3d cp=cam->getPos();
 	cp=pos-cp;
 
 	for (unsigned int i=0; i<6; i++)
@@ -340,7 +340,7 @@ void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[])
 				}
 			}
 	}
-T3dVector CuboBlock::GetPos()
+Vector3d CuboBlock::GetPos()
 	{
 	return pos;
 	}
@@ -357,13 +357,13 @@ CuboBlock *CuboBlock::GetNext(int side)
 	return next[side];
 	}
 
-int CuboBlock::GetNeighbor(T3dVector norm)
+int CuboBlock::GetNeighbor(Vector3d norm)
 	{
-	T3dVector n=norm;
+	Vector3d n=norm;
 	n.normalize();
 	int d=-1;
 	for (int i=0; i<6; i++)
-			{	T3dVector kn;
+			{	Vector3d kn;
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) {d=i; break;}
 			}
@@ -428,8 +428,8 @@ void CuboBlock::WriteLevelData(FILE *f)
 			if (item!=NULL)
 					{
 					///TODO: Check if it is in a block
-					T3dVector checkpos=GetBlockSide(s)->GetMidpoint();
-					T3dVector normal=GetBlockSide(s)->GetNormal();
+					Vector3d checkpos=GetBlockSide(s)->GetMidpoint();
+					Vector3d normal=GetBlockSide(s)->GetNormal();
 					normal=normal*CUBO_SCALE;
 					checkpos=checkpos+normal;
 					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos))
@@ -469,8 +469,8 @@ void CuboBlock::WriteLevelData(FILE *f)
 
 			if (e!=NULL)
 					{
-					T3dVector checkpos=GetBlockSide(s)->GetMidpoint();
-					T3dVector normal=GetBlockSide(s)->GetNormal();
+					Vector3d checkpos=GetBlockSide(s)->GetMidpoint();
+					Vector3d normal=GetBlockSide(s)->GetNormal();
 					normal=normal*CUBO_SCALE;
 					checkpos=checkpos+normal;
 					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos))
@@ -550,10 +550,10 @@ int CuboBlockSide::Call_MaySlideDown(int actorid)
 	}
 
 
-int CuboBlock::BlockInRay(T3dVector start,T3dVector dir,float *dist,T3dVector *hitpt) //-1 if not hit otherwise the side
+int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitpt) //-1 if not hit otherwise the side
 	{
 //First a distance check:
-	T3dVector diff=pos;
+	Vector3d diff=pos;
 	diff=diff-start;
 	float sqrdist=diff.sqrlength();
 	if (sqrdist-3*CUBO_SCALE*CUBO_SCALE>(*dist)*(*dist)) return -1;
@@ -578,10 +578,10 @@ int CuboBlock::BlockInRay(T3dVector start,T3dVector dir,float *dist,T3dVector *h
 			if (planedist<*dist)
 					{
 					///Only check if we are inside
-					T3dVector onpos=dir*planedist;
+					Vector3d onpos=dir*planedist;
 					onpos=onpos+start;
 					//Subtract the normal
-					T3dVector vgl=s_CuboNormals[i];
+					Vector3d vgl=s_CuboNormals[i];
 					vgl=vgl*CUBO_SCALE;
 					vgl=onpos-vgl;
 					//Remains to check the maximum of vgl smaller than the CUBO_DIST
@@ -604,11 +604,11 @@ CuboItem::CuboItem(int id,int type,CuboBlockSide *side)
 	sideptr=side;
 	}
 
-T3dVector CuboItem::GetPos()
+Vector3d CuboItem::GetPos()
 	{
 //ok, get the sides midpoint and add a bit
-	T3dVector pos=sideptr->GetMidpoint();
-	T3dVector norm=sideptr->GetNormal();
+	Vector3d pos=sideptr->GetMidpoint();
+	Vector3d norm=sideptr->GetNormal();
 	norm=norm*CUBO_SCALE;
 	pos=pos+norm;
 	return pos;
@@ -672,17 +672,17 @@ void CuboBlockSide::Call_Constructor()
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SideConstructor(GetID());
 	}
 
-T3dVector CuboBlock::GetBBMax()
+Vector3d CuboBlock::GetBBMax()
 	{
-	T3dVector res;
+	Vector3d res;
 	res.xyz(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE);
 	res=pos+res;
 	return res;
 	}
 
-T3dVector CuboBlock::GetBBMin()
+Vector3d CuboBlock::GetBBMin()
 	{
-	T3dVector res;
+	Vector3d res;
 	res.xyz(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE);
 	res=pos-res;
 	return res;
@@ -815,7 +815,7 @@ int SIDE_RenderQuad(lua_State *state)
 int SIDE_GetTangent(lua_State *state)
 	{
 	int side=LUA_GET_INT;
-	T3dVector v= g_Game()->GetLevel()->GetBlockSide(side)->GetTangent();
+	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetTangent();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
@@ -823,7 +823,7 @@ int SIDE_GetTangent(lua_State *state)
 int SIDE_GetNormal(lua_State *state)
 	{
 	int side=LUA_GET_INT;
-	T3dVector v= g_Game()->GetLevel()->GetBlockSide(side)->GetNormal();
+	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetNormal();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
@@ -831,7 +831,7 @@ int SIDE_GetNormal(lua_State *state)
 int SIDE_GetMidpoint(lua_State *state)
 	{
 	int side=LUA_GET_INT;
-	T3dVector v= g_Game()->GetLevel()->GetBlockSide(side)->GetMidpoint();
+	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetMidpoint();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
@@ -951,7 +951,7 @@ void LUA_SIDE_RegisterLib()
 
 int BLOCK_GetNeighbor(lua_State *state)
 	{
-	T3dVector norm=Vector3FromStack(state);
+	Vector3d norm=Vector3FromStack(state);
 	int blockid=LUA_GET_INT;
 	int res=g_Game()->GetLevel()->GetBlock(blockid)->GetNeighbor(norm);
 	LUA_SET_INT(res);
@@ -1012,7 +1012,7 @@ int BLOCK_GetVar(lua_State *state)
 int BLOCK_GetPos(lua_State *state)
 	{
 	int b=LUA_GET_INT;
-	T3dVector v=g_Game()->GetLevel()->GetBlock(b)->GetPos();
+	Vector3d v=g_Game()->GetLevel()->GetBlock(b)->GetPos();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
@@ -1031,7 +1031,7 @@ int BLOCK_GetEditorInfo(lua_State *state)
 
 int BLOCK_AtPos(lua_State *state)
 	{
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	CuboBlock* b=g_Game()->GetLevel()->GetBlockAtPos(v);
 	int i;
 	if (b) i=b->GetID(); else i=-1;
@@ -1042,7 +1042,7 @@ int BLOCK_AtPos(lua_State *state)
 
 int BLOCK_SetPos(lua_State *state)
 	{
-	T3dVector np=Vector3FromStack(state);
+	Vector3d np=Vector3FromStack(state);
 	int b=LUA_GET_INT;
 	g_Game()->GetLevel()->GetBlock(b)->SetIPos((int)(np.x/(2*CUBO_SCALE)),(int)(np.y/(2*CUBO_SCALE)),(int)(np.z/(2*CUBO_SCALE)));
 
@@ -1061,7 +1061,7 @@ int BLOCK_GetBlocking(lua_State *state)
 
 int BLOCK_SetPosf(lua_State *state)
 	{
-	T3dVector np=Vector3FromStack(state);
+	Vector3d np=Vector3FromStack(state);
 	int b=LUA_GET_INT;
 	g_Game()->GetLevel()->GetBlock(b)->SetPos(np);
 

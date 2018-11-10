@@ -364,7 +364,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 
 	/* push arguments */
 	narg = 0;
-	T3dVector p;
+	Vector3d p;
 	while (*sig) {  /* push arguments */
 			switch (*sig++) {
 
@@ -384,7 +384,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 						break;
 
 					case 'v': //Push a 3d-Vector POINTER!!
-						p=*((T3dVector*)va_arg(vl, T3dVector*));
+						p=*((Vector3d*)va_arg(vl, Vector3d*));
 						lua_newtable(state);
 
 						lua_pushstring(state, "x");
@@ -489,7 +489,7 @@ void TLuaAccess::CallVA (const char *func, const char *sig, ...)
 
 
 
-						((T3dVector *)(va_arg(vl, T3dVector *)))->xyz(p.x,p.y,p.z);
+						((Vector3d *)(va_arg(vl, Vector3d *)))->xyz(p.x,p.y,p.z);
 
 						lua_pop(state, 1);
 						break;
@@ -1068,9 +1068,9 @@ float getfloatfield (lua_State *L, const char *key) {
 
 
 
-T3dVector Vector3FromStack(lua_State *state)
+Vector3d Vector3FromStack(lua_State *state)
 	{
-	T3dVector v;
+	Vector3d v;
 //stackDump(state); return 0;
 	float vs[3]= {0,0,0};
 	vs[0]=getfloatfield(state,"x");
@@ -1083,9 +1083,9 @@ T3dVector Vector3FromStack(lua_State *state)
 	return v;
 	}
 
-T4dVector Vector4FromStack(lua_State *state)
+Vector4d Vector4FromStack(lua_State *state)
 	{
-	T4dVector v;
+	Vector4d v;
 //stackDump(state); return 0;
 	float vs[4]= {0,0,0,0};
 	vs[0]=getfloatfield(state,"r");

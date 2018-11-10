@@ -78,7 +78,7 @@ class CuboPlayer
 		std::vector<int> actorids;
 		int activeact;
 		int lastact;
-		T3dVector pyr;
+		Vector3d pyr;
 		MatrixObject old_mo,new_mo;
 		void CamMove(int newactor);
 	public:
@@ -137,7 +137,7 @@ const std::string s_CuboMoveStringsMove[]= {"none","forward","up","down","left",
 
 
 
-typedef T3dVector TBasis[3];
+typedef Vector3d TBasis[3];
 
 class TCuboMovement
 	{
@@ -155,16 +155,16 @@ class TCuboMovement
 		float j_heightoverground; //How far are we over the ground ///with respect to the last jumping height
 		float j_dist,j_desdist;//How far are we jumped forward and should we jump forward
 		float j_flytime;
-		T3dVector pos;
-		T3dVector newpos;
-		T3dVector oldpos;
+		Vector3d pos;
+		Vector3d newpos;
+		Vector3d oldpos;
 		CuboLevel *lvl;
 		CuboBlock *onBlock;
 		CuboBlock *BlockUnderMe;
 		TLuaVarHolder varholder;
-		T3dVector camfloats;       //
-		T3dVector lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
-		T3dVector lookdownfloats;  //
+		Vector3d camfloats;       //
+		Vector3d lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
+		Vector3d lookdownfloats;  //
 		float CUBO_MOVESPEED,CUBO_GROUND_DIST,CUBO_GROUND_DIST_OFFS,CUBO_JUMP_UPVEL,CUBO_FARJUMP_UPVEL,CUBO_HIGHJUMP_UPVEL,CUBO_GRAVITY_G,CUBO_MAX_FALLSPEED,CUBO_ROTSPEED,LATE_FORWARD_JUMP_TIME,FORWARD_PRESS_TIME,FORWARD_PRESS_TIME_JUMP,ROTATE_STOP_TIME;
 		float distance_normjump,distance_farjump,distance_highjump;
 		int startposset;
@@ -190,9 +190,9 @@ class TCuboMovement
 		int grav180rot; //For upside down rotation
 		double tempmovespeedmultiply;
 		// float radius;
-		T3dVector AtBlockPos(CuboBlock *b,int s);
-		int DirVectToSide(T3dVector dirvect);
-		CuboBlock *GetRelBlock(CuboBlock *b,T3dVector dir);
+		Vector3d AtBlockPos(CuboBlock *b,int s);
+		int DirVectToSide(Vector3d dirvect);
+		CuboBlock *GetRelBlock(CuboBlock *b,Vector3d dir);
 		CuboBlock *GetRelBlock(CuboBlock *b,int side);
 		void AirMove(float elapsed);
 		int MayMove(int typ);
@@ -231,7 +231,7 @@ class TCuboMovement
 		float GetLookPos() {return lookpos;}
 		void SetLookPos(float v) {lookpos=v;}
 		void Jump();
-		int ChangeGravity(T3dVector newgrav,T3dVector newp,double changespeed,int do_at_same_gravity);
+		int ChangeGravity(Vector3d newgrav,Vector3d newp,double changespeed,int do_at_same_gravity);
 		void SetTimeMultiplicator(double tm) {timemultiplicator=tm;}
 
 		float GetRadius() {return CUBO_GROUND_DIST;}
@@ -246,7 +246,7 @@ class TCuboMovement
 		void SetJumpDistances(float uv,float faruv,float highuv) {distance_normjump=uv; distance_farjump=faruv; distance_highjump=highuv;}
 		void SetJumpTiming(float fwpt,float fwptj,float lateforward) {FORWARD_PRESS_TIME=fwpt; FORWARD_PRESS_TIME_JUMP=fwptj;  LATE_FORWARD_JUMP_TIME=lateforward; }
 		void SetForwardPressTime(float fpt) {forwardpresstime=fpt;}
-		void SetCamParams(std::string what,T3dVector params);
+		void SetCamParams(std::string what,Vector3d params);
 		void SetCamZRotation(tfloat zr,int mirror);
 		float s_MoveSpeed(int move);
 		void HighJump();
@@ -254,11 +254,11 @@ class TCuboMovement
 		void JumpUp(); //Ensures that we only jump up.. For callmove on onedir blocks
 		void SetCamPos(MatrixObject *cam);
 		int GetID() {return id;}
-		T3dVector GetPos() {return pos;}
-		T3dVector GetOldPos() {return oldpos;}
-		T3dVector GetSide() {return base[CUBO_SIDEV];}
-		T3dVector GetUp() {return base[CUBO_UPV];}
-		T3dVector GetDir() {return base[CUBO_DIRV];}
+		Vector3d GetPos() {return pos;}
+		Vector3d GetOldPos() {return oldpos;}
+		Vector3d GetSide() {return base[CUBO_SIDEV];}
+		Vector3d GetUp() {return base[CUBO_UPV];}
+		Vector3d GetDir() {return base[CUBO_DIRV];}
 		int GetOnSideID();
 		int GetLastOnSideID();
 		int GetPrevOnSideID();

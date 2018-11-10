@@ -49,9 +49,9 @@ void CuboPlayer::CamMove(int newactor)
 
 			caminterpolation=0;
 			g_Game()->GetActorMovement(actorids[newactor])->SetCamPos(&new_mo);
-			T3dMatrix *old_rmat=old_mo.getBase();
-			T3dMatrix *new_rmat=new_mo.getBase();
-			T3dMatrix new_rmat_viewed_by_old_rmat=old_rmat->transpose();
+			Matrix3d *old_rmat=old_mo.getBase();
+			Matrix3d *new_rmat=new_mo.getBase();
+			Matrix3d new_rmat_viewed_by_old_rmat=old_rmat->transpose();
 			new_rmat_viewed_by_old_rmat=new_rmat_viewed_by_old_rmat*(*new_rmat);
 			//cout << new_rmat_viewed_by_old_rmat.toString() << endl;
 			pyr=new_rmat_viewed_by_old_rmat.getPitchYawRoll();
@@ -86,12 +86,12 @@ void CuboPlayer::SetCameraPos(tfloat elapsed,MatrixObject *cam)
 
 
 	if (l>1) l=1;
-	T3dVector pos=old_mo.getPos()*(1.0-l); T3dVector npos=new_mo.getPos()*l;
+	auto pos=old_mo.getPos()*(1.0-l); auto npos=new_mo.getPos()*l;
 	pos=pos+npos;
 	cam->setPos(pos);
 
-	T3dMatrix *old_rmat=old_mo.getBase();
-	T3dMatrix pyrmat; pyrmat.setPitchYawRoll(pyr*l);
+	Matrix3d *old_rmat=old_mo.getBase();
+	Matrix3d pyrmat; pyrmat.setPitchYawRoll(pyr*l);
 	pyrmat=(*old_rmat)*pyrmat;
 	cam->SetBasis(pyrmat.getCol(0),pyrmat.getCol(1),pyrmat.getCol(2));
 
@@ -128,8 +128,8 @@ void BaseInterpolate(TBasis *from1,TBasis *from2, float t,TBasis *to)
 	float t1=cos(t*M_PI/2.0);
 	float t2=sin(t*M_PI/2.0);
 	for (int i=0; i<3; i++) {
-			T3dVector v1=(*from1)[i];
-			T3dVector v2=(*from2)[i];
+			auto v1=(*from1)[i];
+			auto v2=(*from2)[i];
 			v1=v1*t1;
 			v2=v2*t2;
 			(*to)[i]=v1+v2;
@@ -147,21 +147,21 @@ TCuboMovement::~TCuboMovement()
 	if (player>=0) g_Game()->GetPlayer(player)->RemoveActor(this->id);
 	}
 
-T3dVector TCuboMovement::AtBlockPos(CuboBlock *b,int s)
+Vector3d TCuboMovement::AtBlockPos(CuboBlock *b,int s)
 	{
-	T3dVector res;
+	Vector3d res;
 	res=b->GetPos();
-	T3dVector offs=s_CuboNormals[s];
+	Vector3d offs=s_CuboNormals[s];
 	res=res+offs*(CUBO_SCALE+GetRadius()+GetGroundOffset());
 	return res;
 	}
 
-int TCuboMovement::DirVectToSide(T3dVector dirvect)
+int TCuboMovement::DirVectToSide(Vector3d dirvect)
 	{
-	T3dVector n=dirvect;
+	auto n = dirvect;
 	n.normalize();
 	for (int i=0; i<6; i++)
-			{	T3dVector kn;
+			{	Vector3d kn;
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) return i;
 			}
@@ -294,7 +294,7 @@ void TCuboMovement::PostLevelThink()
 	if ((onBlock) && (this->inmove!=CUBO_MOVE_JUMP_AHEAD) && (this->inmove!=CUBO_MOVE_JUMP_FAR)) {
 			if (onBlock->Moving())
 					{
-					T3dVector moffs=onBlock->GetMovementDelta();
+					Vector3d moffs=onBlock->GetMovementDelta();
 					pos=pos+moffs;
 					oldpos=oldpos+moffs;
 					newpos=newpos+moffs;
@@ -330,7 +330,7 @@ void TCuboMovement::SetJumpDistBlocks(int d)
 	j_desdist=(((int)((j_dist+d*2*CUBO_SCALE)/(2*CUBO_SCALE))))*2*CUBO_SCALE;
 	}
 
-CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,T3dVector dir)
+CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,Vector3d dir)
 	{
 	return GetRelBlock(b,DirVectToSide(dir));
 	}
@@ -376,9 +376,9 @@ void TCuboMovement::MoveForward()
 			}
 	if (movementcheck && (!MayMove(CUBO_MOVE_AHEAD))) return;
 	//First check, if we can roll "up"
-	T3dVector checkvect;
+	Vector3d checkvect;
 	checkvect=onBlock->GetPos();
-	T3dVector rv=base[CUBO_DIRV]+base[CUBO_UPV];
+	Vector3d rv=base[CUBO_DIRV]+base[CUBO_UPV];
 	checkvect=checkvect+rv*(2*CUBO_SCALE);
 	CuboBlock *b;
 	b=lvl->GetBlockAtPos(checkvect);
@@ -555,7 +555,7 @@ void TCuboMovement::AirMove(float elapsed)
 
 
 //Apply yspeed
-//T3dVector yspeed=base[CUBO_UPV];
+//Vector3d yspeed=base[CUBO_UPV];
 //yspeed=yspeed*(yvel*elapsed);
 
 	j_heightoverground+=yvel*elapsed;
@@ -582,7 +582,7 @@ void TCuboMovement::AirMove(float elapsed)
 			{
 			dvel=0;
 			j_dist=j_desdist;
-			/*T3dVector temp=base[CUBO_DIRV];
+			/*Vector3d temp=base[CUBO_DIRV];
 			temp=temp*j_dist;
 			pos=pos+oldpos;*/
 			}
@@ -593,7 +593,7 @@ void TCuboMovement::AirMove(float elapsed)
 //  pos=pos+yspeed;
 			}
 
-	T3dVector upoffs,diroffs;
+	Vector3d upoffs,diroffs;
 	upoffs=base[CUBO_UPV];
 	upoffs=upoffs*j_heightoverground;
 	diroffs=base[CUBO_DIRV];
@@ -603,7 +603,7 @@ void TCuboMovement::AirMove(float elapsed)
 	pos=pos+upoffs;
 
 //Get the travelled distance
-//T3dVector dist=pos-oldpos;
+//Vector3d dist=pos-oldpos;
 //float dirdist=dist*base[CUBO_DIRV];
 	/*if (dirdist>1.5*2*CUBO_SCALE)
 	{
@@ -618,7 +618,7 @@ void TCuboMovement::AirMove(float elapsed)
 //For forward moving we need to add the dir_speed
 //Check, if we hit the ground
 	CuboBlock *b;
-	T3dVector checkpos;
+	Vector3d checkpos;
 
 	if ((yvel<0))
 			{
@@ -643,17 +643,17 @@ void TCuboMovement::AirMove(float elapsed)
 					Call_ChangeMove();
 					onBlock=b; //Should be itself, but ok
 					onSide=DirVectToSide(base[CUBO_UPV]);
-					T3dVector ps;
-					T3dVector posbackup=pos;
+					Vector3d ps;
+					Vector3d posbackup=pos;
 					pos=AtBlockPos(onBlock,onSide);
 					// prevBlock=onBlock;
-					//T3dVector ps;
+					//Vector3d ps;
 					ps=base[CUBO_UPV]*(1.1*(CUBO_GROUND_DIST+CUBO_GROUND_DIST_OFFS));
 					ps=pos-ps;
 					BlockUnderMe=lvl->GetBlockAtPos(ps);
 					if (BlockUnderMe && (BlockUnderMe->Blocking()))
 							{
-							T3dVector relpos;
+							Vector3d relpos;
 							relpos=BlockUnderMe->GetPos();
 							relpos=pos-relpos;
 							BlockSideUnderMe=DirVectToSide(relpos);
@@ -692,8 +692,8 @@ void TCuboMovement::AirMove(float elapsed)
 					inhighjump=0;
 					yvel=-yvel*0.7;
 					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_UPV])]);
-					T3dVector hn=hs->GetNormal();
-					T3dVector hpd=hs->GetMidpoint();
+					Vector3d hn=hs->GetNormal();
+					Vector3d hpd=hs->GetMidpoint();
 					if (j_desdist>0)
 							{
 							hpd=oldpos-hpd;
@@ -713,7 +713,7 @@ void TCuboMovement::AirMove(float elapsed)
 			checkpos=pos+checkpos;
 			b=lvl->GetBlockAtPos(checkpos);
 			if (!b) {
-					T3dVector checkpos2=base[CUBO_DIRV]-base[CUBO_UPV]; checkpos2.normalize();
+					Vector3d checkpos2=base[CUBO_DIRV]-base[CUBO_UPV]; checkpos2.normalize();
 					checkpos2=checkpos2*GetRadius();
 					checkpos2=pos+checkpos2;
 					b=lvl->GetBlockAtPos(checkpos2);
@@ -725,8 +725,8 @@ void TCuboMovement::AirMove(float elapsed)
 					inhighjump=0;
 					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_DIRV])]);
 
-					T3dVector hn=hs->GetNormal();
-					T3dVector hpd=hn*CUBO_SCALE;
+					Vector3d hn=hs->GetNormal();
+					Vector3d hpd=hn*CUBO_SCALE;
 					hpd=hpd+hs->GetMidpoint();
 					hpd=oldpos-hpd;
 					j_desdist=hpd*hn;
@@ -742,8 +742,8 @@ void TCuboMovement::AirMove(float elapsed)
 void TCuboMovement::FrontSideRebounce()
 	{
 	inhighjump=0;
-	T3dVector hn=base[CUBO_DIRV]*(-1);
-	T3dVector hpd=hn*(CUBO_SCALE);
+	Vector3d hn=base[CUBO_DIRV]*(-1);
+	Vector3d hpd=hn*(CUBO_SCALE);
 	hpd=hpd+pos;
 	//hpd=hpd+hs->GetMidpoint();
 	hpd=oldpos-hpd;
@@ -820,8 +820,8 @@ void TCuboMovement::InterpolateMove(double elapsed)
 					ipos=moveInterpolate*0.5;
 					if (grav180rot==1 && moveInterpolate>=1.0)
 							{
-							T3dVector tupv=newbase[CUBO_UPV]; //Might be wrong!
-							T3dVector tsidev=newbase[CUBO_SIDEV];
+							Vector3d tupv=newbase[CUBO_UPV]; //Might be wrong!
+							Vector3d tsidev=newbase[CUBO_SIDEV];
 
 							BaseCp(&base,&oldbase);
 							newbase[CUBO_UPV]=-tsidev;
@@ -834,8 +834,8 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 					}
 			BaseInterpolate(&oldbase,&newbase,moveInterpolate,&base);
-			T3dVector p1=oldpos*(1.0-ipos);
-			T3dVector p2=newpos*ipos;
+			Vector3d p1=oldpos*(1.0-ipos);
+			Vector3d p2=newpos*ipos;
 			pos=p1+p2;
 			if (moveInterpolate>=1.0) {
 					BaseCp(&newbase,&base);
@@ -855,7 +855,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 
 
-	T3dVector ps;
+	Vector3d ps;
 	ps=base[CUBO_UPV]*(1.05*(CUBO_GROUND_DIST+CUBO_GROUND_DIST_OFFS));
 	ps=pos-ps;
 	BlockUnderMe=lvl->GetBlockAtPos(ps);
@@ -872,7 +872,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			//Call the Sides OnSideScript
 			BlockUnderMe->Call_OnBlockEvent(id);
 			//Get the relative vector
-			T3dVector relpos;
+			Vector3d relpos;
 			relpos=BlockUnderMe->GetPos();
 			relpos=pos-relpos;
 			BlockSideUnderMe=DirVectToSide(relpos);
@@ -1020,8 +1020,8 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	//First try a linear interpolation for the pos
 	if ((inmove==CUBO_MOVE_UP) || (inmove==CUBO_MOVE_DOWN))
 			{
-			T3dVector p1=oldpos;
-			T3dVector diff=newpos-oldpos;
+			Vector3d p1=oldpos;
+			Vector3d diff=newpos-oldpos;
 			float proj1=diff*oldbase[CUBO_DIRV];
 			float proj2=diff*newbase[CUBO_DIRV];
 			if (pt<0.5) {
@@ -1043,8 +1043,8 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			{
 			if (!inAir)
 					{
-					T3dVector p1=oldpos*(1-pt);
-					T3dVector p2=newpos*pt;
+					Vector3d p1=oldpos*(1-pt);
+					Vector3d p2=newpos*pt;
 					pos=p1+p2;
 					}
 			}
@@ -1088,7 +1088,7 @@ int TCuboMovement::TraceOnSideID()
 			{
 
 			TraceResult tr;
-			T3dVector d=base[CUBO_UPV]*(-1.0);
+			Vector3d d=base[CUBO_UPV]*(-1.0);
 			tr=g_Game()->GetLevel()->TraceLine(pos,d,1);
 
 			if (!tr.hit) return -1;
@@ -1098,7 +1098,7 @@ int TCuboMovement::TraceOnSideID()
 	}
 
 
-void TCuboMovement::SetCamParams(std::string what,T3dVector params)
+void TCuboMovement::SetCamParams(std::string what,Vector3d params)
 	{
 	if (what=="normal") camfloats=params;
 	else if (what=="lookup") lookupfloats=params;
@@ -1114,7 +1114,7 @@ void TCuboMovement::SetCamZRotation(tfloat zr,int mirror)
 void TCuboMovement::SetCamPos(MatrixObject *cam)
 	{
 //Get the Position
-	T3dVector res;
+	Vector3d res;
 	res=pos;
 //float factor=2.5;
 //float factor=3;
@@ -1129,9 +1129,9 @@ void TCuboMovement::SetCamPos(MatrixObject *cam)
 	if (lookpos<0) lookdown=-lookpos;
 
 	tfloat f=1-lookup-lookdown;
-	T3dVector cp=camfloats*f;
-	T3dVector add1=lookdownfloats*lookdown;
-	T3dVector add2=lookupfloats*lookup;
+	Vector3d cp=camfloats*f;
+	Vector3d add1=lookdownfloats*lookdown;
+	Vector3d add2=lookupfloats*lookup;
 	add1=add1+add2;
 	cp=cp+add1;
 
@@ -1139,7 +1139,7 @@ void TCuboMovement::SetCamPos(MatrixObject *cam)
 	float height=CUBO_SCALE*cp.y;
 	float lookheight=CUBO_SCALE*cp.z;
 
-	T3dVector offs;
+	Vector3d offs;
 	offs=base[CUBO_DIRV]*(dist);
 	res=res-offs;
 	offs=base[CUBO_UPV]*(height);
@@ -1168,7 +1168,7 @@ void TCuboMovement::Rebounce(TCuboMovement *other)
 	inAir=1;
 	onSide=prevSide;
 	//prevSide=onSide;
-	T3dVector diff=(this->GetPos()-other->GetPos());
+	Vector3d diff=(this->GetPos()-other->GetPos());
 	double proj=diff*this->GetUp();
 	double h=other->GetRadius()-this->GetRadius()+proj;
 	double disc=CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL-2*CUBO_GRAVITY_G*h;
@@ -1198,7 +1198,7 @@ void TCuboMovement::FarJump()
 	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 			{
 			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
-			T3dVector mp=bs->GetMidpoint();
+			Vector3d mp=bs->GetMidpoint();
 			mp=pos-mp;
 			j_dist=mp*base[CUBO_DIRV];
 			}
@@ -1228,7 +1228,7 @@ void TCuboMovement::HighJump()
 	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 			{
 			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
-			T3dVector mp=bs->GetMidpoint();
+			Vector3d mp=bs->GetMidpoint();
 			mp=pos-mp;
 			j_dist=mp*base[CUBO_DIRV];
 			}
@@ -1246,7 +1246,7 @@ void TCuboMovement::HighJump()
 	}
 
 
-int TCuboMovement::ChangeGravity(T3dVector newgrav,T3dVector newp,double changespeed,int do_at_same_gravity)
+int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespeed,int do_at_same_gravity)
 	{
 	if (inmove==CUBO_MOVE_GRAVITY_CHANGE) return -1;
 	//Test the change
@@ -1341,7 +1341,7 @@ void TCuboMovement::Jump()
 			if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
 					{
 					CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
-					T3dVector mp=bs->GetMidpoint();
+					Vector3d mp=bs->GetMidpoint();
 					mp=pos-mp;
 					j_dist=mp*base[CUBO_DIRV];
 					}
@@ -1434,8 +1434,8 @@ void TCuboMovement::JumpUp()
 void TCuboMovement::CheckEnemyCollision(TCuboMovement* other)
 	{
 //Radial check
-	T3dVector p1=this->GetPos();
-	T3dVector p2=other->GetPos();
+	Vector3d p1=this->GetPos();
+	Vector3d p2=other->GetPos();
 	p1=p1-p2;
 	float dsqr=p1*p1;
 	float rsqr=this->GetRadius()+other->GetRadius();
@@ -1450,8 +1450,8 @@ void TCuboMovement::CheckEnemyCollision(TCuboMovement* other)
 void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 	{
 //Radial check
-	T3dVector p1=this->GetPos();
-	T3dVector p2=other->GetPos();
+	Vector3d p1=this->GetPos();
+	Vector3d p2=other->GetPos();
 	p1=p1-p2;
 	float dsqr=p1*p1;
 	float rsqr=this->GetRadius()+other->GetRadius();
@@ -1735,7 +1735,7 @@ int ACTOR_GetType(lua_State *state)
 int ACTOR_GetPos(lua_State *state)
 	{
 	int a=LUA_GET_INT;
-	T3dVector p=g_Game()->GetActorMovement(a)->GetPos();
+	Vector3d p=g_Game()->GetActorMovement(a)->GetPos();
 	LUA_SET_VECTOR3(p);
 	return 1;
 
@@ -1744,7 +1744,7 @@ int ACTOR_GetPos(lua_State *state)
 int ACTOR_GetOldPos(lua_State *state)
 	{
 	int a=LUA_GET_INT;
-	T3dVector p=g_Game()->GetActorMovement(a)->GetOldPos();
+	Vector3d p=g_Game()->GetActorMovement(a)->GetOldPos();
 	LUA_SET_VECTOR3(p);
 	return 1;
 	}
@@ -1753,7 +1753,7 @@ int ACTOR_GetOldPos(lua_State *state)
 int ACTOR_GetSide(lua_State *state)
 	{
 	int a=LUA_GET_INT;
-	T3dVector p=g_Game()->GetActorMovement(a)->GetSide();
+	Vector3d p=g_Game()->GetActorMovement(a)->GetSide();
 	LUA_SET_VECTOR3(p);
 	return 1;
 
@@ -1762,7 +1762,7 @@ int ACTOR_GetSide(lua_State *state)
 int ACTOR_GetUp(lua_State *state)
 	{
 	int a=LUA_GET_INT;
-	T3dVector p=g_Game()->GetActorMovement(a)->GetUp();
+	Vector3d p=g_Game()->GetActorMovement(a)->GetUp();
 	LUA_SET_VECTOR3(p);
 	return 1;
 	}
@@ -1770,7 +1770,7 @@ int ACTOR_GetUp(lua_State *state)
 int ACTOR_GetDir(lua_State *state)
 	{
 	int a=LUA_GET_INT;
-	T3dVector p=g_Game()->GetActorMovement(a)->GetDir();
+	Vector3d p=g_Game()->GetActorMovement(a)->GetDir();
 	LUA_SET_VECTOR3(p);
 	return 1;
 
@@ -1919,7 +1919,7 @@ int ACTOR_GetEditorInfo(lua_State *state)
 
 int ACTOR_SetCamParams(lua_State *state)
 	{
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	std::string what=LUA_GET_STRING;
 	int actorid=LUA_GET_INT;
 	g_Game()->GetActorMovement(actorid)->SetCamParams(what,p);
@@ -2096,8 +2096,8 @@ int ACTOR_ChangeGravity(lua_State *state)
 	{
 	int do_at_same_grav=LUA_GET_INT;
 	double speed=LUA_GET_DOUBLE;
-	T3dVector np=Vector3FromStack(state);
-	T3dVector ng=Vector3FromStack(state);
+	Vector3d np=Vector3FromStack(state);
+	Vector3d ng=Vector3FromStack(state);
 	int actorid=LUA_GET_INT;
 	int res=g_Game()->GetActorMovement(actorid)->ChangeGravity(ng,np,speed,do_at_same_grav);
 	LUA_SET_INT(res);

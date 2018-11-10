@@ -47,7 +47,7 @@ class DistRenderObj
 		std::string myhint;
 		lua_State *callstate;
 		double CullRadius;
-		T3dVector CullCenter;
+		Vector3d CullCenter;
 
 	public:
 		DistRenderObj(int tid,int ttype,float tdist,lua_State *ccallstate) : dist(tdist), id(tid), type(ttype), callstate(ccallstate), CullRadius(-1) {};
@@ -56,7 +56,7 @@ class DistRenderObj
 		const int GetType() const {return type;}
 		const std::string GetHint() const {return myhint;}
 		void SetHint(std::string h) {myhint=h;}
-		void SetCulling(T3dVector cc,double cr) {CullCenter=cc; CullRadius=cr;}
+		void SetCulling(Vector3d cc,double cr) {CullCenter=cc; CullRadius=cr;}
 		bool operator < (DistRenderObj b ) const {return dist > b.dist;}
 		void DistRender(Camera *cam);
 		void Render(Camera *cam);
@@ -70,7 +70,7 @@ class CuboLevel
 		std::vector<CuboItem*> items;
 		std::vector<DistRenderObj> distrenderlist; //Used for Blending stuff
 		std::vector<DistRenderObj> rlist;
-		T3dVector bbmax,bbmin; //Sizes of the bounding box
+		Vector3d bbmax,bbmin; //Sizes of the bounding box
 //    TTextFileReader tr;
 		TLuaAccess lua;
 		BlockDefServer bdefs;
@@ -109,12 +109,12 @@ class CuboLevel
 		void Render(Camera *cam);
 		void SpecialRender(Camera *cam,std::string nam,int defrender);
 		void DistRender(Camera *cam);
-		void LastDistanceRenderCull(T3dVector center,double rad);
+		void LastDistanceRenderCull(Vector3d center,double rad);
 		void SpecialDistRender(std::string nam,int defrender);
 		void FrameRenderStart();
 		void FrameRenderEnd();
 		void DrawHUD();
-		T3dVector GetCenter();
+		Vector3d GetCenter();
 		tfloat GetRadius();
 		int LoadTexDef(std::string name);
 		BlockDef *GetBlockDef(int i) {return bdefs.GetDefPtr(i);}
@@ -122,10 +122,10 @@ class CuboLevel
 		ItemDef *GetItemDef(int i) {return idefs.GetDefPtr(i);}
 		CuboItem *GetItem(int i) {return items[i];}
 		CuboBlock *GetBlockAtIPos(int x,int y,int z);
-		CuboBlock *GetBlockAtPos(T3dVector p);
+		CuboBlock *GetBlockAtPos(Vector3d p);
 		CuboBlock *GetBlock(int i);
 		CuboBlock *GetBlockFromType(std::string name,int i);
-		TraceResult TraceLine(T3dVector start,T3dVector dir, int onlyblocking=0);
+		TraceResult TraceLine(Vector3d start,Vector3d dir, int onlyblocking=0);
 		CuboBlockSide *GetBlockSide(int id);
 		std::string GetErrorString();
 		void AddDistRenderItem(int id,int type,float dist,lua_State *callstate);
@@ -135,7 +135,7 @@ class CuboLevel
 		int AddItem(int block, std::string sidestr,std::string idefname);
 		void LoadSky(std::string skyname);
 		int NumItemsOfType(std::string itemname);
-		int PointInBBox(T3dVector cp,float extrasize=40*CUBO_SCALE);
+		int PointInBBox(Vector3d cp,float extrasize=40*CUBO_SCALE);
 		std::string GetLevelFileName() {return filename;}
 		void SendKey(int key,int down,int toggle);
 		void SendJoyButton(int joy,int button,int dir,int down,int toggle);

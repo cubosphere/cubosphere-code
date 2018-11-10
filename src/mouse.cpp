@@ -131,9 +131,9 @@ void TMouse::SetCursor(int curs)
 
 	}
 
-T2dVector TMouse::getRelativeMotion()
+Vector2d TMouse::getRelativeMotion()
 	{
-	T2dVector res(dx,dy);
+	Vector2d res(dx,dy);
 	return res;
 	}
 
@@ -159,7 +159,7 @@ void TMouse::Snap(int active)
 
 int MOUSE_GetState(lua_State *state)
 	{
-	T2dVector dxy=g_Game()->GetMouse()->getRelativeMotion();
+	Vector2d dxy=g_Game()->GetMouse()->getRelativeMotion();
 	lua_newtable(state);
 	lua_pushstring(state, "dx");
 	lua_pushnumber(state, dxy.u);

@@ -68,8 +68,8 @@ extern "C" {
 	lua_pushnumber(state, (double)(v.w));\
 	lua_settable(state, -3);
 
-extern T3dVector Vector3FromStack(lua_State *state);
-extern T4dVector Vector4FromStack(lua_State *state);
+extern Vector3d Vector3FromStack(lua_State *state);
+extern Vector4d Vector4FromStack(lua_State *state);
 extern float getfloatfield (lua_State *L, const char *key);
 
 class TLuaCFunctions;

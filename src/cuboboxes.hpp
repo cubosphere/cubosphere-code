@@ -81,22 +81,22 @@ typedef BaseDefServer<ItemDef> TItemDefServer;
 #define CUBO_FRONT 4
 #define CUBO_BACK 5
 
-static const T3dVector s_CuboNormals[6]= {T3dVector(0,1,0),T3dVector(0,-1,0),T3dVector(1,0,0),T3dVector(-1,0,0),T3dVector(0,0,1),T3dVector(0,0,-1)};
+static const Vector3d s_CuboNormals[6]= {Vector3d(0,1,0),Vector3d(0,-1,0),Vector3d(1,0,0),Vector3d(-1,0,0),Vector3d(0,0,1),Vector3d(0,0,-1)};
 
-static const T3dVector s_CuboVerts[6][4]= {
-		{T3dVector(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),T3dVector(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE)},
-		{T3dVector(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
+static const Vector3d s_CuboVerts[6][4]= {
+		{Vector3d(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),Vector3d(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE)},
+		{Vector3d(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
 
-		{T3dVector(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),T3dVector(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE)},
-		{T3dVector(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),T3dVector(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
+		{Vector3d(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),Vector3d(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE)},
+		{Vector3d(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),Vector3d(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
 
-		{T3dVector(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),T3dVector(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),T3dVector(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
-		{T3dVector(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),T3dVector(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE)}
+		{Vector3d(-CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),Vector3d(-CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE),Vector3d(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,CUBO_SCALE)},
+		{Vector3d(CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,CUBO_SCALE,-CUBO_SCALE),Vector3d(-CUBO_SCALE,-CUBO_SCALE,-CUBO_SCALE)}
 
 	};
 
 
-static const T2dVector s_CuboUV[4] = { T2dVector(0,1),T2dVector(0,0),T2dVector(1,1),T2dVector(1,0)};
+static const Vector2d s_CuboUV[4] = { Vector2d(0,1),Vector2d(0,0),Vector2d(1,1),Vector2d(1,0)};
 
 static const int s_CuboOpposingDir[6]= {1,0,3,2,5,4}; //Switches the direction to the opposing side
 
@@ -120,10 +120,10 @@ class CuboBlockSide
 		void Render();
 		void SpecialRender(std::string nam,int defrender);
 		void RenderQuad();
-		T2dVector GetUV(int i);
-		T3dVector GetTangent();
-		T3dVector GetMidpoint();
-		T3dVector GetNormal() {return s_CuboNormals[side];}
+		Vector2d GetUV(int i);
+		Vector3d GetTangent();
+		Vector3d GetMidpoint();
+		Vector3d GetNormal() {return s_CuboNormals[side];}
 		void Call_OnSideEvent(int actorid);
 		int Call_MayMove(int actorid,std::string movestr);
 		int Call_MaySlideDown(int actorid);
@@ -150,7 +150,7 @@ class CuboItem
 		CuboBlockSide *sideptr;
 	public:
 		CuboItem(int id, int type,CuboBlockSide *side);
-		T3dVector GetPos();
+		Vector3d GetPos();
 		void Render();
 		void SpecialRender(std::string nam,int defrender);
 		CuboBlockSide *GetSide() {return sideptr;}
@@ -169,8 +169,8 @@ class CuboBlock
 	{
 	protected:
 		int id;
-		T3dVector pos;
-		T3dVector oldpos;
+		Vector3d pos;
+		Vector3d oldpos;
 		tfloat scale;
 		std::vector<CuboBlockSide> sides;
 		std::vector<CuboBlock*> next;
@@ -181,7 +181,7 @@ class CuboBlock
 
 
 	public:
-		int GetNeighbor(T3dVector norm);
+		int GetNeighbor(Vector3d norm);
 		bool HasNoTransparency();
 		void ReleaseMeFromNext();
 		void ReAttachMeToNext();
@@ -192,10 +192,10 @@ class CuboBlock
 		void Render(Camera *cam);
 		//void SpecialRender(string nam,int defrender);
 		void MustRenderSides(Camera *cam,int  mustrender[]);
-		T3dVector GetPos();
+		Vector3d GetPos();
 		int Moving();
 		void SetIPos(int x,int y,int z);
-		void SetPos(T3dVector p) {pos=p;}
+		void SetPos(Vector3d p) {pos=p;}
 		void SetNext(int side,CuboBlock *n);
 		CuboBlock *GetNext(int side);
 		void SetBlockType(int i);
@@ -206,17 +206,17 @@ class CuboBlock
 		void Call_Constructor();
 		int Blocking(); //Can we pass through it
 		std::string GetEditorInfo(std::string what,std::string def);
-		int BlockInRay(T3dVector start,T3dVector dir,float *dist,T3dVector *hitpt); //-1 if not hit
+		int BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitpt); //-1 if not hit
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
 		void Think();
-		T3dVector GetBBMax();
-		T3dVector GetBBMin();
+		Vector3d GetBBMax();
+		Vector3d GetBBMin();
 		void Call_CollisionCheck(int plr);
 		int IsEditorSelector();
 		void WriteLevelData(FILE *f);
 		float GetCullRadius() {return cullradius;}
 		void SetCullRadiusIfHigher(float r) {cullradius=r<cullradius ? cullradius : r;}
-		T3dVector GetMovementDelta() {return pos-oldpos;}
+		Vector3d GetMovementDelta() {return pos-oldpos;}
 		std::string GetName();
 	};
 

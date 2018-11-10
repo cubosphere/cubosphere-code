@@ -52,7 +52,7 @@ class TLuaGLLib : public TLuaCFunctions
 
 		static int LglNormal(lua_State *state)
 			{
-			T3dVector v=Vector3FromStack(state);
+			Vector3d v=Vector3FromStack(state);
 			glNormal3f(v.x,v.y,v.z);
 			return 0;
 			}
@@ -69,7 +69,7 @@ class TLuaGLLib : public TLuaCFunctions
 
 		static int LglVertex(lua_State *state)
 			{
-			T3dVector v=Vector3FromStack(state);
+			Vector3d v=Vector3FromStack(state);
 			glVertex3f(v.x,v.y,v.z);
 			return 0;
 			}
@@ -183,7 +183,7 @@ class TLuaGLLib : public TLuaCFunctions
 
 			GLfloat vs[4];
 			glGetFloatv(GL_FOG_COLOR,vs);
-			T4dVector v(vs[0],vs[1],vs[2],vs[3]);
+			Vector4d v(vs[0],vs[1],vs[2],vs[3]);
 			LUA_SET_COLOR(v);
 			return 1;
 			}
@@ -565,7 +565,7 @@ int LIGHT_Disable(lua_State *state)
 
 int LIGHT_SetPosition(lua_State *state)
 	{
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	int l=LUA_GET_INT;
 	GLfloat p[4]= {v.x,v.y,v.z,0};
 	glLightfv(GL_LIGHT0+l, GL_POSITION, p);

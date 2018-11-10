@@ -23,7 +23,7 @@ class T2dGlutVector : public T2dVector
     void glutTexture();
 };
 
-class T3dGlutVector : public T3dVector
+class T3dGlutVector : public Vector3d
 {
  public:
   void glutPosition();
@@ -39,7 +39,7 @@ class T4dGlutVector : public T4dVector
 };
 */
 
-class T4dGlutMatrix: public T4dMatrix
+class T4dGlutMatrix: public Matrix4d
 	{
 	protected:
 	public:
@@ -51,9 +51,9 @@ class T4dGlutMatrix: public T4dMatrix
 		void glPop();
 		void glPushLoad();
 		void glLoad();
-		const T3dVector getPos(); //Returns the last col
-		void setPos(const T3dVector&); //sets the last col
-		void assign(T4dMatrix* other);
+		const Vector3d getPos(); //Returns the last col
+		void setPos(const Vector3d&); //sets the last col
+		void assign(Matrix4d* other);
 	};
 
 

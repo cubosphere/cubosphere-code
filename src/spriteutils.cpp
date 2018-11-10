@@ -19,8 +19,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <algorithm>
 
-T3dVector v_camside,v_camdir,v_camup;
-T3dVector v_corner1,v_corner2;
+Vector3d v_camside,v_camdir,v_camup;
+Vector3d v_corner1,v_corner2;
 
 
 TSpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
@@ -151,7 +151,7 @@ double TSpriteEmitter::GetCullInformation()
 			//cout << "Emitter culled" << endl;
 			return -1;
 			}
-	T3dVector d=g_Game()->GetCam()->getPos()-cull_center;
+	Vector3d d=g_Game()->GetCam()->getPos()-cull_center;
 	cam_dist=d.sqrlength();
 	return cam_dist;
 	}
@@ -196,26 +196,26 @@ void TSpriteEmitter::RenderAfterLevel()
 	glEnd();
 	}
 
-T3dVector TSpriteEmitter::GetPos(int rel)
+Vector3d TSpriteEmitter::GetPos(int rel)
 	{
 	if (rel==relpos) {return pos;}
 	else {
 			if (relpos) {  //Relative to world
-					T3dVector r=env->base*pos;
+					Vector3d r=env->base*pos;
 					r=r+env->vpos;
 					return r;
 					}
 			else //Absolute to relative
 					{
-					T3dVector r=pos-env->vpos;
-					T3dMatrix ib=env->base.inverse();
+					Vector3d r=pos-env->vpos;
+					Matrix3d ib=env->base.inverse();
 					return ib*r;
 					}
 
 			}
 	}
 
-void TSpriteEmitter::SetPos(T3dVector p,int rel)
+void TSpriteEmitter::SetPos(Vector3d p,int rel)
 	{
 	relpos=rel;
 	pos=p;
@@ -236,13 +236,13 @@ void TSpriteEmitter::Think()
 	{
 ///TODO: Advance physics
 
-	T3dVector adv=grav*(env->elapsed*gravfactor);
+	Vector3d adv=grav*(env->elapsed*gravfactor);
 	vel=vel+adv;
 	adv=vel*env->elapsed;
 	pos=pos+adv;
 
-	T3dVector minpos(100000000000.0,1000000000000.0,1000000000000.0);
-	T3dVector maxpos=-minpos;
+	Vector3d minpos(100000000000.0,1000000000000.0,1000000000000.0);
+	Vector3d maxpos=-minpos;
 	double maxscale=0;
 
 	std::vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
@@ -258,7 +258,7 @@ void TSpriteEmitter::Think()
 				sprites[i].col=sdefs[sprites[i].typ]->GetCol(ip,sprites[i].rgbphase);
 				sprites[i].grav=sdefs[sprites[i].typ]->gravf->GetValue(ip);
 
-				T3dVector adv=grav*(sprites[i].grav*env->elapsed);
+				Vector3d adv=grav*(sprites[i].grav*env->elapsed);
 				sprites[i].vel=sprites[i].vel+adv;
 				adv=sprites[i].vel*env->elapsed;
 				sprites[i].pos=sprites[i].pos+adv;
@@ -273,15 +273,15 @@ void TSpriteEmitter::Think()
 
 //We can compute the bounding area
 	cull_center=maxpos+minpos; cull_center=cull_center*0.5;
-	T3dVector diff=maxpos-minpos; diff=diff*0.5;
+	Vector3d diff=maxpos-minpos; diff=diff*0.5;
 	cull_radius=diff.MaxValue();
 	cull_radius+=maxscale*scalefactor*sqrt(2.0); //Maximal offs
 	}
 
-T3dVector TSpriteEmitter::RelativePosToWorldPos(T3dVector rp)
+Vector3d TSpriteEmitter::RelativePosToWorldPos(Vector3d rp)
 	{
-	T3dVector res(0,0,0);
-	T3dVector offs;
+	Vector3d res(0,0,0);
+	Vector3d offs;
 	offs=env->vside;
 	res=res+offs*rp.x;
 	offs=env->vup;
@@ -309,9 +309,9 @@ void TSpriteEmitter::SpawnSprite(int typ,double theta,double phi,double vel)
 	sprites[p].lifetime=sd->lifetime; sprites[p].timeleft=sprites[p].lifetime;
 	sprites[p].pos=GetPos(0);
 //sprites[p].col=sd->GetCol(0,0);
-	T3dVector d=env->vup*cos(theta);
+	Vector3d d=env->vup*cos(theta);
 	double v=sin(theta)*cos(phi);
-	T3dVector offs=env->vside*v;
+	Vector3d offs=env->vside*v;
 	d=d+offs;
 	v=sin(theta)*sin(phi);
 	offs=env->vdir*v;
@@ -347,10 +347,10 @@ void TSpriteDef::Render(TSprite & s)
 			{
 			tfloat si=sin(s.rot)*scale;
 			tfloat co=cos(s.rot)*scale;
-			T3dVector c1=s.pos+(v_corner1*co+v_corner2*si);
-			T3dVector c2=s.pos+(v_corner2*co-v_corner1*si);
-			T3dVector c3=s.pos-(v_corner1*co+v_corner2*si);
-			T3dVector c4=s.pos+(v_corner1*si-v_corner2*co);
+			Vector3d c1=s.pos+(v_corner1*co+v_corner2*si);
+			Vector3d c2=s.pos+(v_corner2*co-v_corner1*si);
+			Vector3d c3=s.pos-(v_corner1*co+v_corner2*si);
+			Vector3d c4=s.pos+(v_corner1*si-v_corner2*co);
 			glTexCoord2f(0,0); glVertex3f(c1.x,c1.y,c1.z);
 			glTexCoord2f(1,0);  glVertex3f(c2.x,c2.y,c2.z);
 			glTexCoord2f(1,1); glVertex3f(c3.x,c3.y,c3.z);
@@ -589,7 +589,7 @@ int EMITTER_GetVar(lua_State *state)
 int EMITTER_SetPos(lua_State *state)
 	{
 	int relative=LUA_GET_INT;
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	TSpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetPos(p,relative);
 	return 0;
@@ -597,7 +597,7 @@ int EMITTER_SetPos(lua_State *state)
 
 int EMITTER_SetVelocity(lua_State *state)
 	{
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	TSpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetVel(p);
 	return 0;
@@ -606,7 +606,7 @@ int EMITTER_SetVelocity(lua_State *state)
 int EMITTER_SetGravity(lua_State *state)
 	{
 	double f=LUA_GET_DOUBLE;
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	TSpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetGrav(p,f);
 	return 0;
@@ -636,7 +636,7 @@ int EMITTER_SetMaxTimeInterval(lua_State *state)
 
 int EMITTER_SetColorMultiply(lua_State *state)
 	{
-	T4dVector p=Vector4FromStack(state);
+	Vector4d p=Vector4FromStack(state);
 	TSpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetColorMultiply(p);
 	return 0;
@@ -721,7 +721,7 @@ int SPRITE_SetRot(lua_State *state)
 int SPRITE_SetPos(lua_State *state)
 	{
 	int relative=LUA_GET_INT;
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	TSpriteEmitter * emi=LUA_GET_EMITTER;
 
 	if (relative) {

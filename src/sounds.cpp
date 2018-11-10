@@ -632,16 +632,16 @@ int SOUND_SetVolume(lua_State *state)
 int SOUND_Set3dFromCam(lua_State *state)
 	{
 	float maxdist=LUA_GET_DOUBLE;
-	T3dVector p=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
 	int channel=LUA_GET_INT;
-	T3dVector rel=g_Game()->GetCam()->getPos();
+	Vector3d rel=g_Game()->GetCam()->getPos();
 	rel=p-rel;
 	float dist=rel.length();
 	if (dist>maxdist) dist=1;
 	else dist=dist/maxdist;
 	//Now get the angle. First project the Vector into the Cams UP-Plane
-	T3dVector proj;
-	T3dVector up=g_Game()->GetCam()->getUp();
+	Vector3d proj;
+	Vector3d up=g_Game()->GetCam()->getUp();
 	float pd=-(up*rel);
 	proj=up*pd;
 	proj=proj+rel;
@@ -651,8 +651,8 @@ int SOUND_Set3dFromCam(lua_State *state)
 			ang=0;
 			}
 	else {
-			T3dVector dir=g_Game()->GetCam()->getDir();
-			T3dVector side=g_Game()->GetCam()->getSide();
+			Vector3d dir=g_Game()->GetCam()->getDir();
+			Vector3d side=g_Game()->GetCam()->getSide();
 			float x=proj*side;
 			float y=proj*dir;
 			ang=atan2(x,y);

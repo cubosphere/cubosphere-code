@@ -42,18 +42,18 @@ class TSpriteEnvironment
 		friend class TSpriteEmitter;
 		int id;
 		double elapsed;
-		T3dVector gravity_in_ownbase;
-		T3dVector gravity_worldcoords;
+		Vector3d gravity_in_ownbase;
+		Vector3d gravity_worldcoords;
 		int attachtype; //i.e. World, side etc
 		int attachedid; //For sides etc...
-		T3dVector vup,vdir,vside,vpos;
-		T3dMatrix base;
+		Vector3d vup,vdir,vside,vpos;
+		Matrix3d base;
 		std::vector<TSpriteEmitter*> emitters;
 		int died;
 		void RefreshBasis();
 	public:
-		T3dVector GetGravity() {return vup*(-1);}//TODO: MAke it changeable
-		T3dVector GetPos() {return vpos;}
+		Vector3d GetGravity() {return vup*(-1);}//TODO: MAke it changeable
+		Vector3d GetPos() {return vpos;}
 		TSpriteEmitter * GetEmitter(int i) {return emitters[i];}
 		void SetID(int i) {id=i;}
 		int GetID() {return id;}
@@ -72,8 +72,8 @@ class TSpriteEnvironment
 typedef struct
 	{
 	int typ;
-	T3dVector pos,vel;
-	T4dVector col;
+	Vector3d pos,vel;
+	Vector4d col;
 	float lifetime;
 	float timeleft;
 	float  scale;
@@ -96,15 +96,15 @@ class TSpriteEmitter
 		std::vector<TSprite> sprites;
 		int activesprites;
 		int relpos;
-		T3dVector pos;
-		T3dVector vel;
-		T4dVector colmultiply;
-		T3dVector grav;
+		Vector3d pos;
+		Vector3d vel;
+		Vector4d colmultiply;
+		Vector3d grav;
 		double gravfactor; //Own "Mass" on gravity
 		double scalefactor;
 		TLuaVarHolder varholder;
 		double maxtimeinterval;
-		T3dVector cull_center;
+		Vector3d cull_center;
 		double cull_radius;
 		double cam_dist;
 		int lastsprite;
@@ -115,14 +115,14 @@ class TSpriteEmitter
 		double GetMaxTimeInterval() {return maxtimeinterval;}
 		void Die() {died=1;}
 		void Clear() {sprites.clear();}
-		void SetPos(T3dVector p,int rel) ;
-		void SetVel(T3dVector v) {vel=v;}
-		void SetGrav(T3dVector v,double f) {grav=v; gravfactor=f;}
-		void SetColorMultiply(T4dVector c) {colmultiply=c;}
+		void SetPos(Vector3d p,int rel) ;
+		void SetVel(Vector3d v) {vel=v;}
+		void SetGrav(Vector3d v,double f) {grav=v; gravfactor=f;}
+		void SetColorMultiply(Vector4d c) {colmultiply=c;}
 		void SetScaleMultiply(double sm) {scalefactor=sm;}
 		TLuaVarHolder  *GetVarHolder() {return &varholder;}
 		int GetActiveSprites() {return activesprites;}
-		T3dVector GetPos(int rel);
+		Vector3d GetPos(int rel);
 		void SpawnSprite(int typ,double theta,double phi,double vel);
 		void SetID(int i) {id=i;}
 		int GetID() {return id;}
@@ -130,7 +130,7 @@ class TSpriteEmitter
 		TSpriteEmitter() : died(0),activesprites(0), relpos(1), pos(0,0,0), vel(0,0,0),colmultiply(1,1,1,1), grav(0,0,0), gravfactor(0), scalefactor(1), maxtimeinterval(-1), lastsprite(-1) {}
 		int Died() {return died;}
 		void Think();
-		T3dVector RelativePosToWorldPos(T3dVector rp);
+		Vector3d RelativePosToWorldPos(Vector3d rp);
 		void RenderAfterLevel();
 		TSprite *GetLastSprite() {return &(sprites[lastsprite]);}
 	};
@@ -200,7 +200,7 @@ class TSpriteDef
 		void SetColorBf(TInterpolationFunction *cf) {if (colbf) delete colbf; colbf=cf;}
 		void SetColorAf(TInterpolationFunction *cf) {if (alphaf) delete alphaf; alphaf=cf;}
 
-		T4dVector GetCol(double arg,double rgbphase) {return T4dVector(colrf->GetValue(arg+rgbphase),colgf->GetValue(arg+rgbphase),colbf->GetValue(arg+rgbphase),alphaf->GetValue(arg));}
+		Vector4d GetCol(double arg,double rgbphase) {return Vector4d(colrf->GetValue(arg+rgbphase),colgf->GetValue(arg+rgbphase),colbf->GetValue(arg+rgbphase),alphaf->GetValue(arg));}
 
 		void SetLifeTime(double lt) {lifetime=lt;}
 		void Render(TSprite &s);

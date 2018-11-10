@@ -108,8 +108,8 @@ class TShaderServer
 		bool Deactivate();
 		void SetInt(std::string ref,int i);
 		void SetFloat(std::string ref,float f);
-		void SetVector3(std::string ref,T3dVector v);
-		void SetVector4(std::string ref,T4dVector v);
+		void SetVector3(std::string ref,Vector3d v);
+		void SetVector4(std::string ref,Vector4d v);
 		GLint GetAttributeLocation(std::string name);
 		void clear();
 	};

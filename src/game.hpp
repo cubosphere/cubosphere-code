@@ -67,7 +67,7 @@ class TGame
 		virtual void SetAntiAliasing(int aa) {AntiAliasing=aa;}
 
 		virtual void End();
-		virtual T2dVector GetScreenSize() {T2dVector res(screenwidth,screenheight); return res;}
+		virtual Vector2d GetScreenSize() {Vector2d res(screenwidth,screenheight); return res;}
 		virtual void KeyHandle(int ident,int down,int special) {}
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval) {}
 		virtual int Init();

@@ -64,7 +64,7 @@ class TMouse
 		void SetButtonHandler(TMouseButtonFunc f);
 		void HandleClick(int butt,int press,int x,int y);
 		TMouseButton GetButton(int i);
-		T2dVector getRelativeMotion();
+		Vector2d getRelativeMotion();
 		void DispatchEvent(SDL_Event *ev);
 		void Snap(int active);
 		int IsSnapped() {return snapping;}

@@ -48,7 +48,7 @@ void MatrixObject::CopyBasis(MatrixObject *other)
 	OnBaseChange();
 	}
 
-void MatrixObject::setBasis(const T3dVector side,const T3dVector up,const T3dVector dir)
+void MatrixObject::setBasis(const Vector3d side,const Vector3d up,const Vector3d dir)
 	{
 	OnBaseWillChange();
 	base.setCol(0,side);
@@ -60,7 +60,7 @@ void MatrixObject::setBasis(const T3dVector side,const T3dVector up,const T3dVec
 	OnBaseChange();
 	}
 
-void MatrixObject::setSide(const T3dVector& side)
+void MatrixObject::setSide(const Vector3d& side)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -71,7 +71,7 @@ void MatrixObject::setSide(const T3dVector& side)
 	OnBaseChange();
 	}
 
-void MatrixObject::setUp(const T3dVector& up)
+void MatrixObject::setUp(const Vector3d& up)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -82,7 +82,7 @@ void MatrixObject::setUp(const T3dVector& up)
 	OnBaseChange();
 	}
 
-void MatrixObject::setDir(const T3dVector& dir)
+void MatrixObject::setDir(const Vector3d& dir)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
@@ -93,7 +93,7 @@ void MatrixObject::setDir(const T3dVector& dir)
 	OnBaseChange();
 	}
 
-void MatrixObject::setPos(const T3dVector& pos)
+void MatrixObject::setPos(const Vector3d& pos)
 	{
 	vPos=pos;
 	changed=1;
@@ -116,10 +116,10 @@ void MatrixObject::orthonomalize()
 	*/
 	}
 
-void MatrixObject::setScale(const T3dVector& scal)
+void MatrixObject::setScale(const Vector3d& scal)
 	{
 	vScale=scal;
-	T3dVector diff(1,1,1);
+	Vector3d diff(1,1,1);
 	diff=(vScale-diff);
 	if (diff.sqrlength()<VECTOR_EPSILON) usescale=0; else usescale=1;
 	changed=1;
@@ -129,7 +129,7 @@ void MatrixObject::rotateX(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix rx(1.0);
+	Matrix3d rx(1.0);
 	rx.makeRotX(angle);
 	base=rx*base;
 	usePYR=0;
@@ -142,7 +142,7 @@ void MatrixObject::rotateY(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix ry(1.0);
+	Matrix3d ry(1.0);
 	ry.makeRotY(angle);
 	base=ry*base;
 	usePYR=0;
@@ -155,7 +155,7 @@ void MatrixObject::rotateZ(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix rz(1.0);
+	Matrix3d rz(1.0);
 	rz.makeRotZ(angle);
 	base=rz*base;
 	usePYR=0;
@@ -168,7 +168,7 @@ void MatrixObject::rotateSide(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix rx(1.0);
+	Matrix3d rx(1.0);
 	rx.makeRotX(angle);
 	base=base*rx;
 	usePYR=0;
@@ -181,7 +181,7 @@ void MatrixObject::rotateUp(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix ry(1.0);
+	Matrix3d ry(1.0);
 	ry.makeRotY(angle);
 	base=base*ry;
 	usePYR=0;
@@ -194,7 +194,7 @@ void MatrixObject::rotateDir(const tfloat angle)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix rz(1.0);
+	Matrix3d rz(1.0);
 	rz.makeRotZ(angle);
 	base=base*rz;
 	usePYR=0;
@@ -203,12 +203,12 @@ void MatrixObject::rotateDir(const tfloat angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateV(const tfloat angle, const T3dVector axis)
+void MatrixObject::rotateV(const tfloat angle, const Vector3d axis)
 	{
 	OnBaseWillChange();
 	if (usePYR==2) PitchYawRollToBase();
-	T3dMatrix rv(1.0);
-	T3dVector ax=axis;
+	Matrix3d rv(1.0);
+	Vector3d ax=axis;
 	ax.normalize();
 	rv.makeRotV(angle,ax);
 	base=rv*base;
@@ -224,11 +224,11 @@ void MatrixObject::setMatrix(const T4dGlutMatrix& m)
 	changed=0;
 	}
 
-void MatrixObject::setBaseVector(int toSet,T3dVector val,int toKeep) //RIGHT SO?
+void MatrixObject::setBaseVector(int toSet,Vector3d val,int toKeep) //RIGHT SO?
 	{
 	if (toSet==toKeep) return; //So gehts nicht
 	val.normalize();
-	T3dVector keep,remaining;
+	Vector3d keep,remaining;
 	if (toSet==BASE_DIR_SIDE)
 			{
 			setSide(val);
@@ -253,10 +253,10 @@ void MatrixObject::setBaseVector(int toSet,T3dVector val,int toKeep) //RIGHT SO?
 			}
 	}
 
-void MatrixObject::lookAt(int withBaseVector,T3dVector pos,int toKeepFirst)
+void MatrixObject::lookAt(int withBaseVector,Vector3d pos,int toKeepFirst)
 	{
 	if (withBaseVector==toKeepFirst) return;
-	T3dVector diff=pos-vPos;
+	Vector3d diff=pos-vPos;
 	setBaseVector(withBaseVector,diff,toKeepFirst);
 //Find the new keep first (=keep last  ^^)
 	if (withBaseVector==BASE_DIR_SIDE) {
@@ -275,10 +275,10 @@ void MatrixObject::lookAt(int withBaseVector,T3dVector pos,int toKeepFirst)
 	}
 
 
-void MatrixObject::lookAtZWithWorldUp(T3dVector pos,T3dVector upVect)
+void MatrixObject::lookAtZWithWorldUp(Vector3d pos,Vector3d upVect)
 	{
 	upVect.normalize();
-	T3dVector diff=vPos-pos;
+	Vector3d diff=vPos-pos;
 	if (diff.normalizeCheck()==VECTOR_NORMALIZE_ERROR) return;
 	float dot=diff*upVect;
 	if (dot*dot>1-VECTOR_EPSILON*VECTOR_EPSILON) return;
@@ -287,7 +287,7 @@ void MatrixObject::lookAtZWithWorldUp(T3dVector pos,T3dVector upVect)
 	setBaseVector(BASE_DIR_DIR,diff,BASE_DIR_SIDE);
 	}
 
-T3dVector MatrixObject::getPitchYawRoll()
+Vector3d MatrixObject::getPitchYawRoll()
 	{
 	if (!usePYR || pyrOverFlip)
 			{
@@ -298,7 +298,7 @@ T3dVector MatrixObject::getPitchYawRoll()
 	return vPitchYawRoll;
 	}
 
-T3dVector MatrixObject::getPitchYawRollOverflip()
+Vector3d MatrixObject::getPitchYawRollOverflip()
 	{
 	if (!usePYR || !pyrOverFlip)
 			{
@@ -321,7 +321,7 @@ T3dVector MatrixObject::getPitchYawRollOverflip()
 	return vPitchYawRoll;
 	}
 
-void MatrixObject::setPitchYawRoll(T3dVector pyr)
+void MatrixObject::setPitchYawRoll(Vector3d pyr)
 	{
 	usePYR=2;
 	vPitchYawRoll=pyr;
@@ -340,7 +340,7 @@ void MatrixObject::PitchYawRollToBase()
 void MatrixObject::applySpeed(const tfloat elapsed)
 	{
 	if (!useSpeed && !useRotSpeed) return;
-	T3dVector s,as,p,a;
+	Vector3d s,as,p,a;
 	s=vSpeed*(elapsed);
 	as=vAngleSpeed*(elapsed);
 
@@ -390,12 +390,12 @@ void MatrixObject::TraverseTree(const tfloat timeelapsed)
 	}
 
 
-T3dVector MatrixObject::transformToWorld(const T3dVector v)
+Vector3d MatrixObject::transformToWorld(const Vector3d v)
 	{
 	if (!parent) return v;
 	else
 			{
-			T3dVector p=v;
+			Vector3d p=v;
 			p=parent->base*p;
 			p=p+parent->getWorldPos();
 			return p;
@@ -413,7 +413,7 @@ int MatrixObject::GetMirror()
 	return mirr;
 	}
 
-void MatrixObject::SetBasisAxisRotate(const T3dVector & axis,const tfloat angle)
+void MatrixObject::SetBasisAxisRotate(const Vector3d & axis,const tfloat angle)
 	{
 //TODO: Implement
 	}
@@ -445,7 +445,7 @@ void Camera::CalcMatrix()
 			else {
 
 					glOrtho(-ar*fovxy.u/zoom, ar*fovxy.u/zoom, -1.0*fovxy.v/zoom, 1.0*fovxy.v/zoom, nearfar.u, nearfar.v);
-					T3dVector d;
+					Vector3d d;
 					d.xyz(0,1,0);
 					setDir(d);
 					d.xyz(1,0,0);
@@ -461,8 +461,8 @@ void Camera::CalcMatrix()
 	if (!changed) return;
 	if (usePYR==2) PitchYawRollToBase();
 	if (numOps>=RENORMALIZE_STEPS) orthonomalize();
-	T3dVector campos;
-	T3dVector v;
+	Vector3d campos;
+	Vector3d v;
 	tfloat v1,v2,v3;
 
 
@@ -510,7 +510,7 @@ void Camera::CalcMatrix()
 
 #define FRUSTUM_EPSILON 0.0001
 
-int Camera::PointInFrustum( T3dVector pos )
+int Camera::PointInFrustum( Vector3d pos )
 	{
 	int p;
 
@@ -525,7 +525,7 @@ int Camera::PointInFrustum( T3dVector pos )
 	return 1;
 	}
 
-int Camera::SphereInFrustum( T3dVector pos,float rad)
+int Camera::SphereInFrustum( Vector3d pos,float rad)
 	{
 	int p;
 
@@ -540,7 +540,7 @@ int Camera::SphereInFrustum( T3dVector pos,float rad)
 	return 1;
 	}
 
-int Camera::VertsVisible(  T3dVector *pt,int numpoints)
+int Camera::VertsVisible(  Vector3d *pt,int numpoints)
 	{
 
 
@@ -571,15 +571,15 @@ int Camera::VertsVisible(  T3dVector *pt,int numpoints)
 
 
 
-T3dVector Camera::PixelPosToDir(T2dVector ppos,int local)
+Vector3d Camera::PixelPosToDir(Vector2d ppos,int local)
 	{
 	if (usePYR==2) PitchYawRollToBase();
-	T3dVector res=getDir();
-	T2dVector rel;
+	Vector3d res=getDir();
+	Vector2d rel;
 	if (!local) rel.uv((ppos.u-screenwh.u/2)/screenwh.u,(ppos.v-screenwh.v/2)/screenwh.v);
 	else rel.uv((ppos.u)/screenwh.u,(ppos.v)/screenwh.v);
 	rel.uv(rel.u*fovxy.u,rel.v*fovxy.v);
-	T3dVector v;
+	Vector3d v;
 	v=getSide();
 	res=res+v*(rel.u);
 	v=getUp();
@@ -729,28 +729,28 @@ void WorldObject::CalcMatrix()
 
 int CAM_GetPos(lua_State *state)
 	{
-	T3dVector v=g_Game()->GetCam()->getPos();
+	Vector3d v=g_Game()->GetCam()->getPos();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
 
 int CAM_GetDir(lua_State *state)
 	{
-	T3dVector v=g_Game()->GetCam()->getDir();
+	Vector3d v=g_Game()->GetCam()->getDir();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
 
 int CAM_GetSide(lua_State *state)
 	{
-	T3dVector v=g_Game()->GetCam()->getSide();
+	Vector3d v=g_Game()->GetCam()->getSide();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
 
 int CAM_GetUp(lua_State *state)
 	{
-	T3dVector v=g_Game()->GetCam()->getUp();
+	Vector3d v=g_Game()->GetCam()->getUp();
 	LUA_SET_VECTOR3(v);
 	return 1;
 	}
@@ -763,7 +763,7 @@ int CAM_Think(lua_State *state)
 
 int CAM_SetPos(lua_State *state)
 	{
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	g_Game()->GetCam()->setPos(v);
 	return 0;
 	}
@@ -802,7 +802,7 @@ int CAM_SetDistortionBase(lua_State *state)
 int CAM_AxisRotate(lua_State *state)
 	{
 	float angle=LUA_GET_DOUBLE;
-	T3dVector s=Vector3FromStack(state);
+	Vector3d s=Vector3FromStack(state);
 
 	g_Game()->GetCam()->rotateV(angle,s);
 
@@ -813,8 +813,8 @@ int CAM_AxisRotate(lua_State *state)
 
 int CAM_Distance(lua_State *state)
 	{
-	T3dVector d=Vector3FromStack(state);
-	T3dVector c=g_Game()->GetCam()->getPos();
+	Vector3d d=Vector3FromStack(state);
+	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
 	float dist=d.length();
 	LUA_SET_DOUBLE(dist);
@@ -823,10 +823,10 @@ int CAM_Distance(lua_State *state)
 
 int CAM_ZDistance(lua_State *state)
 	{
-	T3dVector d=Vector3FromStack(state);
-	T3dVector c=g_Game()->GetCam()->getPos();
+	Vector3d d=Vector3FromStack(state);
+	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
-	T3dVector camdir=-g_Game()->GetCam()->getDir();
+	Vector3d camdir=-g_Game()->GetCam()->getDir();
 	float dist=d*camdir;
 	LUA_SET_DOUBLE(dist);
 	return 1;

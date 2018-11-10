@@ -37,12 +37,12 @@ CuboPathNode::CuboPathNode(int si)
 	next[0]=next[1]=next[2]=next[3]=-1;
 	}
 
-int DirVectToSide(T3dVector dirvect)
+int DirVectToSide(Vector3d dirvect)
 	{
-	T3dVector n=dirvect;
+	Vector3d n=dirvect;
 	n.normalize();
 	for (int i=0; i<6; i++)
-			{	T3dVector kn;
+			{	Vector3d kn;
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) return i;
 			}
@@ -53,7 +53,7 @@ int DirVectToSide(T3dVector dirvect)
 int CuboPathNode::GetNextSideID(int dir)
 	{
 	if (sideindex<0) return -1;
-	T3dVector t,n,d;
+	Vector3d t,n,d;
 	CuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(sideindex);
 	if (!bs) return -1;
 	t= bs->GetTangent();
@@ -68,9 +68,9 @@ int CuboPathNode::GetNextSideID(int dir)
 				d=t;
 			}
 
-	T3dVector checkvect;
+	Vector3d checkvect;
 	checkvect=bs->GetBlock()->GetPos();
-	T3dVector rv=d+n;
+	Vector3d rv=d+n;
 	checkvect=checkvect+rv*(2*CUBO_SCALE);
 	CuboBlock *b;
 

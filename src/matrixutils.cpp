@@ -37,7 +37,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 T4dGlutMatrix::T4dGlutMatrix(): mode(GL_MODELVIEW) {}
-T4dGlutMatrix::T4dGlutMatrix(tfloat scal): T4dMatrix(scal), mode(GL_MODELVIEW) {}
+T4dGlutMatrix::T4dGlutMatrix(tfloat scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
 
 
 void T4dGlutMatrix::glPushMult()
@@ -73,23 +73,23 @@ void T4dGlutMatrix::glLoad()
 	glLoadMatrixf((GLfloat*)(&m));
 	}
 
-const T3dVector T4dGlutMatrix::getPos() //Returns the last col
+const Vector3d T4dGlutMatrix::getPos() //Returns the last col
 	{
-	T3dVector res(m[12],m[13],m[14]);
+	Vector3d res(m[12],m[13],m[14]);
 	return res;
 	}
 
-void T4dGlutMatrix::setPos(const T3dVector& v) //sets the last c
+void T4dGlutMatrix::setPos(const Vector3d& v) //sets the last c
 	{
 	setCol(3,v);
 	}
 
-void T4dGlutMatrix::assign(T4dMatrix* other)
+void T4dGlutMatrix::assign(Matrix4d* other)
 	{
 	tfloat* mom=other->getValueMem();
 	for (int i=0; i<16; i++)
 			{
-			T4dMatrix::m[i]=mom[i];
+			Matrix4d::m[i]=mom[i];
 			}
 	}
 
@@ -110,7 +110,7 @@ int MATRIX_Pop(lua_State *state)
 	}
 int MATRIX_Translate(lua_State *state)
 	{
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	glTranslatef(v.x,v.y,v.z);
 	return 0;
 	}
@@ -124,7 +124,7 @@ int MATRIX_Identity(lua_State *state)
 int MATRIX_AxisRotate(lua_State *state)
 	{
 	float angle=LUA_GET_DOUBLE;
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	glRotatef(angle,v.x,v.y,v.z);
 	return 0;
 	}
@@ -138,19 +138,19 @@ int MATRIX_ScaleUniform(lua_State *state)
 
 int MATRIX_Scale(lua_State *state)
 	{
-	T3dVector v=Vector3FromStack(state);
+	Vector3d v=Vector3FromStack(state);
 	glScalef(v.x,v.y,v.z);
 	return 0;
 	}
 
 int MATRIX_MultBase(lua_State *state)
 	{
-	T3dVector p=Vector3FromStack(state);
-	T3dVector d=Vector3FromStack(state);
-	T3dVector u=Vector3FromStack(state);
-	T3dVector s=Vector3FromStack(state);
+	Vector3d p=Vector3FromStack(state);
+	Vector3d d=Vector3FromStack(state);
+	Vector3d u=Vector3FromStack(state);
+	Vector3d s=Vector3FromStack(state);
 
-	T3dMatrix m(s,u,d);
+	Matrix3d m(s,u,d);
 
 	T4dGlutMatrix m4(1);
 	m4.setSubMatrix(m);
