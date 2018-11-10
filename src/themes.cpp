@@ -78,25 +78,25 @@ void ThemeLoad(std::string n)
 /////////////////LUA IMPLEMENT/////////////////7
 
 
-int THEME_Clear(lua_State *state)
+int THEME_Clear([[maybe_unused]] lua_State *state)
 	{
 	ThemeClear();
 	return 0;
 	}
-int THEME_AddDir(lua_State *state)
+int THEME_AddDir([[maybe_unused]] lua_State *state)
 	{
 	std::string s=LUA_GET_STRING;
 	ThemeAddDir(s);
 	return 0;
 	}
-int THEME_Load(lua_State *state)
+int THEME_Load([[maybe_unused]] lua_State *state)
 	{
 	std::string s=LUA_GET_STRING;
 	ThemeLoad(s);
 	return 0;
 	}
 
-int THEME_GetName(lua_State *state)
+int THEME_GetName([[maybe_unused]] lua_State *state)
 	{
 	std::string s=GetThemeName();
 	LUA_SET_STRING(s);
