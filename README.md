@@ -28,6 +28,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Made code C++17 compatible (no either warnings or errors)
 * Configured Cricle CI with auto .deb build for Ubuntu LTS + last release (read next section), cross-linux .tar.gz
 * Created icon and .desktop file
+* Moved editor manual to GitHub wiki
 
 # How to download last git build?
 1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last build artifacts are kept, some of them may be missing if build is uploading now)
