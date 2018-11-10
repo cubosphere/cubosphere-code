@@ -3,7 +3,10 @@ set -e
 
 REL="`lsb_release -cs`"
 BIN_VER="`git log --pretty=format:'%at+git-%H' -n 1 .`-$REL"
-DATA_VER="`git log --pretty=format:'%at+git-%H' -n 1 data`-$REL"
+
+cd data
+DATA_VER="`git log --pretty=format:'%at+git-%H' -n 1 .`-$REL"
+cd ..
 
 cmake -H. -Bbuild \
 -DINCLUDE_CPACK=TRUE -DCPACK_GENERATOR=DEB -DCMAKE_INSTALL_PREFIX=/usr \
