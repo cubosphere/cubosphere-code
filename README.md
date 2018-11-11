@@ -1,4 +1,4 @@
-# Cubosphere [reborn]
+# Cubosphere [reborn] :basketball: :video_game:
 [![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://webchat.freenode.net/?channels=cubosphere)
 ## A little story behind it
 One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will become great.
@@ -40,7 +40,7 @@ You can be confused by ubuntu packaging system, but it isn't hard in fact.
 
 1. You need both `BIN` and `DATA` packages, they are `cubosphere` and `cubosphere-data` respectively.
 2. It is ok that their versions differ, data is stored in another repo and updates with it
-3. When updating, download only `BIN` package: download `DATA` only if deps can't be resolved
+3. When updating, download only `BIN` package: download `DATA` only if deps can't be resolved 
     1. You'll probably be reqested to remove `cubosphere` when updating `cubosphere-data`, do so and install new version later
     2. Use `dpkg -i` from cmd to avoid this issues (google a bit)
 
