@@ -75,7 +75,7 @@ class MatrixObject
 		unsigned char rotSpeedMode;
 		unsigned char useRotSpeed;
 		unsigned char useSpeed;
-		T4dGlutMatrix matrix;
+		GlutMatrix4d matrix;
 		unsigned char changed,usescale,usePYR,pyrOverFlip;
 		int numOps;
 		std::vector<MatrixObject*> children;
@@ -101,7 +101,7 @@ class MatrixObject
 		virtual void OnBaseChange() {} //Is called whenever the BaseMatrix is changed
 		virtual void OnPYRChange() {} //Called whenever PYR is changed
 		virtual void OnBaseWillChange() {} //Called whenever BaseMatrix is about to change... We can use the old matrix for some implementations
-		virtual void setMatrix(const T4dGlutMatrix& m);
+		virtual void setMatrix(const GlutMatrix4d& m);
 		virtual void setScale(const Vector3d& scal);
 		virtual void setPos(const Vector3d& pos);
 		virtual void rotateX(const float angle); //THIS ARE THE FIXES COORDS   (1,0,0)

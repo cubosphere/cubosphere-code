@@ -49,7 +49,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define FONT_SIZE 40
 #define V_DIST_FACTOR 1.2
 
-void TSizedFont::DestructFont()
+void SizedFont::DestructFont()
 	{
 	if (font) {
 			size=0;
@@ -59,7 +59,7 @@ void TSizedFont::DestructFont()
 
 
 //Currently not in use!!
-int TSizedFont::Load(SDL_RWops *rwops,int fontsize)
+int SizedFont::Load(SDL_RWops *rwops,int fontsize)
 	{
 	DestructFont();
 	SDL_RWseek(rwops,0,SEEK_SET);
@@ -72,10 +72,10 @@ int TSizedFont::Load(SDL_RWops *rwops,int fontsize)
 	return 1;
 	}
 
-int TSizedFont::Load(std::string fontname,int fontsize)
+int SizedFont::Load(std::string fontname,int fontsize)
 	{
 	DestructFont();
-	TCuboFile * finfo=GetFileName(fontname,FILE_FONT,".ttf");
+	CuboFile * finfo=GetFileName(fontname,FILE_FONT,".ttf");
 	if (!finfo) {
 			coutlog("Font "+fontname+".ttf not found!",1);
 			return 0;
@@ -95,50 +95,50 @@ int TSizedFont::Load(std::string fontname,int fontsize)
 	return 1;
 	}
 
-TSizedFont* TLoadedFont::GetSized(int dessize)
+SizedFont* LoadedFont::GetSized(int dessize)
 	{
 	//First attempt: The font should be the exactly right size   ///Later: add a delta value
 	for (unsigned int i=0; i<sized.size(); i++)
 			{
 			if (sized[i])
 					{
-					if (sized[i]->GetSize()==dessize) return sized[i];
+					if (sized[i]->GetSize()==dessize) { return sized[i]; }
 					}
 			}
 //Oh, none found: Add it
-	TSizedFont *n=new TSizedFont();
+	SizedFont *n=new SizedFont();
 
-	if (!(n->Load(fname,dessize))) return NULL;
+	if (!(n->Load(fname,dessize))) { return NULL; }
 	sized.push_back(n);
 
 	return n;
 	}
 
-int TLoadedFont::Load(std::string fontname)
+int LoadedFont::Load(std::string fontname)
 	{
-	if (fontname==fname) return 1;
+	if (fontname==fname) { return 1; }
 	Clear();
 	fname=fontname;
 
-	if (!Prepare()) return 0;
+	if (!Prepare()) { return 0; }
 	return 1;
 	}
 
 
-int TLoadedFont::Prepare()
+int LoadedFont::Prepare()
 	{
-	for (int i=0; i<NUM_FONT_SIZES; i++)
-		if (!GetSized(g_FontSizes[i])) return 0;
+	for (auto& font: g_FontSizes)
+		if (!GetSized(font)) { return 0; }
 
 	return 1;
 	}
 
 
-void TLoadedFont::Clear()
+void LoadedFont::Clear()
 	{
 	for (unsigned int i=0; i<sized.size(); i++)
 			{
-			if (sized[i]) delete sized[i];
+			if (sized[i]) { delete sized[i]; }
 			sized[i]=NULL;
 			}
 	fname="";
@@ -146,7 +146,7 @@ void TLoadedFont::Clear()
 	}
 
 
-TSizedFont *TLoadedFont::GetBestFont(int pixelsize)
+SizedFont *LoadedFont::GetBestFont(int pixelsize)
 	{
 	int best=-1;
 	int mindev=100000;
@@ -154,20 +154,20 @@ TSizedFont *TLoadedFont::GetBestFont(int pixelsize)
 			{
 
 			int dev=sized[i]->GetSize()-pixelsize;
-			if (dev<0) dev=-dev;
+			if (dev<0) { dev=-dev; }
 			if (dev<mindev) {
 					best=i;
 					mindev=dev;
 					}
 			}
-	if (best==-1) return NULL;
+	if (best==-1) { return NULL; }
 	return sized[best];
 	}
 
 
-void TFontCache::Clear()
+void FontCache::Clear()
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 //cout << "Clearing Font Cache " << endl;
 	glFinish();
 	SDL_FreeSurface(surf);
@@ -185,7 +185,7 @@ int nextpoweroftwo(int x)
 	return (int)round(pow(2,ceil(logbase2)));
 	}
 
-void TFontCache::Setup(TLoadedFont *font,std::string text,int size)
+void FontCache::Setup(LoadedFont *font,std::string text,int size)
 	{
 	Clear();
 	mysize=size;
@@ -203,9 +203,9 @@ void TFontCache::Setup(TLoadedFont *font,std::string text,int size)
 	color.b=255;
 
 
-	TSizedFont *fnt=font->GetBestFont(size);
+	SizedFont *fnt=font->GetBestFont(size);
 	fontsize=fnt->GetSize();
-	if (!fnt) return;
+	if (!fnt) { return; }
 	initial = TTF_RenderUTF8_Blended(fnt->GetFont(), text.c_str(), color);
 
 	w = nextpoweroftwo(initial->w);
@@ -244,7 +244,7 @@ void TFontCache::Setup(TLoadedFont *font,std::string text,int size)
 	}
 
 
-void TFontCaches::Clear()
+void FontCaches::Clear()
 	{
 	for (unsigned int i=0; i<caches.size(); i++)
 			{
@@ -256,7 +256,7 @@ void TFontCaches::Clear()
 	caches.resize(0);
 	}
 
-TFontCache *TFontCaches::GetCache(TLoadedFont *font,std::string text,int size)
+FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size)
 	{
 
 	for (unsigned int i=0; i<caches.size(); i++)
@@ -266,7 +266,7 @@ TFontCache *TFontCaches::GetCache(TLoadedFont *font,std::string text,int size)
 	//Test if we can add a surf
 	int index=caches.size();
 	if (index<MAX_FONT_CACHE) {
-			TFontCache *n=new TFontCache();
+			FontCache *n=new FontCache();
 			caches.push_back(n);
 			}
 	else
@@ -291,9 +291,9 @@ TFontCache *TFontCaches::GetCache(TLoadedFont *font,std::string text,int size)
 
 	}
 
-void TFont::RenderText(std::string text)
+void Font::RenderText(std::string text)
 	{
-	TFontCache* c=cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
+	FontCache* c=cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
 
 	//glEnable(GL_TEXTURE_2D);
 	g_Game()->GetTextures()->EnableTexturing();
@@ -321,8 +321,8 @@ void TFont::RenderText(std::string text)
 	th*=Yscale;
 	th2*=Yscale;
 
-	if (halign=="right") x-=tw;
-	else if (halign=="center") x-=tw/2.0;
+	if (halign=="right") { x-=tw; }
+	else if (halign=="center") { x-=tw/2.0; }
 
 	glTexCoord2f(0.0, th/th2);
 	glVertex3f(x,y,-10);
@@ -340,7 +340,7 @@ void TFont::RenderText(std::string text)
 	}
 
 
-void TFont::Init()
+void Font::Init()
 	{
 	if(TTF_Init())
 			{
@@ -353,7 +353,7 @@ void TFont::Init()
 
 	}
 
-void TFont::Load(std::string textname)
+void Font::Load(std::string textname)
 	{
 	if (textname!=cname)
 			{
@@ -363,7 +363,7 @@ void TFont::Load(std::string textname)
 	}
 
 
-void TFont::Begin()
+void Font::Begin()
 	{
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -375,7 +375,7 @@ void TFont::Begin()
 //glFinish();
 	}
 
-void TFont::End()
+void Font::End()
 	{
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -383,7 +383,7 @@ void TFont::End()
 
 	}
 
-void TFont::TextOut(std::string s)
+void Font::TextOut(std::string s)
 	{
 
 	s=RemapString(s);
@@ -391,9 +391,9 @@ void TFont::TextOut(std::string s)
 	Tokenize(s,lines,"\n");
 
 	float hoffs=scaley*(lines.size()-1)*(V_DIST_FACTOR);
-	if (valign=="top") ypos-=scaley;
-	else if (valign=="center") ypos-=scaley/2.0-hoffs/2.0;
-	else if (valign=="bottom") ypos+=hoffs;
+	if (valign=="top") { ypos-=scaley; }
+	else if (valign=="center") { ypos-=scaley/2.0-hoffs/2.0; }
+	else if (valign=="bottom") { ypos+=hoffs; }
 
 	for (unsigned int l=0; l<lines.size(); l++)
 			{
@@ -410,7 +410,7 @@ void TFont::TextOut(std::string s)
 			}
 	}
 
-std::string TFont::RemapString(std::string s)
+std::string Font::RemapString(std::string s)
 	{
 
 	///SENSELESS
@@ -443,39 +443,41 @@ std::string TFont::RemapString(std::string s)
 			}
 	}
 
-void TFont::SetSize(float s)
+void Font::SetSize(float s)
 	{
 	float ratio=g_Game()->GetScreenSize().u/g_Game()->GetScreenSize().v;
-	if (ratio<=640.0 / 480.0)
-		scalex=s;
-	else
-		scalex=s*(640.0 / 480.0)/ratio;
+	if (ratio<=640.0 / 480.0) {
+			scalex=s;
+			}
+	else {
+			scalex=s*(640.0 / 480.0)/ratio;
+			}
 	scaley=s;
 
 	}
 
 
-void TFont::ClearCache()
+void Font::ClearCache()
 	{
 	cache.Clear();
 	}
 
 
-void TFont::StopFontEngine()
+void Font::StopFontEngine()
 	{
 	ClearCache();
 	ClearRemaps();
 	font.Clear();
 	}
 
-void TFont::ClearRemaps()
+void Font::ClearRemaps()
 	{
 	remaps.resize(0);
 	}
 
-void TFont::AddRemap(std::string oldc,std::string newc)
+void Font::AddRemap(std::string oldc,std::string newc)
 	{
-	TFontRemap nr;
+	FontRemap nr;
 	nr.oldc=oldc;
 	nr.newc=newc;
 	remaps.push_back(nr);

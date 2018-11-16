@@ -17,7 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 
 
-extern TLuaCFunctions * g_GLLib();
+extern LuaCFunctions * g_GLLib();
 
 extern void LUA_BLEND_RegisterLib();
 extern void LUA_CULL_RegisterLib();

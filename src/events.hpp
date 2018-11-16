@@ -37,21 +37,21 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.hpp"
 #include "joystick.hpp"
 
-class TEventManager
+class EventManager
 	{
 	protected:
 		int windowclose;
-		TKeyboard *keyb;
-		TMouse *mouse;
-		TJoystickServer *joy;
+		Keyboard *keyb;
+		Mouse *mouse;
+		JoystickServer *joy;
 	public:
-		TEventManager() : windowclose(0) {};
+		EventManager() : windowclose(0) {};
 		void HandleEvents();
 		void Close() {windowclose=1;}
 		int Closed() {return windowclose;}
-		void SetMouse(TMouse *m) {mouse=m;}
-		void SetKeyboard(TKeyboard *kb) {keyb=kb;}
-		void SetJoystick(TJoystickServer *ys) {joy=ys;}
+		void SetMouse(Mouse *m) {mouse=m;}
+		void SetKeyboard(Keyboard *kb) {keyb=kb;}
+		void SetJoystick(JoystickServer *ys) {joy=ys;}
 	};
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

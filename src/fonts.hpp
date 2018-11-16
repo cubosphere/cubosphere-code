@@ -17,12 +17,13 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <vector>
 #include <string>
+#include <array>
 
 #ifdef WIN32
 
 //#include <windows.h>
 //#include <GL\glew.h>
-// #include <GL\gl.h>
+//#include <GL\gl.h>
 //#include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -33,42 +34,41 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL/SDL_ttf.h>
 #endif
 
-class TSizedFont
+class SizedFont
 	{
 	protected:
 		int size;
 		TTF_Font* font;
 		void DestructFont();
 	public:
-		TSizedFont() : size(0), font(NULL) {}
-		~TSizedFont() {DestructFont();}
+		SizedFont() : size(0), font(NULL) {}
+		~SizedFont() {DestructFont();}
 		int Load(std::string fontname,int fontsize);
 		int Load(SDL_RWops *rwops,int fontsize);
 		int GetSize() {return size;}
 		TTF_Font *GetFont() {return font;}
 	};
 
-#define NUM_FONT_SIZES 6
-const int g_FontSizes[NUM_FONT_SIZES]= {12,14,18,24,32,64};
+constexpr std::array<int, 6> g_FontSizes = {12,14,18,24,32,64};
 
-class TLoadedFont
+class LoadedFont
 	{
 	protected:
 		std::string fname; //Name of the font
-		std::vector<TSizedFont*> sized; //Storing the sized fonts
-		TSizedFont* GetSized(int dessize);
+		std::vector<SizedFont*> sized; //Storing the sized fonts
+		SizedFont* GetSized(int dessize);
 		int Prepare(); ///TODO: Load the std sizes
 	public:
 		void Clear();
-		TLoadedFont() {Clear();}
-		~TLoadedFont() {Clear();}
+		LoadedFont() {Clear();}
+		~LoadedFont() {Clear();}
 		int Load(std::string fontname);
-		TSizedFont *GetBestFont(int pixelsize);
+		SizedFont *GetBestFont(int pixelsize);
 		std::string GetName() {return fname;}
 	};
 
 //Stores a Surface with a text
-class TFontCache
+class FontCache
 	{
 	protected:
 		int mysize,fontsize;
@@ -82,9 +82,9 @@ class TFontCache
 	public:
 		int iw,ih,sw,sh; //Bad, but who cares
 		int IsTheSame(std::string fname,std::string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
-		TFontCache() : initialized(0) {};
-		~TFontCache() {Clear();}
-		void Setup(TLoadedFont *font,std::string text, int size);
+		FontCache() : initialized(0) {};
+		~FontCache() {Clear();}
+		void Setup(LoadedFont *font,std::string text, int size);
 		void SetTime(double T) {TimeStamp=T;}
 		double GetTime() {return TimeStamp;}
 		GLuint GetTexture() {return texture;}
@@ -93,38 +93,38 @@ class TFontCache
 	};
 
 
-#define MAX_FONT_CACHE 16
-class TFontCaches
+constexpr unsigned int MAX_FONT_CACHE = 16;
+class FontCaches
 	{
 	protected:
-		std::vector<TFontCache*> caches;
+		std::vector<FontCache*> caches;
 
 	public:
 		void Clear();
-		TFontCaches() {Clear();}
-		~TFontCaches() {Clear();}
-		TFontCache *GetCache(TLoadedFont *font,std::string text, int size);
+		FontCaches() {Clear();}
+		~FontCaches() {Clear();}
+		FontCache *GetCache(LoadedFont *font,std::string text, int size);
 	};
 
-using TFontRemap = struct
+using FontRemap = struct
 	{
 	std::string oldc;
 	std::string newc;
 	};
 
-class TFont
+class Font
 	{
 	protected:
 		std::string valign; //top, center, bottom
 		std::string halign; //left, center, right
 
 		//TTF_Font* font;
-		TLoadedFont font;
-		TFontCaches cache;
+		LoadedFont font;
+		FontCaches cache;
 		///OLD
 		//   int tindex;
 
-		std::vector <TFontRemap> remaps;
+		std::vector <FontRemap> remaps;
 		float xpos,ypos;
 		float scalex;
 		float scaley;

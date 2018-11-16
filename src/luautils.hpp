@@ -14,11 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-	}
+#include "lua.hpp"
 
 #include <iostream>
 #include <string>
@@ -28,7 +24,7 @@ extern "C" {
 #include "vectors.hpp"
 #include "filesystem.hpp"
 
-
+// TODO: use functions instead of defines
 
 #define LUA_GET_STRING lua_tostring(state,-1); lua_pop(state,1);
 
@@ -72,14 +68,14 @@ extern Vector3d Vector3FromStack(lua_State *state);
 extern Vector4d Vector4FromStack(lua_State *state);
 extern float getfloatfield (lua_State *L, const char *key);
 
-class TLuaCFunctions;
+class LuaCFunctions;
 
-class TLuaBaseVar
+class LuaBaseVar
 	{
 	protected:
 		std::string myname;
 	public:
-		virtual ~TLuaBaseVar() {}
+		virtual ~LuaBaseVar() {}
 		virtual void SetName(std::string name) {myname=name;}
 		virtual std::string GetName() {return myname;}
 		virtual void ReadFromState(lua_State *state) { lua_remove(state,1);}
@@ -87,14 +83,14 @@ class TLuaBaseVar
 		virtual std::string GetVarString(int forscript=1) {return "";}
 	};
 
-class TLuaNumberVar : public TLuaBaseVar
+class LuaNumberVar : public LuaBaseVar
 	{
 	protected:
 		double var;
 	public:
-		TLuaNumberVar() : var(0) {}
-		TLuaNumberVar(double n) : var(n) {}
-		virtual void ReadFromState(lua_State *state) { var=lua_tonumber(state,1); TLuaBaseVar::ReadFromState(state); }
+		LuaNumberVar() : var(0) {}
+		LuaNumberVar(double n) : var(n) {}
+		virtual void ReadFromState(lua_State *state) { var=lua_tonumber(state,1); LuaBaseVar::ReadFromState(state); }
 		virtual void WriteInState(lua_State *state) {lua_pushnumber(state,var);}
 		virtual std::string GetVarString(int forscript=1) {
 			std::stringstream ns;
@@ -103,30 +99,30 @@ class TLuaNumberVar : public TLuaBaseVar
 			}
 	};
 
-class TLuaStringVar : public TLuaBaseVar
+class LuaStringVar : public LuaBaseVar
 	{
 	protected:
 		std::string var;
 
 	public:
-		TLuaStringVar() : var("") {}
-		TLuaStringVar(std::string n) : var(n) {}
-		virtual void ReadFromState(lua_State *state) { var=lua_tostring(state,1); TLuaBaseVar::ReadFromState(state); }
+		LuaStringVar() : var("") {}
+		LuaStringVar(std::string n) : var(n) {}
+		virtual void ReadFromState(lua_State *state) { var=lua_tostring(state,1); LuaBaseVar::ReadFromState(state); }
 		virtual void WriteInState(lua_State *state) {lua_pushstring(state,var.c_str());}
 		virtual std::string GetVarString(int forscript=1) {if (forscript) return "\""+var+"\""; else return var;}
 	};
 
-class TLuaVarHolder //Used to encapsulate member values for items etc.
+class LuaVarHolder //Used to encapsulate member values for items etc.
 	{
 	protected:
-		std::vector<TLuaBaseVar*> vars;
-		virtual TLuaBaseVar **RefForStore(std::string name);
-		virtual TLuaBaseVar **RefForRead(std::string name);
-		virtual TLuaBaseVar **Ref(std::string name);
+		std::vector<LuaBaseVar*> vars;
+		virtual LuaBaseVar **RefForStore(std::string name);
+		virtual LuaBaseVar **RefForRead(std::string name);
+		virtual LuaBaseVar **Ref(std::string name);
 	public:
-		TLuaVarHolder() {}
+		LuaVarHolder() {}
 		virtual void clear() { for (unsigned int i=0; i<vars.size(); i++) if (vars[i]) {delete vars[i]; vars[i]=NULL;} vars.resize(0); }
-		virtual ~TLuaVarHolder() {clear();}
+		virtual ~LuaVarHolder() {clear();}
 		virtual void StoreVar(lua_State *fromstate);
 		virtual void GetVar(lua_State *tostate);
 		virtual std::string GetVarString(std::string varname,int forscript=1);
@@ -137,9 +133,9 @@ class TLuaVarHolder //Used to encapsulate member values for items etc.
 	};
 
 
-extern TLuaVarHolder* g_Vars();
+extern LuaVarHolder* g_Vars();
 
-class TLuaAccess
+class LuaAccess
 	{
 	protected:
 		lua_State *state;
@@ -150,13 +146,13 @@ class TLuaAccess
 		virtual void LoadStdLibs();
 	public:
 		lua_State * GetLuaState() {return state;}
-		static std::vector<TLuaAccess*> gAllLuaStates;
-		TLuaAccess();
+		static std::vector<LuaAccess*> gAllLuaStates;
+		LuaAccess();
 		void Reset();
-		virtual ~TLuaAccess();
+		virtual ~LuaAccess();
 		std::string GetFileName() {return lfname;}
-		bool LoadFile(TCuboFile *finfo,int t,int id);
-		void Include(TLuaCFunctions *funcs);
+		bool LoadFile(CuboFile *finfo,int t,int id);
+		void Include(LuaCFunctions *funcs);
 		void CallVA (const char *func, const char *sig, ...);
 		bool FuncExists (const char *func);
 		void PushInt(int i);
@@ -174,7 +170,7 @@ class TLuaAccess
 
 
 
-using TLuaCFunc = struct
+using LuaCFunc = struct
 	{
 	std::string name;
 	lua_CFunction func;
@@ -185,10 +181,10 @@ using TLuaCFunc = struct
 //Simply Add it in the Constructor
 
 
-class TLuaCFunctions
+class LuaCFunctions
 	{
 	protected:
-		std::vector<TLuaCFunc> funcs;
+		std::vector<LuaCFunc> funcs;
 		// TLuaAccess *access;
 	public:
 		void RegisterToState(lua_State *state);
@@ -199,7 +195,7 @@ class TLuaCFunctions
 
 
 
-class TLuaCuboLib : public TLuaCFunctions
+class LuaCuboLib : public LuaCFunctions
 	{
 	protected:
 
@@ -294,11 +290,11 @@ class TLuaCuboLib : public TLuaCFunctions
 
 
 	public:
-		TLuaCuboLib();
+		LuaCuboLib();
 		//void SetUsage(TTextureServer *ts);
 	};
 
-extern TLuaCuboLib* g_CuboLib();
+extern LuaCuboLib* g_CuboLib();
 
 
 
@@ -309,6 +305,6 @@ extern void closelog();
 
 extern void  ReloadLanguage();
 
-extern TLuaAccess* g_CallAccess();
+extern LuaAccess* g_CallAccess();
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

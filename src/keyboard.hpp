@@ -36,16 +36,16 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 // (IDENT-CODE, PRESS or RELEASE, First-Time-Down (toggle)
-using TKeyboardFunc = void(*)(int,int,int);
+using KeyboardFunc = void(*)(int,int,int);
 
-class TKeyboard
+class Keyboard
 	{
 	protected:
 		int keynum;
 		Uint8 *keydown;
 		std::vector<Uint8> downbefore;
 		std::vector<double> pressedtime;
-		TKeyboardFunc handler;
+		KeyboardFunc handler;
 		double rep_start_time;
 		double rep_rep_time;
 		int textinputmode;
@@ -61,7 +61,7 @@ class TKeyboard
 		int IsPressed(int ident) {return keydown[ident];}
 		int DownBefore(int ident) {return downbefore[ident];}
 		SDLKey GetKeyConstFor(std::string keyname);
-		void SetHandler(TKeyboardFunc h) {handler=h;}
+		void SetHandler(KeyboardFunc h) {handler=h;}
 //    void RegisterKey(SDLKey key,int ident,TKeyboardFunc func, int toggle);
 		void DispatchEvent(SDL_Event *ev);
 		void HandleKeys();

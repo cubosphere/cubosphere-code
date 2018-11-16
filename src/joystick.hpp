@@ -27,20 +27,20 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "cuboutils.hpp"
 
-class TJoystickServer;
+class JoystickServer;
 
-class TJoystick
+class Joystick
 	{
 	protected:
-		TJoystickServer *server;
+		JoystickServer *server;
 		int index;
 		SDL_Joystick *stick;
 		std::vector<float> axisvals,axisovals;
 		std::vector<int> buttons,obuttons;
 		float SDLAxisToFloat(int sa);
 	public:
-		TJoystick(int mindex,TJoystickServer *serv);
-		~TJoystick();
+		Joystick(int mindex,JoystickServer *serv);
+		~Joystick();
 		SDL_Joystick * GetSDLJoystick() { return stick;}
 		std::string Name();
 		int NumAxes();
@@ -54,21 +54,21 @@ class TJoystick
 	};
 
 // Stick-Index, Axis-Index, value, oldvalue
-using TJoystickAxisFunc = void(*)(int,int,float,float);
+using JoystickAxisFunc = void(*)(int,int,float,float);
 
 // Stick-Index, Button-Index, dir(for axis), value, toggle
-using TJoystickButtonFunc = void(*)(int,int,int,int,int);
+using JoystickButtonFunc = void(*)(int,int,int,int,int);
 
-class TJoystickServer
+class JoystickServer
 	{
 	protected:
-		std::vector<TJoystick*> sticks;
-		TJoystickAxisFunc axishandler;
-		TJoystickButtonFunc buttonhandler;
-		friend class TJoystick;
+		std::vector<Joystick*> sticks;
+		JoystickAxisFunc axishandler;
+		JoystickButtonFunc buttonhandler;
+		friend class Joystick;
 	public:
-		void SetAxisHandler(TJoystickAxisFunc h) {axishandler=h;}
-		void SetDiscreteHandler(TJoystickButtonFunc b) {buttonhandler=b;}
+		void SetAxisHandler(JoystickAxisFunc h) {axishandler=h;}
+		void SetDiscreteHandler(JoystickButtonFunc b) {buttonhandler=b;}
 		int NumJoysticks();
 		void DispatchEvent(SDL_Event *ev);
 		void Initialize();

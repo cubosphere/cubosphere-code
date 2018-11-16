@@ -80,7 +80,7 @@ extern CuboPathGraphServer * g_PathGraphs();
 
 
 
-class LuaPathfindingLib : public TLuaCFunctions
+class LuaPathfindingLib : public LuaCFunctions
 	{
 	protected:
 		static int PATH_NewGraph(lua_State *state);

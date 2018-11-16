@@ -44,7 +44,7 @@ int DirVectToSide(Vector3d dirvect)
 	for (int i=0; i<6; i++)
 			{	Vector3d kn;
 			kn=s_CuboNormals[i];
-			if ((kn*n)>0.5) return i;
+			if ((kn*n)>0.5) { return i; }
 			}
 	return -1;
 	}
@@ -52,10 +52,10 @@ int DirVectToSide(Vector3d dirvect)
 
 int CuboPathNode::GetNextSideID(int dir)
 	{
-	if (sideindex<0) return -1;
+	if (sideindex<0) { return -1; }
 	Vector3d t,n,d;
 	CuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(sideindex);
-	if (!bs) return -1;
+	if (!bs) { return -1; }
 	t= bs->GetTangent();
 	n= bs->GetNormal();
 	switch (dir)
@@ -114,7 +114,7 @@ int CuboPathGraph::EdgeBetween(int i,int j)
 	{
 	for (int m=0; m<4; m++)
 			{
-			if (nodes[i].GetNext(m)==j) return 1;
+			if (nodes[i].GetNext(m)==j) { return 1; }
 			}
 	return 0;
 	}
@@ -122,10 +122,10 @@ int CuboPathGraph::EdgeBetween(int i,int j)
 void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string addcb)
 	{
 	nodes.clear(); path.clear(); next.clear();
-	if (startindex<0) return;
+	if (startindex<0) { return; }
 
 	CuboBlockSide *bs=g_Game()->GetLevel()->GetBlockSide(startindex);
-	if (!bs) return;
+	if (!bs) { return; }
 
 	cstate=state;
 	callbfunc=addcb;
@@ -139,9 +139,9 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 		for (int m=0; m<4; m++)
 				{
 				int ns=nodes[j].GetNextSideID(m);
-				if (ns<0) continue;
+				if (ns<0) { continue; }
 				int mn=GetNodeIDFromSideID(ns);
-				if (mn<0) continue;
+				if (mn<0) { continue; }
 				nodes[j].SetNext(m,mn);
 				}
 
@@ -155,9 +155,9 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 			{
 			for (int i=0; i<N; i++)
 					{
-					if (i==j) path[i+N*j]=0;
-					else if (EdgeBetween(i,j)) path[i+N*j]=1;
-					else path[i+N*j]=PATH_INFINITY;
+					if (i==j) { path[i+N*j]=0; }
+					else if (EdgeBetween(i,j)) { path[i+N*j]=1; }
+					else { path[i+N*j]=PATH_INFINITY; }
 					next[i+N*j]=-1;
 					}
 
@@ -180,12 +180,14 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 std::string CuboPathGraph::GetPath(int i,int j)
 	{
 	int N=nodes.size();
-	if (path[i+N*j]>=PATH_INFINITY)
-		return "no path";
+	if (path[i+N*j]>=PATH_INFINITY) {
+			return "no path";
+			}
 
 	int intermediate = next[i+N*j];
-	if (intermediate==-1)
-		return " <-> ";   /* there is an edge from i to j, with no vertices between */
+	if (intermediate==-1) {
+			return " <-> ";    /* there is an edge from i to j, with no vertices between */
+			}
 	else
 			{
 			std::ostringstream oss; oss << nodes[intermediate].GetSideID();
@@ -218,7 +220,7 @@ int CuboPathGraph::MayAddNode(int from,int to)
 			lua_pop(cstate,1);
 			return res;
 			}
-	else return 1;
+	else { return 1; }
 	}
 
 CuboPathNode* CuboPathGraph::AddNode(int sindex)
@@ -235,8 +237,9 @@ CuboPathNode* CuboPathGraph::AddNode(int sindex)
 					int ns=nodes[res].GetNextSideID(m);
 					if (ns>=0)
 							{
-							if (MayAddNode(sindex,ns))
-								AddNode(ns);
+							if (MayAddNode(sindex,ns)) {
+									AddNode(ns);
+									}
 							//   nodes[res].SetNext(m,AddNode(ns));
 							//  int mirror[4]={2,3,0,1};
 							// nodes[res].GetNext(m)->SetNext(mirror[m],&(nodes[res]));
@@ -255,7 +258,7 @@ int CuboPathGraph::GetNodeIDFromSideID(int ID)
 	{
 	for (unsigned int i=0; i<nodes.size(); i++)
 			{
-			if (ID==nodes[i].GetSideID()) return i;
+			if (ID==nodes[i].GetSideID()) { return i; }
 			}
 	return -1;
 	}
@@ -266,7 +269,7 @@ std::string CuboPathGraph::GetPathFromTo(int startbs,int endbs)
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
 //cout << "Trace from "<<startbs<< "("<< si <<") to "<<endbs<<" (" << ei << ")" << endl;
-	if (si==-1 || ei==-1) return "";
+	if (si==-1 || ei==-1) { return ""; }
 	return GetPath(si,ei);
 	}
 
@@ -276,10 +279,11 @@ int CuboPathGraph::GetDistance(int startbs,int endbs)
 	int ei=GetNodeIDFromSideID(endbs);
 
 
-	if (si==-1 || ei==-1) return -1;
+	if (si==-1 || ei==-1) { return -1; }
 	int N=nodes.size();
-	if (path[si+N*ei]>=PATH_INFINITY)
-		return -1; //No path
+	if (path[si+N*ei]>=PATH_INFINITY) {
+			return -1;    //No path
+			}
 	return path[si+N*ei];
 	}
 
@@ -289,10 +293,11 @@ std::string CuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 	int ei=GetNodeIDFromSideID(endbs);
 
 
-	if (si==-1 || ei==-1) return "";
+	if (si==-1 || ei==-1) { return ""; }
 	int N=nodes.size();
-	if (path[si+N*ei]>=PATH_INFINITY)
-		return ""; //No path
+	if (path[si+N*ei]>=PATH_INFINITY) {
+			return "";    //No path
+			}
 
 //cout << "Trace from "<<startbs<< "("<< si <<") , rot " << startrot << "to "<<endbs<<" (" << ei << ")" << endl;
 
@@ -304,7 +309,7 @@ std::string CuboPathGraph::GetNextMove(int startbs,int startrot,int endbs)
 	n = next[i+N*j];
 	while (n!=-1) { m=n; n=next[i+N*n];}
 //  cout << "Next side should be " << nodes[m].GetSideID() << endl;
-	if (m==-1) m=ei;
+	if (m==-1) { m=ei; }
 
 	for (int drot=0; drot<4; drot++)
 			{
@@ -335,10 +340,11 @@ std::string CuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 	int si=GetNodeIDFromSideID(startbs);
 	int ei=GetNodeIDFromSideID(endbs);
 
-	if (si==-1 || ei==-1) return "";
+	if (si==-1 || ei==-1) { return ""; }
 	int N=nodes.size();
-	if (path[si+N*ei]>=PATH_INFINITY)
-		return ""; //No path
+	if (path[si+N*ei]>=PATH_INFINITY) {
+			return "";    //No path
+			}
 
 	int i=si;
 	int j=ei;
@@ -347,7 +353,7 @@ std::string CuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 	n = next[i+N*j];
 	while (n!=-1) { m=n; n=next[i+N*n];}
 //  cout << "Next side should be " << nodes[m].GetSideID() << endl;
-	if (m==-1) m=ei;
+	if (m==-1) { m=ei; }
 
 
 	int towardsrot=0;
@@ -384,18 +390,18 @@ std::string CuboPathGraph::GetEscapeMove(int startbs,int startrot,int endbs)
 					if (mnode)
 							{
 							//Choose left or right randomly
-							if (rand()%2) mnode=lnode;
+							if (rand()%2) { mnode=lnode; }
 							}
-					else mnode=lnode;
+					else { mnode=lnode; }
 					}
 			}
 
-	if (!mnode) return ""; //No way to escape
+	if (!mnode) { return ""; } //No way to escape
 
 //Check if we get further away by movin into this dir
 
 
-	if (path[mnode+N*ei]<=path[si+N*ei]) return ""; //Will not optimize the position
+	if (path[mnode+N*ei]<=path[si+N*ei]) { return ""; } //Will not optimize the position
 
 
 	for (int drot=0; drot<4; drot++)
@@ -425,11 +431,11 @@ std::string CuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rot
 	{
 	std::string rmoves[3]= {"f","r","l"};
 	int si=GetNodeIDFromSideID(startbs);
-	if (si==-1) return rmoves[rand() % 3];
+	if (si==-1) { return rmoves[rand() % 3]; }
 	int numways=0;
-	for (unsigned int i=0; i<4; i++) if (nodes[si].GetNext(i)!=-1) numways++;
+	for (unsigned int i=0; i<4; i++) if (nodes[si].GetNext(i)!=-1) { numways++; }
 
-	if (!numways) return rmoves[rand() % 3];
+	if (!numways) { return rmoves[rand() % 3]; }
 	numways=rand()%numways;
 	int myway=0;
 	for (unsigned int i=0; i<4; i++) if (nodes[si].GetNext(i)!=-1) {if (numways==myway) { myway=i; break;} else myway++;}
@@ -448,8 +454,8 @@ std::string CuboPathGraph::GetRandomMove(int startbs,int startrot) //Gives a rot
 
 int CuboPathGraph::GetNodeSideID(int n)
 	{
-	if (n<0 || n>=GetNumNodes()) return -1;
-	else return nodes[n].GetSideID();
+	if (n<0 || n>=GetNumNodes()) { return -1; }
+	else { return nodes[n].GetSideID(); }
 	}
 
 /////////////////////
@@ -470,7 +476,7 @@ int CuboPathGraphServer::New(int startside,lua_State *state,std::string addcb)
 
 CuboPathGraph * CuboPathGraphServer::GetGraph(int i)
 	{
-	if (i<0 || i>=(int)(pgs.size())) return NULL;
+	if (i<0 || i>=(int)(pgs.size())) { return NULL; }
 	return &(pgs[i]);
 	}
 

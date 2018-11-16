@@ -80,7 +80,7 @@ int FileTypeFromString(std::string which,std::string *exte)
 	else if (which=="skyboxes")   { d=FILE_SKYBOX; ext="sdef";}
 
 	if (exte) {(*exte)=ext;}
-	if (d<0)  coutlog("Warning: <FileTypeFromString> does not know the type "+which,2);
+	if (d<0) { coutlog("Warning: <FileTypeFromString> does not know the type "+which,2); }
 	return d;
 	}
 
@@ -142,16 +142,16 @@ void RecursiveMKDir(std::string dir,std::string dirsep,int mode)
 	while ((error) && (dirindex>=0))
 			{
 			testname=ds[0];
-			for (int j=1; j<dirindex; j++) testname=testname+dirsep+ds[j];
+			for (int j=1; j<dirindex; j++) { testname=testname+dirsep+ds[j]; }
 #ifdef WIN32
 			error=mkdir(testname.c_str());
 #else
 			error=mkdir(testname.c_str(),mode);
 #endif
-			if (!error) break;
+			if (!error) { break; }
 			dirindex--;
 			}
-	if (error) return; //FAIL
+	if (error) { return; } //FAIL
 //Create the missing dirs successively
 	for (unsigned int i=dirindex; i<ds.size(); i++)
 			{
@@ -162,7 +162,7 @@ void RecursiveMKDir(std::string dir,std::string dirsep,int mode)
 			error=mkdir(testname.c_str(),mode);
 #endif
 
-			if (error) return; //FAIL
+			if (error) { return; } //FAIL
 			}
 	}
 
@@ -171,7 +171,7 @@ void RecursiveMKDir(std::string dir,std::string dirsep,int mode)
 std::string PlattformFilename(std::string in)
 	{
 #ifdef WIN32
-	for (unsigned int i=0; i<in.size(); i++) if (in[i]=='/') in[i]='\\';
+	for (unsigned int i=0; i<in.size(); i++) if (in[i]=='/') { in[i]='\\'; }
 #endif
 	return in;
 	}
@@ -203,18 +203,20 @@ std::string GetFileNameForMod(std::string subname,int type,std::string ext,std::
 	std::string res;
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
-			if (subname=="") res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]);
+			if (subname=="") { res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]); }
 			else {
-					if (g_SubDirUsesTheme[type])
-						res=ThemeFileName(g_DataDir()+modstr+g_SubDirs[type],subname,ext);
-					else
-						res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]+"/"+subname+ext);
+					if (g_SubDirUsesTheme[type]) {
+							res=ThemeFileName(g_DataDir()+modstr+g_SubDirs[type],subname,ext);
+							}
+					else {
+							res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]+"/"+subname+ext);
+							}
 					}
 			}
 	else
 			{
-			if (subname=="") res=PlattformFilename(g_ProfileDir()+modstr+g_Vars()->GetVarString("ActiveProfile",0)+"/"+g_SubDirs[type]);
-			else res=PlattformFilename(g_ProfileDir()+modstr+g_Vars()->GetVarString("ActiveProfile",0)+"/"+g_SubDirs[type]+"/"+subname+ext);
+			if (subname=="") { res=PlattformFilename(g_ProfileDir()+modstr+g_Vars()->GetVarString("ActiveProfile",0)+"/"+g_SubDirs[type]); }
+			else { res=PlattformFilename(g_ProfileDir()+modstr+g_Vars()->GetVarString("ActiveProfile",0)+"/"+g_SubDirs[type]+"/"+subname+ext); }
 			}
 
 
@@ -222,29 +224,31 @@ std::string GetFileNameForMod(std::string subname,int type,std::string ext,std::
 	}
 
 
-TCuboFile* GetCuboFileFromRelativeName(std::string relname)
+CuboFile* GetCuboFileFromRelativeName(std::string relname)
 	{
-	///TODO:Mod-Stuff
+	///TODO: Mod-Stuff
 	return gBaseFileSystem.GetFileForReading(relname);
 	}
 
-TCuboFile * GetFileName(std::string subname,int type,std::string ext)
+CuboFile* GetFileName(std::string subname,int type,std::string ext)
 	{
 //   coutlog("GetFileName is not implemented yet!"); return NULL;
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME))
 			{
 			///TODO: Mod-Zeugs, Dir Getting
 			std::string res;
-			if (g_SubDirUsesTheme[type])
-				res=ThemeFileName(g_SubDirs[type],subname,ext);
-			else
-				res=(g_SubDirs[type]+"/"+subname+ext);
+			if (g_SubDirUsesTheme[type]) {
+					res=ThemeFileName(g_SubDirs[type],subname,ext);
+					}
+			else {
+					res=(g_SubDirs[type]+"/"+subname+ext);
+					}
 			return gBaseFileSystem.GetFileForReading(res);
 			}
 	else {
 			std::string res="";
-			if (type==FILE_USERLEVEL) res="/user/levels/"+subname+".ldef";
-			else if (type==FILE_SAVEGAME) res="/user/saves/"+subname+".sdef";
+			if (type==FILE_USERLEVEL) { res="/user/levels/"+subname+".ldef"; }
+			else if (type==FILE_SAVEGAME) { res="/user/saves/"+subname+".sdef"; }
 			return gBaseFileSystem.GetFileForReading(res);
 			};
 
@@ -317,7 +321,7 @@ void SetCmdLine(int argc,char *argv[])
 							}
 					}
 			}
-	if (!allset) cmdlines.push_back(cmd);
+	if (!allset) { cmdlines.push_back(cmd); }
 	}
 
 /*
@@ -482,7 +486,7 @@ std::string g_CmdLineVal(int i)
 
 ////LUA STUFF/////////////////////////////////////////
 
-class TLuaFileSysLib : public TLuaCFunctions
+class TLuaFileSysLib : public LuaCFunctions
 	{
 	protected:
 		static int FILESYS_PlatformFilename(lua_State *state)
@@ -519,8 +523,8 @@ class TLuaFileSysLib : public TLuaCFunctions
 			cls_FileReadable *zf=gBaseFileSystem.GetFileForReading(zipf);
 			int res;
 			if (!zf) { res=0; }
-			else res=gBaseFileSystem.MountZipFile(zf,mountbase);
-			if (gBaseFileSystem.GetLastError(0)!="") coutlog(gBaseFileSystem.GetLastError(1),1);
+			else { res=gBaseFileSystem.MountZipFile(zf,mountbase); }
+			if (gBaseFileSystem.GetLastError(0)!="") { coutlog(gBaseFileSystem.GetLastError(1),1); }
 			LUA_SET_INT(res);
 			return 1;
 			}
@@ -553,8 +557,8 @@ class TLuaFileSysLib : public TLuaCFunctions
 			{
 			int index=LUA_GET_INT;
 			std::string res;
-			if (index<0 || index>=(int)entries.size()) res="";
-			else res=entries[index];
+			if (index<0 || index>=(int)entries.size()) { res=""; }
+			else { res=entries[index]; }
 			LUA_SET_STRING(res);
 			return 1;
 			}
@@ -562,13 +566,13 @@ class TLuaFileSysLib : public TLuaCFunctions
 		static int FILESYS_FileExists(lua_State *state)
 			{
 			std::string f=LUA_GET_STRING;
-			TCuboFile * cf=gBaseFileSystem.GetFileForReading(f);
+			CuboFile * cf=gBaseFileSystem.GetFileForReading(f);
 			if (cf)
 					{
 					delete cf;
 					LUA_SET_INT(1);
 					}
-			else LUA_SET_INT(0);
+			else { LUA_SET_INT(0); }
 			return 1;
 			}
 
@@ -630,7 +634,7 @@ std::vector<std::string> TLuaFileSysLib::entries;
 
 static TLuaFileSysLib fslib;
 
-TLuaCFunctions* g_FileSysLib()
+LuaCFunctions* g_FileSysLib()
 	{
 	return &fslib;
 	}
@@ -642,9 +646,9 @@ bool StartBootScript(std::string name)
 	{
 	// gBaseFileSystem.MountZipFile(dir+"/data.zip");
 	gBaseFileSystem.MountHDDDir(g_DataDir(),"/");
-	TCuboFile * cf=gBaseFileSystem.GetFileForReading(name);
+	CuboFile * cf=gBaseFileSystem.GetFileForReading(name);
 	if (!cf) { gBaseFileSystem.PopBottom(); return false;}
-	TLuaAccess acc;
+	LuaAccess acc;
 	acc.Include(g_CuboLib());
 	int res=acc.LoadFile(cf,-1,-1);
 	delete cf;

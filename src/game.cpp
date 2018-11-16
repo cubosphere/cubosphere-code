@@ -57,15 +57,15 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <omp.h>
 #endif
 
-static TCuboGame *TheGame=NULL;
+static CuboGame *TheGame=NULL;
 
-TCuboGame *g_Game() {return TheGame;}
+CuboGame *g_Game() {return TheGame;}
 
 
 static void keyhandle(int key,int down,int special)
 	{
-	if (!TheGame) return;
-	else TheGame->KeyHandle(key,down,special);
+	if (!TheGame) { return; }
+	else { TheGame->KeyHandle(key,down,special); }
 	}
 /*
 static void joyaxishandle(int joys,int axis,float val,float pval)
@@ -77,8 +77,8 @@ static void joyaxishandle(int joys,int axis,float val,float pval)
 */
 static void joyhandle(int joys,int button,int dir,int down,int toggle)
 	{
-	if (!TheGame) return;
-	else TheGame->DiscreteJoyHandle(joys,button,dir,down,toggle);
+	if (!TheGame) { return; }
+	else { TheGame->DiscreteJoyHandle(joys,button,dir,down,toggle); }
 
 	}
 
@@ -102,13 +102,13 @@ const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat high_shininess[] = { 10.0f };
 
 
-void TGame::End()
+void Game::End()
 	{
 	font.StopFontEngine();
 	joysticks.Free();
 	}
 
-void TGame::CheckNeededExtensions()
+void Game::CheckNeededExtensions()
 	{
 
 	if ((const char *) glGetString(GL_VERSION))
@@ -116,7 +116,7 @@ void TGame::CheckNeededExtensions()
 			std::string version = (const char *) glGetString(GL_VERSION);
 			coutlog("INIT: OpenGL version "+version);
 			}
-	else   coutlog("INIT: unknown OpenGL version ");
+	else { coutlog("INIT: unknown OpenGL version "); }
 
 	if (glewIsSupported("GL_VERSION_2_0"))
 			{
@@ -125,8 +125,9 @@ void TGame::CheckNeededExtensions()
 			float vers=atof(slangvers.c_str());
 			//  ostringstream oss; oss << vers;
 			//  coutlog(oss.str());
-			if (vers>=1.2999)
-				supportingShaders=1;
+			if (vers>=1.2999) {
+					supportingShaders=1;
+					}
 			else {   coutlog("       > GLSL version not supported"); supportingShaders=0; }
 
 			}
@@ -150,13 +151,14 @@ void OutVideoInfo()
 
 }*/
 
-bool TGame::InitGL(int w,int h,int hw,int fs,int bpp)
+bool Game::InitGL(int w,int h,int hw,int fs,int bpp)
 	{
 //  PrintModes();
 	textures.clear();
 	Uint32 flags=SDL_OPENGL  ;
-	if (fs) flags|=SDL_FULLSCREEN;
-	if (hw) flags|=SDL_HWSURFACE | SDL_DOUBLEBUF; else flags|=SDL_SWSURFACE;
+	if (fs) { flags|=SDL_FULLSCREEN; }
+	if (hw) { flags|=SDL_HWSURFACE | SDL_DOUBLEBUF; }
+	else { flags|=SDL_SWSURFACE; }
 
 	SDL_Surface *screen;
 
@@ -179,7 +181,7 @@ bool TGame::InitGL(int w,int h,int hw,int fs,int bpp)
 	screenwidth=w;
 	screenheight=h;
 	screen = SDL_SetVideoMode( w, h, bpp, flags );
-	if (!screen) return false;
+	if (!screen) { return false; }
 	SDL_WM_SetCaption("Cubosphere","Cubosphere");
 
 
@@ -229,12 +231,12 @@ bool TGame::InitGL(int w,int h,int hw,int fs,int bpp)
 	return true;
 	}
 
-void TGame::Quit()
+void Game::Quit()
 	{
 	events.Close();
 	}
 
-void TGame::HandleInput()
+void Game::HandleInput()
 	{
 	keyboard.HandleKeys();
 	joysticks.HandleKeys();
@@ -244,12 +246,12 @@ void TGame::HandleInput()
 static int framecounter=0;
 static double ftime=0;
 
-void TGame::HandleEvents()
+void Game::HandleEvents()
 	{
 	events.HandleEvents();
 	}
 
-void TGame::GameLoopFrame()
+void Game::GameLoopFrame()
 	{
 	if (GameLua.FuncExists("GameLoop"))
 			{
@@ -268,7 +270,7 @@ void TGame::GameLoopFrame()
 
 	}
 
-void TGame::GameLoop()
+void Game::GameLoop()
 	{
 
 	double maxframeaccu=0;
@@ -285,7 +287,7 @@ void TGame::GameLoop()
 			maxframeaccu+=elapsed;
 			if (maxframes>0)
 					{
-					if (maxframeaccu<1.0/maxframes) continue;
+					if (maxframeaccu<1.0/maxframes) { continue; }
 					else
 							{
 							elapsed=maxframeaccu;
@@ -316,7 +318,7 @@ void TGame::GameLoop()
 
 
 
-			TheGame=(TCuboGame*)this;
+			TheGame=(CuboGame*)this;
 
 			GameLoopFrame();
 
@@ -325,10 +327,10 @@ void TGame::GameLoop()
 	}
 
 
-int TGame::Init()
+int Game::Init()
 	{
 
-	TheGame=(TCuboGame*)this;
+	TheGame=(CuboGame*)this;
 	mouse.Initialize();
 	joysticks.Initialize();
 	events.SetMouse(&mouse);
@@ -339,15 +341,15 @@ int TGame::Init()
 	return 0;
 	}
 
-void TGame::SetGameLoopSource(std::string s)
+void Game::SetGameLoopSource(std::string s)
 	{
-	if (s=="") GameLoopSource="-"; //stdin
-	else GameLoopSource=s;
+	if (s=="") { GameLoopSource="-"; } //stdin
+	else { GameLoopSource=s; }
 	}
 
-void TGame::Start()
+void Game::Start()
 	{
-	TheGame=(TCuboGame*)this;
+	TheGame=(CuboGame*)this;
 	CuboConsole::GetInstance()->Init();
 
 
@@ -361,7 +363,7 @@ void TGame::Start()
 			std::string line;
 			std::istream * inp=NULL;
 			std::ifstream file;
-			if (GameLoopSource=="-") inp=&std::cin;
+			if (GameLoopSource=="-") { inp=&std::cin; }
 			else {
 					file.open(GameLoopSource.c_str());
 					inp=&file;
@@ -386,7 +388,7 @@ void TGame::Start()
 			GameLua.ExecStrings(defaultcmds);
 			}
 
-	if (GameLua.FuncExists("Init")) GameLua.CallVA("Init","");
+	if (GameLua.FuncExists("Init")) { GameLua.CallVA("Init",""); }
 
 	time=oldtime=SDL_GetTicks();
 	GameLoop();
@@ -399,7 +401,7 @@ void TGame::Start()
 
 ////////////////////////////////////////////////////////////////7
 
-void TCuboGame::SaveFramePic(std::string fname, int nw,int nh)
+void CuboGame::SaveFramePic(std::string fname, int nw,int nh)
 	{
 
 	GLint viewport[4];
@@ -413,7 +415,7 @@ void TCuboGame::SaveFramePic(std::string fname, int nw,int nh)
 
 	auto pixels = std::make_unique<GLubyte[]>(nSize);
 	//GLubyte *pixels = new GLubyte [nSize];
-	if (pixels == NULL) return;
+	if (pixels == NULL) { return; }
 
 	fScreenshot = fopen(fname.c_str(),"wb");
 
@@ -423,7 +425,7 @@ void TCuboGame::SaveFramePic(std::string fname, int nw,int nh)
 	//Resizing
 	if ( ((nw>=0) && (w!=nw)) || ((nh>=0) && (h!=nh)))
 			{
-			if (nw<0) nw=w; if (nh<0) nh=h;
+			if (nw<0) { nw=w; } if (nh<0) { nh=h; }
 			int nSize2 = nw*nh* 3;
 			auto pixels2 = std::make_unique<GLubyte[]>(nSize2);
 			gluScaleImage(GL_RGB,w,h,GL_UNSIGNED_BYTE,pixels.get(),nw,nh,GL_UNSIGNED_BYTE,pixels2.get());
@@ -496,7 +498,7 @@ void TCuboGame::SaveFramePic(std::string fname, int nw,int nh)
 	}
 
 
-void TCuboGame::ScreenShot(void)
+void CuboGame::ScreenShot(void)
 	{
 
 	std::string ext="jpg";
@@ -510,7 +512,7 @@ void TCuboGame::ScreenShot(void)
 			sprintf(cFileName,form.c_str(),nShot);
 			fname=cFileName;
 			cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting("/user/"+fname);
-			if (!fw) return;
+			if (!fw) { return; }
 			if (fw->WillOverwrite()) {
 					delete fw;
 					++nShot;
@@ -531,22 +533,24 @@ void TCuboGame::ScreenShot(void)
 
 	}
 
-void TCuboGame::JoyAxisHandle(int joys,int axis,float val,float pval)
+void CuboGame::JoyAxisHandle(int joys,int axis,float val,float pval)
 	{
-	if (CuboConsole::GetInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) { return ; }
 
-	if (MenuActive)
-		menu.JoyAxisChange(joys,axis,val,pval);
-	if (GameActive)
-		lvl.JoyAxisChange(joys,axis,val,pval);
+	if (MenuActive) {
+			menu.JoyAxisChange(joys,axis,val,pval);
+			}
+	if (GameActive) {
+			lvl.JoyAxisChange(joys,axis,val,pval);
+			}
 	}
 
-int TCuboGame::StartLevel(std::string lname,int normal_user_edit)
+int CuboGame::StartLevel(std::string lname,int normal_user_edit)
 	{
 
 	if (normal_user_edit!=2 || lname!="")
 			{
-			TCuboFile * finfo=GetFileName(lname,normal_user_edit!=0 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
+			CuboFile * finfo=GetFileName(lname,normal_user_edit!=0 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
 			if (!finfo) {std::string uls=(normal_user_edit!=0 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+lname,2); return 0 ;}
 			delete finfo;
 			}
@@ -584,9 +588,9 @@ int TCuboGame::StartLevel(std::string lname,int normal_user_edit)
 	}
 
 
-void TCuboGame::KeyHandle(int ident,int down,int toggle)
+void CuboGame::KeyHandle(int ident,int down,int toggle)
 	{
-	if (ident==-1) exit(0);
+	if (ident==-1) { exit(0); }
 //cout << ident << " " << down << " " << toggle << endl;
 	if ((ident==CuboConsole::GetInstance()->GetToggleKey() ) && down && toggle)
 			{
@@ -603,24 +607,28 @@ void TCuboGame::KeyHandle(int ident,int down,int toggle)
 
 	if (CuboConsole::GetInstance()->CheckBindKey(ident,down,toggle)) {return;}
 
-	if (MenuActive)
-		menu.SendKey(ident,down,toggle);
-	if (GameActive)
-		lvl.SendKey(ident,down,toggle);
+	if (MenuActive) {
+			menu.SendKey(ident,down,toggle);
+			}
+	if (GameActive) {
+			lvl.SendKey(ident,down,toggle);
+			}
 	}
 
-void TCuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle)
+void CuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle)
 	{
-	if (CuboConsole::GetInstance()->IsActive()) return;
+	if (CuboConsole::GetInstance()->IsActive()) { return; }
 
-	if (MenuActive)
-		menu.SendJoyButton(joy,button,dir,down,toggle);
-	if (GameActive)
-		lvl.SendJoyButton(joy,button,dir,down,toggle);
+	if (MenuActive) {
+			menu.SendJoyButton(joy,button,dir,down,toggle);
+			}
+	if (GameActive) {
+			lvl.SendJoyButton(joy,button,dir,down,toggle);
+			}
 	}
 
 
-int TCuboGame::AddActor(std::string aname)
+int CuboGame::AddActor(std::string aname)
 	{
 	int res=move.size();
 	move.resize(move.size()+1);
@@ -631,16 +639,16 @@ int TCuboGame::AddActor(std::string aname)
 	return res;
 	}
 
-void TCuboGame::DeleteActor(int index)
+void CuboGame::DeleteActor(int index)
 	{
-	if ((index<0) || (index>=(int)(move.size()))) return;
+	if ((index<0) || (index>=(int)(move.size()))) { return; }
 	if (move[index]) {delete move[index]; move[index]=NULL;}
 	move.erase(move.begin()+index); //CAREFUL! SHIFTS THE ACTORS INDICES
-	for (unsigned int i=0; i<move.size(); i++) move[i]->SetID(i);
+	for (unsigned int i=0; i<move.size(); i++) { move[i]->SetID(i); }
 	}
 
 
-int TCuboGame::AddEnemy(std::string aname)
+int CuboGame::AddEnemy(std::string aname)
 	{
 	int res=move.size();
 	move.resize(move.size()+1);
@@ -650,7 +658,7 @@ int TCuboGame::AddEnemy(std::string aname)
 	return res;
 	}
 
-void TCuboGame::Clear()
+void CuboGame::Clear()
 	{
 	g_SpriteEnvs()->Clear();
 	for (unsigned int i=0; i<move.size(); i++) if (move[i]) {delete move[i]; move[i]=NULL;}
@@ -661,7 +669,7 @@ void TCuboGame::Clear()
 	lvl.clear();
 	}
 
-int TCuboGame::AddBasis()
+int CuboGame::AddBasis()
 	{
 	int res=basis.size();
 	basis.resize(res+1);
@@ -669,9 +677,9 @@ int TCuboGame::AddBasis()
 	}
 
 
-int TCuboGame::Init()
+int CuboGame::Init()
 	{
-	TGame::Init();
+	Game::Init();
 	freecam=0;
 	Vector2d wh;
 	maxphyselapsed=1000; //Means only one phys calc
@@ -702,14 +710,14 @@ int TCuboGame::Init()
 	}
 
 
-void TCuboGame::LoadSky(std::string name)
+void CuboGame::LoadSky(std::string name)
 	{
 // sky.LoadTextures(name,&textures);
 	sky.LoadSkybox(name);
 	}
 
 
-void TCuboGame::Think()
+void CuboGame::Think()
 	{
 
 	//if (mouse.GetButton(0).pressed) move[0].Jump();
@@ -767,10 +775,10 @@ void TCuboGame::Think()
 							{
 							for (unsigned int a=0; a<g_Game()->NumActors(); a++)
 									{
-									if (!(move[a]->IsPlayer())) continue;
+									if (!(move[a]->IsPlayer())) { continue; }
 									for (unsigned int e=0; e<g_Game()->NumActors(); e++)
-										if (!(move[e]->IsPlayer())) move[a]->CheckEnemyCollision(move[e]);
-										else if (a!=e) move[a]->CheckPlayerCollision(move[e]);
+										if (!(move[e]->IsPlayer())) { move[a]->CheckEnemyCollision(move[e]); }
+										else if (a!=e) { move[a]->CheckPlayerCollision(move[e]); }
 									}
 							}
 					}
@@ -802,7 +810,7 @@ void TCuboGame::Think()
 			if (!(player[0]->InCameraPan()))
 					{
 					int CamPlayer=cam.GetPlayer();
-					if (CamPlayer>=0) move[CamPlayer]->SetCamPos(&cam);
+					if (CamPlayer>=0) { move[CamPlayer]->SetCamPos(&cam); }
 					}
 			else
 					{
@@ -813,37 +821,37 @@ void TCuboGame::Think()
 			g_SpriteEnvs()->Think(elapsed);
 
 			}
-	if (MenuActive) menu.Think();
+	if (MenuActive) { menu.Think(); }
 	}
 
-void TCuboGame::PreRender(int wo,int ho)
+void CuboGame::PreRender(int wo,int ho)
 	{
 
 	const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
 	Vector2d widthheight;
 
-	if (wo<=0) wo=vidinfo->current_w;
-	if (ho<=0) ho=vidinfo->current_h;
+	if (wo<=0) { wo=vidinfo->current_w; }
+	if (ho<=0) { ho=vidinfo->current_h; }
 
 
 	widthheight.uv(wo,ho);
 	cam.setScreenWidthHeight(widthheight);
-	if (GameActive) lvl.FrameRenderStart();
+	if (GameActive) { lvl.FrameRenderStart(); }
 	cam.think();
 
 	}
 
-void TCuboGame::AfterRenderLevel()
+void CuboGame::AfterRenderLevel()
 	{
 
 	cam.postthink();
-	if (GameActive) lvl.FrameRenderEnd();
+	if (GameActive) { lvl.FrameRenderEnd(); }
 	}
 
-void TCuboGame::Render()
+void CuboGame::Render()
 	{
 
-	if (!glReady) return;
+	if (!glReady) { return; }
 
 
 //AntiAliasing=1;
@@ -884,27 +892,29 @@ void TCuboGame::Render()
 
 
 
-	if (GameActive) lvl.DrawHUD();
-	if (MenuActive) menu.Render();
+	if (GameActive) { lvl.DrawHUD(); }
+	if (MenuActive) { menu.Render(); }
 
 	CuboConsole::GetInstance()->Render();
 
-	if (FlushOrFinishBeforeSwap==1)
-		glFlush();
-	else if (FlushOrFinishBeforeSwap==2)
-		glFinish();
+	if (FlushOrFinishBeforeSwap==1) {
+			glFlush();
+			}
+	else if (FlushOrFinishBeforeSwap==2) {
+			glFinish();
+			}
 
 	SDL_GL_SwapBuffers();
 
 
-	if (GameActive || NewGameActive) lvl.PostThink();
-	if (MenuActive || NewMenuActive) menu.PostThink();
+	if (GameActive || NewGameActive) { lvl.PostThink(); }
+	if (MenuActive || NewMenuActive) { menu.PostThink(); }
 
 	GameActive=NewGameActive;
 	MenuActive=NewMenuActive;
 	}
 
-void TCuboGame::RenderPass()
+void CuboGame::RenderPass()
 	{
 	if (GameActive)
 			{
@@ -915,7 +925,7 @@ void TCuboGame::RenderPass()
 			sky.Render();
 
 			lvl.Render(&cam);
-			for (unsigned int i=0; i<move.size(); i++) move[i]->Render();
+			for (unsigned int i=0; i<move.size(); i++) { move[i]->Render(); }
 
 
 			lvl.SortDistRenderList();
@@ -927,19 +937,19 @@ void TCuboGame::RenderPass()
 			}
 	}
 
-void TCuboGame::SpecialRenderPass(std::string nam,int defrender)
+void CuboGame::SpecialRenderPass(std::string nam,int defrender)
 	{
 	if (GameActive)
 			{
 			sky.SpecialRender(nam,defrender);
 			lvl.SpecialRender(&cam,nam,defrender);
-			for (unsigned int i=0; i<move.size(); i++) move[i]->SpecialRender(nam,defrender);
+			for (unsigned int i=0; i<move.size(); i++) { move[i]->SpecialRender(nam,defrender); }
 			lvl.SortDistRenderList();
 			lvl.DistRender(&cam); //You have to keep in mind, that the special DistRender has to be set up in the individual lua script with SetVar, GetVar etc
 			}
 	}
 
-void TCuboGame::Reload(std::vector<std::string> & extratoks)
+void CuboGame::Reload(std::vector<std::string> & extratoks)
 	{
 	int all=0; // Implicits => All
 	int lua=0; // Implicits =>
@@ -956,55 +966,55 @@ void TCuboGame::Reload(std::vector<std::string> & extratoks)
 
 	if (!extratoks.size())  {
 			FreeMedia();
-			if (GameActive) lvl.Reload();
-			if (MenuActive) menu.Reload(); return;
+			if (GameActive) { lvl.Reload(); }
+			if (MenuActive) { menu.Reload(); } return;
 			}
 
 
 	for (unsigned int i=0; i<extratoks.size(); i++)
 			{
-			if (extratoks[i]=="all") all=1;
-			else if (extratoks[i]=="lua") lua=1;
+			if (extratoks[i]=="all") { all=1; }
+			else if (extratoks[i]=="lua") { lua=1; }
 
-			else if (extratoks[i]=="actordefs") actordefs=1;
-			else if (extratoks[i]=="blockdefs") bdefs=1;
-			else if (extratoks[i]=="enemydefs") actordefs=1;
-			else if (extratoks[i]=="itemdefs") idefs=1;
-			else if (extratoks[i]=="mdldefs") mdldefs=1;
-			else if (extratoks[i]=="menudefs") menudefs=1;
-			else if (extratoks[i]=="textures") textures=1;
-			else if (extratoks[i]=="mdls") models=1;
-			else if (extratoks[i]=="sounds") sounds=1;
-			else if (extratoks[i]=="texdefs") tdefs=1;
-			else if (extratoks[i]=="level") level=1;
-			else if (extratoks[i]=="skydef") skydef=1;
-			else if (extratoks[i]=="language") language=1;
+			else if (extratoks[i]=="actordefs") { actordefs=1; }
+			else if (extratoks[i]=="blockdefs") { bdefs=1; }
+			else if (extratoks[i]=="enemydefs") { actordefs=1; }
+			else if (extratoks[i]=="itemdefs") { idefs=1; }
+			else if (extratoks[i]=="mdldefs") { mdldefs=1; }
+			else if (extratoks[i]=="menudefs") { menudefs=1; }
+			else if (extratoks[i]=="textures") { textures=1; }
+			else if (extratoks[i]=="mdls") { models=1; }
+			else if (extratoks[i]=="sounds") { sounds=1; }
+			else if (extratoks[i]=="texdefs") { tdefs=1; }
+			else if (extratoks[i]=="level") { level=1; }
+			else if (extratoks[i]=="skydef") { skydef=1; }
+			else if (extratoks[i]=="language") { language=1; }
 			else { coutlog("switch "+extratoks[i]+" not defined",2); }
 			}
 
 
 
-	if (textures || all) this->textures.Reload();
-	if (sounds || all) g_Sounds()->Reload();
-	if (models || all) mdls.Reload();
+	if (textures || all) { this->textures.Reload(); }
+	if (sounds || all) { g_Sounds()->Reload(); }
+	if (models || all) { mdls.Reload(); }
 
-	if (actordefs || all || lua) adefs.Reload();
-	if (mdldefs || all || lua) mdefs.Reload();
+	if (actordefs || all || lua) { adefs.Reload(); }
+	if (mdldefs || all || lua) { mdefs.Reload(); }
 
-	if (tdefs || all || lua) lvl.GetTexDefs()->Reload();
-	if (bdefs || all || lua) lvl.GetBlockDefs()->Reload();
-	if (idefs || all || lua) lvl.GetItemDefs()->Reload();
+	if (tdefs || all || lua) { lvl.GetTexDefs()->Reload(); }
+	if (bdefs || all || lua) { lvl.GetBlockDefs()->Reload(); }
+	if (idefs || all || lua) { lvl.GetItemDefs()->Reload(); }
 
-	if (skydef || all || lua) sky.Reload();
-	if (language || all ) ReloadLanguage();
+	if (skydef || all || lua) { sky.Reload(); }
+	if (language || all ) { ReloadLanguage(); }
 
-	if (menudefs || all || lua) menu.Reload();
+	if (menudefs || all || lua) { menu.Reload(); }
 
-	if (level || all ) lvl.Reload();
+	if (level || all ) { lvl.Reload(); }
 
 	}
 
-void TCuboGame::FreeMedia()
+void CuboGame::FreeMedia()
 	{
 	// glReady=0;
 	mdefs.clear();
@@ -1018,23 +1028,23 @@ void TCuboGame::FreeMedia()
 ///What about the sounds?
 	font.ClearCache();
 	GetShaders()->clear();
-	if (g_PostEffect()) g_PostEffect()->UnPrecache();
+	if (g_PostEffect()) { g_PostEffect()->UnPrecache(); }
 	}
 
-bool TCuboGame::InitGL(int w,int h,int hw,int fs,int bpp)
+bool CuboGame::InitGL(int w,int h,int hw,int fs,int bpp)
 	{
 	FreeMedia();
-	return TGame::InitGL(w,h,hw,fs,bpp);
+	return Game::InitGL(w,h,hw,fs,bpp);
 
 	}
 
-TCuboGame::~TCuboGame()
+CuboGame::~CuboGame()
 	{
 	for (unsigned int i=0; i<player.size(); i++) if (player[i]) {delete player[i]; player[i]=NULL;}
 
 	}
 
-void TCuboBasis::InvertMatrix()
+void CuboBasis::InvertMatrix()
 	{
 	Matrix3d sub;
 	matrix.getSubMatrix(&sub);
@@ -1063,7 +1073,7 @@ int BASIS_SetAxisRotate(lua_State *state)
 	int index=LUA_GET_INT;
 
 
-	TCuboBasis *b=g_Game()->GetBasis(index);
+	CuboBasis *b=g_Game()->GetBasis(index);
 	b->setPos(pos);
 	b->SetBasisAxisRotate(axis,angle);
 	return 0;
@@ -1079,7 +1089,7 @@ int BASIS_Set(lua_State *state)
 	int index=LUA_GET_INT;
 
 
-	TCuboBasis *b=g_Game()->GetBasis(index);
+	CuboBasis *b=g_Game()->GetBasis(index);
 	b->setPos(pos);
 	b->SetBasis(side,up,dir);
 	return 0;
@@ -1091,7 +1101,7 @@ int BASIS_Invert(lua_State *state)
 	int index=LUA_GET_INT;
 
 
-	TCuboBasis *b=g_Game()->GetBasis(index);
+	CuboBasis *b=g_Game()->GetBasis(index);
 	b->InvertMatrix();
 	return 0;
 	}

@@ -42,171 +42,159 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include"cuboutils.hpp"
 
-#ifdef LUAJIT
-#include"lua.hpp"
-
-#else
-
-extern"C"
-	{
-#include"lua.h"
-#include"lualib.h"
-#include"lauxlib.h"
-	}
-
-#endif
+#include "lua.hpp"
 
 #include"luautils.hpp"
 #include"game.hpp"
 
-SDLKey TKeyboard::GetKeyConstFor(std::string keyname)
+SDLKey Keyboard::GetKeyConstFor(std::string keyname)
 	{
-	if (keyname=="return") return SDLK_RETURN;
-	else if (keyname=="space") return SDLK_SPACE;
-	if (keyname=="uparrow") return SDLK_UP;
-	if (keyname=="downarrow") return SDLK_DOWN;
-	if (keyname=="leftarrow") return SDLK_LEFT;
-	if (keyname=="rightarrow") return SDLK_RIGHT;
-	if (keyname=="esc") return SDLK_ESCAPE;
+	if (keyname=="return") { return SDLK_RETURN; }
+	else if (keyname=="space") { return SDLK_SPACE; }
+	if (keyname=="uparrow") { return SDLK_UP; }
+	if (keyname=="downarrow") { return SDLK_DOWN; }
+	if (keyname=="leftarrow") { return SDLK_LEFT; }
+	if (keyname=="rightarrow") { return SDLK_RIGHT; }
+	if (keyname=="esc") { return SDLK_ESCAPE; }
 
-	else if (keyname=="backspace") return SDLK_BACKSPACE;
-	else if (keyname=="tab") return SDLK_TAB;
-	else if (keyname=="clear") return SDLK_CLEAR;
-	else if (keyname=="pause") return SDLK_PAUSE;
-	else if (keyname=="exclamation mark") return SDLK_EXCLAIM;
-	else if (keyname=="double quote") return SDLK_QUOTEDBL;
-	else if (keyname=="hash") return SDLK_HASH;
-	else if (keyname=="dollar") return SDLK_DOLLAR;
-	else if (keyname=="ampersand") return SDLK_AMPERSAND;
-	else if (keyname=="single quote") return SDLK_QUOTE;
-	else if (keyname=="left parenthesis") return SDLK_LEFTPAREN;
-	else if (keyname=="right parenthesis") return SDLK_RIGHTPAREN;
-	else if (keyname=="asterisk") return SDLK_ASTERISK;
-	else if (keyname=="plus sign") return SDLK_PLUS;
-	else if (keyname=="comma") return SDLK_COMMA;
-	else if (keyname=="minus sign") return SDLK_MINUS;
-	else if (keyname=="period / full stop") return SDLK_PERIOD;
-	else if (keyname=="forward slash") return SDLK_SLASH;
-	else if (keyname=="0") return SDLK_0;
-	else if (keyname=="1") return SDLK_1;
-	else if (keyname=="2") return SDLK_2;
-	else if (keyname=="3") return SDLK_3;
-	else if (keyname=="4") return SDLK_4;
-	else if (keyname=="5") return SDLK_5;
-	else if (keyname=="6") return SDLK_6;
-	else if (keyname=="7") return SDLK_7;
-	else if (keyname=="8") return SDLK_8;
-	else if (keyname=="9") return SDLK_9;
-	else if (keyname=="colon") return SDLK_COLON;
-	else if (keyname=="semicolon") return SDLK_SEMICOLON;
-	else if (keyname=="less-than sign") return SDLK_LESS;
-	else if (keyname=="equals sign") return SDLK_EQUALS;
-	else if (keyname=="greater-than sign") return SDLK_GREATER;
-	else if (keyname=="question mark") return SDLK_QUESTION;
-	else if (keyname=="at") return SDLK_AT;
-	else if (keyname=="left bracket") return SDLK_LEFTBRACKET;
-	else if (keyname=="backslash") return SDLK_BACKSLASH;
-	else if (keyname=="right bracket") return SDLK_RIGHTBRACKET;
-	else if (keyname=="caret") return SDLK_CARET;
-	else if (keyname=="underscore") return SDLK_UNDERSCORE;
-	else if (keyname=="grave") return SDLK_BACKQUOTE;
-	else if (keyname=="a") return SDLK_a;
-	else if (keyname=="b") return SDLK_b;
-	else if (keyname=="c") return SDLK_c;
-	else if (keyname=="d") return SDLK_d;
-	else if (keyname=="e") return SDLK_e;
-	else if (keyname=="f") return SDLK_f;
-	else if (keyname=="g") return SDLK_g;
-	else if (keyname=="h") return SDLK_h;
-	else if (keyname=="i") return SDLK_i;
-	else if (keyname=="j") return SDLK_j;
-	else if (keyname=="k") return SDLK_k;
-	else if (keyname=="l") return SDLK_l;
-	else if (keyname=="m") return SDLK_m;
-	else if (keyname=="n") return SDLK_n;
-	else if (keyname=="o") return SDLK_o;
-	else if (keyname=="p") return SDLK_p;
-	else if (keyname=="q") return SDLK_q;
-	else if (keyname=="r") return SDLK_r;
-	else if (keyname=="s") return SDLK_s;
-	else if (keyname=="t") return SDLK_t;
-	else if (keyname=="u") return SDLK_u;
-	else if (keyname=="v") return SDLK_v;
-	else if (keyname=="w") return SDLK_w;
-	else if (keyname=="x") return SDLK_x;
-	else if (keyname=="y") return SDLK_y;
-	else if (keyname=="z") return SDLK_z;
-	else if (keyname=="delete") return SDLK_DELETE;
-	else if (keyname=="keypad 0") return SDLK_KP0;
-	else if (keyname=="keypad 1") return SDLK_KP1;
-	else if (keyname=="keypad 2") return SDLK_KP2;
-	else if (keyname=="keypad 3") return SDLK_KP3;
-	else if (keyname=="keypad 4") return SDLK_KP4;
-	else if (keyname=="keypad 5") return SDLK_KP5;
-	else if (keyname=="keypad 6") return SDLK_KP6;
-	else if (keyname=="keypad 7") return SDLK_KP7;
-	else if (keyname=="keypad 8") return SDLK_KP8;
-	else if (keyname=="keypad 9") return SDLK_KP9;
-	else if (keyname=="keypad period") return SDLK_KP_PERIOD;
-	else if (keyname=="keypad divide") return SDLK_KP_DIVIDE;
-	else if (keyname=="keypad multiply") return SDLK_KP_MULTIPLY;
-	else if (keyname=="keypad minus") return SDLK_KP_MINUS;
-	else if (keyname=="keypad plus") return SDLK_KP_PLUS;
-	else if (keyname=="keypad enter") return SDLK_KP_ENTER;
-	else if (keyname=="keypad equals") return SDLK_KP_EQUALS;
-	else if (keyname=="up arrow") return SDLK_UP;
-	else if (keyname=="down arrow") return SDLK_DOWN;
-	else if (keyname=="right arrow") return SDLK_RIGHT;
-	else if (keyname=="left arrow") return SDLK_LEFT;
-	else if (keyname=="insert") return SDLK_INSERT;
-	else if (keyname=="home") return SDLK_HOME;
-	else if (keyname=="end") return SDLK_END;
-	else if (keyname=="page up") return SDLK_PAGEUP;
-	else if (keyname=="page down") return SDLK_PAGEDOWN;
-	else if (keyname=="F1") return SDLK_F1;
-	else if (keyname=="F2") return SDLK_F2;
-	else if (keyname=="F3") return SDLK_F3;
-	else if (keyname=="F4") return SDLK_F4;
-	else if (keyname=="F5") return SDLK_F5;
-	else if (keyname=="F6") return SDLK_F6;
-	else if (keyname=="F7") return SDLK_F7;
-	else if (keyname=="F8") return SDLK_F8;
-	else if (keyname=="F9") return SDLK_F9;
-	else if (keyname=="F10") return SDLK_F10;
-	else if (keyname=="F11") return SDLK_F11;
-	else if (keyname=="F12") return SDLK_F12;
-	else if (keyname=="F13") return SDLK_F13;
-	else if (keyname=="F14") return SDLK_F14;
-	else if (keyname=="F15") return SDLK_F15;
-	else if (keyname=="numlock") return SDLK_NUMLOCK;
-	else if (keyname=="capslock") return SDLK_CAPSLOCK;
-	else if (keyname=="scrollock") return SDLK_SCROLLOCK;
-	else if (keyname=="right shift") return SDLK_RSHIFT;
-	else if (keyname=="left shift") return SDLK_LSHIFT;
-	else if (keyname=="right ctrl") return SDLK_RCTRL;
-	else if (keyname=="left ctrl") return SDLK_LCTRL;
-	else if (keyname=="right alt / alt gr") return SDLK_RALT;
-	else if (keyname=="left alt") return SDLK_LALT;
-	else if (keyname=="right meta") return SDLK_RMETA;
-	else if (keyname=="left meta") return SDLK_LMETA;
-	else if (keyname=="left windows key") return SDLK_LSUPER;
-	else if (keyname=="right windows key") return SDLK_RSUPER;
-	else if (keyname=="mode shift") return SDLK_MODE;
-	else if (keyname=="compose") return SDLK_COMPOSE;
-	else if (keyname=="help") return SDLK_HELP;
-	else if (keyname=="print-screen") return SDLK_PRINT;
-	else if (keyname=="SysRq") return SDLK_SYSREQ;
-	else if (keyname=="break") return SDLK_BREAK;
-	else if (keyname=="menu") return SDLK_MENU;
-	else if (keyname=="power") return SDLK_POWER;
-	else if (keyname=="euro") return SDLK_EURO;
-	else if (keyname=="undo") return SDLK_UNDO;
+	else if (keyname=="backspace") { return SDLK_BACKSPACE; }
+	else if (keyname=="tab") { return SDLK_TAB; }
+	else if (keyname=="clear") { return SDLK_CLEAR; }
+	else if (keyname=="pause") { return SDLK_PAUSE; }
+	else if (keyname=="exclamation mark") { return SDLK_EXCLAIM; }
+	else if (keyname=="double quote") { return SDLK_QUOTEDBL; }
+	else if (keyname=="hash") { return SDLK_HASH; }
+	else if (keyname=="dollar") { return SDLK_DOLLAR; }
+	else if (keyname=="ampersand") { return SDLK_AMPERSAND; }
+	else if (keyname=="single quote") { return SDLK_QUOTE; }
+	else if (keyname=="left parenthesis") { return SDLK_LEFTPAREN; }
+	else if (keyname=="right parenthesis") { return SDLK_RIGHTPAREN; }
+	else if (keyname=="asterisk") { return SDLK_ASTERISK; }
+	else if (keyname=="plus sign") { return SDLK_PLUS; }
+	else if (keyname=="comma") { return SDLK_COMMA; }
+	else if (keyname=="minus sign") { return SDLK_MINUS; }
+	else if (keyname=="period / full stop") { return SDLK_PERIOD; }
+	else if (keyname=="forward slash") { return SDLK_SLASH; }
+	else if (keyname=="0") { return SDLK_0; }
+	else if (keyname=="1") { return SDLK_1; }
+	else if (keyname=="2") { return SDLK_2; }
+	else if (keyname=="3") { return SDLK_3; }
+	else if (keyname=="4") { return SDLK_4; }
+	else if (keyname=="5") { return SDLK_5; }
+	else if (keyname=="6") { return SDLK_6; }
+	else if (keyname=="7") { return SDLK_7; }
+	else if (keyname=="8") { return SDLK_8; }
+	else if (keyname=="9") { return SDLK_9; }
+	else if (keyname=="colon") { return SDLK_COLON; }
+	else if (keyname=="semicolon") { return SDLK_SEMICOLON; }
+	else if (keyname=="less-than sign") { return SDLK_LESS; }
+	else if (keyname=="equals sign") { return SDLK_EQUALS; }
+	else if (keyname=="greater-than sign") { return SDLK_GREATER; }
+	else if (keyname=="question mark") { return SDLK_QUESTION; }
+	else if (keyname=="at") { return SDLK_AT; }
+	else if (keyname=="left bracket") { return SDLK_LEFTBRACKET; }
+	else if (keyname=="backslash") { return SDLK_BACKSLASH; }
+	else if (keyname=="right bracket") { return SDLK_RIGHTBRACKET; }
+	else if (keyname=="caret") { return SDLK_CARET; }
+	else if (keyname=="underscore") { return SDLK_UNDERSCORE; }
+	else if (keyname=="grave") { return SDLK_BACKQUOTE; }
+	else if (keyname=="a") { return SDLK_a; }
+	else if (keyname=="b") { return SDLK_b; }
+	else if (keyname=="c") { return SDLK_c; }
+	else if (keyname=="d") { return SDLK_d; }
+	else if (keyname=="e") { return SDLK_e; }
+	else if (keyname=="f") { return SDLK_f; }
+	else if (keyname=="g") { return SDLK_g; }
+	else if (keyname=="h") { return SDLK_h; }
+	else if (keyname=="i") { return SDLK_i; }
+	else if (keyname=="j") { return SDLK_j; }
+	else if (keyname=="k") { return SDLK_k; }
+	else if (keyname=="l") { return SDLK_l; }
+	else if (keyname=="m") { return SDLK_m; }
+	else if (keyname=="n") { return SDLK_n; }
+	else if (keyname=="o") { return SDLK_o; }
+	else if (keyname=="p") { return SDLK_p; }
+	else if (keyname=="q") { return SDLK_q; }
+	else if (keyname=="r") { return SDLK_r; }
+	else if (keyname=="s") { return SDLK_s; }
+	else if (keyname=="t") { return SDLK_t; }
+	else if (keyname=="u") { return SDLK_u; }
+	else if (keyname=="v") { return SDLK_v; }
+	else if (keyname=="w") { return SDLK_w; }
+	else if (keyname=="x") { return SDLK_x; }
+	else if (keyname=="y") { return SDLK_y; }
+	else if (keyname=="z") { return SDLK_z; }
+	else if (keyname=="delete") { return SDLK_DELETE; }
+	else if (keyname=="keypad 0") { return SDLK_KP0; }
+	else if (keyname=="keypad 1") { return SDLK_KP1; }
+	else if (keyname=="keypad 2") { return SDLK_KP2; }
+	else if (keyname=="keypad 3") { return SDLK_KP3; }
+	else if (keyname=="keypad 4") { return SDLK_KP4; }
+	else if (keyname=="keypad 5") { return SDLK_KP5; }
+	else if (keyname=="keypad 6") { return SDLK_KP6; }
+	else if (keyname=="keypad 7") { return SDLK_KP7; }
+	else if (keyname=="keypad 8") { return SDLK_KP8; }
+	else if (keyname=="keypad 9") { return SDLK_KP9; }
+	else if (keyname=="keypad period") { return SDLK_KP_PERIOD; }
+	else if (keyname=="keypad divide") { return SDLK_KP_DIVIDE; }
+	else if (keyname=="keypad multiply") { return SDLK_KP_MULTIPLY; }
+	else if (keyname=="keypad minus") { return SDLK_KP_MINUS; }
+	else if (keyname=="keypad plus") { return SDLK_KP_PLUS; }
+	else if (keyname=="keypad enter") { return SDLK_KP_ENTER; }
+	else if (keyname=="keypad equals") { return SDLK_KP_EQUALS; }
+	else if (keyname=="up arrow") { return SDLK_UP; }
+	else if (keyname=="down arrow") { return SDLK_DOWN; }
+	else if (keyname=="right arrow") { return SDLK_RIGHT; }
+	else if (keyname=="left arrow") { return SDLK_LEFT; }
+	else if (keyname=="insert") { return SDLK_INSERT; }
+	else if (keyname=="home") { return SDLK_HOME; }
+	else if (keyname=="end") { return SDLK_END; }
+	else if (keyname=="page up") { return SDLK_PAGEUP; }
+	else if (keyname=="page down") { return SDLK_PAGEDOWN; }
+	else if (keyname=="F1") { return SDLK_F1; }
+	else if (keyname=="F2") { return SDLK_F2; }
+	else if (keyname=="F3") { return SDLK_F3; }
+	else if (keyname=="F4") { return SDLK_F4; }
+	else if (keyname=="F5") { return SDLK_F5; }
+	else if (keyname=="F6") { return SDLK_F6; }
+	else if (keyname=="F7") { return SDLK_F7; }
+	else if (keyname=="F8") { return SDLK_F8; }
+	else if (keyname=="F9") { return SDLK_F9; }
+	else if (keyname=="F10") { return SDLK_F10; }
+	else if (keyname=="F11") { return SDLK_F11; }
+	else if (keyname=="F12") { return SDLK_F12; }
+	else if (keyname=="F13") { return SDLK_F13; }
+	else if (keyname=="F14") { return SDLK_F14; }
+	else if (keyname=="F15") { return SDLK_F15; }
+	else if (keyname=="numlock") { return SDLK_NUMLOCK; }
+	else if (keyname=="capslock") { return SDLK_CAPSLOCK; }
+	else if (keyname=="scrollock") { return SDLK_SCROLLOCK; }
+	else if (keyname=="right shift") { return SDLK_RSHIFT; }
+	else if (keyname=="left shift") { return SDLK_LSHIFT; }
+	else if (keyname=="right ctrl") { return SDLK_RCTRL; }
+	else if (keyname=="left ctrl") { return SDLK_LCTRL; }
+	else if (keyname=="right alt / alt gr") { return SDLK_RALT; }
+	else if (keyname=="left alt") { return SDLK_LALT; }
+	else if (keyname=="right meta") { return SDLK_RMETA; }
+	else if (keyname=="left meta") { return SDLK_LMETA; }
+	else if (keyname=="left windows key") { return SDLK_LSUPER; }
+	else if (keyname=="right windows key") { return SDLK_RSUPER; }
+	else if (keyname=="mode shift") { return SDLK_MODE; }
+	else if (keyname=="compose") { return SDLK_COMPOSE; }
+	else if (keyname=="help") { return SDLK_HELP; }
+	else if (keyname=="print-screen") { return SDLK_PRINT; }
+	else if (keyname=="SysRq") { return SDLK_SYSREQ; }
+	else if (keyname=="break") { return SDLK_BREAK; }
+	else if (keyname=="menu") { return SDLK_MENU; }
+	else if (keyname=="power") { return SDLK_POWER; }
+	else if (keyname=="euro") { return SDLK_EURO; }
+	else if (keyname=="undo") { return SDLK_UNDO; }
 
 	return (SDLKey)0;
 	}
 
 
-void TKeyboard::Init()
+void Keyboard::Init()
 	{
 //Create the keys
 	rep_start_time=0;
@@ -216,7 +204,7 @@ void TKeyboard::Init()
 	pressedtime.resize(keynum,0);
 	}
 
-void TKeyboard::HandleKeys()
+void Keyboard::HandleKeys()
 	{
 	double el=g_Game()->GetElapsed();
 	for (int i=0; i<keynum; i++)
@@ -235,7 +223,7 @@ void TKeyboard::HandleKeys()
 							}
 
 					if (keydown[i])  {pressedtime[i]+=el; }
-					else pressedtime[i]=0;
+					else { pressedtime[i]=0; }
 
 					handler(i,(keydown[i]),toggle);
 					}
@@ -246,28 +234,28 @@ void TKeyboard::HandleKeys()
 			}
 	}
 
-void TKeyboard::StartTextInput()
+void Keyboard::StartTextInput()
 	{
 	SDL_EnableUNICODE(SDL_ENABLE);
 	textinputmode=1;
 	}
 
-void TKeyboard::StopTextInput()
+void Keyboard::StopTextInput()
 	{
 	SDL_EnableUNICODE(SDL_DISABLE);
 	textinputmode=0;
 	}
 
-void TKeyboard::DispatchEvent(SDL_Event *ev)
+void Keyboard::DispatchEvent(SDL_Event *ev)
 	{
-	if (!textinputmode) return;
+	if (!textinputmode) { return; }
 	if (ev->type==SDL_KEYDOWN)
 			{
 			lastkeysim=ev->key.keysym;
 			}
 	}
 
-std::string TKeyboard::GetKeyName(int key)
+std::string Keyboard::GetKeyName(int key)
 	{
 	std::string result="";
 	switch (key)

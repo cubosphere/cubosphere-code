@@ -19,11 +19,11 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "textures.hpp"
 #include <vector>
 
-class TSkyBox : public BaseLuaDef
+class SkyBox: public BaseLuaDef
 	{
 
 	public:
-		virtual ~TSkyBox() {};
+		virtual ~SkyBox() {};
 		virtual int GetType() {return FILE_SKYBOX;}
 		void  LoadSkybox(std::string basename);
 		void Render();

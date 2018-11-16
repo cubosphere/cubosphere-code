@@ -42,28 +42,28 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "vectors.hpp"
 
-class TMdlDef : public BaseLuaDef
+class MdlDef : public BaseLuaDef
 	{
 	protected:
 		GLuint totalrenderlist;
 		std::vector<GLuint> grenderlists;
 	public:
-		TMdlDef() : BaseLuaDef(), totalrenderlist(0) {};
-		virtual ~TMdlDef();
+		MdlDef() : BaseLuaDef(), totalrenderlist(0) {};
+		virtual ~MdlDef();
 		virtual int GetType() {return FILE_MDLDEF;}
 		void CreateRenderList(int gindex);
 		void Call_RenderModel();
 		void Call_RenderGroup(int g);
 	};
 
-using TMdlDefServer = BaseDefServer<TMdlDef>;
+using MdlDefServer = BaseDefServer<MdlDef>;
 
-using TIntVect = struct
+using IntVect = struct
 	{
 	int x,y,z;
 	};
 
-class TTextFileReader
+class TextFileReader
 	{
 	protected:
 		std::vector<std::string> lines;
@@ -71,15 +71,15 @@ class TTextFileReader
 		int linenr;
 	public:
 		void RemoveComments(std::string commentindicator="#",bool trim=true,bool cutempty=true);
-		bool LoadFile(TCuboFile * finfo);
+		bool LoadFile(CuboFile * finfo);
 		void OutToTTY();
 		int GetLineNr();
 		std::string NextLine();
 		bool isEoF();
-		bool ExtractIntVect(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
-		bool ExtractIntVectFace(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
+		bool ExtractIntVect(std::string s,IntVect &intv,std::string *ress=NULL,std::string sep=" ");
+		bool ExtractIntVectFace(std::string s,IntVect &intv,std::string *ress=NULL,std::string sep=" ");
 
-		bool ExtractIntVect0(std::string s,TIntVect &intv,std::string *ress=NULL,std::string sep=" ");
+		bool ExtractIntVect0(std::string s,IntVect &intv,std::string *ress=NULL,std::string sep=" ");
 		bool Extract3dVector(std::string s,Vector3d &intv,int offs);
 		bool Extract2dVector(std::string s,Vector2d &intv,int offs);
 		void ReplaceChar(std::string &str,char which,char with);
@@ -88,41 +88,41 @@ class TTextFileReader
 
 
 
-class TBaseModel
+class BaseModel
 	{
 	protected:
 		std::string name;
 		virtual void Clear() {}
 	public:
-		virtual ~TBaseModel() {}
+		virtual ~BaseModel() {}
 		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader) {}
 		virtual void DrawGroup(int g) {}
 		virtual std::string GetName() {return name;}
-		virtual bool LoadFromFile(TCuboFile *finfo) {name=finfo->GetName(); return true;}
+		virtual bool LoadFromFile(CuboFile *finfo) {name=finfo->GetName(); return true;}
 		virtual void RenderByDef(int defindex) {}
 		virtual void Reload();
 	};
 
-using TOBJFace = struct
+using OBJFace = struct
 	{
 	int vert[3],norm[3],texcoord[3];
 	int tangent;
 	};
 
-using TOBJGroup = struct
+using OBJGroup = struct
 	{
 	std::string name,materialname;
-	std::vector<TOBJFace> faces;
+	std::vector<OBJFace> faces;
 	GLuint renderlist;
 	int userenderlist;
 	};
 
-class TOBJModel : public TBaseModel
+class OBJModel : public BaseModel
 	{
 	protected:
 		std::vector<Vector3d> verts,normals,tangents;
 		std::vector<Vector2d> texcoords;
-		std::vector<TOBJGroup> groups;
+		std::vector<OBJGroup> groups;
 		// GLuint completerenderlist;
 		virtual void Clear();
 		virtual void SmoothSimplify();
@@ -130,24 +130,24 @@ class TOBJModel : public TBaseModel
 	public:
 		virtual void DrawGroup(int g);
 		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader);
-		virtual bool LoadFromFile(TCuboFile *finfo);
+		virtual bool LoadFromFile(CuboFile *finfo);
 		// virtual void RenderAll();
 		virtual void RenderByDef(int defindex);
 	};
 
 
-class TModelServer
+class ModelServer
 	{
 	protected:
-		std::vector<TBaseModel*> mdls;
+		std::vector<BaseModel*> mdls;
 		virtual int GetModel(std::string fname);
 	public:
 		virtual void Clear();
-		TModelServer();
+		ModelServer();
 		void Reload();
-		virtual ~TModelServer();
-		virtual int AddOBJ(TCuboFile *finfo);
-		virtual TBaseModel *GetModelPtr(int i) {return mdls[i];}
+		virtual ~ModelServer();
+		virtual int AddOBJ(CuboFile *finfo);
+		virtual BaseModel *GetModelPtr(int i) {return mdls[i];}
 	};
 
 extern void LUA_MDLDEF_RegisterLib();

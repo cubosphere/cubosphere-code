@@ -38,7 +38,7 @@ if not, see <http://www.gnu.org/licenses/>.
 CuboConsole* CuboConsole::GetInstance() { // TODO: return reference instead
 	static CuboConsole console;
 	return &console;
-}
+	}
 
 int CuboConsole::Toggle()
 	{
@@ -71,7 +71,7 @@ CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  s
 
 void CuboConsole::Init()
 	{
-	TCuboFile * cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
+	CuboFile * cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
 	lua.Include(g_CuboLib());
 	if (cscript)
 			{
@@ -79,7 +79,7 @@ void CuboConsole::Init()
 			c[cscript->GetSize()]='\0';
 			std::vector<std::string> lines;
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
-			for (unsigned int i=0; i<lines.size(); i++) if (lines[i]!="") ParseCmdLine(lines[i]);
+			for (unsigned int i=0; i<lines.size(); i++) if (lines[i]!="") { ParseCmdLine(lines[i]); }
 			delete cscript;
 			}
 	}
@@ -95,7 +95,7 @@ void CuboConsole::AddLine(std::string s,int typ)
 			if (lines.size()<CUBO_CONSOLE_MAX_LINES) { lines.push_back(toks[i]); types.push_back(typ); if (scrolloffs) scrolloffs++;}
 			else {
 					currentline++;
-					if (currentline>=(int)lines.size()) currentline=0;
+					if (currentline>=(int)lines.size()) { currentline=0; }
 					lines[currentline]=toks[i];
 					types[currentline]=typ;
 					}
@@ -118,7 +118,7 @@ int CuboConsole::CheckBindKey(int ident,int down,int toggle)
 			{
 			if (ident==binds[i].k)
 					{
-					if (down && toggle) ParseCmdLine(binds[i].cmd);
+					if (down && toggle) { ParseCmdLine(binds[i].cmd); }
 					return 1;
 					}
 			}
@@ -140,10 +140,10 @@ int CuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 			binds.erase(binds.begin()+bindex);
 			}
 	else {
-			if (bindex==-1) bindex=binds.size(); binds.push_back(ConsoleBinding());
+			if (bindex==-1) { bindex=binds.size(); } binds.push_back(ConsoleBinding());
 			std::string cmd="";
 
-			for (unsigned int i=1; i<extratoks.size(); i++) cmd+=extratoks[i]+" ";
+			for (unsigned int i=1; i<extratoks.size(); i++) { cmd+=extratoks[i]+" "; }
 
 			// ostringstream oss; oss << "Hallo: " << cmd << " key: " << k << "  index " << bindex << endl;
 			// coutlog(oss.str());
@@ -156,8 +156,8 @@ int CuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
 void CuboConsole::ParseCmdLine(std::string cmdl)
 	{
 	std::string cmdline=history.back();
-	if (cmdl!="") cmdline=cmdl;
-	else hisindex=0;
+	if (cmdl!="") { cmdline=cmdl; }
+	else { hisindex=0; }
 
 	TrimSpaces(cmdline);
 
@@ -182,7 +182,7 @@ void CuboConsole::ParseCmdLine(std::string cmdl)
 
 
 			std::string cmdlinepart=parts[p];
-			if (cmdl=="") coutlog(cmdlinepart,3);
+			if (cmdl=="") { coutlog(cmdlinepart,3); }
 
 
 			std::vector<std::string> toks;
@@ -192,7 +192,7 @@ void CuboConsole::ParseCmdLine(std::string cmdl)
 
 			int validcmd=1;
 
-			if (cmdlinepart=="quit" || cmdlinepart=="exit")  g_Game()->Quit();
+			if (cmdlinepart=="quit" || cmdlinepart=="exit") { g_Game()->Quit(); }
 
 			else if (toks[0]=="lua") {
 					std::string s=""; for (unsigned int i=1; i<toks.size(); i++) s+=(toks[i]+" "); lua.ExecString(s);
@@ -201,65 +201,66 @@ void CuboConsole::ParseCmdLine(std::string cmdl)
 
 			else if (toks[0]=="userlevel") {
 					if (toks.size()>1) {
-							if (g_Game()->StartLevel(toks[1],1)) was_mouse_snapped=0;
+							if (g_Game()->StartLevel(toks[1],1)) { was_mouse_snapped=0; }
 							}
 					}
 			else if (toks[0]=="level") {
 					if (toks.size()>1) {
-							if (g_Game()->StartLevel(toks[1],0)) was_mouse_snapped=0;
+							if (g_Game()->StartLevel(toks[1],0)) { was_mouse_snapped=0; }
 							}
 					}
 			else if (toks[0]=="edit") {
-					if (toks.size()>1)
-						g_Game()->StartLevel(toks[1],2);
-					else if (g_Game()->StartLevel("",2)) was_mouse_snapped=1;
+					if (toks.size()>1) {
+							g_Game()->StartLevel(toks[1],2);
+							}
+					else if (g_Game()->StartLevel("",2)) { was_mouse_snapped=1; }
 					}
 			else if (toks[0]=="bind") {
-					if (!Bind(extratoks,0)) validcmd=2;
+					if (!Bind(extratoks,0)) { validcmd=2; }
 					}
 			else if (toks[0]=="unbind") {
-					if (!Bind(extratoks,1)) validcmd=2;
+					if (!Bind(extratoks,1)) { validcmd=2; }
 					}
 			else if (toks[0]=="lsvars") {
-					if (!extratoks.size()) g_Vars()->ListToConsole();
+					if (!extratoks.size()) { g_Vars()->ListToConsole(); }
 					else {
 							std::string what=extratoks[0];
-							if (extratoks.size()<2) coutlog("need an index: "+cmdline,2);
+							if (extratoks.size()<2) { coutlog("need an index: "+cmdline,2); }
 							else {
 									std::istringstream iss(extratoks[1]); int index; iss >> index;
-									if (index<0) coutlog("index negative: "+extratoks[1],2);
+									if (index<0) { coutlog("index negative: "+extratoks[1],2); }
 									else {
 											if (what=="actor") {
-													if (index>=g_Game()->GetNumActors()) coutlog("index out of bounds: "+extratoks[1],2);
+													if (index>=g_Game()->GetNumActors()) { coutlog("index out of bounds: "+extratoks[1],2); }
 													else {
 															g_Game()->GetActorMovement(index)->GetVarHolder()->ListToConsole();
 															}
 													}
-											else coutlog("unknown type: "+what,2);
+											else { coutlog("unknown type: "+what,2); }
 
 											}
 									}
 							}
 
 					}
-			else validcmd=0;
+			else { validcmd=0; }
 
 
-			if (validcmd==0) coutlog("unknown command: "+cmdline,2);
+			if (validcmd==0) { coutlog("unknown command: "+cmdline,2); }
 
 
 			}
 
 	if (cmdl=="")
 			{
-			if (history.size()>=2 && (history.back()==history[history.size()-2])) history.back()="";
-			else history.push_back("");
+			if (history.size()>=2 && (history.back()==history[history.size()-2])) { history.back()=""; }
+			else { history.push_back(""); }
 			}
 	}
 
 void CuboConsole::KeyHandle(int ident,int down,int toggle)
 	{
-	if ((!toggle) || (!down)) return;
+	if ((!toggle) || (!down)) { return; }
 
 	SDL_keysym sim=g_Game()->GetKeyboard()->GetLastKeySim();
 
@@ -276,19 +277,20 @@ void CuboConsole::KeyHandle(int ident,int down,int toggle)
 
 
 	else if (ident2==SDLK_BACKSPACE) {if (history.back()!="") history.back()=history.back().substr(0,history.back().length()-1);}
-	else if (ident2==SDLK_SPACE) history.back()+=" ";
-	else if (ident2==SDLK_RETURN) ParseCmdLine();
+	else if (ident2==SDLK_SPACE) { history.back()+=" "; }
+	else if (ident2==SDLK_RETURN) { ParseCmdLine(); }
 	else if (ident2==SDLK_UP) {
-			if (hisindex==0) hisbackup=history.back();
+			if (hisindex==0) { hisbackup=history.back(); }
 			hisindex++;
-			if (hisindex>=(int)history.size())
-				hisindex=history.size()-1;
+			if (hisindex>=(int)history.size()) {
+					hisindex=history.size()-1;
+					}
 			history.back()=history[history.size()-1-hisindex];
 			}
 	else if (ident2==SDLK_DOWN && hisindex>0)
 			{	hisindex--;
-			if (hisindex==0) history.back()=hisbackup;
-			else history.back()=history[history.size()-1-hisindex];
+			if (hisindex==0) { history.back()=hisbackup; }
+			else { history.back()=history[history.size()-1-hisindex]; }
 			}
 	else if (sim.unicode >0 && (sim.unicode & 0xFF80) == 0)
 			{
@@ -314,21 +316,21 @@ int CuboConsole::GetLineIndex(int offs)
 	{
 	if (lines.size()>=CUBO_CONSOLE_MAX_LINES)
 			{
-			if (offs>=CUBO_CONSOLE_MAX_LINES) return -1;
+			if (offs>=CUBO_CONSOLE_MAX_LINES) { return -1; }
 			return (currentline+lines.size()-offs) % lines.size();
 
 			}
 	else
 			{
 			int pos=lines.size()-1-offs;
-			if (pos<0) return -1;
-			else return pos;
+			if (pos<0) { return -1; }
+			else { return pos; }
 			}
 	}
 
 void CuboConsole::Render()
 	{
-	if ((!isactive) && lowerline_ypos>=0.5) return;
+	if ((!isactive) && lowerline_ypos>=0.5) { return; }
 
 	if (isactive==false)  {
 			lowerline_ypos+=0.2;
@@ -339,7 +341,7 @@ void CuboConsole::Render()
 
 			}
 
-	if (g_Game()->GetFont()->GetFontName()=="") return;
+	if (g_Game()->GetFont()->GetFontName()=="") { return; }
 	glMatrixMode(GL_PROJECTION);								// Select Projection
 	glPushMatrix();												// Push The Matrix
 	glLoadIdentity();											// Reset The Matrix
@@ -411,9 +413,9 @@ void CuboConsole::Render()
 	for (int c=0; c<screenlines; c++)
 			{
 			float ypos=lowerline_ypos+(c+1.5)*linkrement;
-			if (ypos>0.5) break;
+			if (ypos>0.5) { break; }
 			int lindex=GetLineIndex(c+scrolloffs);
-			if (lindex<0) break;
+			if (lindex<0) { break; }
 			g_Game()->GetFont()->Goto(-0.495,ypos);
 			switch (types[lindex])
 					{

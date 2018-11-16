@@ -27,9 +27,9 @@ if not, see <http://www.gnu.org/licenses/>.
 std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
 	{
 	auto p2 = Src.find_last_not_of(c);
-	if (p2 == std::string::npos) return std::string();
+	if (p2 == std::string::npos) { return std::string(); }
 	auto p1 = Src.find_first_not_of(c);
-	if (p1 == std::string::npos) p1 = 0;
+	if (p1 == std::string::npos) { p1 = 0; }
 	return Src.substr(p1, (p2-p1)+1);
 	}
 

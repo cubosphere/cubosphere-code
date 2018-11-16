@@ -31,7 +31,7 @@ class BaseLuaDef
 	protected:
 		std::string name;
 		std::string fname;
-		TLuaAccess lua;
+		LuaAccess lua;
 		int isloaded;
 		int myid;
 		virtual int SendIDWhenPrecache() {return 0;}
@@ -63,17 +63,17 @@ template<typename T> class BaseDefServer
 			}
 		int GetDef(std::string name)
 			{
-			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) return (i);
+			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) { return (i); }
 			return -1;
 			}
 		void Reload()
 			{
-			for (unsigned int i=0; i<defs.size(); i++) defs[i]->Reload();
+			for (unsigned int i=0; i<defs.size(); i++) { defs[i]->Reload(); }
 			}
 		int AddDef(std::string name)
 			{
 			int def=GetDef(name);
-			if (def>-1) return def; //Have it already
+			if (def>-1) { return def; } //Have it already
 			defs.push_back(new T());
 			defs.back()->SetName(name);
 			def=defs.size()-1;
@@ -86,14 +86,14 @@ template<typename T> class BaseDefServer
 
 ////////////////////////////////////
 
-class TMenu : public BaseLuaDef
+class Menu : public BaseLuaDef
 	{
 	protected:
 		int change;
 		std::string nextname;
 	public:
 		virtual int GetType() {return FILE_MENUDEF;}
-		TMenu() : BaseLuaDef(), change(0) {};
+		Menu() : BaseLuaDef(), change(0) {};
 		virtual void LoadDef(std::string cname);
 		// virtual void Reload();
 		void Render();

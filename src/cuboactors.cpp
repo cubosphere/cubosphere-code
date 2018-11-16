@@ -25,7 +25,7 @@ if not, see <http://www.gnu.org/licenses/>.
 void CuboPlayer::AddActor(int i)
 	{
 
-	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) return ; actorids.push_back(i);
+	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) { return ; } actorids.push_back(i);
 	g_Game()->GetActorMovement(actorids.back())->SetPlayer(id);
 	}
 
@@ -42,10 +42,12 @@ void CuboPlayer::CamMove(int newactor)
 			lastact=activeact;
 			//Prepare the matrices for the camera movement
 
-			if (!InCameraPan())
-				g_Game()->GetActorMovement(actorids[activeact])->SetCamPos(&old_mo);
-			else
-				SetCameraPos(0,&old_mo);
+			if (!InCameraPan()) {
+					g_Game()->GetActorMovement(actorids[activeact])->SetCamPos(&old_mo);
+					}
+			else {
+					SetCameraPos(0,&old_mo);
+					}
 
 			caminterpolation=0;
 			g_Game()->GetActorMovement(actorids[newactor])->SetCamPos(&new_mo);
@@ -73,8 +75,8 @@ int CuboPlayer::SelectActor(int actorind)
 	{
 	int found=-1;
 	for (unsigned int i=0; i<actorids.size(); i++) if (actorids[i]==actorind)  {found=i; break;}
-	if (found==-1) return -1;
-	if (activeact==found) return 0;
+	if (found==-1) { return -1; }
+	if (activeact==found) { return 0; }
 	CamMove(found); return 1;
 	}
 
@@ -85,7 +87,7 @@ void CuboPlayer::SetCameraPos(float elapsed,MatrixObject *cam)
 	float l=caminterpolation+elapsed*camspeed;
 
 
-	if (l>1) l=1;
+	if (l>1) { l=1; }
 	auto pos=old_mo.getPos()*(1.0-l); auto npos=new_mo.getPos()*l;
 	pos=pos+npos;
 	cam->setPos(pos);
@@ -108,7 +110,7 @@ void BaseIdentity(TBasis *res)
 
 void BaseCp(TBasis *from,TBasis *to)
 	{
-	for (int i=0; i<3; i++) (*to)[i]=(*from)[i];
+	for (int i=0; i<3; i++) { (*to)[i]=(*from)[i]; }
 	}
 
 void BaseDiscretize(TBasis *b)
@@ -144,7 +146,7 @@ std::string TCuboMovement::GetEditorInfo(std::string what,std::string def)
 
 TCuboMovement::~TCuboMovement()
 	{
-	if (player>=0) g_Game()->GetPlayer(player)->RemoveActor(this->id);
+	if (player>=0) { g_Game()->GetPlayer(player)->RemoveActor(this->id); }
 	}
 
 Vector3d TCuboMovement::AtBlockPos(CuboBlock *b,int s)
@@ -163,7 +165,7 @@ int TCuboMovement::DirVectToSide(Vector3d dirvect)
 	for (int i=0; i<6; i++)
 			{	Vector3d kn;
 			kn=s_CuboNormals[i];
-			if ((kn*n)>0.5) return i;
+			if ((kn*n)>0.5) { return i; }
 			}
 	return -1;
 	}
@@ -270,8 +272,8 @@ void TCuboMovement::SpecialRender(std::string nam,int defrender)
 	if (  g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_SpecialRender(nam,id)) {}
 	else
 			{
-			if (defrender==1) Render();
-			else if (defrender==0 && g_PostEffect())  g_PostEffect()->CallDefaultSpecialRender(nam,"actor",id);
+			if (defrender==1) { Render(); }
+			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"actor",id); }
 			}
 	}
 
@@ -320,13 +322,13 @@ void TCuboMovement::SendJoyButton(int stick,int button,int dir,int down,int togg
 
 int TCuboMovement::GetJumpDistBlocks()
 	{
-	if (!inAir) return 0;
+	if (!inAir) { return 0; }
 	return (int)((j_desdist-j_dist)/(2*CUBO_SCALE));
 	}
 
 void TCuboMovement::SetJumpDistBlocks(int d)
 	{
-	if (!inAir) return;
+	if (!inAir) { return; }
 	j_desdist=(((int)((j_dist+d*2*CUBO_SCALE)/(2*CUBO_SCALE))))*2*CUBO_SCALE;
 	}
 
@@ -336,13 +338,13 @@ CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,Vector3d dir)
 	}
 CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,int side)
 	{
-	if (!b) return NULL;
+	if (!b) { return NULL; }
 	return b->GetNext(side);
 	}
 
 int TCuboMovement::MayMove(int typ)
 	{
-	if (!BlockUnderMe) return 1;
+	if (!BlockUnderMe) { return 1; }
 	std::string typstr=s_CuboMoveStringsDir[typ];
 	return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_MayMove(id,typstr);
 	}
@@ -367,14 +369,14 @@ void TCuboMovement::MoveForward()
 							j_dist=0;
 							return ;
 							}
-					else return;
+					else { return; }
 					}
 			else {
 					//  if ((inmove!=CUBO_MOVE_ROTATE_LEFT && inmove!=CUBO_MOVE_ROTATE_RIGHT) || moveInterpolate<0.95 )
 					return;
 					}
 			}
-	if (movementcheck && (!MayMove(CUBO_MOVE_AHEAD))) return;
+	if (movementcheck && (!MayMove(CUBO_MOVE_AHEAD))) { return; }
 	//First check, if we can roll "up"
 	Vector3d checkvect;
 	checkvect=onBlock->GetPos();
@@ -476,12 +478,12 @@ void TCuboMovement::MoveForward()
 
 void TCuboMovement::RotateLeft()
 	{
-	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) return;
-	if (!MayMove(CUBO_MOVE_ROTATE_LEFT)) return;
+	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) { return; }
+	if (!MayMove(CUBO_MOVE_ROTATE_LEFT)) { return; }
 
 	if (lastmove==CUBO_MOVE_ROTATE_LEFT)
 			{
-			if (rotatestoptime>0)  return ;
+			if (rotatestoptime>0) { return ; }
 			}
 
 	BaseCp(&base,&oldbase);
@@ -510,12 +512,12 @@ void TCuboMovement::RotateLeft()
 
 void TCuboMovement::RotateRight()
 	{
-	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) return;
-	if (!MayMove(CUBO_MOVE_ROTATE_RIGHT)) return;
+	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) { return; }
+	if (!MayMove(CUBO_MOVE_ROTATE_RIGHT)) { return; }
 
 	if (lastmove==CUBO_MOVE_ROTATE_RIGHT)
 			{
-			if (rotatestoptime>0)  return ;
+			if (rotatestoptime>0) { return ; }
 			}
 
 	BaseCp(&base,&oldbase);
@@ -551,7 +553,7 @@ void TCuboMovement::AirMove(float elapsed)
 //elapsed*=timemultiplicator;
 	j_flytime+=elapsed;
 	yvel-=elapsed*CUBO_GRAVITY_G;
-	if (yvel<-CUBO_MAX_FALLSPEED) yvel=-CUBO_MAX_FALLSPEED;
+	if (yvel<-CUBO_MAX_FALLSPEED) { yvel=-CUBO_MAX_FALLSPEED; }
 
 
 //Apply yspeed
@@ -623,7 +625,7 @@ void TCuboMovement::AirMove(float elapsed)
 	if ((yvel<0))
 			{
 			falltime+=elapsed;
-			if (falltime>CUBO_FALL_TILL_LOOKDOWN) LookDown();
+			if (falltime>CUBO_FALL_TILL_LOOKDOWN) { LookDown(); }
 			checkpos=base[CUBO_UPV]*(-1*GetRadius());
 			checkpos=pos+checkpos;
 			b=lvl->GetBlockAtPos(checkpos);
@@ -673,12 +675,13 @@ void TCuboMovement::AirMove(float elapsed)
 									BlockUnderMe->Call_OnBlockEvent(id);
 									g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Event(id,"hitground");
 									}
-							if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (lvl->GetCollisionChecksActive() ))
-								BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_OnSideEvent(id);
+							if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (lvl->GetCollisionChecksActive() )) {
+									BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_OnSideEvent(id);
+									}
 							laststaticside=BlockUnderMe->GetBlockSide(BlockSideUnderMe)->GetID();
 							prevSide=laststaticside;
 							}
-					else BlockUnderMe=NULL;
+					else { BlockUnderMe=NULL; }
 					}
 			}
 	else if ((yvel>0))
@@ -755,8 +758,8 @@ void TCuboMovement::FrontSideRebounce()
 
 float clampinterpolation(float in,float ls,float rs)
 	{
-	if (in<ls) return 0;
-	if (in>rs) return 1;
+	if (in<ls) { return 0; }
+	if (in>rs) { return 1; }
 	return (in-ls)/(rs-ls);
 	}
 
@@ -786,23 +789,23 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 
 
-	if (inmove!=CUBO_MOVE_NONE)  lastmove=inmove;
+	if (inmove!=CUBO_MOVE_NONE) { lastmove=inmove; }
 	if (!lookdir)
 			{
 			if (lookpos>0) {
-					if (resetview) lookpos-=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED;
+					if (resetview) { lookpos-=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED; }
 					if (lookpos<0) { lookpos=0; resetview=0;}
 					}
 			else if (lookpos<0)
 					{
-					if (resetview) lookpos+=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED;
+					if (resetview) { lookpos+=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED; }
 					if (lookpos>0) { lookpos=0; resetview=0;}
 					}
 			}
 	else
 			{
 			lookpos+=elapsed*lookdir/tempmovespeedmultiply*CUBO_LOOK_SPEED;
-			if (lookpos*lookdir>1) lookpos=lookdir;
+			if (lookpos*lookdir>1) { lookpos=lookdir; }
 			}
 
 
@@ -830,7 +833,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 							moveInterpolate=0;
 							tempmovespeedmultiply=1;
 							}
-					else if (grav180rot==2) ipos+=0.5;
+					else if (grav180rot==2) { ipos+=0.5; }
 
 					}
 			BaseInterpolate(&oldbase,&newbase,moveInterpolate,&base);
@@ -851,7 +854,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 	forwardpresstime+=abs(elapsed);
 	lateforwardjumptime-=abs(elapsed);
-	if (inmove!=CUBO_MOVE_ROTATE_LEFT && inmove!=CUBO_MOVE_ROTATE_RIGHT) rotatestoptime-=elapsed/tempmovespeedmultiply;
+	if (inmove!=CUBO_MOVE_ROTATE_LEFT && inmove!=CUBO_MOVE_ROTATE_RIGHT) { rotatestoptime-=elapsed/tempmovespeedmultiply; }
 
 
 
@@ -859,7 +862,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	ps=base[CUBO_UPV]*(1.05*(CUBO_GROUND_DIST+CUBO_GROUND_DIST_OFFS));
 	ps=pos-ps;
 	BlockUnderMe=lvl->GetBlockAtPos(ps);
-	if (BlockUnderMe) if ((!BlockUnderMe->Blocking()) && lvl->GetCollisionChecksActive()) BlockUnderMe=NULL;
+	if (BlockUnderMe) if ((!BlockUnderMe->Blocking()) && lvl->GetCollisionChecksActive()) { BlockUnderMe=NULL; }
 	//Call the blocks OnBlockScript
 
 	if (inAir)
@@ -876,8 +879,9 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			relpos=BlockUnderMe->GetPos();
 			relpos=pos-relpos;
 			BlockSideUnderMe=DirVectToSide(relpos);
-			if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (lvl->GetCollisionChecksActive()) )
-				BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_OnSideEvent(id);
+			if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (lvl->GetCollisionChecksActive()) ) {
+					BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_OnSideEvent(id);
+					}
 			laststaticside=BlockUnderMe->GetBlockSide(BlockSideUnderMe)->GetID();
 
 			}
@@ -956,7 +960,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 
 
-	if (!inAir) falltime=0;
+	if (!inAir) { falltime=0; }
 
 	if (moveInterpolate>1 || moveInterpolate<0)
 			{
@@ -1037,7 +1041,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 					pos=pos+p1;
 					}
 			float btborder=0.15;
-			if (inmove==CUBO_MOVE_DOWN) bt=clampinterpolation(bt,btborder,1-btborder);
+			if (inmove==CUBO_MOVE_DOWN) { bt=clampinterpolation(bt,btborder,1-btborder); }
 			}
 	else
 			{
@@ -1062,11 +1066,12 @@ int TCuboMovement::GetOnSideID()
 	{
 	if (BlockUnderMe)
 			{
-			if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (!inAir))
-				return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->GetID();
-			else return -1;
+			if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (!inAir)) {
+					return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->GetID();
+					}
+			else { return -1; }
 			}
-	else return -1;
+	else { return -1; }
 	}
 
 int TCuboMovement::GetPrevOnSideID()
@@ -1091,18 +1096,18 @@ int TCuboMovement::TraceOnSideID()
 			Vector3d d=base[CUBO_UPV]*(-1.0);
 			tr=g_Game()->GetLevel()->TraceLine(pos,d,1);
 
-			if (!tr.hit) return -1;
-			else return tr.side+tr.block*6;
+			if (!tr.hit) { return -1; }
+			else { return tr.side+tr.block*6; }
 			}
-	else return -1;
+	else { return -1; }
 	}
 
 
 void TCuboMovement::SetCamParams(std::string what,Vector3d params)
 	{
-	if (what=="normal") camfloats=params;
-	else if (what=="lookup") lookupfloats=params;
-	else if (what=="lookdown") lookdownfloats=params;
+	if (what=="normal") { camfloats=params; }
+	else if (what=="lookup") { lookupfloats=params; }
+	else if (what=="lookdown") { lookdownfloats=params; }
 	}
 
 void TCuboMovement::SetCamZRotation(float zr,int mirror)
@@ -1124,9 +1129,9 @@ void TCuboMovement::SetCamPos(MatrixObject *cam)
 
 
 	float lookup=0;
-	if (lookpos>0) lookup=lookpos;
+	if (lookpos>0) { lookup=lookpos; }
 	float lookdown=0;
-	if (lookpos<0) lookdown=-lookpos;
+	if (lookpos<0) { lookdown=-lookpos; }
 
 	float f=1-lookup-lookdown;
 	Vector3d cp=camfloats*f;
@@ -1172,21 +1177,21 @@ void TCuboMovement::Rebounce(TCuboMovement *other)
 	double proj=diff*this->GetUp();
 	double h=other->GetRadius()-this->GetRadius()+proj;
 	double disc=CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL-2*CUBO_GRAVITY_G*h;
-	if (disc<0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL) disc=0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL;
+	if (disc<0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL) { disc=0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL; }
 	yvel=sqrt(disc);
 	j_heightoverground=h;
 	//dvel=CUBO_JUMP_DIRVEL;
 	BaseCp(&oldbase,&newbase);
-	if (inmove==CUBO_MOVE_DOWN) BaseCp(&oldbase,&base);
+	if (inmove==CUBO_MOVE_DOWN) { BaseCp(&oldbase,&base); }
 	BaseCp(&oldbase,&base);
 	oldpos=pos;
 	}
 
 void TCuboMovement::FarJump()
 	{
-	if (inAir) return;
+	if (inAir) { return; }
 	inhighjump=0;
-	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) return;
+	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) { return; }
 
 	if (!MayMove(CUBO_MOVE_JUMP_FAR)) {  return; }
 
@@ -1209,7 +1214,7 @@ void TCuboMovement::FarJump()
 	yvel=CUBO_FARJUMP_UPVEL;
 	//dvel=CUBO_JUMP_DIRVEL;
 	BaseCp(&oldbase,&newbase);
-	if (inmove==CUBO_MOVE_DOWN) BaseCp(&oldbase,&base);
+	if (inmove==CUBO_MOVE_DOWN) { BaseCp(&oldbase,&base); }
 	BaseCp(&oldbase,&base);
 	oldpos=pos;
 
@@ -1218,8 +1223,8 @@ void TCuboMovement::FarJump()
 
 void TCuboMovement::HighJump()
 	{
-	if (inAir) return;
-	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) return;
+	if (inAir) { return; }
+	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) { return; }
 	inmove=CUBO_MOVE_JUMP_AHEAD; jumptype="highjump"; Call_ChangeMove(); //TODO: Add a new movetype for farjumping
 	j_desdist=distance_highjump*2*CUBO_SCALE;
 	j_heightoverground=0;
@@ -1239,7 +1244,7 @@ void TCuboMovement::HighJump()
 	yvel=CUBO_HIGHJUMP_UPVEL;
 	//dvel=CUBO_JUMP_DIRVEL;
 	BaseCp(&oldbase,&newbase);
-	if (inmove==CUBO_MOVE_DOWN) BaseCp(&oldbase,&base);
+	if (inmove==CUBO_MOVE_DOWN) { BaseCp(&oldbase,&base); }
 	BaseCp(&oldbase,&base);
 	oldpos=pos;
 	inhighjump=1;
@@ -1248,7 +1253,7 @@ void TCuboMovement::HighJump()
 
 int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespeed,int do_at_same_gravity)
 	{
-	if (inmove==CUBO_MOVE_GRAVITY_CHANGE) return -1;
+	if (inmove==CUBO_MOVE_GRAVITY_CHANGE) { return -1; }
 	//Test the change
 
 	newgrav.normalize();
@@ -1258,10 +1263,11 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 	double dot=newgrav*tb[CUBO_UPV];
 	if (dot<-0.8)
 			{
-			if (do_at_same_gravity==0)
-				return 5;
+			if (do_at_same_gravity==0) {
+					return 5;
+					}
 			}
-	else do_at_same_gravity=0;
+	else { do_at_same_gravity=0; }
 
 	onBlock=NULL;
 	BlockSideUnderMe=0;
@@ -1278,8 +1284,8 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 	dvel=0;
 	yvel=0;
 	gravitychangespeed=changespeed;
-	if (gravitychangespeed<0) gravitychangespeed*=-1;
-	else if (gravitychangespeed==0) gravitychangespeed=0.0001;
+	if (gravitychangespeed<0) { gravitychangespeed*=-1; }
+	else if (gravitychangespeed==0) { gravitychangespeed=0.0001; }
 
 	inmove=CUBO_MOVE_GRAVITY_CHANGE;
 	Call_ChangeMove();
@@ -1323,15 +1329,15 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 
 void TCuboMovement::Jump()
 	{
-	if (inAir) return;
+	if (inAir) { return; }
 	inhighjump=0;
 	//We have to check, if we are moving
 	if ((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))
 		//forward jump
 			{
-			if  (forwardpresstime>FORWARD_PRESS_TIME_JUMP) return; //Too late to jump;
+			if  (forwardpresstime>FORWARD_PRESS_TIME_JUMP) { return; } //Too late to jump;
 
-			if (!MayMove(CUBO_MOVE_JUMP_AHEAD)) return;
+			if (!MayMove(CUBO_MOVE_JUMP_AHEAD)) { return; }
 
 			inmove=CUBO_MOVE_JUMP_AHEAD; jumptype="jumpforward"; Call_ChangeMove();
 			j_desdist=distance_normjump*2*CUBO_SCALE;
@@ -1352,13 +1358,13 @@ void TCuboMovement::Jump()
 			yvel=CUBO_JUMP_UPVEL;
 			//dvel=CUBO_JUMP_DIRVEL;
 			BaseCp(&oldbase,&newbase);
-			if (inmove==CUBO_MOVE_DOWN) BaseCp(&oldbase,&base);
+			if (inmove==CUBO_MOVE_DOWN) { BaseCp(&oldbase,&base); }
 			BaseCp(&oldbase,&base);
 			oldpos=pos;
 			}
 	else if (inmove==CUBO_MOVE_NONE)
 			{
-			if (!MayMove(CUBO_MOVE_JUMP_UP)) return;
+			if (!MayMove(CUBO_MOVE_JUMP_UP)) { return; }
 
 			if (forwardpresstime!=1000)
 				if (MayMove(CUBO_MOVE_JUMP_AHEAD)) {lateforwardjumptime=LATE_FORWARD_JUMP_TIME;}
@@ -1405,7 +1411,7 @@ std::string TCuboMovement::GetMoveType()
 
 void TCuboMovement::LookUp()
 	{
-	if (lookdir>=0) lookdir=1;
+	if (lookdir>=0) { lookdir=1; }
 	resetview=0;
 	}
 
@@ -1472,7 +1478,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 int ActorDefServer::AddEDef(std::string name)
 	{
 	int def=GetDef(name,0);
-	if (def>-1) return def; //Have it already
+	if (def>-1) { return def; } //Have it already
 	defs.push_back(new EnemyDef());
 	defs.back()->SetName(name);
 	def=defs.size()-1;
@@ -1483,7 +1489,7 @@ int ActorDefServer::AddEDef(std::string name)
 
 int ActorDefServer::GetDef(std::string name,int forplayer)
 	{
-	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) return (i);
+	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) { return (i); }
 	return -1;
 	}
 

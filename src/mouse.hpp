@@ -40,30 +40,30 @@ if not, see <http://www.gnu.org/licenses/>.
 #define NUM_BUTTONS 6
 
 // BUTTON, CLICK OR RELEASE, x,y
-using TMouseButtonFunc = void(*)(int,int,int,int);
+using MouseButtonFunc = void(*)(int,int,int,int);
 
-using TMouseButton = struct
+using MouseButton = struct
 	{
 	int pressed;
 	int lastx,lasty,relx,rely;
 	};
 
-class TMouse
+class Mouse
 	{
 	protected:
 		int snapping;
 		int x,y,dx,dy,WarpMode;
-		TMouseButtonFunc buttonfunc;
-		TMouseButton buttons[NUM_BUTTONS];
+		MouseButtonFunc buttonfunc;
+		MouseButton buttons[NUM_BUTTONS];
 	public:
 		void Initialize();
 		void BeginDispatch(); //Set the Relative motion to 0
 		void HandleMotion(int cx, int cy, int cpassive);
 		void CenterPointer();
 		void SetCursor(int curs);
-		void SetButtonHandler(TMouseButtonFunc f);
+		void SetButtonHandler(MouseButtonFunc f);
 		void HandleClick(int butt,int press,int x,int y);
-		TMouseButton GetButton(int i);
+		MouseButton GetButton(int i);
 		Vector2d getRelativeMotion();
 		void DispatchEvent(SDL_Event *ev);
 		void Snap(int active);

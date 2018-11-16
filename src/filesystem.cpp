@@ -60,9 +60,9 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 static void clsFileErrorLog(std::string msg, const int t)
 	{
-	if (t==CLS_FILE_ERROR_TYPE_ERROR) msg="ERROR: "+msg;
-	else if (t==CLS_FILE_ERROR_TYPE_WARNING) msg="WARNING: "+msg;
-	else if (t==CLS_FILE_ERROR_TYPE_CRITICAL) msg="CRITICAL ERROR: "+msg;
+	if (t==CLS_FILE_ERROR_TYPE_ERROR) { msg="ERROR: "+msg; }
+	else if (t==CLS_FILE_ERROR_TYPE_WARNING) { msg="WARNING: "+msg; }
+	else if (t==CLS_FILE_ERROR_TYPE_CRITICAL) { msg="CRITICAL ERROR: "+msg; }
 	coutlog(msg,(t==CLS_FILE_ERROR_TYPE_WARNING ? 2 : 1));
 	}
 
@@ -81,7 +81,7 @@ std::ofstream * logufiles;
 bool cls_DirectoryExists(const std::string d)
 	{
 	DIR  *dip;
-	if ((dip = opendir(d.c_str())) == NULL) return false;
+	if ((dip = opendir(d.c_str())) == NULL) { return false; }
 	else { closedir(dip); return true; }
 	}
 
@@ -97,22 +97,26 @@ int globMatch(const char * pattern, const char * text)
 					case '*':
 						while(*text) {
 								int rc = globMatch(pattern, text++);
-								if(rc != MATCH_FAIL)
-									return rc;
+								if(rc != MATCH_FAIL) {
+										return rc;
+										}
 								}
 						return MATCH_FAIL;
 					case '\\':
-						if((p = *pattern++) == 0)
-							return MATCH_ERROR;
-						if(p != *text++)
-							return MATCH_FAIL;
+						if((p = *pattern++) == 0) {
+								return MATCH_ERROR;
+								}
+						if(p != *text++) {
+								return MATCH_FAIL;
+								}
 						break;
 					case '?':
 						text++;
 						break;
 					default:
-						if(p != *text++)
-							return MATCH_FAIL;
+						if(p != *text++) {
+								return MATCH_FAIL;
+								}
 					}
 			}
 	return ((*pattern == 0) && (*text == 0))? MATCH_SUCCESS: MATCH_FAIL;
@@ -145,8 +149,8 @@ bool winfnmatch(std::string pattern,std::string curr)
 cls_FileBaseClass::cls_FileBaseClass(const std::string bnam,const std::string dnam) :  dirname(dnam), basename(bnam)
 	{
 	std::string ps=CLS_PATH_SEPARATOR; int psl=ps.length();
-	if (dirname=="") dirname=CLS_PATH_SEPARATOR;
-	else if (dirname.substr(dirname.length()-psl,psl)!=CLS_PATH_SEPARATOR) dirname=dirname+CLS_PATH_SEPARATOR;
+	if (dirname=="") { dirname=CLS_PATH_SEPARATOR; }
+	else if (dirname.substr(dirname.length()-psl,psl)!=CLS_PATH_SEPARATOR) { dirname=dirname+CLS_PATH_SEPARATOR; }
 	}
 
 
@@ -176,7 +180,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable
 
 		virtual void * GetData(const int binary=1) const
 			{
-			if (data) return data;
+			if (data) { return data; }
 			FILE *pFile=fopen(fname.c_str(),(binary ? "rb" : "r"));
 			if (!pFile) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			fseek (pFile, 0, SEEK_END);
@@ -224,7 +228,7 @@ class cls_FileDirMountedForWriting : public cls_FileWriteable
 
 		virtual bool Delete() const
 			{
-			if( remove(fname.c_str() ) != 0 ) return false;
+			if( remove(fname.c_str() ) != 0 ) { return false; }
 			return true;
 			}
 //  virtual void Open(const int binary) {   }  //TODO: Implement
@@ -258,7 +262,7 @@ class cls_FileZipMountedForReading : public cls_FileReadable
 
 		virtual void * GetData(const int binary=1) const
 			{
-			if (data) return data;
+			if (data) { return data; }
 			data=malloc(sizeof(char)*(size+1));
 			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			JumpToZipItem(hz,index,cdi);
@@ -286,8 +290,8 @@ class cls_FileSubSystemBase
 
 		bool IsInMountBaseScope(const std::vector<std::string> & elems) const
 			{
-			if (elems.size()<mountbase.size()) return false;
-			for (unsigned int i=0; i<mountbase.size(); i++) if (mountbase[i]!=elems[i]) return false;
+			if (elems.size()<mountbase.size()) { return false; }
+			for (unsigned int i=0; i<mountbase.size(); i++) if (mountbase[i]!=elems[i]) { return false; }
 			return true;
 			}
 	public:
@@ -301,21 +305,21 @@ class cls_FileSubSystemBase
 
 		virtual cls_FileReadable * GetFileForReading(const std::vector<std::string> & elems, int & denied) const
 			{
-			if (!IsInMountBaseScope(elems)) return NULL;
+			if (!IsInMountBaseScope(elems)) { return NULL; }
 			return virtGetFileForReading(elems,denied);
 			}
 
 		virtual cls_FileWriteable * GetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirs, int & denied) const
 			{
-			if (!IsInMountBaseScope(elems)) return NULL;
+			if (!IsInMountBaseScope(elems)) { return NULL; }
 			denied=1;
 			return virtGetFileForWriting(elems,autocreatedirs);
 			}
 
 		virtual bool DirExists(const std::vector<std::string> & elems, int & denied) const
 			{
-			if (!IsInMountBaseScope(elems)) return false;
-			if (IsWriteable()) denied=1;
+			if (!IsInMountBaseScope(elems)) { return false; }
+			if (IsWriteable()) { denied=1; }
 			return true;
 			}
 
@@ -341,13 +345,13 @@ class cls_FileMountStackMaskEntry
 		void SetMode(const int m) {if (m==CLS_FILE_MASK_UNSET) mode=m; else mode=(m | CLS_FILE_MASK_SET);}
 		cls_FileMountStackMaskEntry * GetSubEntry(const std::string s)
 			{
-			for (unsigned int i=0; i<names.size(); i++) if (names[i]==s) return  subs[i];
+			for (unsigned int i=0; i<names.size(); i++) if (names[i]==s) { return  subs[i]; }
 			return NULL;
 			}
 		cls_FileMountStackMaskEntry * AddSubEntry(const std::string n)
 			{
 			cls_FileMountStackMaskEntry *res=GetSubEntry(n);
-			if (res) return res;
+			if (res) { return res; }
 			names.push_back(n);
 			subs.push_back(new cls_FileMountStackMaskEntry());
 			return subs.back();
@@ -376,9 +380,9 @@ class cls_FileMountStackMask : public cls_FileSubSystemBase
 			for (unsigned int i=0; i<elems.size(); i++)
 					{
 					fe=fe->GetSubEntry(elems[i]);
-					if (!fe) return resumode;
+					if (!fe) { return resumode; }
 					thismode=fe->GetMode();
-					if ( (thismode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_RECURSIVE)) == (CLS_FILE_MASK_SET | CLS_FILE_MASK_RECURSIVE)  ) resumode=thismode;
+					if ( (thismode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_RECURSIVE)) == (CLS_FILE_MASK_SET | CLS_FILE_MASK_RECURSIVE)  ) { resumode=thismode; }
 					}
 			return thismode;
 			}
@@ -395,7 +399,7 @@ class cls_FileMountStackMask : public cls_FileSubSystemBase
 	protected:
 		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
 			int mode=GetMode(elems);
-			if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)) == (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)  ) denied=1;
+			if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)) == (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)  ) { denied=1; }
 			return NULL;
 			}
 		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {return NULL;}
@@ -431,17 +435,17 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 			while ((error) && (dirindex>=0))
 					{
 					testname=ds[0];
-					for (int j=1; j<dirindex; j++) testname=testname+CLS_PATH_SEPARATOR_SYS+ds[j];
+					for (int j=1; j<dirindex; j++) { testname=testname+CLS_PATH_SEPARATOR_SYS+ds[j]; }
 #ifdef WIN32
 					error=mkdir(testname.c_str());
 #else
 					int mode=0755; //The creation mode for Unix
 					error=mkdir(testname.c_str(),mode);
 #endif
-					if (!error) break;
+					if (!error) { break; }
 					dirindex--;
 					}
-			if (error) return false; //FAIL
+			if (error) { return false; } //FAIL
 			for (unsigned int i=dirindex; i<ds.size(); i++)
 					{
 					testname=testname+CLS_PATH_SEPARATOR_SYS+ds[i];
@@ -451,7 +455,7 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 					int mode=0755; //The creation mode for Unix
 					error=mkdir(testname.c_str(),mode);
 #endif
-					if (error) return false; //FAIL
+					if (error) { return false; } //FAIL
 					}
 			return true;
 			}
@@ -466,20 +470,20 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 			{
 			//Mountpoint is already checked, thus check the existance of the Dir, where we like to write into
 			std::string sname="";
-			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i];
+			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) { sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i]; }
 			std::string f=baseOnHD+sname;
 			DIR  *dip;
 			if ((dip = opendir(f.c_str())) == NULL) {
-					if (!autocreatedirs) return NULL; //No creation of this dir
+					if (!autocreatedirs) { return NULL; } //No creation of this dir
 					if (!RecursiveMkDir(f)) {
 							CLS_FILE_ERROR("(("+f+")) cannot be created, when try to open (("+(f+CLS_PATH_SEPARATOR_SYS+elems.back())+"))  with autocreate-dirs",CLS_FILE_ERROR_TYPE_ERROR);
 							return NULL;
 							}
 					}
-			else closedir(dip);
+			else { closedir(dip); }
 			f=f+CLS_PATH_SEPARATOR_SYS+elems.back(); //This is the filename on HDD
 			std::string dname="";
-			for (unsigned int i=0; i+1<elems.size(); i++) dname=dname+CLS_PATH_SEPARATOR+elems[i];
+			for (unsigned int i=0; i+1<elems.size(); i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
 			return new cls_FileDirMountedForWriting(elems.back(),dname,f);
 			}
 
@@ -487,10 +491,10 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const
 			{
 			std::string sname="";
-			for (unsigned int i=mountbase.size(); i<elems.size(); i++) sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i];
+			for (unsigned int i=mountbase.size(); i<elems.size(); i++) { sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i]; }
 			std::string f=baseOnHD+sname;
 			std::ifstream ifs(f.c_str());
-			if (ifs.fail()) return NULL;
+			if (ifs.fail()) { return NULL; }
 			ifs.close();
 			std::string dnam="";   for (unsigned int i=0; i+1<elems.size(); i++) dnam=dnam+CLS_PATH_SEPARATOR+elems[i];
 			return new cls_FileDirMountedForReading(elems.back(),dnam,f);
@@ -503,36 +507,37 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 				std::vector<std::string> & newelems, const int mode,const std::string pds) const
 			{
 			if (d.size()<mountbase.size()) {
-					if ( (mode & (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_RECURSIVE )) ==0) return false; //No need to show
+					if ( (mode & (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_RECURSIVE )) ==0) { return false; } //No need to show
 					for (unsigned int i=0; i<d.size(); i++) { if (mountbase[i]!=d[i]) return false;} // not the same
-					if ((mode & CLS_FILE_LIST_DIRS) != 0) newelems.push_back(pds+mountbase[d.size()]+CLS_PATH_SEPARATOR);
+					if ((mode & CLS_FILE_LIST_DIRS) != 0) { newelems.push_back(pds+mountbase[d.size()]+CLS_PATH_SEPARATOR); }
 					std::vector<std::string> nd(d); nd.push_back(mountbase[d.size()]);
 					return ListDirectoryEntries(nd,lsts,newelems,mode,pds+mountbase[d.size()]+CLS_PATH_SEPARATOR);
 					}
 			else  for (unsigned int i=0; i<mountbase.size(); i++) { if (mountbase[i]!=d[i]) return false;}
 
 			std::string dname=baseOnHD;
-			for (unsigned int i=mountbase.size(); i<d.size(); i++) dname=dname+CLS_PATH_SEPARATOR_SYS+d[i];
+			for (unsigned int i=mountbase.size(); i<d.size(); i++) { dname=dname+CLS_PATH_SEPARATOR_SYS+d[i]; }
 
 			DIR  *dip;
-			if ((dip = opendir(dname.c_str())) == NULL) return false;
+			if ((dip = opendir(dname.c_str())) == NULL) { return false; }
 			struct dirent *entry;
 			while((entry = readdir(dip))) {
 					std::string curr=entry->d_name;
-					if (curr=="." || curr=="..") continue;
+					if (curr=="." || curr=="..") { continue; }
 #ifndef _WIN32
 					int isdir=(entry->d_type == DT_DIR);
 #else
 					struct stat statres;
 					int isdir=0;
 					string path=dname+CLS_PATH_SEPARATOR_SYS+curr;
-					if( stat(path.c_str(),&statres) == 0 )  if( statres.st_mode & S_IFDIR ) isdir=1;
+					if( stat(path.c_str(),&statres) == 0 )  if( statres.st_mode & S_IFDIR ) { isdir=1; }
 					// DIR *tdip;
 					// int isdir=0;
 					// if ((tdip = opendir(curr.c_str())) != NULL) {closedir(tdip); isdir=1;}
 #endif
-					if ((isdir && ((mode & CLS_FILE_LIST_DIRS) !=0) ) || ((!isdir) && ((mode & CLS_FILE_LIST_FILES) !=0)))
-						newelems.push_back(pds+curr+(isdir ? CLS_PATH_SEPARATOR : ""));
+					if ((isdir && ((mode & CLS_FILE_LIST_DIRS) !=0) ) || ((!isdir) && ((mode & CLS_FILE_LIST_FILES) !=0))) {
+							newelems.push_back(pds+curr+(isdir ? CLS_PATH_SEPARATOR : ""));
+							}
 					//  string s="Curr "+curr+(isdir ? "  dir" : "  file");
 					//  coutlog(s,0);
 					if (isdir && ((mode & CLS_FILE_LIST_RECURSIVE)!=0) ) {
@@ -549,12 +554,12 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase
 
 		virtual bool DirExists(const std::vector<std::string> & elems, int & denied) const
 			{
-			if (!cls_FileSubSystemBase::DirExists(elems,denied)) return false; //Wrong mount point and/or set the denied flag for writeables
+			if (!cls_FileSubSystemBase::DirExists(elems,denied)) { return false; } //Wrong mount point and/or set the denied flag for writeables
 			std::string sname="";
-			for (unsigned int i=mountbase.size(); i<elems.size(); i++) sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i];
+			for (unsigned int i=mountbase.size(); i<elems.size(); i++) { sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i]; }
 			std::string f=baseOnHD+sname;
 			DIR  *dip;
-			if ((dip = opendir(f.c_str())) == NULL) return false;
+			if ((dip = opendir(f.c_str())) == NULL) { return false; }
 			closedir(dip);
 			return true;
 			}
@@ -610,9 +615,9 @@ class cls_ZipMountDirEntry
 			{
 			int ind=-1;
 			for (unsigned int i=0; i<subdirs.size(); i++) if (subdirs[i]->name==s) {ind=i; break;}
-			if (ind!=-1) return subdirs[ind];
+			if (ind!=-1) { return subdirs[ind]; }
 			else if (autocreate) {subdirs.push_back(new cls_ZipMountDirEntry(s)); return subdirs.back();}
-			else return NULL;
+			else { return NULL; }
 			}
 
 		void AddFile(cls_ZipMountFileEntry *f) {  files.push_back(f); }
@@ -650,9 +655,9 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase
 			cls_ZipMountDirEntry *de=rootdir;
 			for (unsigned int si=mountbase.size(); si+1<elems.size(); si++) { de=de->GetSubDir(elems[si],0); if (!de) return NULL; }
 			cls_ZipMountFileEntry *fe=de->GetFile(elems.back());
-			if (!fe) return NULL;
+			if (!fe) { return NULL; }
 			std::string dname="";
-			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) dname=dname+CLS_PATH_SEPARATOR+elems[i];
+			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
 			return new cls_FileZipMountedForReading(elems.back(),dname,zipname,hz,fe->GetIndex(),fe->GetCDI(),fe->GetSize());
 			}
 
@@ -701,31 +706,31 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase
 						std::vector<std::string> sds;
 						Tokenize(fnames[i],sds);
 						cls_ZipMountDirEntry *de=rootdir;
-						for (unsigned int si=0; si<sds.size(); si++) de=de->GetSubDir(sds[si],1);
+						for (unsigned int si=0; si<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
 						}
 			for (int i=0; i<numitems; i++) if (!(isdirs[i]))
 						{
 						std::vector<std::string> sds;
 						Tokenize(fnames[i],sds);
 						cls_ZipMountDirEntry *de=rootdir;
-						for (unsigned int si=0; si+1<sds.size(); si++) de=de->GetSubDir(sds[si],1);
+						for (unsigned int si=0; si+1<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
 						de->AddFile(new cls_ZipMountFileEntry(sds.back(),i,cdis[i],sizes[i]));
 						}
 			}
 
 		virtual ~cls_FileSubSystemZipMount()
 			{
-			if (hz) CloseZip(hz);
-			if (rootdir) delete rootdir;
+			if (hz) { CloseZip(hz); }
+			if (rootdir) { delete rootdir; }
 			}
 
 		virtual bool ListDirectoryEntries(const std::vector<std::string> d,const std::vector<std::string> & lsts,
 				std::vector<std::string> & newelems, const int mode,const std::string pds) const
 			{
 			if (d.size()<mountbase.size()) {
-					if ( (mode & (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_RECURSIVE )) ==0) return false; //No need to show
+					if ( (mode & (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_RECURSIVE )) ==0) { return false; } //No need to show
 					for (unsigned int i=0; i<d.size(); i++) { if (mountbase[i]!=d[i]) return false;} // not the same
-					if ((mode & CLS_FILE_LIST_DIRS) != 0) newelems.push_back(pds+mountbase[d.size()]+CLS_PATH_SEPARATOR);
+					if ((mode & CLS_FILE_LIST_DIRS) != 0) { newelems.push_back(pds+mountbase[d.size()]+CLS_PATH_SEPARATOR); }
 					std::vector<std::string> nd(d); nd.push_back(mountbase[d.size()]);
 					return ListDirectoryEntries(nd,lsts,newelems,mode,pds+mountbase[d.size()]+CLS_PATH_SEPARATOR);
 					}
@@ -735,12 +740,12 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase
 			//Iterate through the contents
 			if ((mode & CLS_FILE_LIST_FILES) !=0)
 					{
-					for (unsigned int i=0; i<de->GetFiles().size(); i++) newelems.push_back(pds+de->GetFiles()[i]->GetName());
+					for (unsigned int i=0; i<de->GetFiles().size(); i++) { newelems.push_back(pds+de->GetFiles()[i]->GetName()); }
 					}
 
 			for (unsigned int i=0; i<de->GetSubDirs().size(); i++)
 					{
-					if ((mode & CLS_FILE_LIST_DIRS) !=0) newelems.push_back(pds+(de->GetSubDirs()[i]->GetName())+CLS_PATH_SEPARATOR);
+					if ((mode & CLS_FILE_LIST_DIRS) !=0) { newelems.push_back(pds+(de->GetSubDirs()[i]->GetName())+CLS_PATH_SEPARATOR); }
 					if ((mode & CLS_FILE_LIST_RECURSIVE)!=0)
 							{
 							std::vector<std::string> nd(d); nd.push_back(de->GetSubDirs()[i]->GetName());
@@ -754,7 +759,7 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase
 
 		virtual bool DirExists(const std::vector<std::string> & elems, int & denied) const
 			{
-			if (!cls_FileSubSystemBase::DirExists(elems,denied)) return false; //Wrong mount point
+			if (!cls_FileSubSystemBase::DirExists(elems,denied)) { return false; } //Wrong mount point
 			cls_ZipMountDirEntry *de=rootdir;
 			for (unsigned int si=mountbase.size(); si<elems.size(); si++) { de=de->GetSubDir(elems[si],0); if (!de) return false; }
 			return true;
@@ -796,9 +801,9 @@ class cls_FileSystem_Info_
 			std::vector<std::string>::iterator iter = elems.begin();
 			while( iter != elems.end() )
 					{
-					if ((*iter)==".") iter = elems.erase( iter ) ;
+					if ((*iter)==".") { iter = elems.erase( iter ) ; }
 					else if ((*iter)=="..") { if (iter==elems.begin()) return 0; iter=elems.erase(iter-1, iter+1 );  if (!elems.size()) return 1; }
-					else iter++;
+					else { iter++; }
 					}
 			return 1;
 			}
@@ -815,14 +820,14 @@ class cls_FileSystem_Info_
 
 			for (int i=subsys.size()-1-skiptop; i>=0; i--)
 					{
-					if (subsys[i]->IsMaskLayer()) continue;
+					if (subsys[i]->IsMaskLayer()) { continue; }
 					res=res | subsys[i]->ListDirectoryEntries(direlems,lsts,newentries,mode,pds);
 					for (unsigned int ne=0; ne<newentries.size(); ne++)
 							{
 							bool alreadyin=false;
 							std::string curr=newentries[ne];
 							for (unsigned int oe=0; oe<lsts.size(); oe++) if (lsts[oe]==curr)  {alreadyin=true; break;}
-							if (alreadyin) continue;
+							if (alreadyin) { continue; }
 
 
 							if (pattern) {
@@ -831,27 +836,27 @@ class cls_FileSystem_Info_
 									      if (matchres==FNM_NOMATCH) continue;
 									      #else
 									        ///TODO: Windows-Match*/
-									if (!winfnmatch(pattern,curr)) continue;
+									if (!winfnmatch(pattern,curr)) { continue; }
 									// #endif
 									}
 
 							std::vector<std::string> newelems;
 							std::string curr2;
-							if (mode & CLS_FILE_LIST_FULLPATH) curr2=curr; // TODO: make sure that it is correct
-							else curr2=fpds+curr;
+							if (mode & CLS_FILE_LIST_FULLPATH) { curr2=curr; } // TODO: make sure that it is correct
+							else { curr2=fpds+curr; }
 							StrToElems(curr2,newelems);
 
 							int blocked=0;
 							for (int j=subsys.size()-1-skiptop; j>i; j--)
 									{
-									if (!subsys[j]->IsMaskLayer()) continue;
+									if (!subsys[j]->IsMaskLayer()) { continue; }
 									cls_FileMountStackMask *sm=dynamic_cast<cls_FileMountStackMask *>(subsys[j]);
-									if (!sm) continue;
+									if (!sm) { continue; }
 									int mode=sm->GetMode(newelems);
 									//   std::cout << "Element " << curr << " has mode " << mode << std::endl;
 									if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST))==(CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST)) { blocked=1; break;}
 									}
-							if (blocked) continue;
+							if (blocked) { continue; }
 
 							lsts.push_back(curr);
 							}
@@ -864,12 +869,12 @@ class cls_FileSystem_Info_
 		cls_FileReadable * GetFileForReading(const std::string fname) const
 			{
 			std::vector<std::string> elems;
-			if (!StrToElems(fname,elems)) return NULL;
+			if (!StrToElems(fname,elems)) { return NULL; }
 			for (int i=subsys.size()-1-skiptop; i>=0; i--)
 					{
 					int denied=0;
 					cls_FileReadable * rf=subsys[i]->GetFileForReading(elems,denied);
-					if (rf || denied) return rf;
+					if (rf || denied) { return rf; }
 					}
 			return NULL;
 			}
@@ -877,13 +882,13 @@ class cls_FileSystem_Info_
 		cls_FileWriteable * GetFileForWriting(const std::string fname,const bool autocreatesubdirs) const
 			{
 			std::vector<std::string> elems;
-			if (!StrToElems(fname,elems)) return NULL;
+			if (!StrToElems(fname,elems)) { return NULL; }
 			for (int i=subsys.size()-1-skiptop; i>=0; i--)
 					{
-					if (!subsys[i]->IsWriteable()) continue;
+					if (!subsys[i]->IsWriteable()) { continue; }
 					int denied=0;
 					cls_FileWriteable * rf=subsys[i]->GetFileForWriting(elems,autocreatesubdirs,denied);
-					if (rf || denied) return rf;
+					if (rf || denied) { return rf; }
 					}
 			return NULL;
 			}
@@ -895,7 +900,7 @@ class cls_FileSystem_Info_
 		bool MountHDDDir(std::string dir,bool writeable,std::string mountbase,bool autocreate_write_dir)
 			{
 			std::vector<std::string> mntb;
-			while (dir.length()>1 && dir.substr(dir.length()-1,1)==CLS_PATH_SEPARATOR_SYS) dir=dir.substr(0,dir.length()-1);
+			while (dir.length()>1 && dir.substr(dir.length()-1,1)==CLS_PATH_SEPARATOR_SYS) { dir=dir.substr(0,dir.length()-1); }
 			if (!cls_DirectoryExists(dir)) {
 					int dircreated=0;
 					if (writeable && autocreate_write_dir) {
@@ -949,11 +954,11 @@ class cls_FileSystem_Info_
 		bool DirExists(const std::string d,const bool for_write_only, const bool uselisting_deny_mask) const
 			{
 			std::vector<std::string> elems;
-			if (!StrToElems(d,elems)) return false; //Since it is a dir parent to root "/"
+			if (!StrToElems(d,elems)) { return false; } //Since it is a dir parent to root "/"
 			for (int i=subsys.size()-1-skiptop; i>=0; i--)
 					{
 					bool wable=subsys[i]->IsWriteable();
-					if (for_write_only && (!(wable))) continue;
+					if (for_write_only && (!(wable))) { continue; }
 					int denied=0;
 					if (!wable && subsys[i]->IsMaskLayer())
 							{
@@ -961,12 +966,12 @@ class cls_FileSystem_Info_
 							if (msm) {
 									int mode=msm->GetMode(elems);
 									int mask=CLS_FILE_MASK_SET | (uselisting_deny_mask==true ? CLS_FILE_MASK_LIST : CLS_FILE_MASK_READ);
-									if ( (mode & mask) == mask) denied=1;
+									if ( (mode & mask) == mask) { denied=1; }
 									}
-							if (denied) return false;
+							if (denied) { return false; }
 							}
 					bool res=subsys[i]->DirExists(elems,denied);
-					if (res || (denied && for_write_only)) return res;
+					if (res || (denied && for_write_only)) { return res; }
 					}
 			return false;
 			}
@@ -990,9 +995,9 @@ class cls_FileSystem_Info_
 						{
 						thindex++;
 						if (thindex==index) {msk=dynamic_cast<cls_FileMountStackMask*>(subsys[i]); if (msk) break;}
-						if (index==-1) topmost=i;
+						if (index==-1) { topmost=i; }
 						}
-			if (topmost !=-1) msk=dynamic_cast<cls_FileMountStackMask*>(subsys[topmost]);
+			if (topmost !=-1) { msk=dynamic_cast<cls_FileMountStackMask*>(subsys[topmost]); }
 			if (!msk && index==-1) { AddMaskLayer(); msk=dynamic_cast<cls_FileMountStackMask*>(subsys.back()); }
 			return msk;
 			}
@@ -1028,7 +1033,7 @@ class cls_FileSystem_Info_
 
 		void PopBottom()
 			{
-			if (subsys.size()==0) return;
+			if (subsys.size()==0) { return; }
 			delete subsys.front();
 			subsys.erase(subsys.begin());
 			}
@@ -1056,7 +1061,7 @@ cls_FileReadable * cls_FileSystem::GetFileForReading(const std::string fname) co
 	{
 #ifdef LOG_USED_FILES
 	cls_FileReadable *res=FSINFO->GetFileForReading(fname);
-	if (res) (*logufiles) << fname << std::endl;
+	if (res) { (*logufiles) << fname << std::endl; }
 	return res;
 #else
 	return FSINFO->GetFileForReading(fname);
@@ -1107,10 +1112,12 @@ std::string cls_FileSystem::GetLastError(int reset) const
 
 bool cls_FileSystem::ListDirectoryEntries(const std::string d,std::vector<std::string> & lsts, const int mode,const std::string pattern) const
 	{
-	if (pattern!="")
-		return FSINFO->ListDirectoryEntries(d,lsts, mode,pattern.c_str());
-	else
-		return FSINFO->ListDirectoryEntries(d,lsts, mode,NULL);
+	if (pattern!="") {
+			return FSINFO->ListDirectoryEntries(d,lsts, mode,pattern.c_str());
+			}
+	else {
+			return FSINFO->ListDirectoryEntries(d,lsts, mode,NULL);
+			}
 	}
 
 bool cls_FileSystem::DirExists(const std::string d,const bool for_write_only, const bool uselisting_deny_mask) const

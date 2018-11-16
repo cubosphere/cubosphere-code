@@ -17,22 +17,22 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-TPostEffect *gPostEffect=NULL;
-TPostEffect *g_PostEffect() {return gPostEffect;}
+PostEffect *gPostEffect=NULL;
+PostEffect *g_PostEffect() {return gPostEffect;}
 
 void LoadPostEffect(std::string name)
 	{
-	if (gPostEffect) delete gPostEffect;
+	if (gPostEffect) { delete gPostEffect; }
 	gPostEffect=NULL;
-	if (name=="") return;
-	gPostEffect=new TPostEffect();
+	if (name=="") { return; }
+	gPostEffect=new PostEffect();
 	gPostEffect->SetName(name);
 	gPostEffect->LoadDef();
 	}
 
-void TPostEffect::CallDefaultSpecialRender(std::string nam,std::string what,int index)
+void PostEffect::CallDefaultSpecialRender(std::string nam,std::string what,int index)
 	{
-	if (!isprecached) Precache();
+	if (!isprecached) { Precache(); }
 	if (lua.FuncExists("DefaultSpecialRender"))
 			{
 
@@ -40,9 +40,9 @@ void TPostEffect::CallDefaultSpecialRender(std::string nam,std::string what,int 
 			}
 	}
 
-void TPostEffect::CallRender()
+void PostEffect::CallRender()
 	{
-	if (!isprecached) Precache();
+	if (!isprecached) { Precache(); }
 	if (lua.FuncExists("Render"))
 			{
 
@@ -50,7 +50,7 @@ void TPostEffect::CallRender()
 			}
 	}
 
-void TPostEffect::Precache()
+void PostEffect::Precache()
 	{
 	isprecached=1;
 	if (lua.FuncExists("Precache"))
@@ -60,10 +60,10 @@ void TPostEffect::Precache()
 
 	}
 
-int TPostEffect::CreateTempTexture(int w, int h,int withdepth)
+int PostEffect::CreateTempTexture(int w, int h,int withdepth)
 	{
 
-	if (!isprecached) Precache();
+	if (!isprecached) { Precache(); }
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -117,7 +117,7 @@ int TPostEffect::CreateTempTexture(int w, int h,int withdepth)
 
 		free( data );
 	*/
-	TTempTexture nt;
+	TempTexture nt;
 	nt.fbo=nFBO;
 	nt.tindex=texture;
 	nt.w=w;
@@ -129,15 +129,15 @@ int TPostEffect::CreateTempTexture(int w, int h,int withdepth)
 
 	}
 
-void TPostEffect::SetRenderTarget(int index)
+void PostEffect::SetRenderTarget(int index)
 	{
-	if (!isprecached) Precache();
-	if ((index<0) || (index>=(int)(ttexts.size()))) glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	else glBindFramebuffer(GL_FRAMEBUFFER, ttexts[index].fbo);
+	if (!isprecached) { Precache(); }
+	if ((index<0) || (index>=(int)(ttexts.size()))) { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+	else { glBindFramebuffer(GL_FRAMEBUFFER, ttexts[index].fbo); }
 	}
 
 
-void TPostEffect::UnPrecache()
+void PostEffect::UnPrecache()
 	{
 	isprecached=0;
 	for (unsigned int i=0; i<ttexts.size(); i++)
@@ -145,19 +145,19 @@ void TPostEffect::UnPrecache()
 			glDeleteFramebuffers(1,&(ttexts[i].fbo));
 			glDeleteTextures(1,&(ttexts[i].tindex));
 			//  if (ttexts[i].depth) glDeleteRenderbuffers(1,&(ttexts[i].depth));
-			if (ttexts[i].depth) glDeleteTextures(1,&(ttexts[i].depth));
+			if (ttexts[i].depth) { glDeleteTextures(1,&(ttexts[i].depth)); }
 			}
 	ttexts.resize(0);
 
 	}
 
-TPostEffect::~TPostEffect()
+PostEffect::~PostEffect()
 	{	UnPrecache();
 	}
 
-void TPostEffect::DrawQuad()
+void PostEffect::DrawQuad()
 	{
-	if (!isprecached) Precache();
+	if (!isprecached) { Precache(); }
 // glBegin(GL_QUADS);
 	glBegin(GL_TRIANGLE_STRIP);
 	glTexCoord2f(0,0); glVertex2f(-0.5, -0.5);
@@ -169,10 +169,10 @@ void TPostEffect::DrawQuad()
 	}
 
 
-void TPostEffect::DepthToStage(int ttex,int stage)
+void PostEffect::DepthToStage(int ttex,int stage)
 	{
-	if (!isprecached) Precache();
-	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) return;
+	if (!isprecached) { Precache(); }
+	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) { return; }
 
 	std::cout << "Temp Depth to Stage not defined" << std::endl;
 ///TODO: Set the active Texture g_lastActiveTexture
@@ -181,10 +181,10 @@ void TPostEffect::DepthToStage(int ttex,int stage)
 	//glBindTexture( GL_TEXTURE_2D, ttexts[ttex].depth);
 	}
 
-void TPostEffect::TempTextureToStage(int ttex,int stage)
+void PostEffect::TempTextureToStage(int ttex,int stage)
 	{
-	if (!isprecached) Precache();
-	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) return;
+	if (!isprecached) { Precache(); }
+	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) { return; }
 	std::cout << "Temp Texture to Stage not defined" << std::endl;
 ///TODO: Set the active Texture g_lastActiveTexture
 	//if (g_Game()->HasGLSL())
@@ -230,7 +230,7 @@ int EFFECT_CreateTempTexture(lua_State *state)
 	int wdepth=LUA_GET_INT;
 	int h=LUA_GET_INT;
 	int w=LUA_GET_INT;
-	if (g_PostEffect()) w=g_PostEffect()->CreateTempTexture(w,h,wdepth);
+	if (g_PostEffect()) { w=g_PostEffect()->CreateTempTexture(w,h,wdepth); }
 	LUA_SET_INT(w);
 	return 1;
 	}
@@ -239,7 +239,7 @@ int EFFECT_CreateTempTexture(lua_State *state)
 int EFFECT_SetRenderTarget(lua_State *state)
 	{
 	int i=LUA_GET_INT;
-	if (g_PostEffect()) g_PostEffect()->SetRenderTarget(i);
+	if (g_PostEffect()) { g_PostEffect()->SetRenderTarget(i); }
 	return 0;
 	}
 
@@ -247,7 +247,7 @@ int EFFECT_TempTextureToStage(lua_State *state)
 	{
 	int stage=LUA_GET_INT;
 	int tex=LUA_GET_INT
-			if (g_PostEffect()) g_PostEffect()->TempTextureToStage(tex,stage);
+	if (g_PostEffect()) { g_PostEffect()->TempTextureToStage(tex,stage); }
 	return 0;
 	}
 
@@ -255,13 +255,13 @@ int EFFECT_DepthToStage(lua_State *state)
 	{
 	int stage=LUA_GET_INT;
 	int tex=LUA_GET_INT
-			if (g_PostEffect()) g_PostEffect()->DepthToStage(tex,stage);
+	if (g_PostEffect()) { g_PostEffect()->DepthToStage(tex,stage); }
 	return 0;
 	}
 
 int EFFECT_DrawQuad(lua_State *state)
 	{
-	if (g_PostEffect()) g_PostEffect()->DrawQuad();
+	if (g_PostEffect()) { g_PostEffect()->DrawQuad(); }
 	return 0;
 	}
 

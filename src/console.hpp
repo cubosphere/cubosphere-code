@@ -42,7 +42,7 @@ class CuboConsole
 		double lowerline_ypos;
 		int togglekey;
 		void ParseCmdLine(std::string cmdl="");
-		TLuaAccess lua;
+		LuaAccess lua;
 		std::vector<ConsoleBinding> binds;
 		int Bind(std::vector<std::string> & extratoks,int unbind);
 	public:

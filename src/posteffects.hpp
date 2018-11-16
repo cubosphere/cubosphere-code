@@ -33,7 +33,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-using TTempTexture = struct
+using TempTexture = struct
 	{
 	GLuint tindex;
 	GLuint fbo;
@@ -41,17 +41,17 @@ using TTempTexture = struct
 	int w,h;
 	};
 
-class TPostEffect : public BaseLuaDef
+class PostEffect : public BaseLuaDef
 	{
 	protected:
 		//TLuaAccess lua;
-		std::vector<TTempTexture> ttexts;
+		std::vector<TempTexture> ttexts;
 		int isprecached;
 		//virtual int SendIDWhenPrecache() {return -1;}
 	public:
-		TPostEffect() : isprecached(0) {}
+		PostEffect() : isprecached(0) {}
 		int GetType() {return FILE_POSTEFFECTDEF;}
-		virtual ~TPostEffect();
+		virtual ~PostEffect();
 		void CallRender();
 		int CreateTempTexture(int w, int h,int withdepth);
 		void SetRenderTarget(int index);
@@ -64,7 +64,7 @@ class TPostEffect : public BaseLuaDef
 	};
 
 
-extern TPostEffect *g_PostEffect();
+extern PostEffect *g_PostEffect();
 extern void LoadPostEffect(std::string name);
 
 extern void LUA_EFFECT_RegisterLib();

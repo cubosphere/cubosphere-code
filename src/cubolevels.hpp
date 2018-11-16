@@ -72,9 +72,9 @@ class CuboLevel
 		std::vector<DistRenderObj> rlist;
 		Vector3d bbmax,bbmin; //Sizes of the bounding box
 //    TTextFileReader tr;
-		TLuaAccess lua;
+		LuaAccess lua;
 		BlockDefServer bdefs;
-		TTextureDefServer tdefs;
+		TextureDefServer tdefs;
 		TItemDefServer idefs;
 		std::string errorstring;
 		std::string filename;
@@ -91,7 +91,7 @@ class CuboLevel
 		int docollisions;
 	public:
 		BlockDefServer * GetBlockDefs() {return  &bdefs;}
-		TTextureDefServer *GetTexDefs() {return  &tdefs;}
+		TextureDefServer *GetTexDefs() {return  &tdefs;}
 		TItemDefServer *GetItemDefs() {return  &idefs;}
 		std::string GetLastRendered() const {return lastrenderedtype;}
 		void SetLastRendered(const std::string &s) {lastrenderedtype=s;}

@@ -46,7 +46,7 @@ void BaseLuaDef::LoadDef()
 	int typ=GetType();
 	std::string ext;
 	FileTypeFromString(g_SubDirs[typ],&ext);
-	TCuboFile *fileinfo=GetFileName(name,typ,"."+ext);
+	CuboFile *fileinfo=GetFileName(name,typ,"."+ext);
 
 	if (!fileinfo) {
 			coutlog("Lua script "+name+"."+ext+" not found!",1);
@@ -89,7 +89,7 @@ void BaseLuaDef::Reload()
     TBaseLuaDef::LoadDef();
 }*/
 
-void  TMenu::LoadDef(std::string cname)
+void  Menu::LoadDef(std::string cname)
 	{
 	if (isloaded)
 			{
@@ -102,15 +102,15 @@ void  TMenu::LoadDef(std::string cname)
 			}
 	}
 
-void TMenu::PostThink()
+void Menu::PostThink()
 	{
 
-	if (!change) return;
+	if (!change) { return; }
 
 	name=nextname;
 	change=0;
 	lua.Reset();
-	TCuboFile * finfo=GetFileName(name,FILE_MENUDEF,".mdef");
+	CuboFile * finfo=GetFileName(name,FILE_MENUDEF,".mdef");
 	if (!finfo) { coutlog("Menudef "+name+" not found!",1); isloaded=false; return;}
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_MENUDEF,-1);
@@ -126,9 +126,9 @@ void TMenu::PostThink()
 	}
 
 
-void TMenu::Render()
+void Menu::Render()
 	{
-	if (!isloaded) return;
+	if (!isloaded) { return; }
 	if (lua.FuncExists("Render"))
 			{
 
@@ -137,9 +137,9 @@ void TMenu::Render()
 	}
 
 
-void TMenu::Think()
+void Menu::Think()
 	{
-	if (!isloaded) return;
+	if (!isloaded) { return; }
 	if (lua.FuncExists("Think"))
 			{
 
@@ -147,9 +147,9 @@ void TMenu::Think()
 			}
 	}
 
-void TMenu::JoyAxisChange(int joys,int axis,double val,double pval)
+void Menu::JoyAxisChange(int joys,int axis,double val,double pval)
 	{
-	if (!isloaded) return;
+	if (!isloaded) { return; }
 	if (lua.FuncExists("OnJoyAxisChange"))
 			{
 
@@ -159,9 +159,9 @@ void TMenu::JoyAxisChange(int joys,int axis,double val,double pval)
 	}
 
 
-void TMenu::SendKey(int key,int down, int toggle)
+void Menu::SendKey(int key,int down, int toggle)
 	{
-	if (!isloaded) return;
+	if (!isloaded) { return; }
 	if (lua.FuncExists("OnKeyPressed"))
 			{
 
@@ -170,9 +170,9 @@ void TMenu::SendKey(int key,int down, int toggle)
 	}
 
 
-void TMenu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
+void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
 	{
-	if (!isloaded) return;
+	if (!isloaded) { return; }
 	if (lua.FuncExists("OnJoyButton"))
 			{
 

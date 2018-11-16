@@ -39,21 +39,21 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "filesystem.hpp"
 
-class TSoundContainer
+class SoundContainer
 	{
 	protected:
 		Mix_Chunk *sound;
 		std::string fname;
 	public:
-		TSoundContainer() : sound(NULL), fname("") {}
-		~TSoundContainer();
+		SoundContainer() : sound(NULL), fname("") {}
+		~SoundContainer();
 		Mix_Chunk *GetSound() {return sound;}
-		int Load(TCuboFile *finfo);
+		int Load(CuboFile *finfo);
 		void Reload();
 		std::string Filename() {return fname;}
 	};
 
-class TMusicContainer
+class MusicContainer
 	{
 	protected:
 		Mix_Music *music;
@@ -67,15 +67,15 @@ class TMusicContainer
 		void Rewind() {currentpos=0;}
 		void Think(double elapsed);
 		void SetLoop(double from,double to);
-		TMusicContainer() : music(NULL), fname("") {}
-		~TMusicContainer();
-		int Load(TCuboFile *finfo);
+		MusicContainer() : music(NULL), fname("") {}
+		~MusicContainer();
+		int Load(CuboFile *finfo);
 		void Reload();
 		Mix_Music *GetMusic() {return music;}
 		std::string Filename() {return fname;}
 	};
 
-class TSoundServer
+class SoundServer
 	{
 	protected:
 		static std::string currenteffect;
@@ -84,18 +84,18 @@ class TSoundServer
 		static int bitsps;
 		static double postmixparam[3];
 		int initialized;
-		std::vector<TSoundContainer*> sounds;
-		std::vector<TMusicContainer*> musics;
+		std::vector<SoundContainer*> sounds;
+		std::vector<MusicContainer*> musics;
 		std::vector<int> playchannels;
-		TSoundContainer *GetSound(int i);
-		TMusicContainer *GetMusic(int i);
+		SoundContainer *GetSound(int i);
+		MusicContainer *GetMusic(int i);
 		static void EchoEffect(void *udata, Uint8 *stream, int len);
 	public:
-		TSoundServer() : initialized(0) {};
+		SoundServer() : initialized(0) {};
 		int InitSound(int freq,int bits,int stereo,int buffsize);
 		void KillSound();
-		int LoadSound(TCuboFile *finfo);
-		int LoadMusic(TCuboFile *finfo);
+		int LoadSound(CuboFile *finfo);
+		int LoadMusic(CuboFile *finfo);
 		int PlaySound(int index,int channel);
 		int PlaySoundLooped(int index,int channel,int numloops);
 		void StopChannel(int chind);
@@ -115,7 +115,7 @@ class TSoundServer
 		void Think(double elapsed);
 	};
 
-extern TSoundServer *g_Sounds();
+extern SoundServer *g_Sounds();
 
 extern void LUA_SOUND_RegisterLib();
 

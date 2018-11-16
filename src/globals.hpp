@@ -60,8 +60,8 @@ extern std::vector <std::string> LSCuboSubDir(std::string which);
 
 extern std::string PlattformFilename(std::string in);
 //extern string GetFileName(string subname,int type,string ext);
-extern TCuboFile* GetFileName(std::string subname,int type,std::string ext);
-extern TCuboFile* GetCuboFileFromRelativeName(std::string relname);
+extern CuboFile* GetFileName(std::string subname,int type,std::string ext);
+extern CuboFile* GetCuboFileFromRelativeName(std::string relname);
 
 extern int FileTypeFromString(std::string which,std::string *exte=NULL);
 
@@ -94,7 +94,7 @@ static const std::string g_SubDirs[] = {"textures","texdefs","blockdefs","skybox
 static const int g_SubDirUsesTheme[] = {1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,0,1,1};
 
 
-extern TLuaCFunctions* g_FileSysLib();
+extern LuaCFunctions* g_FileSysLib();
 
 extern bool StartBootScript(std::string name="boot.lua");
 extern cls_FileSystem * g_BaseFileSystem();

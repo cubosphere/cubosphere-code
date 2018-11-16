@@ -71,7 +71,7 @@ float Vector2d::sqrlength()
 bool Vector2d::normalizeCheck()
 	{
 	float denom=length();
-	if (denom<VECTOR_EPSILON) return false;
+	if (denom<VECTOR_EPSILON) { return false; }
 	else {
 			u/=denom;
 			v/=denom;
@@ -186,7 +186,7 @@ float Vector3d::sqrlength()
 bool Vector3d::normalizeCheck()
 	{
 	float denom=length();
-	if (denom<VECTOR_EPSILON) return false;
+	if (denom<VECTOR_EPSILON) { return false; }
 	else {
 			x/=denom;
 			y/=denom;
@@ -216,31 +216,31 @@ const std::string Vector3d::toString()
 
 void Vector3d::Maximize(const Vector3d tomax)
 	{
-	if (tomax.x>x) x=tomax.x;
-	if (tomax.y>y) y=tomax.y;
-	if (tomax.z>z) z=tomax.z;
+	if (tomax.x>x) { x=tomax.x; }
+	if (tomax.y>y) { y=tomax.y; }
+	if (tomax.z>z) { z=tomax.z; }
 	}
 void Vector3d::Minimize(const Vector3d tomin)
 	{
-	if (tomin.x<x) x=tomin.x;
-	if (tomin.y<y) y=tomin.y;
-	if (tomin.z<z) z=tomin.z;
+	if (tomin.x<x) { x=tomin.x; }
+	if (tomin.y<y) { y=tomin.y; }
+	if (tomin.z<z) { z=tomin.z; }
 	}
 
 
 float Vector3d::MinValue()
 	{
 	float r=x;
-	if (r>y) r=y;
-	if (r>z) r=z;
+	if (r>y) { r=y; }
+	if (r>z) { r=z; }
 	return r;
 	}
 
 float Vector3d::MaxValue()
 	{
 	float r=x;
-	if (r<y) r=y;
-	if (r<z) r=z;
+	if (r<y) { r=y; }
+	if (r<z) { r=z; }
 	return r;
 	}
 
@@ -249,9 +249,9 @@ float Vector3d::MaxAbsValue()
 	Vector3d cp(x,y,z);
 	Vector3d neg=cp*(-1);
 	cp.Maximize(neg);
-	if ((cp.x>=cp.y) && (cp.x>=cp.z)) return cp.x;
-	else if ((cp.y>=cp.x) && (cp.y>=cp.z)) return cp.y;
-	else return cp.z;
+	if ((cp.x>=cp.y) && (cp.x>=cp.z)) { return cp.x; }
+	else if ((cp.y>=cp.x) && (cp.y>=cp.z)) { return cp.y; }
+	else { return cp.z; }
 	}
 
 
@@ -304,7 +304,7 @@ float Vector4d::sqrlength()
 bool Vector4d::normalizeCheck()
 	{
 	float denom=length();
-	if (denom<VECTOR_EPSILON) return false;
+	if (denom<VECTOR_EPSILON) { return false; }
 	else {
 			x/=denom;
 			y/=denom;
@@ -369,7 +369,7 @@ Matrix3d::Matrix3d(float diag)
 
 void Matrix3d::Copy(const Matrix3d& other)
 	{
-	for (int i=0; i<16; i++) m[i]=other.m[i];
+	for (int i=0; i<16; i++) { m[i]=other.m[i]; }
 	}
 
 Matrix3d::Matrix3d(Vector3d side,Vector3d up,Vector3d dir)
@@ -382,14 +382,14 @@ Matrix3d::Matrix3d(Vector3d side,Vector3d up,Vector3d dir)
 const Matrix3d Matrix3d::operator+(const Matrix3d& o)
 	{
 	Matrix3d newm;
-	for (int i=0; i<9; i++) newm.m[i]=m[i]+o.m[i];
+	for (int i=0; i<9; i++) { newm.m[i]=m[i]+o.m[i]; }
 	return newm;
 	}
 
 const Matrix3d Matrix3d::operator-(const Matrix3d& o)
 	{
 	Matrix3d newm;
-	for (int i=0; i<9; i++) newm.m[i]=m[i]-o.m[i];
+	for (int i=0; i<9; i++) { newm.m[i]=m[i]-o.m[i]; }
 	return newm;
 
 	}
@@ -397,7 +397,7 @@ const Matrix3d Matrix3d::operator-(const Matrix3d& o)
 const Matrix3d Matrix3d::operator*(const float& s)
 	{
 	Matrix3d newm;
-	for (int i=0; i<9; i++) newm.m[i]=m[i]*s;
+	for (int i=0; i<9; i++) { newm.m[i]=m[i]*s; }
 	return newm;
 	}
 
@@ -524,7 +524,7 @@ const Vector3d Matrix3d::getPitchYawRoll()
 			{
 			newv.z=0;
 			newv.y=-atan2(m[0+1*3],m[2+1*3]);
-			if (newv.y>3.14159 || newv.y<-3.14159) newv.y=0; //Just a small hack
+			if (newv.y>3.14159 || newv.y<-3.14159) { newv.y=0; } //Just a small hack
 			//cout << "SPECIAL A  " << m[0+1*3]<< "  " << m[2+1*3] << endl;
 			return newv;
 			}
@@ -617,8 +617,9 @@ const Matrix3d Matrix3d::transpose()
 	{
 	Matrix3d result2(0.0);
 	for (int i=0; i<3; i++)
-		for (int j=0; j<3; j++)
-			result2.m[i+3*j]=m[j+3*i];
+		for (int j=0; j<3; j++) {
+				result2.m[i+3*j]=m[j+3*i];
+				}
 	return result2;
 	}
 
@@ -729,14 +730,14 @@ Matrix4d::Matrix4d(float diag)
 const Matrix4d Matrix4d::operator+(const Matrix4d& o)
 	{
 	Matrix4d newm;
-	for (int i=0; i<16; i++) newm.m[i]=m[i]+o.m[i];
+	for (int i=0; i<16; i++) { newm.m[i]=m[i]+o.m[i]; }
 	return newm;
 	}
 
 const Matrix4d Matrix4d::operator-(const Matrix4d& o)
 	{
 	Matrix4d newm;
-	for (int i=0; i<16; i++) newm.m[i]=m[i]-o.m[i];
+	for (int i=0; i<16; i++) { newm.m[i]=m[i]-o.m[i]; }
 	return newm;
 
 	}
@@ -744,7 +745,7 @@ const Matrix4d Matrix4d::operator-(const Matrix4d& o)
 const Matrix4d Matrix4d::operator*(const float& s)
 	{
 	Matrix4d newm;
-	for (int i=0; i<16; i++) newm.m[i]=m[i]*s;
+	for (int i=0; i<16; i++) { newm.m[i]=m[i]*s; }
 	return newm;
 	}
 

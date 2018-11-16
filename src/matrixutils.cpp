@@ -36,55 +36,55 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 
 
-T4dGlutMatrix::T4dGlutMatrix(): mode(GL_MODELVIEW) {}
-T4dGlutMatrix::T4dGlutMatrix(float scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
+GlutMatrix4d::GlutMatrix4d(): mode(GL_MODELVIEW) {}
+GlutMatrix4d::GlutMatrix4d(float scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
 
 
-void T4dGlutMatrix::glPushMult()
+void GlutMatrix4d::glPushMult()
 	{
 //glMatrixMode(mode);
 	glPushMatrix();
 	glMultMatrixf((GLfloat*)(&m));
 	}
 
-void T4dGlutMatrix::glMult()
+void GlutMatrix4d::glMult()
 	{
 //glMatrixMode(mode);
 	glMultMatrixf((GLfloat*)(&m));
 	}
 
 
-void T4dGlutMatrix::glPop()
+void GlutMatrix4d::glPop()
 	{
 //glMatrixMode(mode);
 	glPopMatrix();
 	}
 
-void T4dGlutMatrix::glPushLoad()
+void GlutMatrix4d::glPushLoad()
 	{
 //glMatrixMode(mode);
 	glPushMatrix();
 	glLoadMatrixf((GLfloat*)(&m));
 	}
 
-void T4dGlutMatrix::glLoad()
+void GlutMatrix4d::glLoad()
 	{
 //glMatrixMode(mode);
 	glLoadMatrixf((GLfloat*)(&m));
 	}
 
-const Vector3d T4dGlutMatrix::getPos() //Returns the last col
+const Vector3d GlutMatrix4d::getPos() //Returns the last col
 	{
 	Vector3d res(m[12],m[13],m[14]);
 	return res;
 	}
 
-void T4dGlutMatrix::setPos(const Vector3d& v) //sets the last c
+void GlutMatrix4d::setPos(const Vector3d& v) //sets the last c
 	{
 	setCol(3,v);
 	}
 
-void T4dGlutMatrix::assign(Matrix4d* other)
+void GlutMatrix4d::assign(Matrix4d* other)
 	{
 	float* mom=other->getValueMem();
 	for (int i=0; i<16; i++)
@@ -152,7 +152,7 @@ int MATRIX_MultBase(lua_State *state)
 
 	Matrix3d m(s,u,d);
 
-	T4dGlutMatrix m4(1);
+	GlutMatrix4d m4(1);
 	m4.setSubMatrix(m);
 	m4.setPos(p);
 

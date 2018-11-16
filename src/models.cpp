@@ -74,13 +74,13 @@ std::string Untokenize(const std::vector<std::string>& tokens, int pos, const st
 			{
 			res=res+tokens[pos];
 			pos++;
-			if ((unsigned int)pos<tokens.size()) res=res+delimiter;
+			if ((unsigned int)pos<tokens.size()) { res=res+delimiter; }
 			}
 	return res;
 	}
 
 
-void TTextFileReader::RemoveComments(std::string commentindicator,bool trim,bool cutempty)
+void TextFileReader::RemoveComments(std::string commentindicator,bool trim,bool cutempty)
 	{
 	unsigned int i=0;
 	while (i<lines.size())
@@ -89,13 +89,13 @@ void TTextFileReader::RemoveComments(std::string commentindicator,bool trim,bool
 			TrimSpaces(line);
 			if (cutempty && (line=="")) { lines.erase(lines.begin()+i); linenums.erase(linenums.begin()+i); continue;}
 			if ((commentindicator!="") && (BeginsWith(line,commentindicator))) { lines.erase(lines.begin()+i); linenums.erase(linenums.begin()+i); continue;}
-			if (trim) lines[i]=line;
+			if (trim) { lines[i]=line; }
 			i++;
 			}
 
 	}
 
-bool TTextFileReader::LoadFile(TCuboFile *finfo)
+bool TextFileReader::LoadFile(CuboFile *finfo)
 	{
 	lines.clear();
 	linenums.clear();
@@ -121,7 +121,7 @@ bool TTextFileReader::LoadFile(TCuboFile *finfo)
 			lines.clear();
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
 			linenums.resize(lines.size());
-			for (unsigned int i=0; i<lines.size(); i++) linenums[i]=i;
+			for (unsigned int i=0; i<lines.size(); i++) { linenums[i]=i; }
 			}
 
 
@@ -133,45 +133,45 @@ bool TTextFileReader::LoadFile(TCuboFile *finfo)
 	}
 
 
-void TTextFileReader::OutToTTY()
+void TextFileReader::OutToTTY()
 	{
-	for(unsigned i=0; i<lines.size(); i++) std::cout << lines[i] << std::endl;
+	for(unsigned i=0; i<lines.size(); i++) { std::cout << lines[i] << std::endl; }
 	}
 
 
-int TTextFileReader::GetLineNr()
+int TextFileReader::GetLineNr()
 	{
-	if (linenr<0) return 0;
-	if (linenr>=(int)linenums.size()) return 0;
+	if (linenr<0) { return 0; }
+	if (linenr>=(int)linenums.size()) { return 0; }
 	return linenums[linenr];
 	}
 
-std::string TTextFileReader::NextLine()
+std::string TextFileReader::NextLine()
 	{
 	linenr++;
-	if (linenr>=(int)lines.size()) return "";
+	if (linenr>=(int)lines.size()) { return ""; }
 	return lines[linenr];
 	}
 
-bool TTextFileReader::isEoF()
+bool TextFileReader::isEoF()
 	{
 	return (linenr>=(int)lines.size());
 	}
 
 
-bool TTextFileReader::ExtractIntVect(std::string s,TIntVect &intv,std::string *ress,std::string sep)
+bool TextFileReader::ExtractIntVect(std::string s,IntVect &intv,std::string *ress,std::string sep)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
-	if (tokens.size()<3) return false;
+	if (tokens.size()<3) { return false; }
 	intv.x=atoi(tokens[0].c_str()); ///TODO: Errorchecking
 	intv.y=atoi(tokens[1].c_str());
 	intv.z=atoi(tokens[2].c_str());
-	if (ress) (*ress)=Untokenize(tokens,3," ");
+	if (ress) { (*ress)=Untokenize(tokens,3," "); }
 	return true;
 	}
 
-bool TTextFileReader::ExtractIntVectFace(std::string s,TIntVect &intv,std::string *ress,std::string sep)
+bool TextFileReader::ExtractIntVectFace(std::string s,IntVect &intv,std::string *ress,std::string sep)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
@@ -187,29 +187,29 @@ bool TTextFileReader::ExtractIntVectFace(std::string s,TIntVect &intv,std::strin
 			intv.y=atoi(tokens[1].c_str());
 			intv.z=atoi(tokens[2].c_str());
 			}
-	if (ress) (*ress)=Untokenize(tokens,3," ");
+	if (ress) { (*ress)=Untokenize(tokens,3," "); }
 	return true;
 	}
 
 
-bool TTextFileReader::ExtractIntVect0(std::string s,TIntVect &intv,std::string *ress,std::string sep)
+bool TextFileReader::ExtractIntVect0(std::string s,IntVect &intv,std::string *ress,std::string sep)
 	{
 	std::vector<std::string> tokens;
 	Tokenize0(s,tokens,sep);
 
-	if (tokens.size()<3) return false;
+	if (tokens.size()<3) { return false; }
 	intv.x=atoi(tokens[0].c_str()); ///TODO: Errorchecking
 	intv.y=atoi(tokens[1].c_str());
 	intv.z=atoi(tokens[2].c_str());
-	if (ress) (*ress)=Untokenize(tokens,3," ");
+	if (ress) { (*ress)=Untokenize(tokens,3," "); }
 	return true;
 	}
 
-bool TTextFileReader::Extract3dVector(std::string s,Vector3d &intv,int offs)
+bool TextFileReader::Extract3dVector(std::string s,Vector3d &intv,int offs)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
-	if (tokens.size()-offs<3) return false;
+	if (tokens.size()-offs<3) { return false; }
 	intv.x=atof(tokens[offs+0].c_str()); ///TODO: Errorchecking
 	intv.y=atof(tokens[offs+1].c_str());
 	intv.z=atof(tokens[offs+2].c_str());
@@ -217,11 +217,11 @@ bool TTextFileReader::Extract3dVector(std::string s,Vector3d &intv,int offs)
 	return true;
 	}
 
-bool TTextFileReader::Extract2dVector(std::string s,Vector2d &intv,int offs)
+bool TextFileReader::Extract2dVector(std::string s,Vector2d &intv,int offs)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens," ");
-	if (tokens.size()-offs<2) return false;
+	if (tokens.size()-offs<2) { return false; }
 	intv.u=atof(tokens[offs+0].c_str()); ///TODO: Errorchecking
 	intv.v=atof(tokens[offs+1].c_str());
 // if (ress) (*ress)=Untokenize(tokens,3," ");
@@ -229,13 +229,13 @@ bool TTextFileReader::Extract2dVector(std::string s,Vector2d &intv,int offs)
 	}
 
 
-void TTextFileReader::ReplaceChar(std::string &str,char which,char with)
+void TextFileReader::ReplaceChar(std::string &str,char which,char with)
 	{
-	for (unsigned int i=0; i<str.length(); i++) if (str[i]==which) str[i]=with;
+	for (unsigned int i=0; i<str.length(); i++) if (str[i]==which) { str[i]=with; }
 	}
 
 
-std::vector<std::string> TTextFileReader::Seperate(std::string s,std::string sep)
+std::vector<std::string> TextFileReader::Seperate(std::string s,std::string sep)
 	{
 	std::vector<std::string> tokens;
 	Tokenize(s,tokens,sep);
@@ -244,11 +244,11 @@ std::vector<std::string> TTextFileReader::Seperate(std::string s,std::string sep
 
 ////////////////////////////////////////////////7
 
-void TBaseModel::Reload()
+void BaseModel::Reload()
 	{
 	std::string fna=name;
 	Clear();
-	TCuboFile * finfo =g_BaseFileSystem()->GetFileForReading(name);
+	CuboFile * finfo =g_BaseFileSystem()->GetFileForReading(name);
 	if (!finfo) {coutlog("Cannot reload model "+name,2); }
 	LoadFromFile(finfo);
 	delete finfo;
@@ -257,13 +257,13 @@ void TBaseModel::Reload()
 ////////////////////////////////////////////////7
 
 
-bool TOBJModel::LoadFromFile(TCuboFile *finfo)
+bool OBJModel::LoadFromFile(CuboFile *finfo)
 	{
-	TBaseModel::LoadFromFile(finfo);
+	BaseModel::LoadFromFile(finfo);
 	Clear();
-	TTextFileReader tr;
+	TextFileReader tr;
 
-	if (!tr.LoadFile(finfo)) return false;
+	if (!tr.LoadFile(finfo)) { return false; }
 	tr.RemoveComments();
 
 	int groupindex=-1;
@@ -277,14 +277,14 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 					//Vertex
 					Vector3d v;
 					tr.ReplaceChar(line,',','.');
-					if (!tr.Extract3dVector(line,v,1)) return false;
+					if (!tr.Extract3dVector(line,v,1)) { return false; }
 					verts.push_back(v);
 					}
 			else if (BeginsWith(line,"vt "))
 					{
 					Vector2d v;
 					tr.ReplaceChar(line,',','.');
-					if (!tr.Extract2dVector(line,v,1)) return false;
+					if (!tr.Extract2dVector(line,v,1)) { return false; }
 					texcoords.push_back(v);
 					}
 			else if (BeginsWith(line,"vn "))
@@ -292,7 +292,7 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 					//Norm
 					Vector3d v;
 					tr.ReplaceChar(line,',','.');
-					if (!tr.Extract3dVector(line,v,1)) return false;
+					if (!tr.Extract3dVector(line,v,1)) { return false; }
 					normals.push_back(v);
 					}
 			else if (BeginsWith(line,"g "))
@@ -318,13 +318,13 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 					//Parse a face
 					std::vector<std::string> outertokens;
 					outertokens=tr.Seperate(line," ");
-					if (outertokens.size()<4) return false;
+					if (outertokens.size()<4) { return false; }
 					int faceindex=groups[groupindex].faces.size();
 					groups[groupindex].faces.resize(faceindex+1);
 					for (int i=1; i<=3; i++)
 							{
-							TIntVect iv;
-							if (!tr.ExtractIntVectFace(outertokens[i],iv,NULL,"/")) return false;
+							IntVect iv;
+							if (!tr.ExtractIntVectFace(outertokens[i],iv,NULL,"/")) { return false; }
 							groups[groupindex].faces[faceindex].vert[i-1]=iv.x-1;
 							groups[groupindex].faces[faceindex].texcoord[i-1]=iv.y-1;
 							groups[groupindex].faces[faceindex].norm[i-1]=iv.z-1;
@@ -339,12 +339,12 @@ bool TOBJModel::LoadFromFile(TCuboFile *finfo)
 			}
 
 	Vector2d bla;
-	if (texcoords.size()==0) texcoords.push_back(bla);
+	if (texcoords.size()==0) { texcoords.push_back(bla); }
 	return true;
 	}
 
 
-void TOBJModel::Clear()
+void OBJModel::Clear()
 	{
 	verts.clear();
 	normals.clear();
@@ -353,14 +353,14 @@ void TOBJModel::Clear()
 	for (unsigned int i=0; i<groups.size(); i++)
 			{
 			groups[i].faces.clear();
-			if (groups[i].userenderlist) glDeleteLists(groups[i].renderlist, 1);
+			if (groups[i].userenderlist) { glDeleteLists(groups[i].renderlist, 1); }
 			}
 	groups.clear();
 	}
 
 int g_norenderlist=0;
 
-void TOBJModel::DrawGroup(int g)
+void OBJModel::DrawGroup(int g)
 	{
 	//glShadeModel(GL_SMOOTH);
 
@@ -412,14 +412,14 @@ void TOBJModel::DrawGroup(int g)
 
 
 
-void TOBJModel::RenderByDef(int defindex)
+void OBJModel::RenderByDef(int defindex)
 	{
 
-	for (unsigned int g=0; g<groups.size(); g++) g_Game()->GetModelDefs()->GetDefPtr(defindex)->Call_RenderGroup(g);
+	for (unsigned int g=0; g<groups.size(); g++) { g_Game()->GetModelDefs()->GetDefPtr(defindex)->Call_RenderGroup(g); }
 	}
 
 
-void TOBJModel::SmoothSimplify()
+void OBJModel::SmoothSimplify()
 	{
 //Check if doublicate Verts are defined and simplify them
 	std::vector<int> mapper;
@@ -447,7 +447,7 @@ void TOBJModel::SmoothSimplify()
 
 
 
-Vector3d TOBJModel::GetTangent(int g,int f)
+Vector3d OBJModel::GetTangent(int g,int f)
 	{
 	Vector3d p1=verts[groups[g].faces[f].vert[0]];
 	Vector3d p2=verts[groups[g].faces[f].vert[1]];
@@ -466,7 +466,7 @@ Vector3d TOBJModel::GetTangent(int g,int f)
 	return tangent;
 	}
 
-void TOBJModel::DrawGroupWithTangent(int g, std::string TangentNameInShader)
+void OBJModel::DrawGroupWithTangent(int g, std::string TangentNameInShader)
 	{
 	if (tangents.size()==0) //BUILD THE TANGENTS FOR THIS MODEL
 			{
@@ -506,23 +506,23 @@ void TOBJModel::DrawGroupWithTangent(int g, std::string TangentNameInShader)
 
 
 
-void TModelServer::Clear()
+void ModelServer::Clear()
 	{
 	for (unsigned int i=0; i<mdls.size(); i++) if (mdls[i]) { delete mdls[i]; mdls[i]=NULL;}
 	mdls.resize(0);
 	}
 
-TModelServer::TModelServer()
+ModelServer::ModelServer()
 	{
 
 	}
 
-TModelServer::~TModelServer()
+ModelServer::~ModelServer()
 	{
 	Clear();
 	}
 
-void TModelServer::Reload()
+void ModelServer::Reload()
 	{
 	for (unsigned int i=0; i<mdls.size(); i++)
 			{
@@ -530,26 +530,26 @@ void TModelServer::Reload()
 			}
 	}
 
-int TModelServer::GetModel(std::string fname)
+int ModelServer::GetModel(std::string fname)
 	{
 	for (unsigned int i=0; i<mdls.size(); i++)
 			{
-			if (mdls[i]->GetName()==fname) return i;
+			if (mdls[i]->GetName()==fname) { return i; }
 			}
 	return -1;
 	}
 
-int TModelServer::AddOBJ(TCuboFile * finfo)
+int ModelServer::AddOBJ(CuboFile * finfo)
 	{
 
 //TCuboFile * finfo=GetFileName(fname,FILE_MDL,".obj")
 	std::string fname=finfo->GetName();
 
 	int res=GetModel(fname);
-	if (res!=-1) return res;
+	if (res!=-1) { return res; }
 
-	if (g_VerboseMode()) coutlog("Loading Model: "+finfo->GetNameForLog());
-	TOBJModel *newmdl=new TOBJModel();
+	if (g_VerboseMode()) { coutlog("Loading Model: "+finfo->GetNameForLog()); }
+	OBJModel *newmdl=new OBJModel();
 
 
 	if (!newmdl->LoadFromFile(finfo)) { delete newmdl; return -1;}
@@ -563,7 +563,7 @@ int TModelServer::AddOBJ(TCuboFile * finfo)
 ///////////////////////////////////////////////
 
 
-void TMdlDef::CreateRenderList(int gindex)
+void MdlDef::CreateRenderList(int gindex)
 	{
 	if (gindex<0)
 			{
@@ -589,13 +589,13 @@ void TMdlDef::CreateRenderList(int gindex)
 			}
 	}
 
-TMdlDef::~TMdlDef()
+MdlDef::~MdlDef()
 	{
 	if (totalrenderlist) {glDeleteLists(totalrenderlist,1);}
-	for (unsigned int i=0; i<grenderlists.size(); i++) if (grenderlists[i]) glDeleteLists(grenderlists[i],1);
+	for (unsigned int i=0; i<grenderlists.size(); i++) if (grenderlists[i]) { glDeleteLists(grenderlists[i],1); }
 	}
 
-void TMdlDef::Call_RenderModel()
+void MdlDef::Call_RenderModel()
 	{
 
 	if (totalrenderlist && (!g_norenderlist)) {glCallList(totalrenderlist); InvalidateMaterial(); }
@@ -608,9 +608,9 @@ void TMdlDef::Call_RenderModel()
 
 	}
 
-void TMdlDef::Call_RenderGroup(int g)
+void MdlDef::Call_RenderGroup(int g)
 	{
-	if (g>=(int)grenderlists.size()) grenderlists.resize(g+1,0);
+	if (g>=(int)grenderlists.size()) { grenderlists.resize(g+1,0); }
 	if (grenderlists[g] && (!g_norenderlist)) {glCallList(grenderlists[g]);  }
 	else if (lua.FuncExists("RenderGroup"))
 			{
@@ -675,7 +675,7 @@ int MODEL_Render(lua_State *state)
 int MODEL_LoadOBJ(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING;
-	TCuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
+	CuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
 	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_INT(-1) ; return 1;}
 	int r=g_Game()->GetModels()->AddOBJ(finfo);
 	delete finfo;

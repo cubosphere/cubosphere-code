@@ -34,10 +34,10 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "events.hpp"
 #include <iostream>
 
-void TEventManager::HandleEvents()
+void EventManager::HandleEvents()
 	{
 	SDL_Event event;
-	if (mouse) mouse->BeginDispatch();
+	if (mouse) { mouse->BeginDispatch(); }
 	while(SDL_PollEvent(&event)) {
 			//Und gehen diese durch
 			switch(event.type) {
@@ -47,19 +47,19 @@ void TEventManager::HandleEvents()
 						//		case SDL_TEXTEDITING:
 						//Send it to Keyboard
 
-						if (keyb) keyb->DispatchEvent(&event);
+						if (keyb) { keyb->DispatchEvent(&event); }
 						break;
 					case SDL_MOUSEMOTION:
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (mouse) mouse->DispatchEvent(&event);
+						if (mouse) { mouse->DispatchEvent(&event); }
 						break;
 					case SDL_JOYAXISMOTION:
 					case SDL_JOYBALLMOTION:
 					case SDL_JOYHATMOTION:
 					case SDL_JOYBUTTONDOWN:
 					case SDL_JOYBUTTONUP:
-						if (joy) joy->DispatchEvent(&event);
+						if (joy) { joy->DispatchEvent(&event); }
 						break;
 					case SDL_QUIT:
 						//Sollte das Fenster geschlossen werden, soll er auch der Loop beendet werden

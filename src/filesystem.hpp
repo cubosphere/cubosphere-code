@@ -66,13 +66,13 @@ class cls_FileReadable : public cls_FileBaseClass
 		virtual void DisownData() const=0;  //After getting data, the data will be deleted in the file destructor. Disown it to let the data at *GetData() survive
 		///Added for Cubo
 		SDL_RWops * GetAsRWops(int binary=1) {
-			if  (IsHDDFile()) return SDL_RWFromFile(GetHDDName().c_str(),binary==1 ? "rb" : "r");
-			else return SDL_RWFromMem(GetData(),GetSize());
+			if  (IsHDDFile()) { return SDL_RWFromFile(GetHDDName().c_str(),binary==1 ? "rb" : "r"); }
+			else { return SDL_RWFromMem(GetData(),GetSize()); }
 			}
 	};
 
 ///Added for Cubo
-using TCuboFile = cls_FileReadable;
+using CuboFile = cls_FileReadable;
 
 class cls_FileWriteable : public cls_FileBaseClass
 	{

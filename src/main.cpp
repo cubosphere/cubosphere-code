@@ -57,7 +57,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <list>
 
-TCuboGame game;
+CuboGame game;
 
 void MakeConsole()
 	{
@@ -140,21 +140,21 @@ int main(int argc, char *argv[])
 	game.Start();
 	game.FreeMedia();
 
-	if (g_VerboseMode()) coutlog("Ending game engine");
+	if (g_VerboseMode()) { coutlog("Ending game engine"); }
 	game.End();
 
-	if (g_VerboseMode()) coutlog("Stopping sound");
+	if (g_VerboseMode()) { coutlog("Stopping sound"); }
 	g_Sounds()->KillSound();
 
-	if (g_VerboseMode()) coutlog("SDL quit");
+	if (g_VerboseMode()) { coutlog("SDL quit"); }
 	SDL_Quit();
 
-	if (g_VerboseMode()) coutlog("Umount console");
+	if (g_VerboseMode()) { coutlog("Umount console"); }
 	KillConsole();
 
 //   return 0;
 
-	if (g_VerboseMode()) coutlog("-> Good bye!");
+	if (g_VerboseMode()) { coutlog("-> Good bye!"); }
 	return EXIT_SUCCESS;
 	}
 

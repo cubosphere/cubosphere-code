@@ -112,7 +112,7 @@ class CuboBlockSide
 		int side;
 		int sidetype;
 		CuboBlock *parent;
-		TLuaVarHolder varholder;
+		LuaVarHolder varholder;
 	public:
 		void SetSideType(int i) {sidetype=i;}
 		void Init(int cside,CuboBlock *parent);
@@ -134,7 +134,7 @@ class CuboBlockSide
 		void DistRender();
 		void Think();
 		std::string GetEditorInfo(std::string what,std::string def);
-		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		LuaVarHolder  *GetVarHolder() {return &varholder;}
 		std::string GetTypeName();
 		void SetSideItem(std::string n);
 		CuboItem *GetItem();
@@ -146,7 +146,7 @@ class CuboItem
 	protected:
 		int itemtype;
 		int myid;
-		TLuaVarHolder varholder;
+		LuaVarHolder varholder;
 		CuboBlockSide *sideptr;
 	public:
 		CuboItem(int id, int type,CuboBlockSide *side);
@@ -156,7 +156,7 @@ class CuboItem
 		CuboBlockSide *GetSide() {return sideptr;}
 		void DistRender();
 		void Call_Constructor();
-		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		LuaVarHolder  *GetVarHolder() {return &varholder;}
 		void CollisionCheckWithActor(int actorid);
 		std::string GetEditorInfo(std::string what,std::string def);
 		std::string GetName();
@@ -174,7 +174,7 @@ class CuboBlock
 		float scale;
 		std::vector<CuboBlockSide> sides;
 		std::vector<CuboBlock*> next;
-		TLuaVarHolder varholder;
+		LuaVarHolder varholder;
 		float cullradius;
 		int blocktype;
 		void InitSides();
@@ -207,7 +207,7 @@ class CuboBlock
 		int Blocking(); //Can we pass through it
 		std::string GetEditorInfo(std::string what,std::string def);
 		int BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitpt); //-1 if not hit
-		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		LuaVarHolder  *GetVarHolder() {return &varholder;}
 		void Think();
 		Vector3d GetBBMax();
 		Vector3d GetBBMin();
@@ -221,7 +221,7 @@ class CuboBlock
 	};
 
 
-extern void g_SetAlphaFunc(TLuaAccess *acc,std::string func);
+extern void g_SetAlphaFunc(LuaAccess *acc,std::string func);
 extern void g_LastDiffuse(float * ld);
 
 extern void LUA_ITEM_RegisterLib();

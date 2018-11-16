@@ -53,28 +53,28 @@ class TextureDef : public BaseLuaDef
 		void Render2d();
 	};
 
-using TTextureDefServer = BaseDefServer<TextureDef>;
+using TextureDefServer = BaseDefServer<TextureDef>;
 
 //Inherited the different formats herefrom
-class TTexture
+class Texture
 	{
 	protected:
 		int width,height;
 	public:
 		int getWidth() {return width;}
 		int getHeight() {return height;}
-		TTexture() : width(0), height(0) {}
-		TTexture(int w,int h) : width(w), height(h) {}
+		Texture() : width(0), height(0) {}
+		Texture(int w,int h) : width(w), height(h) {}
 		virtual void* getRGBPointer() {return NULL;}
-		virtual bool loadFromFile(TCuboFile *finfo) {return false;}
+		virtual bool loadFromFile(CuboFile *finfo) {return false;}
 		virtual int HasAlpha() {return 0;}
 		virtual int CanFastResize(int maxdim) {return 0;}
 		virtual void FastResize(int maxdim) {}
-		virtual ~TTexture() {};
+		virtual ~Texture() {};
 	};
 
 
-class TJPEGTexture: public TTexture
+class JPEGTexture: public Texture
 	{
 	protected:
 		void * raw;
@@ -82,12 +82,12 @@ class TJPEGTexture: public TTexture
 		void shrink_blur(int ammount);
 		void shrink_half_blur();
 	public:
-		virtual ~TJPEGTexture() {if (raw) free(raw);}
-		TJPEGTexture() : TTexture(), raw(NULL), trans(0) {}
-		TJPEGTexture(int w,int h) : TTexture(w,h), raw(NULL), trans(0) {}
+		virtual ~JPEGTexture() {if (raw) free(raw);}
+		JPEGTexture() : Texture(), raw(NULL), trans(0) {}
+		JPEGTexture(int w,int h) : Texture(w,h), raw(NULL), trans(0) {}
 		virtual void* getRGBPointer() {return raw;}
-		virtual bool loadFromFile(TCuboFile *finfo);
-		virtual int LoadAlphaTexture(TCuboFile *finfo);
+		virtual bool loadFromFile(CuboFile *finfo);
+		virtual int LoadAlphaTexture(CuboFile *finfo);
 		virtual int GetChannels() {return channels;}
 		virtual int HasAlpha() {return trans;}
 		virtual void ColorKeyTransparency(unsigned int ckey);
@@ -110,32 +110,32 @@ class TJPEGTexture: public TTexture
 
 
 
-using TFontExtend = struct
+using FontExtend = struct
 	{
 	float u1,v1,u2,v2;
 	};
 
 
-class TTextureContainer
+class TextureContainer
 	{
 	protected:
 		GLuint tind;
-		std::vector<TFontExtend> chars;
+		std::vector<FontExtend> chars;
 		void AddChar(int x,int y,void *data,int width,int fsize);
 	public:
 		int duration1,duration2;
-		void makeFromTTexture(TTexture* texture,int asfont,int maxsize);
+		void makeFromTTexture(Texture* texture,int asfont,int maxsize);
 		void activate();
 		void activate(int stage);
-		TFontExtend GetFontExtend(int num) {return chars[num];}
+		FontExtend GetFontExtend(int num) {return chars[num];}
 		void clear() {glDeleteTextures(1,&tind);}
-		TTextureContainer() :tind(0) {}
+		TextureContainer() :tind(0) {}
 	};
 
-class TTextureServer
+class TextureServer
 	{
 	protected:
-		std::vector<TTextureContainer> Textures;
+		std::vector<TextureContainer> Textures;
 		std::vector<std::string> filenames,alphanames;
 		std::vector<int> istemp;
 		std::vector<int> activetextures;
@@ -143,12 +143,12 @@ class TTextureServer
 		int maxsize;
 		int txtenabled;
 //      int makeNoiseTexture(int size) {TNoiseRGBTexture t(size,size); return addTexture(&t);} //Should not be used
-		int addTexture(TTexture *tex, int asfont) {
-			TTextureContainer cont; cont.makeFromTTexture(tex,asfont,maxsize);  timer2+=cont.duration1;
+		int addTexture(Texture *tex, int asfont) {
+			TextureContainer cont; cont.makeFromTTexture(tex,asfont,maxsize);  timer2+=cont.duration1;
 			timer3+=cont.duration2; Textures.push_back(cont); return (Textures.size()-1);
 			} //Should not be used directly
 	public:
-		TTextureServer() : maxsize(512),txtenabled(-1) {};
+		TextureServer() : maxsize(512),txtenabled(-1) {};
 		void DeactivateStage(int stage);
 		void activate(int i,int stage);
 		void activate(int i);
@@ -158,12 +158,12 @@ class TTextureServer
 		void Invalidate();
 		void SetMaxTextureSize(int s) {maxsize=s;}
 		int GetMaxTextureSize() {return maxsize;}
-		TFontExtend GetFontExtend(int index,int num);
+		FontExtend GetFontExtend(int index,int num);
 		void clear();
-		int LoadTexture(TCuboFile *finfo,int asfont=0,unsigned int colorkey=0);
-		int LoadTextureAndAlpha(TCuboFile *finfo,TCuboFile *afinfo);
+		int LoadTexture(CuboFile *finfo,int asfont=0,unsigned int colorkey=0);
+		int LoadTextureAndAlpha(CuboFile *finfo,CuboFile *afinfo);
 
-		int LoadTempTexture(std::string tname, TCuboFile *finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
+		int LoadTempTexture(std::string tname, CuboFile *finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
 		int TempTextureIndexFromName(std::string tname);
 		void ResetTimerCounters();
 		void CoutTimerString();

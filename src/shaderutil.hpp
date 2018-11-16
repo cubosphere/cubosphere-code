@@ -51,7 +51,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-class TShaderUniformLocation
+class ShaderUniformLocation
 	{
 	public:
 		std::string name;
@@ -59,38 +59,38 @@ class TShaderUniformLocation
 	};
 
 
-class TShaderServer;
+class ShaderServer;
 
-class TBaseShader
+class BaseShader
 	{
 	protected:
 		std::string filename; //Holds the base name
 		GLuint vertexref,fragmentref,programref;
-		std::vector<TShaderUniformLocation> ulocs;
-		std::vector<TShaderUniformLocation> alocs;
+		std::vector<ShaderUniformLocation> ulocs;
+		std::vector<ShaderUniformLocation> alocs;
 	public:
 		GLint GetUniformLocation(std::string s);
 		GLint GetAttributeLocation(std::string s);
 		std::string GetName() {return filename;}
-		void Load(TShaderServer* ss, std::string fname);
+		void Load(ShaderServer* ss, std::string fname);
 		void Activate();
 		void Deactivate();
-		~TBaseShader();
+		~BaseShader();
 		GLuint GetProgramRef() {return programref;}
 	};
 
 
-class TShaderServer
+class ShaderServer
 	{
 	protected:
-		std::vector<TBaseShader*> shaderlist;
+		std::vector<BaseShader*> shaderlist;
 		int momshader;
 	public:
-		TShaderServer() : momshader(-1) {};
+		ShaderServer() : momshader(-1) {};
 		// GLboolean ShadersSupported(void);
 		GLuint CompileShaderText(GLenum shaderType, const char *text);
 		GLuint CompileShaderFile(GLenum shaderType, const char *filename);
-		GLuint CompileShaderCuboFile(GLenum shaderType, TCuboFile *finfo);
+		GLuint CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo);
 		GLuint LinkShaders(GLuint vertShader, GLuint fragShader);
 		GLboolean ValidateShaderProgram(GLuint program);
 //   void SetUniformValues(GLuint program, struct uniform_info uniforms[]);
@@ -100,9 +100,9 @@ class TShaderServer
 		//void PrintAttribs(const struct attrib_info attribs[]);
 		bool InitShaders(std::string dirname);
 		int GetShader(std::string name);
-		TBaseShader *GetShaderPtr(std::string name);
+		BaseShader *GetShaderPtr(std::string name);
 		int AddShader(std::string name);
-		bool RegisterShader(TBaseShader *sh);
+		bool RegisterShader(BaseShader *sh);
 		bool FreeShaders();
 		bool Activate(int index);
 		bool Deactivate();

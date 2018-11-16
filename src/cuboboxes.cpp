@@ -46,14 +46,14 @@ if not, see <http://www.gnu.org/licenses/>.
 
 //Specifies a function inside the given LuaState.
 //Params: In: x,y,z -> Out: Alpha Value
-static TLuaAccess* s_AlphaAccess=NULL;
+static LuaAccess* s_AlphaAccess=NULL;
 static std::string s_AlphaFunc="";
 
 static float s_LastDiffuse[4];
 
 void g_LastDiffuse(float * ld) {for (int c=0; c<4; c++) s_LastDiffuse[c]=ld[c];}
 
-void g_SetAlphaFunc(TLuaAccess *acc,std::string func)
+void g_SetAlphaFunc(LuaAccess *acc,std::string func)
 	{
 	s_AlphaAccess=acc;
 	s_AlphaFunc=func;
@@ -76,7 +76,7 @@ void CuboBlockSide::SetSideItem(std::string n)
 	{
 	//First remove all Items of this side
 	g_Game()->GetLevel()->RemoveItemFromSide(this);
-	if (n=="") return;
+	if (n=="") { return; }
 	//add the new item
 	g_Game()->GetLevel()->AddItem(parent->GetID(),s_CuboSideNames[side],n);
 	}
@@ -116,8 +116,8 @@ void CuboBlockSide::SpecialRender(std::string nam,int defrender)
 	if ( g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SpecialRender(nam,GetID())) {}
 	else
 			{
-			if (defrender==1) Render();
-			else if (defrender==0 && g_PostEffect())  g_PostEffect()->CallDefaultSpecialRender(nam,"side",GetID());
+			if (defrender==1) { Render(); }
+			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"side",GetID()); }
 			}
 
 	}
@@ -192,8 +192,9 @@ void CuboBlockSide::RenderQuad()
 			offs=offs*parent->GetScale();
 			Vector3d p=ps+offs;
 			//Here we have to check whether we have to call a SetDiffuse for each Texture Coordinate
-			if ((s_AlphaAccess) && (s_AlphaFunc!=""))
-				SideAlpha(p.x,p.y,p.z);
+			if ((s_AlphaAccess) && (s_AlphaFunc!="")) {
+					SideAlpha(p.x,p.y,p.z);
+					}
 			glVertex3d(p.x,p.y,p.z);
 			}
 	glEnd();
@@ -243,7 +244,7 @@ int CuboBlock::Moving()
 
 int CuboBlock::IsEditorSelector()
 	{
-	if (g_Game()->GetLevel()->GetBlockDef(this->blocktype)->GetName()=="_selection") return 1;
+	if (g_Game()->GetLevel()->GetBlockDef(this->blocktype)->GetName()=="_selection") { return 1; }
 	return 0;
 	}
 
@@ -310,11 +311,12 @@ void CuboBlock::Render(Camera *cam)
 			{
 			if (next[i])
 					{
-					if (next[i]->HasNoTransparency()) continue;
+					if (next[i]->HasNoTransparency()) { continue; }
 					}
 			float dist=cp*s_CuboNormals[i];
-			if (-dist>CUBO_SCALE || (!(sides[i].Call_MayCull())))
-				sides[i].Render();
+			if (-dist>CUBO_SCALE || (!(sides[i].Call_MayCull()))) {
+					sides[i].Render();
+					}
 			}
 	}
 
@@ -334,9 +336,10 @@ void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[])
 			//else
 				{
 				float dist=cp*s_CuboNormals[i];
-				if (-dist>CUBO_SCALE || (!(sides[i].Call_MayCull())))
-					mustrender[i]=1;
-				else mustrender[i]=0;
+				if (-dist>CUBO_SCALE || (!(sides[i].Call_MayCull()))) {
+						mustrender[i]=1;
+						}
+				else { mustrender[i]=0; }
 				}
 			}
 	}
@@ -367,9 +370,9 @@ int CuboBlock::GetNeighbor(Vector3d norm)
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) {d=i; break;}
 			}
-	if (d<0) return -1;
+	if (d<0) { return -1; }
 	CuboBlock *ne=next[d];
-	if (!ne) return -1;
+	if (!ne) { return -1; }
 	return ne->GetID();
 	}
 
@@ -401,8 +404,9 @@ void CuboBlock::WriteLevelData(FILE *f)
 	for (int s=0; s<6; s++)
 			{
 			std::string stypen=GetBlockSide(s)->GetTypeName();
-			if (stypen!=typen)
-				fprintf(f,"    LEVEL_ChangeSide(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),stypen.c_str());
+			if (stypen!=typen) {
+					fprintf(f,"    LEVEL_ChangeSide(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),stypen.c_str());
+					}
 
 
 			if (GetBlockSide(s)->GetEditorInfo("BlockOnly","") != "yes")
@@ -437,7 +441,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 							fprintf(f,"    --LEVEL_AddItem(LEVEL_LastBlock(),\"%s\",\"%s\");  -- (Is in another block!)\n",s_CuboSideNames[s].c_str(),item->GetName().c_str());
 
 							}
-					else fprintf(f,"    local item=LEVEL_AddItem(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),item->GetName().c_str());
+					else { fprintf(f,"    local item=LEVEL_AddItem(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),item->GetName().c_str()); }
 
 					if (item->GetEditorInfo("NumVars","") != "")  //Get the exported variables
 							{
@@ -459,7 +463,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 			for (int ind=0; ind<g_Game()->GetNumActors(); ind++)
 					{
 					TCuboMovement *en=g_Game()->GetActorMovement(ind);
-					if (en->IsPlayer()) continue;
+					if (en->IsPlayer()) { continue; }
 					if (en->GetOnSideID()==GetBlockSide(s)->GetID())
 							{
 							e=(CuboEnemy*)en; //Found an enemy
@@ -502,20 +506,20 @@ void CuboBlock::WriteLevelData(FILE *f)
 void CuboBlock::ReleaseMeFromNext()
 	{
 	for (int i=0; i<6; i++)
-		if (next[i]) next[i]->SetNext(s_CuboOpposingDir[i],NULL);
+		if (next[i]) { next[i]->SetNext(s_CuboOpposingDir[i],NULL); }
 	}
 
 
 void CuboBlock::ReAttachMeToNext()
 	{
 	for (int i=0; i<6; i++)
-		if (next[i]) next[i]->SetNext(s_CuboOpposingDir[i],this);
+		if (next[i]) { next[i]->SetNext(s_CuboOpposingDir[i],this); }
 	}
 
 void CuboBlock::SetBlockType(int i)
 	{
 	blocktype=i;
-	for (int j=0; j<6; j++) sides[j].SetSideType(blocktype);
+	for (int j=0; j<6; j++) { sides[j].SetSideType(blocktype); }
 	}
 
 void CuboBlock::Call_OnBlockEvent(int actorid)
@@ -556,7 +560,7 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 	Vector3d diff=pos;
 	diff=diff-start;
 	float sqrdist=diff.sqrlength();
-	if (sqrdist-3*CUBO_SCALE*CUBO_SCALE>(*dist)*(*dist)) return -1;
+	if (sqrdist-3*CUBO_SCALE*CUBO_SCALE>(*dist)*(*dist)) { return -1; }
 //Now go through the sides
 	int theside=-1;
 	for (int i=0; i<6; i++)
@@ -572,9 +576,9 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 			float ndots=start*s_CuboNormals[i];
 			//if (ndots<0) continue;
 			planedist-=ndots;
-			if (ndotd>0.00000001) continue; //parallel
+			if (ndotd>0.00000001) { continue; } //parallel
 			planedist/=ndotd;
-			if (planedist<0) continue;
+			if (planedist<0) { continue; }
 			if (planedist<*dist)
 					{
 					///Only check if we are inside
@@ -619,8 +623,8 @@ void CuboItem::SpecialRender(std::string nam,int defrender)
 	if ( g_Game()->GetLevel()->GetItemDef(itemtype)->Call_SpecialRender(nam,myid)) {}
 	else
 			{
-			if (defrender==1) Render();
-			else if (defrender==0 && g_PostEffect())  g_PostEffect()->CallDefaultSpecialRender(nam,"item",myid);
+			if (defrender==1) { Render(); }
+			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"item",myid); }
 			}
 
 	}
@@ -656,13 +660,13 @@ void CuboBlock::Call_Constructor()
 	varholder.clear();
 	g_Game()->GetLevel()->GetBlockDef(blocktype)->Call_BlockConstructor(GetID());
 	//And the same thing for all sides
-	for (unsigned int i=0; i<6; i++) sides[i].Call_Constructor();
+	for (unsigned int i=0; i<6; i++) { sides[i].Call_Constructor(); }
 	}
 
 
 void CuboBlock::Call_CollisionCheck(int plr)
 	{
-	for (unsigned int i=0; i<6; i++) sides[i].Call_CollisionCheck(plr);
+	for (unsigned int i=0; i<6; i++) { sides[i].Call_CollisionCheck(plr); }
 	}
 
 
@@ -736,7 +740,7 @@ int ITEM_SetVar(lua_State *state)
 	{
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
-	if (item<0) return 0;
+	if (item<0) { return 0; }
 	g_Game()->GetLevel()->GetItem(item)->GetVarHolder()->StoreVar(state);
 
 	return 0;
@@ -871,8 +875,8 @@ int SIDE_SetAlphaFunc(lua_State *state)
 	{
 	std::string f=LUA_GET_STRING;
 
-	if (f=="") g_SetAlphaFunc(NULL,"");
-	else g_SetAlphaFunc(g_CallAccess(),f);
+	if (f=="") { g_SetAlphaFunc(NULL,""); }
+	else { g_SetAlphaFunc(g_CallAccess(),f); }
 	return 0;
 	}
 
@@ -1034,7 +1038,8 @@ int BLOCK_AtPos(lua_State *state)
 	Vector3d v=Vector3FromStack(state);
 	CuboBlock* b=g_Game()->GetLevel()->GetBlockAtPos(v);
 	int i;
-	if (b) i=b->GetID(); else i=-1;
+	if (b) { i=b->GetID(); }
+	else { i=-1; }
 	LUA_SET_INT(i);
 	return 1;
 	}
@@ -1053,8 +1058,9 @@ int BLOCK_GetBlocking(lua_State *state)
 	{
 	int b=LUA_GET_INT;
 	int res=0;
-	if (b>=0)
-		res=g_Game()->GetLevel()->GetBlock(b)->Blocking();
+	if (b>=0) {
+			res=g_Game()->GetLevel()->GetBlock(b)->Blocking();
+			}
 	LUA_SET_INT(res);
 	return 1;
 	}

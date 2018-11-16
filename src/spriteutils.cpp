@@ -23,7 +23,7 @@ Vector3d v_camside,v_camdir,v_camup;
 Vector3d v_corner1,v_corner2;
 
 
-TSpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
+SpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
 	{
 	unsigned int id=(unsigned int)LUA_GET_DOUBLE;
 	unsigned int emi=id & 0xFFFF;
@@ -33,7 +33,7 @@ TSpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
 
 #define LUA_GET_EMITTER LUA_GET_EMITTER_FUNC(state)
 
-TSpriteDef * LUA_GET_SPRITETYPE_FUNC(lua_State * state)
+SpriteDef * LUA_GET_SPRITETYPE_FUNC(lua_State * state)
 	{
 	unsigned int id=(unsigned int)LUA_GET_DOUBLE;
 	unsigned int emi=id & 0xFFFF;
@@ -44,20 +44,20 @@ TSpriteDef * LUA_GET_SPRITETYPE_FUNC(lua_State * state)
 
 #define LUA_GET_SPRITETYPE LUA_GET_SPRITETYPE_FUNC(state)
 
-int TSpriteEnvironment::AddEmitter(int defindex)
+int SpriteEnvironment::AddEmitter(int defindex)
 	{
 	int index=-1;
 	for (unsigned int i=0; i<emitters.size(); i++) if (emitters[i]->Died()) {index=i; break;}
 	if (index>=0) { delete emitters[index];}
 	else { index=emitters.size(); emitters.push_back(NULL);}
-	emitters[index]=new TSpriteEmitter();
+	emitters[index]=new SpriteEmitter();
 	emitters[index]->SetID( (id << 16) | ((index) & 0xFFFF));
 	emitters[index]->Init(defindex,this);
 	died=0;
 	return emitters[index]->GetID();
 	}
 
-void TSpriteEnvironment::AttachOnActor(int aid)
+void SpriteEnvironment::AttachOnActor(int aid)
 	{
 	attachedid=aid;
 	attachtype=SPRITE_ENV_ATTACHED_TO_ACTOR;
@@ -65,32 +65,32 @@ void TSpriteEnvironment::AttachOnActor(int aid)
 	}
 
 
-void TSpriteEnvironment::AttachOnSide(int sid)
+void SpriteEnvironment::AttachOnSide(int sid)
 	{
 	attachedid=sid;
 	attachtype=SPRITE_ENV_ATTACHED_TO_SIDE;
 	RefreshBasis();
 	}
 
-void TSpriteEnvironment::Clear()
+void SpriteEnvironment::Clear()
 	{
 	for (unsigned int i=0; i<emitters.size(); i++) if (emitters[i])   { delete emitters[i]; emitters[i]=NULL;}
 	emitters.clear();
 	}
 
-TSpriteEnvironment::~TSpriteEnvironment()
+SpriteEnvironment::~SpriteEnvironment()
 	{
 	Clear();
 	}
 
-void TSpriteEnvironment::RefreshBasis()
+void SpriteEnvironment::RefreshBasis()
 	{
-	if (attachtype==SPRITE_ENV_ATTACHED_TO_WORLD) return;
+	if (attachtype==SPRITE_ENV_ATTACHED_TO_WORLD) { return; }
 	else if (attachtype==SPRITE_ENV_ATTACHED_TO_SIDE)
 			{
 			CuboBlockSide *bs;
 			bs=g_Game()->GetLevel()->GetBlockSide(attachedid);
-			if (!bs) return;
+			if (!bs) { return; }
 			vpos=bs->GetMidpoint();
 			vup=bs->GetNormal();
 			vdir=bs->GetTangent();
@@ -100,7 +100,7 @@ void TSpriteEnvironment::RefreshBasis()
 			{
 			TCuboMovement *am;
 			am=g_Game()->GetActorMovement(attachedid);
-			if (!am) return;
+			if (!am) { return; }
 			vpos=am->GetPos();
 			vdir=am->GetDir();
 			vside=am->GetSide();
@@ -112,7 +112,7 @@ void TSpriteEnvironment::RefreshBasis()
 	}
 
 
-void TSpriteEnvironment::Think(double elap)
+void SpriteEnvironment::Think(double elap)
 	{
 	elapsed=elap;
 	RefreshBasis();
@@ -122,20 +122,21 @@ void TSpriteEnvironment::Think(double elap)
 			if (!(emitters[i]->Died())) {
 					remaining++;
 					double mti=emitters[i]->GetMaxTimeInterval();
-					if ( elapsed<mti || mti<=0)
-						emitters[i]->Think();
+					if ( elapsed<mti || mti<=0) {
+							emitters[i]->Think();
+							}
 					else
 							{
 							int numcalcs=(int)ceil(elap/mti);
-							if (numcalcs>64) numcalcs=64; //There must be an upper bound!
+							if (numcalcs>64) { numcalcs=64; } //There must be an upper bound!
 							elapsed=elap/(double)numcalcs;
-							for (int c=0; c<numcalcs; c++)  emitters[i]->Think();
+							for (int c=0; c<numcalcs; c++) { emitters[i]->Think(); }
 							elapsed=elap;
 							}
 
 					}
 			}
-	if (!remaining) died=1;
+	if (!remaining) { died=1; }
 	}
 
 
@@ -144,7 +145,7 @@ void TSpriteEnvironment::Think(double elap)
 
 //////////////7
 
-double TSpriteEmitter::GetCullInformation()
+double SpriteEmitter::GetCullInformation()
 	{
 
 	if (!(g_Game()->GetCam()->SphereInFrustum(cull_center,cull_radius))) {
@@ -156,19 +157,19 @@ double TSpriteEmitter::GetCullInformation()
 	return cam_dist;
 	}
 
-void TSpriteEmitter::RenderAfterLevel()
+void SpriteEmitter::RenderAfterLevel()
 	{
-	if (colmultiply.w<=0  || (!sprites.size())) return;// Invisble
+	if (colmultiply.w<=0  || (!sprites.size())) { return; }// Invisble
 
 
-	std::vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
+	std::vector<SpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
 
 	int firstsprite=-1;
 	for (unsigned int i=0; i<sprites.size(); i++)
 			{
 			if (sprites[i].timeleft>0) { firstsprite=i; break;}
 			}
-	if (firstsprite==-1) return;
+	if (firstsprite==-1) { return; }
 
 	int ctext=sdefs[sprites[firstsprite].typ]->textureind;
 	g_Game()->GetTextures()->activate(ctext,0);
@@ -196,7 +197,7 @@ void TSpriteEmitter::RenderAfterLevel()
 	glEnd();
 	}
 
-Vector3d TSpriteEmitter::GetPos(int rel)
+Vector3d SpriteEmitter::GetPos(int rel)
 	{
 	if (rel==relpos) {return pos;}
 	else {
@@ -215,13 +216,13 @@ Vector3d TSpriteEmitter::GetPos(int rel)
 			}
 	}
 
-void TSpriteEmitter::SetPos(Vector3d p,int rel)
+void SpriteEmitter::SetPos(Vector3d p,int rel)
 	{
 	relpos=rel;
 	pos=p;
 	}
 
-void TSpriteEmitter::Init(int defind,TSpriteEnvironment * envi)
+void SpriteEmitter::Init(int defind,SpriteEnvironment * envi)
 	{
 	varholder.clear();
 	died=0;
@@ -232,7 +233,7 @@ void TSpriteEmitter::Init(int defind,TSpriteEnvironment * envi)
 	g_ParticleDefs()->GetDefPtr(defindex)->Call_EmitterConstructor(id);
 	}
 
-void TSpriteEmitter::Think()
+void SpriteEmitter::Think()
 	{
 ///TODO: Advance physics
 
@@ -245,7 +246,7 @@ void TSpriteEmitter::Think()
 	Vector3d maxpos=-minpos;
 	double maxscale=0;
 
-	std::vector<TSpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
+	std::vector<SpriteDef*> & sdefs=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs();
 	int counter=0;
 	for (unsigned int i=0; i<sprites.size(); i++) if (sprites[i].timeleft>0)
 				{
@@ -254,7 +255,7 @@ void TSpriteEmitter::Think()
 
 				double ip=1.0-sprites[i].timeleft/sprites[i].lifetime;
 				sprites[i].scale=sdefs[sprites[i].typ]->scalef->GetValue(ip);
-				if (sprites[i].scale>maxscale) maxscale=sprites[i].scale;
+				if (sprites[i].scale>maxscale) { maxscale=sprites[i].scale; }
 				sprites[i].col=sdefs[sprites[i].typ]->GetCol(ip,sprites[i].rgbphase);
 				sprites[i].grav=sdefs[sprites[i].typ]->gravf->GetValue(ip);
 
@@ -265,10 +266,10 @@ void TSpriteEmitter::Think()
 				sprites[i].rot+=sprites[i].rotspeed*env->elapsed;
 				minpos.Minimize(sprites[i].pos); maxpos.Maximize(sprites[i].pos);
 				sprites[i].timeleft-=env->elapsed;
-				if (sprites[i].timeleft>0) counter++;
+				if (sprites[i].timeleft>0) { counter++; }
 				}
 	activesprites=counter;
-	TParticleDef *pdef=g_ParticleDefs()->GetDefPtr(defindex);
+	ParticleDef *pdef=g_ParticleDefs()->GetDefPtr(defindex);
 	pdef->Call_EmitterThink(id,env->elapsed);
 
 //We can compute the bounding area
@@ -278,7 +279,7 @@ void TSpriteEmitter::Think()
 	cull_radius+=maxscale*scalefactor*sqrt(2.0); //Maximal offs
 	}
 
-Vector3d TSpriteEmitter::RelativePosToWorldPos(Vector3d rp)
+Vector3d SpriteEmitter::RelativePosToWorldPos(Vector3d rp)
 	{
 	Vector3d res(0,0,0);
 	Vector3d offs;
@@ -292,7 +293,7 @@ Vector3d TSpriteEmitter::RelativePosToWorldPos(Vector3d rp)
 	return res;
 	}
 
-void TSpriteEmitter::SpawnSprite(int typ,double theta,double phi,double vel)
+void SpriteEmitter::SpawnSprite(int typ,double theta,double phi,double vel)
 	{
 	int p=-1;
 //Ensure the sprites to be type sorted
@@ -302,9 +303,9 @@ void TSpriteEmitter::SpawnSprite(int typ,double theta,double phi,double vel)
 			{
 			if (sprites[i].timeleft<0) {p=i; break;}
 			}
-	if (p==-1) { p=sprites.size(); sprites.push_back(TSprite()); }
+	if (p==-1) { p=sprites.size(); sprites.push_back(Sprite()); }
 
-	TSpriteDef * sd=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs()[typ & 0xFFFF];
+	SpriteDef * sd=g_ParticleDefs()->GetDefPtr(defindex)->GetSpriteDefs()[typ & 0xFFFF];
 	sprites[p].typ=typ & 0xFFFF;
 	sprites[p].lifetime=sd->lifetime; sprites[p].timeleft=sprites[p].lifetime;
 	sprites[p].pos=GetPos(0);
@@ -325,7 +326,7 @@ void TSpriteEmitter::SpawnSprite(int typ,double theta,double phi,double vel)
 
 /////////////////
 
-void TSpriteDef::Render(TSprite & s)
+void SpriteDef::Render(Sprite & s)
 	{
 
 
@@ -366,43 +367,43 @@ void TSpriteDef::Render(TSprite & s)
 
 /////////////////
 
-TSpriteEnvironment* TSpriteEnvironments::GetEnv(int i)
+SpriteEnvironment* SpriteEnvironments::GetEnv(int i)
 	{
-	if (i<0  || i>=(int)(envs.size())) return NULL;
+	if (i<0  || i>=(int)(envs.size())) { return NULL; }
 	return envs[i];
 	}
 
-int TSpriteEnvironments::CreateEnv()
+int SpriteEnvironments::CreateEnv()
 	{
-	envs.push_back(new TSpriteEnvironment());
+	envs.push_back(new SpriteEnvironment());
 	envs.back()->SetID(envs.size()-1);
 	return envs.size()-1;
 	}
 
 
-void TSpriteEnvironments::Clear()
+void SpriteEnvironments::Clear()
 	{
 	for (unsigned int i=0; i<envs.size(); i++) if (envs[i]) {delete envs[i]; envs[i]=NULL;}
 	envs.clear();
 	}
 
-TSpriteEnvironments::~TSpriteEnvironments() { Clear();}
+SpriteEnvironments::~SpriteEnvironments() { Clear();}
 
-void TSpriteEnvironments::Think(double elapsed)
+void SpriteEnvironments::Think(double elapsed)
 	{
-	if (timescale<0.00001) return;
+	if (timescale<0.00001) { return; }
 	elapsed*=timescale;
 	for (unsigned int i=0; i<envs.size(); i++) {if (envs[i] && (!(envs[i]->Died()))) envs[i]->Think(elapsed);}
 	}
 
-bool TSpriteEmitter::cmp_emitterdists(const TSpriteEmitter *a, const TSpriteEmitter *b)
+bool SpriteEmitter::cmp_emitterdists(const SpriteEmitter *a, const SpriteEmitter *b)
 	{
 	return a->cam_dist > b->cam_dist;
 	}
 
-void TSpriteEnvironments::RenderAfterLevel()
+void SpriteEnvironments::RenderAfterLevel()
 	{
-	if (!envs.size()) return;
+	if (!envs.size()) { return; }
 
 	//Get the visible emitters
 	renderemitters.clear();
@@ -411,10 +412,10 @@ void TSpriteEnvironments::RenderAfterLevel()
 			for (unsigned int emi=0; emi<envs[envi]->emitters.size(); emi++)
 					{
 					double emidist=envs[envi]->emitters[emi]->GetCullInformation();
-					if (emidist>0) renderemitters.push_back(envs[envi]->emitters[emi]);
+					if (emidist>0) { renderemitters.push_back(envs[envi]->emitters[emi]); }
 					}
 			}
-	sort(renderemitters.begin(),renderemitters.end(),TSpriteEmitter::cmp_emitterdists);
+	sort(renderemitters.begin(),renderemitters.end(),SpriteEmitter::cmp_emitterdists);
 
 	glDisable(GL_LIGHTING);
 	glDepthMask(false);
@@ -431,7 +432,7 @@ void TSpriteEnvironments::RenderAfterLevel()
 	v_corner1=v_camup+v_camside;
 	v_corner2=v_camup-v_camside;
 
-	for (unsigned int i=0; i<renderemitters.size(); i++) renderemitters[i]->RenderAfterLevel();
+	for (unsigned int i=0; i<renderemitters.size(); i++) { renderemitters[i]->RenderAfterLevel(); }
 
 
 
@@ -443,18 +444,18 @@ void TSpriteEnvironments::RenderAfterLevel()
 	}
 
 
-TSpriteEnvironments gSpriteEnvs;
-TSpriteEnvironments * g_SpriteEnvs() {return &gSpriteEnvs;}
+SpriteEnvironments gSpriteEnvs;
+SpriteEnvironments * g_SpriteEnvs() {return &gSpriteEnvs;}
 
 //////////////////////////////////////////////////
 
-TParticleDef::~TParticleDef()
+ParticleDef::~ParticleDef()
 	{
 	for (unsigned int i=0; i<spritedefs.size(); i++) if (spritedefs[i]) { delete spritedefs[i]; spritedefs[i]=NULL;}
 	spritedefs.resize(0);
 	}
 
-void TParticleDef::Call_EmitterThink(int eid,double elapsed)
+void ParticleDef::Call_EmitterThink(int eid,double elapsed)
 	{
 	if (lua.FuncExists("EmitterThink"))
 			{
@@ -462,7 +463,7 @@ void TParticleDef::Call_EmitterThink(int eid,double elapsed)
 			}
 	}
 
-void TParticleDef::Call_EmitterConstructor(int eid)
+void ParticleDef::Call_EmitterConstructor(int eid)
 	{
 	if (lua.FuncExists("EmitterConstructor"))
 			{
@@ -471,9 +472,9 @@ void TParticleDef::Call_EmitterConstructor(int eid)
 	}
 
 
-int TParticleDef::NewSpriteType(int tind)
+int ParticleDef::NewSpriteType(int tind)
 	{
-	spritedefs.push_back(new TSpriteDef());
+	spritedefs.push_back(new SpriteDef());
 	spritedefs.back()->textureind=tind;
 	return ((myid << 16) | ((spritedefs.size()-1) & 0xFFFF));
 	}
@@ -487,9 +488,9 @@ ParticleDefServer * g_ParticleDefs() {return &gParticleDefs;}
 
 ////////////////LUA-IMPLEMENT////////////////////
 
-TLuaParticleLib gParticleLib;
+LuaParticleLib gParticleLib;
 
-TLuaParticleLib * g_ParticleLib() {return &gParticleLib;}
+LuaParticleLib * g_ParticleLib() {return &gParticleLib;}
 
 
 int PARTICLE_CreateEnvOnActor(lua_State *state)
@@ -551,14 +552,14 @@ int EMITTER_SpawnSprite(lua_State *state)
 	double phi=LUA_GET_DOUBLE;
 	double theta=LUA_GET_DOUBLE;
 	int typ=LUA_GET_INT;
-	TSpriteEmitter * emitt=LUA_GET_EMITTER;
+	SpriteEmitter * emitt=LUA_GET_EMITTER;
 	emitt->SpawnSprite(typ,theta,phi,vel);
 	return 0;
 	}
 
 int EMITTER_GetActiveSprites(lua_State *state)
 	{
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	int res=em->GetActiveSprites();
 	LUA_SET_INT(res);
 	return 1;
@@ -570,7 +571,7 @@ int EMITTER_SetVar(lua_State *state)
 	unsigned int id=(unsigned int)lua_tonumber(state,1); lua_remove(state,1);
 	unsigned int emi=id & 0xFFFF;
 	unsigned int env=(id >> 16) & 0xFFFF;
-	TSpriteEmitter *em=g_SpriteEnvs()->GetEnv(env)->GetEmitter(emi);
+	SpriteEmitter *em=g_SpriteEnvs()->GetEnv(env)->GetEmitter(emi);
 	em->GetVarHolder()->StoreVar(state);
 	return 0;
 	}
@@ -581,7 +582,7 @@ int EMITTER_GetVar(lua_State *state)
 	unsigned int id=(unsigned int)lua_tonumber(state,1); lua_remove(state,1);
 	unsigned int emi=id & 0xFFFF;
 	unsigned int env=(id >> 16) & 0xFFFF;
-	TSpriteEmitter *em=g_SpriteEnvs()->GetEnv(env)->GetEmitter(emi);
+	SpriteEmitter *em=g_SpriteEnvs()->GetEnv(env)->GetEmitter(emi);
 	em->GetVarHolder()->GetVar(state);
 	return 1;
 	}
@@ -590,7 +591,7 @@ int EMITTER_SetPos(lua_State *state)
 	{
 	int relative=LUA_GET_INT;
 	Vector3d p=Vector3FromStack(state);
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetPos(p,relative);
 	return 0;
 	}
@@ -598,7 +599,7 @@ int EMITTER_SetPos(lua_State *state)
 int EMITTER_SetVelocity(lua_State *state)
 	{
 	Vector3d p=Vector3FromStack(state);
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetVel(p);
 	return 0;
 	}
@@ -607,21 +608,21 @@ int EMITTER_SetGravity(lua_State *state)
 	{
 	double f=LUA_GET_DOUBLE;
 	Vector3d p=Vector3FromStack(state);
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetGrav(p,f);
 	return 0;
 	}
 
 int EMITTER_Clear(lua_State *state)
 	{
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->Clear();
 	return 0;
 	}
 
 int EMITTER_Die(lua_State *state)
 	{
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->Die();
 	return 0;
 	}
@@ -629,7 +630,7 @@ int EMITTER_Die(lua_State *state)
 int EMITTER_SetMaxTimeInterval(lua_State *state)
 	{
 	double mti=LUA_GET_DOUBLE;
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetMaxTimeInterval(mti);
 	return 0;
 	}
@@ -637,7 +638,7 @@ int EMITTER_SetMaxTimeInterval(lua_State *state)
 int EMITTER_SetColorMultiply(lua_State *state)
 	{
 	Vector4d p=Vector4FromStack(state);
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetColorMultiply(p);
 	return 0;
 	}
@@ -645,7 +646,7 @@ int EMITTER_SetColorMultiply(lua_State *state)
 int EMITTER_SetScaleMultiply(lua_State *state)
 	{
 	double s=LUA_GET_DOUBLE;
-	TSpriteEmitter *em=LUA_GET_EMITTER;
+	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetScaleMultiply(s);
 	return 0;
 	}
@@ -653,13 +654,13 @@ int EMITTER_SetScaleMultiply(lua_State *state)
 int SPRITETYPE_SetLifeTime(lua_State *state)
 	{
 	double lt=LUA_GET_DOUBLE;
-	TSpriteDef * st=LUA_GET_SPRITETYPE;
+	SpriteDef * st=LUA_GET_SPRITETYPE;
 	st->SetLifeTime(lt);
 	return 0;
 	}
 
 
-TInterpolationFunction * CreateInterFunc(lua_State *state)
+InterpolationFunction * CreateInterFunc(lua_State *state)
 	{
 	int clampmode=LUA_GET_INT;
 	double p4=LUA_GET_DOUBLE;
@@ -667,19 +668,19 @@ TInterpolationFunction * CreateInterFunc(lua_State *state)
 	double p2=LUA_GET_DOUBLE;
 	double p1=LUA_GET_DOUBLE;
 	std::string typ=LUA_GET_STRING;
-	TInterpolationFunction *result;
-	if (typ=="const") result=new TInterpolationFunctionConst(p1);
-	else if (typ=="linear") result=new TInterpolationFunctionLinear();
-	else if (typ=="sin") result=new TInterpolationFunctionSin();
-	else result=new TInterpolationFunction();
+	InterpolationFunction *result;
+	if (typ=="const") { result=new InterpolationFunctionConst(p1); }
+	else if (typ=="linear") { result=new InterpolationFunctionLinear(); }
+	else if (typ=="sin") { result=new InterpolationFunctionSin(); }
+	else { result=new InterpolationFunction(); }
 	result->SetParameters(p1,p2,p3,p4,clampmode);
 	return result;
 	}
 
 int SPRITETYPE_SetGravityFunction(lua_State *state)
 	{
-	TInterpolationFunction *ifunc=CreateInterFunc(state);
-	TSpriteDef * st=LUA_GET_SPRITETYPE;
+	InterpolationFunction *ifunc=CreateInterFunc(state);
+	SpriteDef * st=LUA_GET_SPRITETYPE;
 	st->SetGravityf(ifunc);
 	return 0;
 	}
@@ -687,21 +688,21 @@ int SPRITETYPE_SetGravityFunction(lua_State *state)
 
 int SPRITETYPE_SetScaleFunction(lua_State *state)
 	{
-	TInterpolationFunction *ifunc=CreateInterFunc(state);
-	TSpriteDef * st=LUA_GET_SPRITETYPE;
+	InterpolationFunction *ifunc=CreateInterFunc(state);
+	SpriteDef * st=LUA_GET_SPRITETYPE;
 	st->SetScalef(ifunc);
 	return 0;
 	}
 
 int SPRITETYPE_SetColorFunction(lua_State *state)
 	{
-	TInterpolationFunction *ifunc=CreateInterFunc(state);
+	InterpolationFunction *ifunc=CreateInterFunc(state);
 	std::string col=LUA_GET_STRING;
-	TSpriteDef * st=LUA_GET_SPRITETYPE;
-	if (col=="r") st->SetColorRf(ifunc);
-	else if (col=="g") st->SetColorGf(ifunc);
-	else if (col=="b") st->SetColorBf(ifunc);
-	else if (col=="a") st->SetColorAf(ifunc);
+	SpriteDef * st=LUA_GET_SPRITETYPE;
+	if (col=="r") { st->SetColorRf(ifunc); }
+	else if (col=="g") { st->SetColorGf(ifunc); }
+	else if (col=="b") { st->SetColorBf(ifunc); }
+	else if (col=="a") { st->SetColorAf(ifunc); }
 	return 0;
 	}
 
@@ -711,8 +712,8 @@ int SPRITE_SetRot(lua_State *state)
 	{
 	double rots=LUA_GET_DOUBLE;
 	double rot=LUA_GET_DOUBLE;
-	TSpriteEmitter *emi=LUA_GET_EMITTER;
-	TSprite *ls=emi->GetLastSprite();
+	SpriteEmitter *emi=LUA_GET_EMITTER;
+	Sprite *ls=emi->GetLastSprite();
 	ls->rotspeed=rots;
 	ls->rot=rot;
 	return 0;
@@ -722,12 +723,12 @@ int SPRITE_SetPos(lua_State *state)
 	{
 	int relative=LUA_GET_INT;
 	Vector3d p=Vector3FromStack(state);
-	TSpriteEmitter * emi=LUA_GET_EMITTER;
+	SpriteEmitter * emi=LUA_GET_EMITTER;
 
 	if (relative) {
 			p=emi->RelativePosToWorldPos(p);
 			}
-	TSprite *ls=emi->GetLastSprite();
+	Sprite *ls=emi->GetLastSprite();
 	ls->pos=p;
 	return 0;
 	}
@@ -735,15 +736,15 @@ int SPRITE_SetPos(lua_State *state)
 int SPRITE_SetPhase(lua_State *state)
 	{
 	double rgb=LUA_GET_DOUBLE;
-	TSpriteEmitter * emi=LUA_GET_EMITTER;
+	SpriteEmitter * emi=LUA_GET_EMITTER;
 
-	TSprite *ls=emi->GetLastSprite();
+	Sprite *ls=emi->GetLastSprite();
 	ls->rgbphase=rgb;
 	return 0;
 	}
 
 
-TLuaParticleLib::TLuaParticleLib()
+LuaParticleLib::LuaParticleLib()
 	{
 	AddFunc("PARTICLE_CreateEnvOnSide",PARTICLE_CreateEnvOnSide);
 	AddFunc("PARTICLE_CreateEnvOnActor",PARTICLE_CreateEnvOnActor);

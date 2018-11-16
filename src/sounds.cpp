@@ -47,10 +47,10 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <cmath>
 
-static TSoundServer soundserv;
+static SoundServer soundserv;
 
 
-TSoundServer *g_Sounds() {return &soundserv;}
+SoundServer *g_Sounds() {return &soundserv;}
 
 static void s_ChannelFinished(int num)
 	{
@@ -61,32 +61,33 @@ static void s_ChannelFinished(int num)
 
 
 
-void TSoundServer::ChannelFinished(int num)
+void SoundServer::ChannelFinished(int num)
 	{
 	Mix_UnregisterAllEffects(num);
 
-	if (num<(int)(playchannels.size()) && num>=0)
-		playchannels[num]=-1;
+	if (num<(int)(playchannels.size()) && num>=0) {
+			playchannels[num]=-1;
+			}
 
 	}
 
 
-std::string TSoundServer::currenteffect="";
-std::vector<int> TSoundServer::effectbuffer;
-int TSoundServer::effectpos;
-double TSoundServer::postmixparam[3];
-int TSoundServer::bitsps;
+std::string SoundServer::currenteffect="";
+std::vector<int> SoundServer::effectbuffer;
+int SoundServer::effectpos;
+double SoundServer::postmixparam[3];
+int SoundServer::bitsps;
 
-void TSoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
+void SoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
 	{
 	Sint16 *Ustr=(Sint16 *)stream;
 	len/=4;
 	//cout << "Stream of length "<< len << endl;
 	int offs=(int)(postmixparam[0]*((double)bitsps)*2);
-	if (offs % 2==0) offs++;
+	if (offs % 2==0) { offs++; }
 	int effectpos2=effectpos-offs;
-	while (effectpos2<0) effectpos2+=effectbuffer.size();
-	while (effectpos2>=(int)(effectbuffer.size())) effectpos2-=effectbuffer.size();
+	while (effectpos2<0) { effectpos2+=effectbuffer.size(); }
+	while (effectpos2>=(int)(effectbuffer.size())) { effectpos2-=effectbuffer.size(); }
 
 	int bp=0;
 	for (int i=0; i<len; i++) {
@@ -107,40 +108,40 @@ void TSoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
 
 
 			// effectpos+=2;
-			if (effectpos>(int)effectbuffer.size()) effectpos-=effectbuffer.size();
+			if (effectpos>(int)effectbuffer.size()) { effectpos-=effectbuffer.size(); }
 			//   effectpos2+=2;
-			if (effectpos2>(int)effectbuffer.size()) effectpos2-=effectbuffer.size();
+			if (effectpos2>(int)effectbuffer.size()) { effectpos2-=effectbuffer.size(); }
 			}
 	}
 
-void TSoundServer::SetPostMix(std::string what,double p1,double p2,double p3)
+void SoundServer::SetPostMix(std::string what,double p1,double p2,double p3)
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 	postmixparam[0]=p1; postmixparam[1]=p2; postmixparam[2]=p3;
 
-	if (what==currenteffect) return;
-	if (what=="") Mix_SetPostMix(NULL,NULL);
+	if (what==currenteffect) { return; }
+	if (what=="") { Mix_SetPostMix(NULL,NULL); }
 	else if (what=="echo")
 			{
 			int channels;
 			Uint16 format;
 			Mix_QuerySpec(NULL, &format, &channels);
-			if (channels!=2 || ((format !=AUDIO_S16LSB) ) ) return;
+			if (channels!=2 || ((format !=AUDIO_S16LSB) ) ) { return; }
 			effectpos=0;
-			for (unsigned int i=0; i<effectbuffer.size(); i++) effectbuffer[i]=0;
+			for (unsigned int i=0; i<effectbuffer.size(); i++) { effectbuffer[i]=0; }
 			Mix_SetPostMix(EchoEffect,(void*)&(postmixparam[0]));
 			}
 	currenteffect=what;
 	}
 
 
-TSoundContainer::~TSoundContainer()
+SoundContainer::~SoundContainer()
 	{
-	if (sound) Mix_FreeChunk(sound);
+	if (sound) { Mix_FreeChunk(sound); }
 	sound=NULL;
 	}
 
-int TSoundContainer::Load(TCuboFile *finfo)
+int SoundContainer::Load(CuboFile *finfo)
 	{
 	sound = Mix_LoadWAV_RW(finfo->GetAsRWops(1),1);
 	if(sound == NULL) {
@@ -151,34 +152,35 @@ int TSoundContainer::Load(TCuboFile *finfo)
 	return 1;
 	}
 
-void TSoundContainer::Reload()
+void SoundContainer::Reload()
 	{
 
-	TCuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
+	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload sound " +fname,2); return;}
 
-	if (sound) Mix_FreeChunk(sound);
+	if (sound) { Mix_FreeChunk(sound); }
 	sound=NULL;
 
 	Load(finfo); delete finfo;
 	}
 
 
-TMusicContainer::~TMusicContainer()
+MusicContainer::~MusicContainer()
 	{
-	if (music) Mix_FreeMusic(music);
+	if (music) { Mix_FreeMusic(music); }
 	music=NULL;
 	}
 
-int TMusicContainer::Load(TCuboFile *finfo)
+int MusicContainer::Load(CuboFile *finfo)
 	{
 	if (!finfo->IsHDDFile())
 			{
 			coutlog("Music from ZIP can be problematic...",2);
 			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1));
 			}
-	else
-		music = Mix_LoadMUS(finfo->GetHDDName().c_str());
+	else {
+			music = Mix_LoadMUS(finfo->GetHDDName().c_str());
+			}
 
 	if(music == NULL) {
 			std::ostringstream oss; oss << "Unable to load music file " << finfo->GetNameForLog().c_str() << Mix_GetError() ;
@@ -191,7 +193,7 @@ int TMusicContainer::Load(TCuboFile *finfo)
 	return 1;
 	}
 
-void TMusicContainer::SetLoop(double from,double to)
+void MusicContainer::SetLoop(double from,double to)
 	{
 	if (((from==0) &&(to==0)) || (from>to)) {hasloop=false; return;}
 	hasloop=true;
@@ -199,35 +201,35 @@ void TMusicContainer::SetLoop(double from,double to)
 	loopto=to;
 	}
 
-void TMusicContainer::JumpTo(double pos)
+void MusicContainer::JumpTo(double pos)
 	{
 	currentpos=pos;
 	Mix_RewindMusic();
 	Mix_SetMusicPosition(pos);
 	}
 
-void TMusicContainer::Think(double elapsed)
+void MusicContainer::Think(double elapsed)
 	{
 	currentpos+=elapsed;
-	if (!hasloop) return;
-	if (currentpos<loopto) return;
+	if (!hasloop) { return; }
+	if (currentpos<loopto) { return; }
 
 	double dest=currentpos-loopto+loopfrom;
-	while (dest>loopto) dest-=loopto-loopfrom;
+	while (dest>loopto) { dest-=loopto-loopfrom; }
 	Mix_RewindMusic();
 	if (dest>0) { Mix_SetMusicPosition(dest); }
-	else dest=0;
+	else { dest=0; }
 
 	currentpos=dest;
 	}
 
-void TMusicContainer::Reload()
+void MusicContainer::Reload()
 	{
 
-	TCuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
+	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload music " +fname,2); return;}
 
-	if (music) Mix_FreeMusic(music);
+	if (music) { Mix_FreeMusic(music); }
 	music=NULL;
 
 	Load(finfo); delete finfo;
@@ -236,20 +238,20 @@ void TMusicContainer::Reload()
 
 
 
-void TSoundServer::KillSound()
+void SoundServer::KillSound()
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 	Mix_HaltChannel(-1);
 	Mix_HaltMusic();
 
 	for (unsigned int i=0; i<sounds.size(); i++)
 			{
-			if (sounds[i]) delete sounds[i];
+			if (sounds[i]) { delete sounds[i]; }
 			sounds[i]=NULL;
 			}
 	for (unsigned int i=0; i<musics.size(); i++)
 			{
-			if (musics[i]) delete musics[i];
+			if (musics[i]) { delete musics[i]; }
 			musics[i]=NULL;
 			}
 	sounds.clear();
@@ -261,13 +263,13 @@ void TSoundServer::KillSound()
 	initialized=0;
 	}
 
-int TSoundServer::InitSound(int freq,int bits,int stereo,int buffsize)
+int SoundServer::InitSound(int freq,int bits,int stereo,int buffsize)
 	{
 
 	printf("Sound init with Freq(%d), Bits(%d), Stereo(%d), Buffer(%d) \n",freq,bits,stereo,buffsize);
 	KillSound();
-	if (bits==8) bits=AUDIO_S8;
-	else bits=AUDIO_S16SYS;
+	if (bits==8) { bits=AUDIO_S8; }
+	else { bits=AUDIO_S16SYS; }
 	//else bits=AUDIO_S16;
 	printf("... \n");
 	if(Mix_OpenAudio(freq, bits, stereo, buffsize) != 0) {
@@ -287,27 +289,27 @@ int TSoundServer::InitSound(int freq,int bits,int stereo,int buffsize)
 
 	}
 
-int TSoundServer::SetNumChannels(int nchan)
+int SoundServer::SetNumChannels(int nchan)
 	{
 	if (nchan>=0) {
 			int oldsize=playchannels.size();
-			if (nchan<oldsize)  playchannels.resize(nchan);
-			else for (int i=oldsize; i<nchan; i++) playchannels.push_back(-1);
+			if (nchan<oldsize) { playchannels.resize(nchan); }
+			else for (int i=oldsize; i<nchan; i++) { playchannels.push_back(-1); }
 			std::cout << "Channels are " << playchannels.size() << std::endl;
 			}
 	return Mix_AllocateChannels(nchan);
 	}
 
-int TSoundServer::LoadSound(TCuboFile *finfo)
+int SoundServer::LoadSound(CuboFile *finfo)
 	{
-	if (!initialized) return -1;
+	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<sounds.size(); i++)
 			{
-			if (finfo->GetNameForLog()==sounds[i]->Filename()) return i;
+			if (finfo->GetNameForLog()==sounds[i]->Filename()) { return i; }
 			}
 //Otherwise add it
-	if (g_VerboseMode()) coutlog("Loading Sound: "+finfo->GetNameForLog());
-	TSoundContainer *news=new TSoundContainer();
+	if (g_VerboseMode()) { coutlog("Loading Sound: "+finfo->GetNameForLog()); }
+	SoundContainer *news=new SoundContainer();
 
 	int res=news->Load(finfo);
 	if (res) {
@@ -318,18 +320,18 @@ int TSoundServer::LoadSound(TCuboFile *finfo)
 	return -1;
 	}
 
-int TSoundServer::LoadMusic(TCuboFile *finfo)
+int SoundServer::LoadMusic(CuboFile *finfo)
 	{
-	if (!initialized) return -1;
+	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<musics.size(); i++)
 			{
-			if (finfo->GetNameForLog()==musics[i]->Filename()) return i;
+			if (finfo->GetNameForLog()==musics[i]->Filename()) { return i; }
 			}
-	if (g_VerboseMode()) coutlog("Loading Music: "+finfo->GetNameForLog());
+	if (g_VerboseMode()) { coutlog("Loading Music: "+finfo->GetNameForLog()); }
 //Otherwise add it
 //However, limit the size to one.. so we must delete the old one
 	musics.resize(0);
-	TMusicContainer *newm=new TMusicContainer();
+	MusicContainer *newm=new MusicContainer();
 
 	int res=newm->Load(finfo);
 	if (res) {
@@ -340,139 +342,139 @@ int TSoundServer::LoadMusic(TCuboFile *finfo)
 	return -1;
 	}
 
-int TSoundServer::SoundPlayedByChannel(int i)
+int SoundServer::SoundPlayedByChannel(int i)
 	{
-	if (i<0 || i>=(int)(playchannels.size())) return -1;
+	if (i<0 || i>=(int)(playchannels.size())) { return -1; }
 	return playchannels[i];
 	return -1;
 	};
 
 
-TSoundContainer *TSoundServer::GetSound(int i)
+SoundContainer *SoundServer::GetSound(int i)
 	{
-	if (i<0) return NULL;
-	if ((unsigned int)i>=sounds.size()) return NULL;
+	if (i<0) { return NULL; }
+	if ((unsigned int)i>=sounds.size()) { return NULL; }
 	return sounds[i];
 	}
-TMusicContainer *TSoundServer::GetMusic(int i)
+MusicContainer *SoundServer::GetMusic(int i)
 	{
-	if (i<0) return NULL;
-	if ((unsigned int)i>=musics.size()) return NULL;
+	if (i<0) { return NULL; }
+	if ((unsigned int)i>=musics.size()) { return NULL; }
 	return musics[i];
 	}
 
-int TSoundServer::PlaySound(int index, int channel)
+int SoundServer::PlaySound(int index, int channel)
 	{
-	if (!initialized) return -1;
-	TSoundContainer *s=GetSound(index);
-	if (!s) return -1;
+	if (!initialized) { return -1; }
+	SoundContainer *s=GetSound(index);
+	if (!s) { return -1; }
 	int c=Mix_PlayChannel(channel,s->GetSound(),0);
-	if (c<0) return c;
-	if (c>=(int)(playchannels.size())) playchannels.resize(c+1);
+	if (c<0) { return c; }
+	if (c>=(int)(playchannels.size())) { playchannels.resize(c+1); }
 	playchannels[c]=index;
 	return c;
 
 	}
 
-int TSoundServer::PlaySoundLooped(int index, int channel, int numloops)
+int SoundServer::PlaySoundLooped(int index, int channel, int numloops)
 	{
-	if (!initialized) return -1;
-	TSoundContainer *s=GetSound(index);
-	if (!s) return -1;
+	if (!initialized) { return -1; }
+	SoundContainer *s=GetSound(index);
+	if (!s) { return -1; }
 	int c=Mix_PlayChannel(channel,s->GetSound(),numloops);
-	if (c<0) return c;
-	if (c>=(int)(playchannels.size())) playchannels.resize(c+1);
+	if (c<0) { return c; }
+	if (c>=(int)(playchannels.size())) { playchannels.resize(c+1); }
 	playchannels[c]=index;
 	return c;
 	}
 
-void TSoundServer::StopChannel(int chind)
+void SoundServer::StopChannel(int chind)
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 	Mix_HaltChannel(chind);
-	if (chind>=0 && chind<(int)(playchannels.size()))   playchannels[chind]=-1;
+	if (chind>=0 && chind<(int)(playchannels.size())) { playchannels[chind]=-1; }
 	}
 
-int TSoundServer::PlayMusic(int index)
+int SoundServer::PlayMusic(int index)
 	{
-	if (!initialized) return -1;
-	TMusicContainer *m=GetMusic(index);
-	if (!m) return -1;
+	if (!initialized) { return -1; }
+	MusicContainer *m=GetMusic(index);
+	if (!m) { return -1; }
 	return Mix_PlayMusic(m->GetMusic(),-1);
 	}
 
-void TSoundServer::MusicJumpTo(double p)
+void SoundServer::MusicJumpTo(double p)
 	{
-	if (!initialized) return ;
-	TMusicContainer *m=GetMusic(0);
-	if (!m) return ;
+	if (!initialized) { return ; }
+	MusicContainer *m=GetMusic(0);
+	if (!m) { return ; }
 	m->JumpTo(p);
 	}
 
 
-int TSoundServer::PlayingMusic()
+int SoundServer::PlayingMusic()
 	{
-	if (!initialized) return 0;
+	if (!initialized) { return 0; }
 	return Mix_PlayingMusic();
 	}
 
-void TSoundServer::RewindMusic()
+void SoundServer::RewindMusic()
 	{
-	if (!initialized) return;
-	TMusicContainer *m=GetMusic(0);
-	if (m) m->Rewind();
+	if (!initialized) { return; }
+	MusicContainer *m=GetMusic(0);
+	if (m) { m->Rewind(); }
 	Mix_RewindMusic();
 	}
 
-void TSoundServer::Think(double elapsed)
+void SoundServer::Think(double elapsed)
 	{
-	if (!initialized) return;
-	TMusicContainer *m=GetMusic(0);
-	if (m) m->Think(elapsed*PlayingMusic());
+	if (!initialized) { return; }
+	MusicContainer *m=GetMusic(0);
+	if (m) { m->Think(elapsed*PlayingMusic()); }
 	}
 
-void TSoundServer::SetMusicVolume(int perc)
+void SoundServer::SetMusicVolume(int perc)
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 	float r=(float)perc/100.0*MIX_MAX_VOLUME;
 	Mix_VolumeMusic((int)r);
 	}
 
-void TSoundServer::SetVolume(int perc)
+void SoundServer::SetVolume(int perc)
 	{
-	if (!initialized) return;
+	if (!initialized) { return; }
 	float r=(float)perc/100.0*MIX_MAX_VOLUME;
 	Mix_Volume(-1,(int)r);
 	}
 
-void TSoundServer::SetPosition(int channel,float norm_dist,float angl)
+void SoundServer::SetPosition(int channel,float norm_dist,float angl)
 	{
 	Mix_SetPosition(channel,(Sint16)(angl/M_PI*180),(Uint8)(norm_dist*255));
 	}
 
 
 
-void TSoundServer::Reload()
+void SoundServer::Reload()
 	{
 	int playmusic=PlayingMusic();
 	Mix_HaltChannel(-1);
 	Mix_HaltMusic();
 
-	for (unsigned int i=0; i<playchannels.size(); i++) playchannels[i]=-1;
+	for (unsigned int i=0; i<playchannels.size(); i++) { playchannels[i]=-1; }
 
 //Reload the sounds
-	for (unsigned int i=0; i<sounds.size(); i++) sounds[i]->Reload();
-	for (unsigned int i=0; i<musics.size(); i++) musics[i]->Reload();
+	for (unsigned int i=0; i<sounds.size(); i++) { sounds[i]->Reload(); }
+	for (unsigned int i=0; i<musics.size(); i++) { musics[i]->Reload(); }
 
 
-	if (playmusic) PlayMusic(0);
+	if (playmusic) { PlayMusic(0); }
 	}
 
-void TSoundServer::SetMusicLoop(double from,double to)
+void SoundServer::SetMusicLoop(double from,double to)
 	{
-	if (!initialized) return ;
-	TMusicContainer *m=GetMusic(0);
-	if (!m) return ;
+	if (!initialized) { return ; }
+	MusicContainer *m=GetMusic(0);
+	if (!m) { return ; }
 	m->SetLoop(from,to);
 	}
 
@@ -522,7 +524,7 @@ int SOUND_PlayedByChannel(lua_State *state)
 int SOUND_Load(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING;
-	TCuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
+	CuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
 	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_INT(-1); return 1;}
 	int res=g_Sounds()->LoadSound(finfo);
 	delete finfo;
@@ -533,7 +535,7 @@ int SOUND_Load(lua_State *state)
 int SOUND_LoadMusic(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING;
-	TCuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
+	CuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
 	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_INT(-1); return 1;}
 //if (g_VerboseMode()) coutlog("Loading Music : "+fname);
 	int res=g_Sounds()->LoadMusic(finfo);
@@ -543,7 +545,7 @@ int SOUND_LoadMusic(lua_State *state)
 	finfo=GetFileName(fname,FILE_MUSIC,".mdef");
 	if (finfo) {
 			//Execute the Music script
-			TLuaAccess acc;
+			LuaAccess acc;
 			acc.Include(g_CuboLib());
 			acc.LoadFile(finfo,-1,-1);
 			}
@@ -637,8 +639,8 @@ int SOUND_Set3dFromCam(lua_State *state)
 	Vector3d rel=g_Game()->GetCam()->getPos();
 	rel=p-rel;
 	float dist=rel.length();
-	if (dist>maxdist) dist=1;
-	else dist=dist/maxdist;
+	if (dist>maxdist) { dist=1; }
+	else { dist=dist/maxdist; }
 	//Now get the angle. First project the Vector into the Cams UP-Plane
 	Vector3d proj;
 	Vector3d up=g_Game()->GetCam()->getUp();

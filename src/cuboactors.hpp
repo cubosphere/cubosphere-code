@@ -74,7 +74,7 @@ class CuboPlayer
 		int id;
 		float caminterpolation;
 		float camspeed;
-		TLuaVarHolder varholder;
+		LuaVarHolder varholder;
 		std::vector<int> actorids;
 		int activeact;
 		int lastact;
@@ -86,7 +86,7 @@ class CuboPlayer
 		void SetCamSpeed(float cs) {camspeed=cs;}
 		bool InCameraPan() {return caminterpolation<1.0;}
 		void SetCameraPos(float elapsed,MatrixObject *cam);
-		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		LuaVarHolder  *GetVarHolder() {return &varholder;}
 		void AddActor(int i);
 		int GetActiveActor() {if ((activeact<0) || (activeact>=(int)actorids.size())) return -1; else return actorids[activeact];}
 		void RemoveActor(int i);
@@ -160,7 +160,7 @@ class TCuboMovement
 		CuboLevel *lvl;
 		CuboBlock *onBlock;
 		CuboBlock *BlockUnderMe;
-		TLuaVarHolder varholder;
+		LuaVarHolder varholder;
 		Vector3d camfloats;       //
 		Vector3d lookupfloats;    // VARIABLES FOR THE CAMERAS POSITION
 		Vector3d lookdownfloats;  //
@@ -208,7 +208,7 @@ class TCuboMovement
 			CUBO_MAX_FALLSPEED(CUBO_MAX_FALLSPEED_STD),  CUBO_ROTSPEED(CUBO_ROTSPEED_STD), LATE_FORWARD_JUMP_TIME(LATE_FORWARD_JUMP_TIME_STD),
 			FORWARD_PRESS_TIME(FORWARD_PRESS_TIME_STD),FORWARD_PRESS_TIME_JUMP(FORWARD_PRESS_TIME_JUMP_STD), ROTATE_STOP_TIME(ROTATE_STOP_TIME_STD),
 			distance_normjump(2),distance_farjump(3),distance_highjump(1), startposset(0), lookpos(0),startrot(0), camzrot(0), cammirror(0),timemultiplicator(1.0),player(-1) {}
-		TLuaVarHolder  *GetVarHolder() {return &varholder;}
+		LuaVarHolder  *GetVarHolder() {return &varholder;}
 		virtual void SetType(int mid,std::string name);
 		void SetID(int mid) {id=mid;}
 		void Render();

@@ -27,22 +27,19 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "models.hpp"
 #include "fonts.hpp"
 
-
-
-
-class TGame
+class Game
 	{
 	protected:
 		//It owns a cam, a texture server and input devices
 		int AntiAliasing;
 		Camera cam;
-		TTextureServer textures;
-		TMouse mouse;
-		TKeyboard keyboard;
-		TJoystickServer joysticks;
-		TEventManager events;
-		TShaderServer shaders;
-		TFont font;
+		TextureServer textures;
+		Mouse mouse;
+		Keyboard keyboard;
+		JoystickServer joysticks;
+		EventManager events;
+		ShaderServer shaders;
+		Font font;
 		int screenwidth;
 		int screenheight;
 		int supportingShaders;
@@ -55,11 +52,11 @@ class TGame
 		virtual void GameLoop();
 		virtual void GameLoopFrame();
 		virtual void CheckNeededExtensions();
-		TLuaAccess GameLua;
+		LuaAccess GameLua;
 	public:
 		virtual void SetGameLoopSource(std::string s);
-		TGame() :  AntiAliasing(0), maxframes(0), GameLoopSource("") {}
-		virtual ~TGame() {}
+		Game() :  AntiAliasing(0), maxframes(0), GameLoopSource("") {}
+		virtual ~Game() {}
 		virtual void HandleInput();
 		virtual void Think() {};
 		virtual void Render() {};
@@ -75,40 +72,40 @@ class TGame
 		virtual void SetMaxFrames(float t) {maxframes=t;}
 		virtual void Quit();
 		virtual void Start();
-		virtual TTextureServer* GetTextures() {return &textures;}
-		virtual TShaderServer* GetShaders() {return &shaders;}
+		virtual TextureServer* GetTextures() {return &textures;}
+		virtual ShaderServer* GetShaders() {return &shaders;}
 		virtual double GetTime() {return time/1000.0;}
 		virtual double GetElapsed() {return elapsed;}
 		virtual Camera *GetCam() {return &cam;}
 		virtual int GetFPS() {return FPS;}
-		virtual TKeyboard *GetKeyboard() {return &keyboard;}
-		virtual TJoystickServer *GetJoysticks() {return &joysticks;}
+		virtual Keyboard *GetKeyboard() {return &keyboard;}
+		virtual JoystickServer *GetJoysticks() {return &joysticks;}
 		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
 		virtual int HasGLSL() {return supportingShaders;}
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle) {}
 		virtual void SetMaxPhysElapsed(double t) {if (t>0) maxphyselapsed=t; else maxphyselapsed=100000;}
 	};
 
-class TCuboBasis : public WorldObject
+class CuboBasis : public WorldObject
 	{
 	public:
 		virtual void InvertMatrix();
 	};
 
-class TCuboGame : public TGame
+class CuboGame : public Game
 	{
 	protected:
 		int freecam;
 		std::vector<TCuboMovement*> move;
 		std::vector<CuboPlayer*> player;
-		std::vector<TCuboBasis> basis; //3d-Matrices
+		std::vector<CuboBasis> basis; //3d-Matrices
 		CuboLevel lvl;
-		TSkyBox sky;
-		TMdlDefServer mdefs;
-		TModelServer mdls;
+		SkyBox sky;
+		MdlDefServer mdefs;
+		ModelServer mdls;
 		ActorDefServer adefs;
 
-		TMenu menu;
+		Menu menu;
 		int RenderPassID;
 		int MenuActive;
 		int GameActive;
@@ -116,11 +113,11 @@ class TCuboGame : public TGame
 		int FlushOrFinishBeforeSwap;
 
 	public:
-		~TCuboGame();
+		~CuboGame();
 		void SetFlushOrFinishBeforeSwap(int i) {FlushOrFinishBeforeSwap=i;}
 		int GetFlushOrFinishBeforeSwap() {return FlushOrFinishBeforeSwap;}
 		virtual int StartLevel(std::string lname,int normal_user_edit);
-		TSkyBox * GetSky() {return &sky;}
+		SkyBox * GetSky() {return &sky;}
 		virtual void SaveFramePic(std::string fname, int nw=-1, int nh=-1);
 		virtual void PreRender(int wo=-1,int ho=-1);
 		virtual void AfterRenderLevel();
@@ -138,10 +135,10 @@ class TCuboGame : public TGame
 		virtual int GetNumPlayers() {return (player.size());}
 		virtual void DeleteActor(int index);
 		virtual unsigned int NumActors() {return move.size();}
-		virtual TMdlDefServer *GetModelDefs() {return &mdefs;}
-		virtual TModelServer *GetModels() {return &mdls;}
+		virtual MdlDefServer *GetModelDefs() {return &mdefs;}
+		virtual ModelServer *GetModels() {return &mdls;}
 		virtual ActorDefServer *GetActorDefs() {return &adefs;}
-		virtual TMouse *GetMouse() {return &mouse;}
+		virtual Mouse *GetMouse() {return &mouse;}
 		virtual void LoadSky(std::string name);
 		virtual int AddActor(std::string aname);
 		virtual int AddEnemy(std::string aname);
@@ -149,9 +146,9 @@ class TCuboGame : public TGame
 		virtual int AddBasis();
 		virtual void SetMenuActive(int m) {NewMenuActive=m;}
 		virtual void SetGameActive(int g) {NewGameActive=g;}
-		virtual TCuboBasis *GetBasis(int i) {return &(basis[i]);}
-		virtual TFont* GetFont() {return &font;}
-		virtual TMenu* GetMenu() {return &menu;}
+		virtual CuboBasis *GetBasis(int i) {return &(basis[i]);}
+		virtual Font* GetFont() {return &font;}
+		virtual Menu* GetMenu() {return &menu;}
 		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
 		virtual void FreeMedia();
 		virtual void RenderPass();
@@ -160,7 +157,7 @@ class TCuboGame : public TGame
 		virtual int GetRenderPassID() const {return RenderPassID;}
 		//  virtual int GetGlobalVarInt(string name);
 	};
-extern TCuboGame *g_Game();
+extern CuboGame *g_Game();
 
 
 extern void LUA_BASIS_RegisterLib();

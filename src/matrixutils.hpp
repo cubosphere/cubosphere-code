@@ -15,37 +15,14 @@ if not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "vectors.hpp"
-/*
-class T2dGlutVector : public T2dVector
-{
- public:
-  void glutPosition();
-    void glutTexture();
-};
 
-class T3dGlutVector : public Vector3d
-{
- public:
-  void glutPosition();
-  void glutNormal();
-  void glutColor();
-};
-
-class T4dGlutVector : public T4dVector
-{
- public:
-  void glutPosition();
-  void glutColor();
-};
-*/
-
-class T4dGlutMatrix: public Matrix4d
+class GlutMatrix4d: public Matrix4d
 	{
 	protected:
 	public:
 		int mode;
-		T4dGlutMatrix();
-		T4dGlutMatrix(float scal);
+		GlutMatrix4d();
+		GlutMatrix4d(float scal);
 		void glPushMult();
 		void glMult();
 		void glPop();

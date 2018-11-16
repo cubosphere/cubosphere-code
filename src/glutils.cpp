@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 
-class TLuaGLLib : public TLuaCFunctions
+class TLuaGLLib : public LuaCFunctions
 	{
 	protected:
 
@@ -29,17 +29,17 @@ class TLuaGLLib : public TLuaCFunctions
 			std::string s=LUA_GET_STRING;
 			GLuint t;
 
-			if (s=="GL_POINTS") t=GL_POINTS;
-			else if (s=="GL_LINES") t=GL_LINES;
-			else if (s=="GL_LINE_STRIP") t=GL_LINE_STRIP;
-			else if (s=="GL_LINE_LOOP") t=GL_LINE_LOOP;
-			else if (s=="GL_TRIANGLES") t=GL_TRIANGLES;
-			else if (s=="GL_TRIANGLE_STRIP") t=GL_TRIANGLE_STRIP;
-			else if (s=="GL_TRIANGLE_FAN") t=GL_TRIANGLE_FAN;
-			else if (s=="GL_QUADS") t=GL_QUADS;
-			else if (s=="GL_QUAD_STRIP") t=GL_QUAD_STRIP;
-			else if (s=="GL_POLYGON") t=GL_POLYGON;
-			else t=GL_TRIANGLES;
+			if (s=="GL_POINTS") { t=GL_POINTS; }
+			else if (s=="GL_LINES") { t=GL_LINES; }
+			else if (s=="GL_LINE_STRIP") { t=GL_LINE_STRIP; }
+			else if (s=="GL_LINE_LOOP") { t=GL_LINE_LOOP; }
+			else if (s=="GL_TRIANGLES") { t=GL_TRIANGLES; }
+			else if (s=="GL_TRIANGLE_STRIP") { t=GL_TRIANGLE_STRIP; }
+			else if (s=="GL_TRIANGLE_FAN") { t=GL_TRIANGLE_FAN; }
+			else if (s=="GL_QUADS") { t=GL_QUADS; }
+			else if (s=="GL_QUAD_STRIP") { t=GL_QUAD_STRIP; }
+			else if (s=="GL_POLYGON") { t=GL_POLYGON; }
+			else { t=GL_TRIANGLES; }
 			glBegin(t);
 			return 0;
 			}
@@ -146,7 +146,7 @@ class TLuaGLLib : public TLuaCFunctions
 			if (arg=="LINEAR") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_LINEAR); }
 			else  if (arg=="EXP") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_EXP); }
 			else  if (arg=="EXP2") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_EXP2); }
-			else  glDisable(GL_FOG);
+			else { glDisable(GL_FOG); }
 
 			return 0;
 			}
@@ -196,7 +196,7 @@ class TLuaGLLib : public TLuaCFunctions
 					glLogicOp(GL_INVERT);
 					glEnable(GL_COLOR_LOGIC_OP);
 					}
-			else glDisable(GL_COLOR_LOGIC_OP);
+			else { glDisable(GL_COLOR_LOGIC_OP); }
 			return 0;
 			}
 
@@ -226,7 +226,7 @@ class TLuaGLLib : public TLuaCFunctions
 	};
 
 static TLuaGLLib g_gllib;
-TLuaCFunctions* g_GLLib() {return &g_gllib;}
+LuaCFunctions* g_GLLib() {return &g_gllib;}
 
 
 //////////////LUA-IMPLEMENT///////////////////
@@ -266,11 +266,12 @@ void LUA_BLEND_RegisterLib()
 int CULL_Mode(lua_State *state) //0: Disable, 1: Backfaces culled, 2: Front faces
 	{
 	int m=LUA_GET_INT;
-	if (!m) glDisable(GL_CULL_FACE);
+	if (!m) { glDisable(GL_CULL_FACE); }
 	else {
 			glEnable(GL_CULL_FACE);
 			int f;
-			if (m==2) f=GL_FRONT; else f=GL_BACK;
+			if (m==2) { f=GL_FRONT; }
+			else { f=GL_BACK; }
 			glCullFace(f);
 			}
 	return 0;
@@ -357,8 +358,9 @@ int GetModes(int hw,int fs)
 
 	/* Get available fullscreen/hardware modes */
 	Uint32 flags=SDL_OPENGL;
-	if (fs) flags|=SDL_FULLSCREEN;
-	if (hw) flags|=SDL_HWSURFACE |SDL_DOUBLEBUF; else flags|=SDL_SWSURFACE;
+	if (fs) { flags|=SDL_FULLSCREEN; }
+	if (hw) { flags|=SDL_HWSURFACE |SDL_DOUBLEBUF; }
+	else { flags|=SDL_SWSURFACE; }
 	modes = SDL_ListModes(NULL, flags);
 
 	videowidths.clear();
@@ -466,8 +468,8 @@ int DEVICE_SaveFramePic(lua_State *state)
 	int w=LUA_GET_INT;
 	std::string s=LUA_GET_STRING;
 	cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting(s,true);
-	if (!fw) return 0;
-	if (!fw->IsHDDFile()) return 0;
+	if (!fw) { return 0; }
+	if (!fw->IsHDDFile()) { return 0; }
 	g_Game()->SaveFramePic(fw->GetHDDName(),w,h);
 	delete fw;
 	return 0;
@@ -718,9 +720,9 @@ int MATERIAL_SetAmbient(lua_State *state)
 
 	bool same=true;
 	for (unsigned int i=0; i<4; i++)  {if (g_lastambient[i]!=vs[i]) {same=false; break;}}
-	if (same) return 0;
+	if (same) { return 0; }
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,   vs);
-	for (unsigned int i=0; i<4; i++) g_lastambient[i]=vs[i];
+	for (unsigned int i=0; i<4; i++) { g_lastambient[i]=vs[i]; }
 	return 0;
 	}
 
@@ -741,9 +743,9 @@ int MATERIAL_SetDiffuse(lua_State *state)
 
 	bool same=true;
 	for (unsigned int i=0; i<4; i++)  {if (g_lastdiffuse[i]!=vs[i]) {same=false; break;}}
-	if (same) return 0;
+	if (same) { return 0; }
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,   vs);
-	for (unsigned int i=0; i<4; i++) g_lastdiffuse[i]=vs[i];
+	for (unsigned int i=0; i<4; i++) { g_lastdiffuse[i]=vs[i]; }
 
 	g_LastDiffuse(vs);
 
@@ -765,9 +767,9 @@ int MATERIAL_SetSpecular(lua_State *state)
 
 	bool same=true;
 	for (unsigned int i=0; i<4; i++)  {if (g_lastspecular[i]!=vs[i]) {same=false; break;}}
-	if (same) return 0;
+	if (same) { return 0; }
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,   vs);
-	for (unsigned int i=0; i<4; i++) g_lastspecular[i]=vs[i];
+	for (unsigned int i=0; i<4; i++) { g_lastspecular[i]=vs[i]; }
 
 
 	return 0;
@@ -788,9 +790,9 @@ int MATERIAL_SetEmissive(lua_State *state)
 
 	bool same=true;
 	for (unsigned int i=0; i<4; i++)  {if (g_lastemission[i]!=vs[i]) {same=false; break;}}
-	if (same) return 0;
+	if (same) { return 0; }
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION,   vs);
-	for (unsigned int i=0; i<4; i++) g_lastemission[i]=vs[i];
+	for (unsigned int i=0; i<4; i++) { g_lastemission[i]=vs[i]; }
 
 	return 0;
 	}
@@ -810,9 +812,9 @@ int MATERIAL_SetColor(lua_State *state)
 
 	bool same=true;
 	for (unsigned int i=0; i<4; i++)  {if (g_lastcolor[i]!=vs[i]) {same=false; break;}}
-	if (same) return 0;
+	if (same) { return 0; }
 	glColor4fv(vs);
-	for (unsigned int i=0; i<4; i++) g_lastcolor[i]=vs[i];
+	for (unsigned int i=0; i<4; i++) { g_lastcolor[i]=vs[i]; }
 
 
 	return 0;
@@ -825,7 +827,8 @@ int MATERIAL_SetSpecularPower(lua_State *state)
 	double dpower=LUA_GET_DOUBLE;
 
 	float power=1.0*dpower;
-	if (power<0) power=0; else if (power>128) power=128.0;
+	if (power<0) { power=0; }
+	else if (power>128) { power=128.0; }
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS,   power);
 	return 0;
 	}

@@ -60,43 +60,45 @@ GLboolean ExtensionSupported(std::string name)
 	{
 	char *extensions = (char *)glGetString(GL_EXTENSIONS);
 // Check your extension
-	if (strstr(extensions, name.c_str()))
-		return true;
-	else
-		return false;
+	if (strstr(extensions, name.c_str())) {
+			return true;
+			}
+	else {
+			return false;
+			}
 	}
 
 
 
 
-GLint TBaseShader::GetUniformLocation(std::string name)
+GLint BaseShader::GetUniformLocation(std::string name)
 	{
 	for (unsigned int i=0; i<ulocs.size(); i++) {if(ulocs[i].name==name) return ulocs[i].loc;}
 
 	GLint loc   = glGetUniformLocation(programref, name.c_str());
-	ulocs.push_back(TShaderUniformLocation());
+	ulocs.push_back(ShaderUniformLocation());
 	ulocs.back().name=name;
 	ulocs.back().loc=loc;
 	return loc;
 	}
 
-GLint TBaseShader::GetAttributeLocation(std::string name)
+GLint BaseShader::GetAttributeLocation(std::string name)
 	{
 	for (unsigned int i=0; i<alocs.size(); i++) {if(alocs[i].name==name) return alocs[i].loc;}
 
 	GLint loc   = glGetAttribLocation(programref, name.c_str());
-	alocs.push_back(TShaderUniformLocation());
+	alocs.push_back(ShaderUniformLocation());
 	alocs.back().name=name;
 	alocs.back().loc=loc;
 	return loc;
 	}
 
 
-void TBaseShader::Load(TShaderServer *ss,std::string fname)
+void BaseShader::Load(ShaderServer *ss,std::string fname)
 	{
 	this->filename=fname;
-	TCuboFile *temp1=GetFileName(fname,FILE_SHADER,".vert");
-	TCuboFile *temp2=GetFileName(fname,FILE_SHADER,".frag");
+	CuboFile *temp1=GetFileName(fname,FILE_SHADER,".vert");
+	CuboFile *temp2=GetFileName(fname,FILE_SHADER,".frag");
 
 	if (!temp1) {coutlog("Shader "+fname+ ".vert not found!",1); return;}
 	if (!temp2) {coutlog("Shader "+fname+ ".frag not found!",1); return;}
@@ -111,12 +113,12 @@ void TBaseShader::Load(TShaderServer *ss,std::string fname)
 	}
 
 
-void TBaseShader::Activate()
+void BaseShader::Activate()
 	{
 	glUseProgram(programref);
 	}
 
-TBaseShader::~TBaseShader()
+BaseShader::~BaseShader()
 	{
 	glDeleteProgram(programref);
 	glDeleteShader(fragmentref);
@@ -124,13 +126,13 @@ TBaseShader::~TBaseShader()
 	}
 
 
-void TBaseShader::Deactivate()
+void BaseShader::Deactivate()
 	{
 	glUseProgram(0);
 	}
 
 GLuint
-TShaderServer::CompileShaderText(GLenum shaderType, const char *text)
+ShaderServer::CompileShaderText(GLenum shaderType, const char *text)
 	{
 	GLuint shader;
 	GLint stat;
@@ -158,7 +160,7 @@ TShaderServer::CompileShaderText(GLenum shaderType, const char *text)
  * Read a shader from a file.
  */
 GLuint
-TShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
+ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
 	{
 	const int max = 100*1000;
 	int n;
@@ -190,7 +192,7 @@ TShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
 	}
 
 
-GLuint TShaderServer::CompileShaderCuboFile(GLenum shaderType, TCuboFile *finfo)
+GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo)
 	{
 	if (finfo->IsHDDFile()) {return CompileShaderFile(shaderType,finfo->GetHDDName().c_str());}
 	else {
@@ -200,15 +202,17 @@ GLuint TShaderServer::CompileShaderCuboFile(GLenum shaderType, TCuboFile *finfo)
 	}
 
 GLuint
-TShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
+ShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
 	{
 	GLuint program = glCreateProgram();
 	assert(vertShader || fragShader);
 
-	if (fragShader)
-		glAttachShader(program, fragShader);
-	if (vertShader)
-		glAttachShader(program, vertShader);
+	if (fragShader) {
+			glAttachShader(program, fragShader);
+			}
+	if (vertShader) {
+			glAttachShader(program, vertShader);
+			}
 
 	glLinkProgram(program);
 
@@ -231,7 +235,7 @@ TShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
 
 
 GLboolean
-TShaderServer::ValidateShaderProgram(GLuint program)
+ShaderServer::ValidateShaderProgram(GLuint program)
 	{
 	GLint stat;
 	glValidateProgram(program);
@@ -253,56 +257,56 @@ TShaderServer::ValidateShaderProgram(GLuint program)
 
 
 
-TBaseShader *TShaderServer::GetShaderPtr(std::string name)
+BaseShader *ShaderServer::GetShaderPtr(std::string name)
 	{
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
-			if (shaderlist[i]->GetName()==name) return shaderlist[i];
+			if (shaderlist[i]->GetName()==name) { return shaderlist[i]; }
 			}
 	return NULL;
 	}
 
-int TShaderServer::GetShader(std::string name)
+int ShaderServer::GetShader(std::string name)
 	{
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
-			if (shaderlist[i]->GetName()==name) return i;
+			if (shaderlist[i]->GetName()==name) { return i; }
 			}
 	return -1;
 	}
 
 
-bool TShaderServer::FreeShaders()
+bool ShaderServer::FreeShaders()
 	{
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
-			if (shaderlist[i]) delete shaderlist[i];
+			if (shaderlist[i]) { delete shaderlist[i]; }
 			}
 	shaderlist.resize(0);
 	return true;
 	}
 
-int TShaderServer::AddShader(std::string name)
+int ShaderServer::AddShader(std::string name)
 	{
 	int f=GetShader(name);
-	if (f>-1) return f;
-	if (g_VerboseMode()) coutlog("Loading Shader: "+name);
-	TBaseShader *sh=new TBaseShader;
+	if (f>-1) { return f; }
+	if (g_VerboseMode()) { coutlog("Loading Shader: "+name); }
+	BaseShader *sh=new BaseShader;
 	sh->Load(this,name);
 	shaderlist.push_back(sh);
 	return shaderlist.size()-1;
 	}
 
 
-bool TShaderServer::Activate(int index)
+bool ShaderServer::Activate(int index)
 	{
-	if (index==momshader) return true;
+	if (index==momshader) { return true; }
 	momshader=index;
 	shaderlist[momshader]->Activate();
 	return true;
 	}
 
-bool TShaderServer::Deactivate()
+bool ShaderServer::Deactivate()
 	{
 	if (momshader>=0) {
 			shaderlist[momshader]->Deactivate();   g_Game()->GetTextures()->DeactivateStage(0);
@@ -311,43 +315,43 @@ bool TShaderServer::Deactivate()
 	return true;
 	}
 
-void TShaderServer::SetInt(std::string ref,int i)
+void ShaderServer::SetInt(std::string ref,int i)
 	{
-	if (momshader<0) return;
+	if (momshader<0) { return; }
 	glUniform1i(shaderlist[momshader]->GetUniformLocation(ref), i);
 	}
 
-void TShaderServer::SetFloat(std::string ref,float f)
+void ShaderServer::SetFloat(std::string ref,float f)
 	{
 
-	if (momshader<0) return;
+	if (momshader<0) { return; }
 	glUniform1f(shaderlist[momshader]->GetUniformLocation(ref), f);
 	}
 
-void TShaderServer::SetVector3(std::string ref,Vector3d v)
+void ShaderServer::SetVector3(std::string ref,Vector3d v)
 	{
-	if (momshader<0) return;
+	if (momshader<0) { return; }
 	glUniform3f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z);
 	}
 
-void TShaderServer::SetVector4(std::string ref,Vector4d v)
+void ShaderServer::SetVector4(std::string ref,Vector4d v)
 	{
-	if (momshader<0) return;
+	if (momshader<0) { return; }
 	glUniform4f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z,v.w);
 	}
 
-GLint TShaderServer::GetAttributeLocation(std::string name)
+GLint ShaderServer::GetAttributeLocation(std::string name)
 	{
 	return shaderlist[momshader]->GetAttributeLocation(name);
 	}
 
 
-void TShaderServer::clear()
+void ShaderServer::clear()
 	{
 
 	for (unsigned int i=0; i<shaderlist.size(); i++)
 			{
-			if (shaderlist[i]) delete shaderlist[i];
+			if (shaderlist[i]) { delete shaderlist[i]; }
 			shaderlist[i]=NULL;
 			}
 	shaderlist.resize(0);

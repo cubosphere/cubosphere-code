@@ -38,38 +38,38 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "console.hpp"
 #include <iostream>
 
-TMouse *g_Mouse;
+Mouse *g_Mouse;
 
-void TMouse::BeginDispatch()
+void Mouse::BeginDispatch()
 	{
 	dx=0;
 	dy=0;
 	}
 
-void TMouse::SetButtonHandler(TMouseButtonFunc f)
+void Mouse::SetButtonHandler(MouseButtonFunc f)
 	{
 	buttonfunc=f;
 	}
 
-void TMouse::HandleClick(int butt,int press,int x,int y)
+void Mouse::HandleClick(int butt,int press,int x,int y)
 	{
 	buttons[butt].pressed=!press;
 	if (buttons[butt].pressed) { buttons[butt].lastx=x; buttons[butt].lasty=y; }
 	else  { buttons[butt].relx=x; buttons[butt].rely=y; }
-	if (buttonfunc) buttonfunc(butt,press,x,y);
+	if (buttonfunc) { buttonfunc(butt,press,x,y); }
 	}
 
-TMouseButton TMouse::GetButton(int i)
+MouseButton Mouse::GetButton(int i)
 	{
 
-	if ((i==3) || (i==4)) buttons[i].pressed=0;
+	if ((i==3) || (i==4)) { buttons[i].pressed=0; }
 
 	return buttons[i];
 	}
 
-void TMouse::DispatchEvent(SDL_Event *ev)
+void Mouse::DispatchEvent(SDL_Event *ev)
 	{
-	if (CuboConsole::GetInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) { return ; }
 
 	if (ev->type==SDL_MOUSEMOTION)
 			{
@@ -91,17 +91,18 @@ void TMouse::DispatchEvent(SDL_Event *ev)
 			int bt=ev->button.button-1;
 			//if (ev->button.button == SDL_BUTTON_LEFT) bt=0;
 			//else bt=1;
-			if ((bt!=3) && (bt!=4))
-				buttons[bt].pressed=0;
+			if ((bt!=3) && (bt!=4)) {
+					buttons[bt].pressed=0;
+					}
 			}
 	}
 
-void TMouse::CenterPointer()
+void Mouse::CenterPointer()
 	{
 
 	}
 
-void TMouse::Initialize()
+void Mouse::Initialize()
 	{
 	snapping=0;
 	g_Mouse=this;
@@ -115,9 +116,9 @@ void TMouse::Initialize()
 	SDL_ShowCursor(SDL_DISABLE);
 	}
 
-void TMouse::HandleMotion(int cx,int cy,int cpassive)
+void Mouse::HandleMotion(int cx,int cy,int cpassive)
 	{
-	if (CuboConsole::GetInstance()->IsActive()) return ;
+	if (CuboConsole::GetInstance()->IsActive()) { return ; }
 
 	dx+=cx-x;
 	dy+=cy-y;
@@ -126,18 +127,18 @@ void TMouse::HandleMotion(int cx,int cy,int cpassive)
 
 	}
 
-void TMouse::SetCursor(int curs)
+void Mouse::SetCursor(int curs)
 	{
 
 	}
 
-Vector2d TMouse::getRelativeMotion()
+Vector2d Mouse::getRelativeMotion()
 	{
 	Vector2d res(dx,dy);
 	return res;
 	}
 
-void TMouse::Snap(int active)
+void Mouse::Snap(int active)
 	{
 	if (active)
 			{

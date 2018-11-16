@@ -31,9 +31,9 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "luautils.hpp"
 
-void TJoystick::AxisMotionEvent(int axis,int value)
+void Joystick::AxisMotionEvent(int axis,int value)
 	{
-	if (axis>=(int)(axisvals.size())) return ;
+	if (axis>=(int)(axisvals.size())) { return ; }
 	float fval=SDLAxisToFloat(value);
 	float oval=axisvals[axis];
 	float diff=fval-oval;
@@ -41,50 +41,51 @@ void TJoystick::AxisMotionEvent(int axis,int value)
 	if (diff*diff>0.000000000000001)
 //Call the handler //
 ///TODO: Careful -> Handler not installed in TGame currently
-		if (server->axishandler)
-			server->axishandler(index,axis,fval,oval);
+		if (server->axishandler) {
+				server->axishandler(index,axis,fval,oval);
+				}
 
 	axisovals[axis]=oval;
 	axisvals[axis]=fval;
 	}
 
 
-std::string TJoystick::Name()
+std::string Joystick::Name()
 	{
 	return SDL_JoystickName(index);
 	}
 
-float TJoystick::SDLAxisToFloat(int sa)
+float Joystick::SDLAxisToFloat(int sa)
 	{
 	return (sa < 0 ? (sa/32768.0) : (sa/32767.0));
 	}
 
-float TJoystick::GetAxis(int i)
+float Joystick::GetAxis(int i)
 	{
 	return SDLAxisToFloat(SDL_JoystickGetAxis(stick,i));
 	}
 
-int TJoystick::GetButton(int i)
+int Joystick::GetButton(int i)
 	{
 	return SDL_JoystickGetButton(stick,i);
 	}
 
-int TJoystick::NumAxes()
+int Joystick::NumAxes()
 	{
 	return SDL_JoystickNumAxes(stick);
 	}
 
-int TJoystick::NumButtons()
+int Joystick::NumButtons()
 	{
 	return SDL_JoystickNumButtons(stick);
 	}
 
-TJoystick::TJoystick(int mindex,TJoystickServer * serv)
+Joystick::Joystick(int mindex,JoystickServer * serv)
 	{
 	server=serv;
 	index=mindex;
 	stick=SDL_JoystickOpen(index);
-	if (!stick) return;
+	if (!stick) { return; }
 	for (int a=0; a<NumAxes(); a++)
 			{
 			axisvals.push_back(GetAxis(a));
@@ -97,12 +98,12 @@ TJoystick::TJoystick(int mindex,TJoystickServer * serv)
 			}
 	}
 
-TJoystick::~TJoystick()
+Joystick::~Joystick()
 	{
 	if (stick) {SDL_JoystickClose(stick);}
 	}
 
-void TJoystick::HandleKeys()
+void Joystick::HandleKeys()
 	{
 	float plustresh=0.5;
 	float minustresh=-0.5;
@@ -152,33 +153,33 @@ void TJoystick::HandleKeys()
 			}
 	}
 
-void TJoystick::ResetButtons()
+void Joystick::ResetButtons()
 	{
-	for (unsigned int i=0; i<obuttons.size(); i++) obuttons[i]=0;
-	for (unsigned int i=0; i<axisovals.size(); i++) axisovals[i]=0;
+	for (unsigned int i=0; i<obuttons.size(); i++) { obuttons[i]=0; }
+	for (unsigned int i=0; i<axisovals.size(); i++) { axisovals[i]=0; }
 
 	}
 
-void TJoystickServer::ResetButtons()
+void JoystickServer::ResetButtons()
 	{
-	for (unsigned int i=0; i<sticks.size(); i++) sticks[i]->ResetButtons();
+	for (unsigned int i=0; i<sticks.size(); i++) { sticks[i]->ResetButtons(); }
 	}
 
 
-void TJoystickServer::Initialize()
+void JoystickServer::Initialize()
 	{
 	std::ostringstream oss;
 	int ns=NumJoysticks();
-	if (!ns) oss << "no joystick found";
-	else if (ns==1) oss << "detected a joystick";
-	else oss << "detected " << ns << " joysticks";
+	if (!ns) { oss << "no joystick found"; }
+	else if (ns==1) { oss << "detected a joystick"; }
+	else { oss << "detected " << ns << " joysticks"; }
 	coutlog(oss.str());
-	if (!ns) return;
+	if (!ns) { return; }
 
 
 	for (int i=0; i<ns; i++)
 			{
-			TJoystick *njs=new TJoystick(i,this);
+			Joystick *njs=new Joystick(i,this);
 			oss.str("");
 			if (!(njs->GetSDLJoystick())) {
 					oss.clear();
@@ -196,7 +197,7 @@ void TJoystickServer::Initialize()
 			}
 	}
 
-void TJoystickServer::Free()
+void JoystickServer::Free()
 	{
 	for (unsigned int i=0; i<sticks.size(); i++)
 			{
@@ -205,22 +206,22 @@ void TJoystickServer::Free()
 	}
 
 
-void TJoystickServer::DispatchEvent(SDL_Event *ev)
+void JoystickServer::DispatchEvent(SDL_Event *ev)
 	{
 	return;
 	}
 
 
-void TJoystickServer::HandleKeys()
+void JoystickServer::HandleKeys()
 	{
 	for (unsigned int i=0; i<sticks.size(); i++)
 			{
-			if (sticks[i]) sticks[i]->HandleKeys();
+			if (sticks[i]) { sticks[i]->HandleKeys(); }
 
 			}
 	}
 
-int TJoystickServer::NumJoysticks()
+int JoystickServer::NumJoysticks()
 	{
 	return SDL_NumJoysticks();
 	}
