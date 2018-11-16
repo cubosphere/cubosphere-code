@@ -7,6 +7,6 @@ Visit our FreeNode channel if you want to discuss not-that-code-related things, 
 like Jabber, IRC PM or voice via air.
 2. Be ok about any constructive critics, it is so damn important! It, however, should not violate rule #3.
 3. Don't be rude even if your opponent is COMPLETE IDIOT. If they violate rule #1, write to vyo@vallua.ru.
-4. Be honest about things you can't, we'll find anyone better at them.
+4. Be honest about things you can't, we'll find someone better at them.
 
 Enjoy collaboration!
