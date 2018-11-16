@@ -24,20 +24,12 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "vectors.hpp"
 
-std::string IntToString(const int& t)
+std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
 	{
-	std::stringstream ss;
-	ss << t;
-	return ss.str();
-	}
-
-
-inline std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
-	{
-	int p2 = Src.find_last_not_of(c);
-	if (p2 == (int)std::string::npos) return std::string();
-	int p1 = Src.find_first_not_of(c);
-	if (p1 == (int)std::string::npos) p1 = 0;
+	auto p2 = Src.find_last_not_of(c);
+	if (p2 == std::string::npos) return std::string();
+	auto p1 = Src.find_first_not_of(c);
+	if (p1 == std::string::npos) p1 = 0;
 	return Src.substr(p1, (p2-p1)+1);
 	}
 
@@ -51,30 +43,18 @@ void Tokenize(const std::string& str,
 		std::vector<std::string>& tokens,
 		const std::string& delimiters)
 	{
-	// Skip delimiters at beginning.
-	auto lastPos = str.find_first_not_of(delimiters, 0);
-	// Find first "non-delimiter".
-	auto pos     = str.find_first_of(delimiters, lastPos);
-
-	while (std::string::npos != pos || std::string::npos != lastPos)
-			{
-			// Found a token, add it to the vector.
-			tokens.push_back(str.substr(lastPos, pos - lastPos));
-			// Skip delimiters.  Note the "not_of"
-			lastPos = str.find_first_not_of(delimiters, pos);
-			// Find next "non-delimiter"
-			pos = str.find_first_of(delimiters, lastPos);
-			}
+	TokenizeFull(str, tokens, delimiters, str.find_first_not_of(delimiters, 0));
 	}
 
 void TokenizeFull(const std::string& str,
 		std::vector<std::string>& tokens,
-		const std::string& delimiters)
+		const std::string& delimiters,
+		const int& first)
 	{
 	// Skip delimiters at beginning.
-	std::string::size_type lastPos = 0;
+	auto lastPos = first;
 	// Find first "non-delimiter".
-	std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+	auto pos     = str.find_first_of(delimiters, lastPos);
 	while (std::string::npos != pos || std::string::npos != lastPos)
 			{
 			// Found a token, add it to the vector.
@@ -90,8 +70,7 @@ void TokenizeFull(const std::string& str,
 
 bool BeginsWith(const std::string& str,const std::string& with)
 	{
-	std::string t(str,0,with.length());
-	return (t==with);
+	return str.substr(0, with.length()) == with;
 	}
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

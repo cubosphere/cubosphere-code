@@ -19,7 +19,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include "vectors.hpp"
 
-extern std::string IntToString(const int& t);
 extern bool BeginsWith(const std::string &str, const std::string &with);
 extern void Tokenize(const std::string& str,
 		std::vector<std::string>& tokens,
@@ -27,7 +26,9 @@ extern void Tokenize(const std::string& str,
 
 extern void TokenizeFull(const std::string& str,
 		std::vector<std::string>& tokens,
-		const std::string& delimiters = " ");
+		const std::string& delimiters = " ",
+		const int& first = 0);
+
 extern void TrimSpaces( std::string& str);
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

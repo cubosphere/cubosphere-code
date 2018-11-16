@@ -787,7 +787,7 @@ void CuboLevel::BindBlocksToNext()
 std::string CuboLevel::GetErrorString()
 	{
 	if (errorline==-1) return "";
-	return ">LEVEL("+filename+" : "+IntToString(errorline)+"): \n     "+errorstring;
+	return ">LEVEL("+filename+" : "+std::to_string(errorline)+"): \n     "+errorstring;
 	}
 
 

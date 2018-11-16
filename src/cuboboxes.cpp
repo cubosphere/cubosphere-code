@@ -389,7 +389,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 					int sidevars=atoi(nvs.c_str());
 					for (int sv=1; sv<=sidevars; sv++)
 							{
-							std::string svarname=GetBlockSide(0)->GetEditorInfo("Var"+IntToString(sv),"");
+							std::string svarname=GetBlockSide(0)->GetEditorInfo("Var"+std::to_string(sv),"");
 							std::string svarval=GetVarHolder()->GetVarString(svarname,1);
 							fprintf(f,"    BLOCK_SetVar(LEVEL_LastBlock(), \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
 
@@ -414,7 +414,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 							int sidevars=atoi(nvs.c_str());
 							for (int sv=1; sv<=sidevars; sv++)
 									{
-									std::string svarname=GetBlockSide(s)->GetEditorInfo("Var"+IntToString(sv),"");
+									std::string svarname=GetBlockSide(s)->GetEditorInfo("Var"+std::to_string(sv),"");
 									std::string svarval=GetBlockSide(s)->GetVarHolder()->GetVarString(svarname,1);
 									fprintf(f,"      SIDE_SetVar(LEVEL_LastBlock()*6+%d, \"%s\", %s);\n",s,svarname.c_str(),svarval.c_str());
 
@@ -445,7 +445,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 							int itemvars=atoi(nvs.c_str());
 							for (int iv=1; iv<=itemvars; iv++)
 									{
-									std::string ivarname=item->GetEditorInfo("Var"+IntToString(iv),"");
+									std::string ivarname=item->GetEditorInfo("Var"+std::to_string(iv),"");
 									std::string ivarval=item->GetVarHolder()->GetVarString(ivarname,1);
 									fprintf(f,"      ITEM_SetVar(item, \"%s\", %s);\n",ivarname.c_str(),ivarval.c_str());
 
@@ -488,7 +488,7 @@ void CuboBlock::WriteLevelData(FILE *f)
 									int sidevars=atoi(nvs.c_str());
 									for (int sv=1; sv<=sidevars; sv++)
 											{
-											std::string svarname=e->GetEditorInfo("Var"+IntToString(sv),"");
+											std::string svarname=e->GetEditorInfo("Var"+std::to_string(sv),"");
 											std::string svarval=e->GetVarHolder()->GetVarString(svarname,1);
 											fprintf(f,"      ACTOR_SetVar(enemy, \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
 
