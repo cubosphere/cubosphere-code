@@ -627,24 +627,24 @@ void MdlDef::Call_RenderGroup(int g)
 
 int MDLDEF_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	int r=g_Game()->GetModelDefs()->AddDef(s);
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
 int MDLDEF_Render(lua_State *state)
 	{
-	int mdldef=LUA_GET_INT;
+	int mdldef=LUA_GET_INT(state);
 	g_Game()->GetModelDefs()->GetDefPtr(mdldef)->Call_RenderModel();
 	return 0;
 	}
 
 int MDLDEF_CreateRenderList(lua_State *state)
 	{
-	int g=LUA_GET_INT;
+	int g=LUA_GET_INT(state);
 	lua_getglobal(state,"LUA_DEF_ID");
-	int mdldef=LUA_GET_INT;
+	int mdldef=LUA_GET_INT(state);
 	InvalidateMaterial();
 	g_Game()->GetModelDefs()->GetDefPtr(mdldef)->CreateRenderList(g);
 	InvalidateMaterial();
@@ -665,8 +665,8 @@ void LUA_MDLDEF_RegisterLib()
 
 int MODEL_Render(lua_State *state)
 	{
-	int mdlindex=LUA_GET_INT;
-	int defindex=LUA_GET_INT;
+	int mdlindex=LUA_GET_INT(state);
+	int defindex=LUA_GET_INT(state);
 	g_Game()->GetModels()->GetModelPtr(mdlindex)->RenderByDef(defindex);
 	return 0;
 	}
@@ -674,28 +674,28 @@ int MODEL_Render(lua_State *state)
 
 int MODEL_LoadOBJ(lua_State *state)
 	{
-	std::string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING(state);
 	CuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
-	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_INT(-1) ; return 1;}
+	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_NUMBER(state, -1) ; return 1;}
 	int r=g_Game()->GetModels()->AddOBJ(finfo);
 	delete finfo;
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
 int MODEL_DrawGroup(lua_State *state)
 	{
-	int group=LUA_GET_INT;
-	int model=LUA_GET_INT;
+	int group=LUA_GET_INT(state);
+	int model=LUA_GET_INT(state);
 	g_Game()->GetModels()->GetModelPtr(model)->DrawGroup(group);
 	return 0;
 	}
 
 int MODEL_DrawGroupWithTangent(lua_State *state)
 	{
-	std::string TangentNameInShader=LUA_GET_STRING;
-	int group=LUA_GET_INT;
-	int model=LUA_GET_INT;
+	std::string TangentNameInShader=LUA_GET_STRING(state);
+	int group=LUA_GET_INT(state);
+	int model=LUA_GET_INT(state);
 	g_Game()->GetModels()->GetModelPtr(model)->DrawGroupWithTangent(group,TangentNameInShader);
 	return 0;
 	}

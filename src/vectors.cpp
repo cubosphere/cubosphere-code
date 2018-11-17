@@ -819,21 +819,21 @@ void Matrix4d::Setup(Vector3d side,Vector3d up,Vector3d dir,Vector3d pos)
 
 int VECTOR_New(lua_State *state)
 	{
-	float z=(float)LUA_GET_DOUBLE;
-	float y=(float)LUA_GET_DOUBLE;
-	float x=(float)LUA_GET_DOUBLE;
+	float z=(float)LUA_GET_DOUBLE(state);
+	float y=(float)LUA_GET_DOUBLE(state);
+	float x=(float)LUA_GET_DOUBLE(state);
 	Vector3d v;
 	v.xyz(x,y,z);
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int VECTOR_Scale(lua_State *state)
 	{
-	float s=LUA_GET_DOUBLE;
+	float s=LUA_GET_DOUBLE(state);
 	Vector3d v=Vector3FromStack(state);
 	v=v*s;
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -842,7 +842,7 @@ int VECTOR_Add(lua_State *state)
 	Vector3d v2=Vector3FromStack(state);
 	Vector3d v1=Vector3FromStack(state);
 	v1=v1+v2;
-	LUA_SET_VECTOR3(v1);
+	LUA_SET_VECTOR3(state, v1);
 	return 1;
 	}
 
@@ -851,7 +851,7 @@ int VECTOR_Dot(lua_State *state)
 	Vector3d v2=Vector3FromStack(state);
 	Vector3d v1=Vector3FromStack(state);
 	double d=v1*v2;
-	LUA_SET_DOUBLE(d);
+	LUA_SET_NUMBER(state, d);
 	return 1;
 	}
 
@@ -861,7 +861,7 @@ int VECTOR_Sub(lua_State *state)
 	Vector3d v2=Vector3FromStack(state);
 	Vector3d v1=Vector3FromStack(state);
 	v1=v1-v2;
-	LUA_SET_VECTOR3(v1);
+	LUA_SET_VECTOR3(state, v1);
 	return 1;
 	}
 
@@ -869,7 +869,7 @@ int VECTOR_ToString(lua_State *state)
 	{
 	Vector3d v1=Vector3FromStack(state);
 	std::string s=v1.toString();
-	LUA_SET_STRING(s);
+	LUA_SET_STRING(state, s);
 	return 1;
 	}
 
@@ -879,7 +879,7 @@ int VECTOR_Length(lua_State *state)
 	{
 	Vector3d v1=Vector3FromStack(state);
 	double res=v1.length();
-	LUA_SET_DOUBLE(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -888,7 +888,7 @@ int VECTOR_Cross(lua_State *state)
 	Vector3d v2=Vector3FromStack(state);
 	Vector3d v1=Vector3FromStack(state);
 	Vector3d v3=v1.cross(v2);
-	LUA_SET_VECTOR3(v3);
+	LUA_SET_VECTOR3(state, v3);
 	return 1;
 	}
 
@@ -912,13 +912,13 @@ void LUA_VECTOR_RegisterLib()
 
 int COLOR_New(lua_State *state)
 	{
-	float a=(float)LUA_GET_DOUBLE;
-	float b=(float)LUA_GET_DOUBLE;
-	float g=(float)LUA_GET_DOUBLE;
-	float r=(float)LUA_GET_DOUBLE;
+	float a=(float)LUA_GET_DOUBLE(state);
+	float b=(float)LUA_GET_DOUBLE(state);
+	float g=(float)LUA_GET_DOUBLE(state);
+	float r=(float)LUA_GET_DOUBLE(state);
 	Vector4d v;
 	v.xyzw(r,g,b,a);
-	LUA_SET_COLOR(v);
+	LUA_SET_COLOR(state, v);
 	return 1;
 	}
 

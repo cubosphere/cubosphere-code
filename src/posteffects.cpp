@@ -205,8 +205,8 @@ int EFFECT_RenderPass(lua_State *state)
 
 int EFFECT_SpecialRenderPass(lua_State *state)
 	{
-	int defaultrender=LUA_GET_INT;
-	std::string nam=LUA_GET_STRING;
+	int defaultrender=LUA_GET_INT(state);
+	std::string nam=LUA_GET_STRING(state);
 
 	g_Game()->SpecialRenderPass(nam,defaultrender);
 	return 0;
@@ -215,8 +215,8 @@ int EFFECT_SpecialRenderPass(lua_State *state)
 
 int EFFECT_DoRenderPart(lua_State *state)
 	{
-	int index=LUA_GET_INT;
-	std::string tname=LUA_GET_STRING;
+	int index=LUA_GET_INT(state);
+	std::string tname=LUA_GET_STRING(state);
 	if (tname=="sky") {g_Game()->GetSky()->Render(); }
 	else if (tname=="item") {g_Game()->GetLevel()->GetItem(index)->Render();}
 	else if (tname=="side") {g_Game()->GetLevel()->GetBlockSide(index)->Render();}
@@ -227,34 +227,34 @@ int EFFECT_DoRenderPart(lua_State *state)
 
 int EFFECT_CreateTempTexture(lua_State *state)
 	{
-	int wdepth=LUA_GET_INT;
-	int h=LUA_GET_INT;
-	int w=LUA_GET_INT;
+	int wdepth=LUA_GET_INT(state);
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
 	if (g_PostEffect()) { w=g_PostEffect()->CreateTempTexture(w,h,wdepth); }
-	LUA_SET_INT(w);
+	LUA_SET_NUMBER(state, w);
 	return 1;
 	}
 
 
 int EFFECT_SetRenderTarget(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	if (g_PostEffect()) { g_PostEffect()->SetRenderTarget(i); }
 	return 0;
 	}
 
 int EFFECT_TempTextureToStage(lua_State *state)
 	{
-	int stage=LUA_GET_INT;
-	int tex=LUA_GET_INT
+	int stage=LUA_GET_INT(state);
+	int tex=LUA_GET_INT(state);
 	if (g_PostEffect()) { g_PostEffect()->TempTextureToStage(tex,stage); }
 	return 0;
 	}
 
 int EFFECT_DepthToStage(lua_State *state)
 	{
-	int stage=LUA_GET_INT;
-	int tex=LUA_GET_INT
+	int stage=LUA_GET_INT(state);
+	int tex=LUA_GET_INT(state);
 	if (g_PostEffect()) { g_PostEffect()->DepthToStage(tex,stage); }
 	return 0;
 	}
@@ -268,7 +268,7 @@ int EFFECT_DrawQuad(lua_State *state)
 
 int EFFECT_Load(lua_State *state)
 	{
-	std::string name=LUA_GET_STRING;
+	std::string name=LUA_GET_STRING(state);
 	LoadPostEffect(name);
 	return 0;
 	}

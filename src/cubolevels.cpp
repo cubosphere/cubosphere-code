@@ -924,7 +924,7 @@ int LEVEL_GetEditorSelector(lua_State *state)
 	int i;
 	if (b) { i=b->GetID(); }
 	else { i=-1; }
-	LUA_SET_INT(i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
@@ -937,10 +937,10 @@ int LEVEL_Clear(lua_State *state)
 
 int LEVEL_AddBlock(lua_State *state)
 	{
-	std::string bdefname=LUA_GET_STRING;
-	int z=LUA_GET_INT;
-	int y=LUA_GET_INT;
-	int x=LUA_GET_INT;
+	std::string bdefname=LUA_GET_STRING(state);
+	int z=LUA_GET_INT(state);
+	int y=LUA_GET_INT(state);
+	int x=LUA_GET_INT(state);
 
 	std::string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
 
@@ -952,16 +952,16 @@ int LEVEL_AddBlock(lua_State *state)
 
 int LEVEL_DeleteBlock(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	g_Game()->GetLevel()->DeleteBlock(i);
 	return 0;
 	}
 
 int LEVEL_ChangeSide(lua_State *state)
 	{
-	std::string bdefname=LUA_GET_STRING;
-	std::string sidestr=LUA_GET_STRING;
-	int blockid=LUA_GET_INT;
+	std::string bdefname=LUA_GET_STRING(state);
+	std::string sidestr=LUA_GET_STRING(state);
+	int blockid=LUA_GET_INT(state);
 	std::string nbdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"side");
 	if (g_VerboseMode()) { std::ostringstream oss; oss<<blockid<<" - " << sidestr; coutlog("  Changing block side to "+nbdefname+" ("+bdefname+") of block"+oss.str()); }
 
@@ -971,8 +971,8 @@ int LEVEL_ChangeSide(lua_State *state)
 
 int LEVEL_ChangeBlock(lua_State *state)
 	{
-	std::string bdefname=LUA_GET_STRING;
-	int blockid=LUA_GET_INT;
+	std::string bdefname=LUA_GET_STRING(state);
+	int blockid=LUA_GET_INT(state);
 	bdefname=g_Game()->GetLevel()->CheckDefExchange(bdefname,"block");
 	g_Game()->GetLevel()->ChangeBlock(blockid,bdefname);
 	return 0;
@@ -981,15 +981,15 @@ int LEVEL_ChangeBlock(lua_State *state)
 
 int LEVEL_CustomDistanceRender(lua_State *state)
 	{
-	float dist=LUA_GET_DOUBLE;
-	int id=LUA_GET_INT;
+	float dist=LUA_GET_DOUBLE(state);
+	int id=LUA_GET_INT(state);
 	g_Game()->GetLevel()->AddDistRenderItem(id,DIST_RENDER_CUSTOM,dist,state);
 	return 0;
 	}
 
 int LEVEL_LastDistanceRenderCull(lua_State *state)
 	{
-	double rad=LUA_GET_DOUBLE;
+	double rad=LUA_GET_DOUBLE(state);
 	Vector3d center=Vector3FromStack(state);
 	g_Game()->GetLevel()->LastDistanceRenderCull(center,rad);
 	return 0;
@@ -1008,9 +1008,9 @@ int LEVEL_Deactivate(lua_State *state)
 
 int LEVEL_AddItem(lua_State *state)
 	{
-	std::string idefname=LUA_GET_STRING;
-	std::string sidestr=LUA_GET_STRING;
-	int blockid=LUA_GET_INT;
+	std::string idefname=LUA_GET_STRING(state);
+	std::string sidestr=LUA_GET_STRING(state);
+	int blockid=LUA_GET_INT(state);
 	std::string nidefname=g_Game()->GetLevel()->CheckDefExchange(idefname,"item");
 	int res;
 //cout <<"Idefname |" << idefname << "| " << endl;
@@ -1019,32 +1019,32 @@ int LEVEL_AddItem(lua_State *state)
 	else {
 			res=g_Game()->GetLevel()->AddItem(blockid,sidestr,nidefname);
 			}
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 int LEVEL_LastBlock(lua_State *state)
 	{
 	int b=g_Game()->GetLevel()->LastBlock()->GetID();
-	LUA_SET_INT(b);
+	LUA_SET_NUMBER(state, b);
 	return 1;
 	}
 int LEVEL_LoadSky(lua_State *state)
 	{
-//string sname=LUA_GET_STRING;
+//string sname=LUA_GET_STRING(state);
 	g_Game()->GetLevel()->LoadSky("");
 	return 0;
 	}
 
 int LEVEL_Load(lua_State *state)
 	{
-	std::string lname=LUA_GET_STRING;
+	std::string lname=LUA_GET_STRING(state);
 	g_Game()->GetLevel()->SetNewLevel(lname,0);
 	return 0;
 	}
 
 int LEVEL_LoadUserLevel(lua_State *state)
 	{
-	std::string lname=LUA_GET_STRING;
+	std::string lname=LUA_GET_STRING(state);
 	g_Game()->GetLevel()->SetNewLevel(lname,1);
 
 	return 0;
@@ -1052,7 +1052,7 @@ int LEVEL_LoadUserLevel(lua_State *state)
 
 int LEVEL_SetCollisionChecksActive(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 
 	g_Game()->GetLevel()->SetCollisionChecksActive(i);
 	return 0;
@@ -1099,17 +1099,17 @@ int LEVEL_Restart(lua_State *state)
 
 int LEVEL_NumItems(lua_State *state)
 	{
-	std::string iname=LUA_GET_STRING;
+	std::string iname=LUA_GET_STRING(state);
 	int num=g_Game()->GetLevel()->NumItemsOfType(iname);
-	LUA_SET_INT(num);
+	LUA_SET_NUMBER(state, num);
 	return 1;
 	}
 
 int LEVEL_NumBlocks(lua_State *state)
 	{
-//string iname=LUA_GET_STRING;
+//string iname=LUA_GET_STRING(state);
 	int num=g_Game()->GetLevel()->GetNumBlocks();
-	LUA_SET_INT(num);
+	LUA_SET_NUMBER(state, num);
 	return 1;
 	}
 
@@ -1117,28 +1117,28 @@ int LEVEL_NumBlocks(lua_State *state)
 int LEVEL_GetCenter(lua_State *state)
 	{
 	Vector3d c=g_Game()->GetLevel()->GetCenter();
-	LUA_SET_VECTOR3(c);
+	LUA_SET_VECTOR3(state, c);
 	return 1;
 	}
 
 int LEVEL_GetTime(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->Time();
-	LUA_SET_DOUBLE(c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 
 int LEVEL_GetElapsed(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->Elapsed();
-	LUA_SET_DOUBLE(c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 
 int LEVEL_SetSideItem(lua_State *state)
 	{
-	std::string iname=LUA_GET_STRING;
-	int s=LUA_GET_INT;
+	std::string iname=LUA_GET_STRING(state);
+	int s=LUA_GET_INT(state);
 	iname=g_Game()->GetLevel()->CheckDefExchange(iname,"item");
 	g_Game()->GetLevel()->GetBlockSide(s)->SetSideItem(iname);
 	return 0;
@@ -1146,15 +1146,15 @@ int LEVEL_SetSideItem(lua_State *state)
 
 int LEVEL_SetTimeScale(lua_State *state)
 	{
-	double c=LUA_GET_DOUBLE;
+	double c=LUA_GET_DOUBLE(state);
 	g_Game()->GetLevel()->SetTimeScale(c);
-//LUA_SET_DOUBLE(0.0);
+//LUA_SET_NUMBER(state, 0.0);
 	return 0;
 	}
 
 int LEVEL_GetTimeScale(lua_State *state)
 	{
-	LUA_SET_DOUBLE(g_Game()->GetLevel()->GetTimeScale());
+	LUA_SET_NUMBER(state, g_Game()->GetLevel()->GetTimeScale());
 	return 1;
 	}
 
@@ -1162,10 +1162,10 @@ int LEVEL_FileBegin(lua_State *state)
 	{
 	g_Game()->GetLevel()->CreateBBox(); //For creating the picture
 
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
-	if (!fw) {LUA_SET_INT(0); return 1;}
-	if (!fw->IsHDDFile()) {LUA_SET_INT(0); return 1;}
+	if (!fw) {LUA_SET_NUMBER(state, 0); return 1;}
+	if (!fw->IsHDDFile()) {LUA_SET_NUMBER(state, 0); return 1;}
 	s=fw->GetHDDName();
 	delete fw;
 
@@ -1178,14 +1178,14 @@ int LEVEL_FileBegin(lua_State *state)
 
 	FILE* f=fopen(s.c_str(),"wt");
 	unsigned long int i=(unsigned long int)f;
-	LUA_SET_INT(i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
 int LEVEL_FileWrite(lua_State *state)
 	{
-	std::string k=LUA_GET_STRING;
-	unsigned long int c=LUA_GET_ULINT;
+	std::string k=LUA_GET_STRING(state);
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	fprintf(f,"%s\n",k.c_str());
 	return 0;
@@ -1193,7 +1193,7 @@ int LEVEL_FileWrite(lua_State *state)
 
 int LEVEL_FileData(lua_State *state)
 	{
-	unsigned long int c=LUA_GET_ULINT;
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	g_Game()->GetLevel()->WriteLevelData(f);
 	//fprintf(f,"%s",k.c_str());
@@ -1203,7 +1203,7 @@ int LEVEL_FileData(lua_State *state)
 
 int LEVEL_FileEnd(lua_State *state)
 	{
-	unsigned long int c=LUA_GET_ULINT;
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	fclose(f);
 	return 0;
@@ -1212,7 +1212,7 @@ int LEVEL_FileEnd(lua_State *state)
 int LEVEL_GetRadius(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->GetRadius();
-	LUA_SET_DOUBLE(c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 

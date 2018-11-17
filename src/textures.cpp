@@ -821,13 +821,13 @@ void TextureServer::CoutTimerString()
 int TEXDEF_Load(lua_State *state)
 	{
 
-	std::string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING(state);
 
 
 	int r=g_Game()->GetLevel()->LoadTexDef(name);
 
 
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 
 	return 1;
 	}
@@ -836,8 +836,8 @@ int _TEXTDEF_ResetMeanwhile=0;
 
 int TEXDEF_Render(lua_State *state)
 	{
-	int side= LUA_GET_INT;
-	int tind= LUA_GET_INT;
+	int side= LUA_GET_INT(state);
+	int tind= LUA_GET_INT(state);
 	_TEXTDEF_ResetMeanwhile=1;
 	g_Game()->GetLevel()->GetTexDef(tind)->Call_Render(side);
 	if (_TEXTDEF_ResetMeanwhile==1)    {g_Game()->GetLevel()->SetLastRendered(g_Game()->GetLevel()->GetTexDef(tind)->GetName());}
@@ -849,14 +849,14 @@ int TEXDEF_Render(lua_State *state)
 
 int TEXDEF_RenderDirect(lua_State *state)
 	{
-	int tind= LUA_GET_INT;
+	int tind= LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetTexDef(tind)->RenderPlane();
 	return 0;
 	}
 
 int TEXDEF_Render2d(lua_State *state)
 	{
-	int tind= LUA_GET_INT;
+	int tind= LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetTexDef(tind)->Render2d();
 	return 0;
 	}
@@ -865,7 +865,7 @@ int TEXDEF_Render2d(lua_State *state)
 int TEXDEF_GetLastRenderedType(lua_State *state)
 	{
 	std::string tn=g_Game()->GetLevel()->GetLastRendered();
-	LUA_SET_STRING(tn);
+	LUA_SET_STRING(state, tn);
 	return 1;
 	}
 
@@ -893,18 +893,18 @@ void LUA_TEXDEF_RegisterLib()
 
 int TEXTURE_LoadSkyTexture(lua_State *state)
 	{
-	std::string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING(state);
 	CuboFile* finfo=GetFileName(name,FILE_SKYBOX,".jpg");
-	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
 int TEXTURE_SetClamp(lua_State *state)
 	{
-	int mode=LUA_GET_INT;
+	int mode=LUA_GET_INT(state);
 	int m;
 	if (mode==2) { m=GL_CLAMP_TO_EDGE; }
 	else if (mode==1) { m=GL_CLAMP; }
@@ -919,14 +919,14 @@ int TEXTURE_Load(lua_State *state)
 	{
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
-	std::string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING(state);
 
 	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
-	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 // coutlog("Loading Texture "+Texturename);
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 
 	return 1;
 	}
@@ -934,26 +934,26 @@ int TEXTURE_Load(lua_State *state)
 
 int TEXTURE_LoadWithAlpha(lua_State *state)
 	{
-	std::string aname = LUA_GET_STRING;
-	std::string name = LUA_GET_STRING;
+	std::string aname = LUA_GET_STRING(state);
+	std::string name = LUA_GET_STRING(state);
 
 	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
-	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	CuboFile* finfoa=GetFileName(aname,FILE_TEXTURE,".jpg");
-	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_INT(-1); delete finfo; return 1;}
+	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); delete finfo; return 1;}
 
 	int r=g_Game()->GetTextures()->LoadTextureAndAlpha(finfo,finfoa);
 	delete finfo; delete finfoa;
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 
 	return 1;
 	}
 
 int TEXTURE_GetTempTexture(lua_State *state)
 	{
-	std::string tname=LUA_GET_STRING;
+	std::string tname=LUA_GET_STRING(state);
 	int r=g_Game()->GetTextures()->TempTextureIndexFromName(tname);
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
@@ -962,8 +962,8 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
 
-	std::string fname = LUA_GET_STRING;
-	std::string tname= LUA_GET_STRING;
+	std::string fname = LUA_GET_STRING(state);
+	std::string tname= LUA_GET_STRING(state);
 	CuboFile *cf=GetCuboFileFromRelativeName(fname);
 	int r=0;
 	if (cf)
@@ -971,7 +971,7 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 			r=g_Game()->GetTextures()->LoadTempTexture(tname,cf,false);
 			delete cf;
 			}
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 
 	return 1;
 	}
@@ -979,7 +979,7 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 
 int TEXTURE_SetMaxSize(lua_State *state)
 	{
-	int s=LUA_GET_INT;
+	int s=LUA_GET_INT(state);
 	g_Game()->GetTextures()->SetMaxTextureSize(s);
 	return 0;
 	}
@@ -987,14 +987,14 @@ int TEXTURE_SetMaxSize(lua_State *state)
 
 int TEXTURE_GetMaxSize(lua_State *state)
 	{
-	LUA_SET_INT(g_Game()->GetTextures()->GetMaxTextureSize());
+	LUA_SET_NUMBER(state, g_Game()->GetTextures()->GetMaxTextureSize());
 	return 1;
 	}
 
 int TEXTURE_Activate(lua_State *state)
 	{
-	int stage=LUA_GET_INT;
-	int txt=LUA_GET_INT;
+	int stage=LUA_GET_INT(state);
+	int txt=LUA_GET_INT(state);
 	g_Game()->GetTextures()->EnableTexturing();
 	g_Game()->GetTextures()->activate(txt,stage);
 	return 0;
@@ -1002,7 +1002,7 @@ int TEXTURE_Activate(lua_State *state)
 
 int TEXTURE_MatrixMode(lua_State *state)
 	{
-	int onoff=LUA_GET_INT;
+	int onoff=LUA_GET_INT(state);
 
 	if (onoff) { glMatrixMode(GL_TEXTURE); }
 	else { glMatrixMode(GL_MODELVIEW); }
@@ -1011,7 +1011,7 @@ int TEXTURE_MatrixMode(lua_State *state)
 
 int TEXTURE_Deactivate(lua_State *state)
 	{
-	int stage=LUA_GET_INT;
+	int stage=LUA_GET_INT(state);
 //g_Game()->GetTextures()->EnableTexturing();
 	g_Game()->GetTextures()->activate(-1,stage);
 	return 0;

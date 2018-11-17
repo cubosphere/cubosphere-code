@@ -26,7 +26,7 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglBegin(lua_State *state)
 			{
-			std::string s=LUA_GET_STRING;
+			std::string s=LUA_GET_STRING(state);
 			GLuint t;
 
 			if (s=="GL_POINTS") { t=GL_POINTS; }
@@ -59,9 +59,9 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglNormal3f(lua_State *state)
 			{
-			double z=LUA_GET_DOUBLE;
-			double y=LUA_GET_DOUBLE;
-			double x=LUA_GET_DOUBLE;
+			double z=LUA_GET_DOUBLE(state);
+			double y=LUA_GET_DOUBLE(state);
+			double x=LUA_GET_DOUBLE(state);
 			glNormal3f(x,y,z);
 
 			return 0;
@@ -76,9 +76,9 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglVertex3f(lua_State *state)
 			{
-			double z=LUA_GET_DOUBLE;
-			double y=LUA_GET_DOUBLE;
-			double x=LUA_GET_DOUBLE;
+			double z=LUA_GET_DOUBLE(state);
+			double y=LUA_GET_DOUBLE(state);
+			double x=LUA_GET_DOUBLE(state);
 			glVertex3f(x,y,z);
 
 			return 0;
@@ -86,39 +86,39 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglVertex2f(lua_State *state)
 			{
-			double y=LUA_GET_DOUBLE;
-			double x=LUA_GET_DOUBLE;
+			double y=LUA_GET_DOUBLE(state);
+			double x=LUA_GET_DOUBLE(state);
 			glVertex2f(x,y);
 			return 0;
 			}
 
 		static int LglTexCoord2f(lua_State *state)
 			{
-			double y=LUA_GET_DOUBLE;
-			double x=LUA_GET_DOUBLE;
+			double y=LUA_GET_DOUBLE(state);
+			double x=LUA_GET_DOUBLE(state);
 			glTexCoord2f(x,y);
 			return 0;
 			}
 
 		static int LglGenLists(lua_State *state)
 			{
-			int num=LUA_GET_INT;
+			int num=LUA_GET_INT(state);
 			num=glGenLists((GLsizei)num);
-			LUA_SET_INT(num);
+			LUA_SET_NUMBER(state, num);
 			return 1;
 			}
 
 		static int LglDeleteLists(lua_State *state)
 			{
-			int num=LUA_GET_INT;
-			int start=LUA_GET_INT;
+			int num=LUA_GET_INT(state);
+			int start=LUA_GET_INT(state);
 			glDeleteLists(start,num);
 			return 0;
 			}
 
 		static int LglBeginListCompile(lua_State *state)
 			{
-			int lst=LUA_GET_INT;
+			int lst=LUA_GET_INT(state);
 			InvalidateMaterial();
 			glNewList(lst,GL_COMPILE);
 			return 0;
@@ -133,7 +133,7 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglCallList(lua_State *state)
 			{
-			int lst=LUA_GET_INT;
+			int lst=LUA_GET_INT(state);
 			glCallList(lst);
 			return 0;
 			}
@@ -141,7 +141,7 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglFogMode(lua_State *state)
 			{
-			std::string arg=LUA_GET_STRING;
+			std::string arg=LUA_GET_STRING(state);
 
 			if (arg=="LINEAR") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_LINEAR); }
 			else  if (arg=="EXP") {glEnable(GL_FOG); glHint(GL_FOG_HINT,GL_NICEST); glFogf(GL_FOG_MODE,GL_EXP); }
@@ -153,9 +153,9 @@ class TLuaGLLib : public LuaCFunctions
 
 		static int LglFogParams(lua_State *state)
 			{
-			GLfloat dens=LUA_GET_DOUBLE;
-			GLfloat end=LUA_GET_DOUBLE;
-			GLfloat start=LUA_GET_DOUBLE;
+			GLfloat dens=LUA_GET_DOUBLE(state);
+			GLfloat end=LUA_GET_DOUBLE(state);
+			GLfloat start=LUA_GET_DOUBLE(state);
 			glFogf(GL_FOG_DENSITY,dens);
 			glFogf(GL_FOG_END,end);
 			glFogf(GL_FOG_START,start);
@@ -184,13 +184,13 @@ class TLuaGLLib : public LuaCFunctions
 			GLfloat vs[4];
 			glGetFloatv(GL_FOG_COLOR,vs);
 			Vector4d v(vs[0],vs[1],vs[2],vs[3]);
-			LUA_SET_COLOR(v);
+			LUA_SET_COLOR(state, v);
 			return 1;
 			}
 
 		static int LglInvertColors(lua_State *state)
 			{
-			int st=LUA_GET_INT;
+			int st=LUA_GET_INT(state);
 			if (st!=0)
 					{
 					glLogicOp(GL_INVERT);
@@ -239,8 +239,8 @@ int BLEND_Activate(lua_State *state)
 
 int BLEND_Function(lua_State *state)
 	{
-	int v2=LUA_GET_INT;
-	int v1=LUA_GET_INT;
+	int v2=LUA_GET_INT(state);
+	int v1=LUA_GET_INT(state);
 	glBlendFunc(v1,v2);
 	return 0;
 	}
@@ -265,7 +265,7 @@ void LUA_BLEND_RegisterLib()
 
 int CULL_Mode(lua_State *state) //0: Disable, 1: Backfaces culled, 2: Front faces
 	{
-	int m=LUA_GET_INT;
+	int m=LUA_GET_INT(state);
 	if (!m) { glDisable(GL_CULL_FACE); }
 	else {
 			glEnable(GL_CULL_FACE);
@@ -289,8 +289,8 @@ void LUA_CULL_RegisterLib()
 
 int DEPTH_Offset(lua_State *state)
 	{
-	float v2=LUA_GET_DOUBLE;
-	float v1=LUA_GET_DOUBLE;
+	float v2=LUA_GET_DOUBLE(state);
+	float v1=LUA_GET_DOUBLE(state);
 	if ((v1*v1<0.0000001) && (v2*v2<0.0000001))
 			{
 			glPolygonOffset(0,0);
@@ -316,14 +316,14 @@ int DEPTH_Disable(lua_State *state)
 
 int DEPTH_Mask(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	glDepthMask(i);
 	return 0;
 	}
 
 int DEPTH_Func(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	glDepthFunc(i);
 	return 0;
 	}
@@ -394,8 +394,8 @@ int GetModes(int hw,int fs)
 
 int DEVICE_Viewport(lua_State *state)
 	{
-	int h=LUA_GET_INT;
-	int w=LUA_GET_INT;
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
 	glViewport(0,0,w,h);
 	return 0;
 	}
@@ -442,17 +442,17 @@ int DEVICE_Clear(lua_State *state)
 int DEVICE_GetVideoModes(lua_State *state)
 	{
 	//Make the Video-Modes
-	int fs=LUA_GET_INT;
-	int hw=LUA_GET_INT;
+	int fs=LUA_GET_INT(state);
+	int hw=LUA_GET_INT(state);
 	int i=GetModes(hw,fs);
-	LUA_SET_INT(i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
 int DEVICE_GetVideoWidths(lua_State *state)
 	{
-	int index=LUA_GET_INT;
-	LUA_SET_INT(videowidths[index]);
+	int index=LUA_GET_INT(state);
+	LUA_SET_NUMBER(state, videowidths[index]);
 	return 1;
 	}
 
@@ -464,9 +464,9 @@ int DEVICE_ScreenShot(lua_State *state)
 
 int DEVICE_SaveFramePic(lua_State *state)
 	{
-	int h=LUA_GET_INT;
-	int w=LUA_GET_INT;
-	std::string s=LUA_GET_STRING;
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
+	std::string s=LUA_GET_STRING(state);
 	cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { return 0; }
 	if (!fw->IsHDDFile()) { return 0; }
@@ -478,27 +478,27 @@ int DEVICE_SaveFramePic(lua_State *state)
 
 int DEVICE_HasGLSL(lua_State *state)
 	{
-	LUA_SET_INT(g_Game()->HasGLSL());
+	LUA_SET_NUMBER(state, g_Game()->HasGLSL());
 	return 1;
 	}
 
 
 int DEVICE_Init(lua_State *state)
 	{
-	int bpp=LUA_GET_INT;
-	int fs=LUA_GET_INT;
-	int hw=LUA_GET_INT;
-	int h=LUA_GET_INT;
-	int w=LUA_GET_INT;
+	int bpp=LUA_GET_INT(state);
+	int fs=LUA_GET_INT(state);
+	int hw=LUA_GET_INT(state);
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
 	bool res=g_Game()->InitGL(w,h,hw,fs,bpp);
-	LUA_SET_INT((res==true ? 1 : 0));
+	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
 	return 1;
 	}
 
 int DEVICE_GetVideoHeights(lua_State *state)
 	{
-	int index=LUA_GET_INT;
-	LUA_SET_INT(videoheights[index]);
+	int index=LUA_GET_INT(state);
+	LUA_SET_NUMBER(state, videoheights[index]);
 	return 1;
 	}
 
@@ -511,7 +511,7 @@ int DEVICE_Reload(lua_State *state)
 
 int DEVICE_SetAntiAliasing(lua_State *state)
 	{
-	int aa=LUA_GET_INT;
+	int aa=LUA_GET_INT(state);
 	g_Game()->SetAntiAliasing(aa);
 	return 0;
 	}
@@ -541,14 +541,14 @@ void LUA_DEVICE_RegisterLib()
 
 int LIGHT_Activate(lua_State *state)
 	{
-	int l=LUA_GET_INT;
+	int l=LUA_GET_INT(state);
 	glEnable(GL_LIGHT0+l);
 	return 0;
 	}
 
 int LIGHT_Deactivate(lua_State *state)
 	{
-	int l=LUA_GET_INT;
+	int l=LUA_GET_INT(state);
 	glDisable(GL_LIGHT0+l);
 	return 0;
 	}
@@ -568,7 +568,7 @@ int LIGHT_Disable(lua_State *state)
 int LIGHT_SetPosition(lua_State *state)
 	{
 	Vector3d v=Vector3FromStack(state);
-	int l=LUA_GET_INT;
+	int l=LUA_GET_INT(state);
 	GLfloat p[4]= {v.x,v.y,v.z,0};
 	glLightfv(GL_LIGHT0+l, GL_POSITION, p);
 	return 0;
@@ -585,7 +585,7 @@ int LIGHT_SetAmbient(lua_State *state)
 	vs[2]=getfloatfield(state,"b");
 	vs[3]=getfloatfield(state,"a");
 	lua_pop(state,1);
-	int light=LUA_GET_INT;
+	int light=LUA_GET_INT(state);
 
 	glLightfv(GL_LIGHT0+light, GL_AMBIENT,   vs);
 	return 0;
@@ -616,7 +616,7 @@ int LIGHT_SetDiffuse(lua_State *state)
 	vs[2]=getfloatfield(state,"b");
 	vs[3]=getfloatfield(state,"a");
 	lua_pop(state,1);
-	int light=LUA_GET_INT;
+	int light=LUA_GET_INT(state);
 
 	glLightfv(GL_LIGHT0+light, GL_DIFFUSE,   vs);
 	return 0;
@@ -634,7 +634,7 @@ int LIGHT_SetSpecular(lua_State *state)
 	vs[3]=getfloatfield(state,"a");
 
 	lua_pop(state,1);
-	int light=LUA_GET_INT;
+	int light=LUA_GET_INT(state);
 
 	glLightfv(GL_LIGHT0+light, GL_SPECULAR,   vs);
 	return 0;
@@ -824,7 +824,7 @@ int MATERIAL_SetColor(lua_State *state)
 
 int MATERIAL_SetSpecularPower(lua_State *state)
 	{
-	double dpower=LUA_GET_DOUBLE;
+	double dpower=LUA_GET_DOUBLE(state);
 
 	float power=1.0*dpower;
 	if (power<0) { power=0; }

@@ -734,28 +734,28 @@ void WorldObject::CalcMatrix()
 int CAM_GetPos(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getPos();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetDir(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getDir();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetSide(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getSide();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetUp(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getUp();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -774,7 +774,7 @@ int CAM_SetPos(lua_State *state)
 
 int CAM_FromBasis(lua_State *state)
 	{
-	int bi=LUA_GET_INT;
+	int bi=LUA_GET_INT(state);
 
 	CuboBasis *b=g_Game()->GetBasis(bi);
 	g_Game()->GetCam()->CopyBasis(b);
@@ -783,7 +783,7 @@ int CAM_FromBasis(lua_State *state)
 
 int CAM_Attach(lua_State *state)
 	{
-	int ind=LUA_GET_INT;
+	int ind=LUA_GET_INT(state);
 	g_Game()->GetCam()->AttachToPlayer(ind);
 	return 0;
 	}
@@ -796,7 +796,7 @@ int CAM_Identity(lua_State *state)
 
 int CAM_SetDistortionBase(lua_State *state)
 	{
-	int b=LUA_GET_INT;
+	int b=LUA_GET_INT(state);
 	if (b<0) {
 			g_Game()->GetCam()->distort=NULL;
 			}
@@ -806,7 +806,7 @@ int CAM_SetDistortionBase(lua_State *state)
 
 int CAM_AxisRotate(lua_State *state)
 	{
-	float angle=LUA_GET_DOUBLE;
+	float angle=LUA_GET_DOUBLE(state);
 	Vector3d s=Vector3FromStack(state);
 
 	g_Game()->GetCam()->rotateV(angle,s);
@@ -822,7 +822,7 @@ int CAM_Distance(lua_State *state)
 	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
 	float dist=d.length();
-	LUA_SET_DOUBLE(dist);
+	LUA_SET_NUMBER(state, dist);
 	return 1;
 	}
 
@@ -833,7 +833,7 @@ int CAM_ZDistance(lua_State *state)
 	d=d-c;
 	Vector3d camdir=-g_Game()->GetCam()->getDir();
 	float dist=d*camdir;
-	LUA_SET_DOUBLE(dist);
+	LUA_SET_NUMBER(state, dist);
 	return 1;
 	}
 

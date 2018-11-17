@@ -25,7 +25,7 @@ Vector3d v_corner1,v_corner2;
 
 SpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
 	{
-	unsigned int id=(unsigned int)LUA_GET_DOUBLE;
+	unsigned int id=(unsigned int)LUA_GET_DOUBLE(state);
 	unsigned int emi=id & 0xFFFF;
 	unsigned int env=(id >> 16) & 0xFFFF;
 	return g_SpriteEnvs()->GetEnv(env)->GetEmitter(emi);
@@ -35,7 +35,7 @@ SpriteEmitter * LUA_GET_EMITTER_FUNC(lua_State * state)
 
 SpriteDef * LUA_GET_SPRITETYPE_FUNC(lua_State * state)
 	{
-	unsigned int id=(unsigned int)LUA_GET_DOUBLE;
+	unsigned int id=(unsigned int)LUA_GET_DOUBLE(state);
 	unsigned int emi=id & 0xFFFF;
 	unsigned int env=(id >> 16) & 0xFFFF;
 
@@ -495,34 +495,34 @@ LuaParticleLib * g_ParticleLib() {return &gParticleLib;}
 
 int PARTICLE_CreateEnvOnActor(lua_State *state)
 	{
-	int act=LUA_GET_INT;
+	int act=LUA_GET_INT(state);
 	int ei=gSpriteEnvs.CreateEnv();
 	gSpriteEnvs.GetEnv(ei)->AttachOnActor(act);
-	LUA_SET_INT(ei);
+	LUA_SET_NUMBER(state, ei);
 	return 1;
 	}
 
 
 int PARTICLE_CreateEnvOnSide(lua_State *state)
 	{
-	int side=LUA_GET_INT;
+	int side=LUA_GET_INT(state);
 	int ei=gSpriteEnvs.CreateEnv();
 	gSpriteEnvs.GetEnv(ei)->AttachOnSide(side);
-	LUA_SET_INT(ei);
+	LUA_SET_NUMBER(state, ei);
 	return 1;
 	}
 
 int PARTICLE_LoadDef(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	int r=gParticleDefs.AddDef(s);
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
 int PARTICLE_SetTimeScale(lua_State *state)
 	{
-	double s=LUA_GET_DOUBLE;
+	double s=LUA_GET_DOUBLE(state);
 	gSpriteEnvs.SetTimeScale(s);
 	return 0;
 	}
@@ -530,28 +530,28 @@ int PARTICLE_SetTimeScale(lua_State *state)
 
 int PARTICLE_AddEmitter(lua_State *state)
 	{
-	int envid=LUA_GET_INT;
-	int emdef=LUA_GET_INT;
+	int envid=LUA_GET_INT(state);
+	int emdef=LUA_GET_INT(state);
 	unsigned int emid= gSpriteEnvs.GetEnv(envid)->AddEmitter(emdef);
-	LUA_SET_INT(emid);
+	LUA_SET_NUMBER(state, emid);
 	return 1;
 	}
 
 int EMITTER_NewSpriteType(lua_State *state)
 	{
-	int tind=LUA_GET_INT;
-	int pdefi=LUA_GET_INT;
+	int tind=LUA_GET_INT(state);
+	int pdefi=LUA_GET_INT(state);
 	int r=gParticleDefs.GetDefPtr(pdefi)->NewSpriteType(tind);
-	LUA_SET_INT(r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
 int EMITTER_SpawnSprite(lua_State *state)
 	{
-	double vel=LUA_GET_DOUBLE;
-	double phi=LUA_GET_DOUBLE;
-	double theta=LUA_GET_DOUBLE;
-	int typ=LUA_GET_INT;
+	double vel=LUA_GET_DOUBLE(state);
+	double phi=LUA_GET_DOUBLE(state);
+	double theta=LUA_GET_DOUBLE(state);
+	int typ=LUA_GET_INT(state);
 	SpriteEmitter * emitt=LUA_GET_EMITTER;
 	emitt->SpawnSprite(typ,theta,phi,vel);
 	return 0;
@@ -561,7 +561,7 @@ int EMITTER_GetActiveSprites(lua_State *state)
 	{
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	int res=em->GetActiveSprites();
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -589,7 +589,7 @@ int EMITTER_GetVar(lua_State *state)
 
 int EMITTER_SetPos(lua_State *state)
 	{
-	int relative=LUA_GET_INT;
+	int relative=LUA_GET_INT(state);
 	Vector3d p=Vector3FromStack(state);
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetPos(p,relative);
@@ -606,7 +606,7 @@ int EMITTER_SetVelocity(lua_State *state)
 
 int EMITTER_SetGravity(lua_State *state)
 	{
-	double f=LUA_GET_DOUBLE;
+	double f=LUA_GET_DOUBLE(state);
 	Vector3d p=Vector3FromStack(state);
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetGrav(p,f);
@@ -629,7 +629,7 @@ int EMITTER_Die(lua_State *state)
 
 int EMITTER_SetMaxTimeInterval(lua_State *state)
 	{
-	double mti=LUA_GET_DOUBLE;
+	double mti=LUA_GET_DOUBLE(state);
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetMaxTimeInterval(mti);
 	return 0;
@@ -645,7 +645,7 @@ int EMITTER_SetColorMultiply(lua_State *state)
 
 int EMITTER_SetScaleMultiply(lua_State *state)
 	{
-	double s=LUA_GET_DOUBLE;
+	double s=LUA_GET_DOUBLE(state);
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	em->SetScaleMultiply(s);
 	return 0;
@@ -653,7 +653,7 @@ int EMITTER_SetScaleMultiply(lua_State *state)
 
 int SPRITETYPE_SetLifeTime(lua_State *state)
 	{
-	double lt=LUA_GET_DOUBLE;
+	double lt=LUA_GET_DOUBLE(state);
 	SpriteDef * st=LUA_GET_SPRITETYPE;
 	st->SetLifeTime(lt);
 	return 0;
@@ -662,12 +662,12 @@ int SPRITETYPE_SetLifeTime(lua_State *state)
 
 InterpolationFunction * CreateInterFunc(lua_State *state)
 	{
-	int clampmode=LUA_GET_INT;
-	double p4=LUA_GET_DOUBLE;
-	double p3=LUA_GET_DOUBLE;
-	double p2=LUA_GET_DOUBLE;
-	double p1=LUA_GET_DOUBLE;
-	std::string typ=LUA_GET_STRING;
+	int clampmode=LUA_GET_INT(state);
+	double p4=LUA_GET_DOUBLE(state);
+	double p3=LUA_GET_DOUBLE(state);
+	double p2=LUA_GET_DOUBLE(state);
+	double p1=LUA_GET_DOUBLE(state);
+	std::string typ=LUA_GET_STRING(state);
 	InterpolationFunction *result;
 	if (typ=="const") { result=new InterpolationFunctionConst(p1); }
 	else if (typ=="linear") { result=new InterpolationFunctionLinear(); }
@@ -697,7 +697,7 @@ int SPRITETYPE_SetScaleFunction(lua_State *state)
 int SPRITETYPE_SetColorFunction(lua_State *state)
 	{
 	InterpolationFunction *ifunc=CreateInterFunc(state);
-	std::string col=LUA_GET_STRING;
+	std::string col=LUA_GET_STRING(state);
 	SpriteDef * st=LUA_GET_SPRITETYPE;
 	if (col=="r") { st->SetColorRf(ifunc); }
 	else if (col=="g") { st->SetColorGf(ifunc); }
@@ -710,8 +710,8 @@ int SPRITETYPE_SetColorFunction(lua_State *state)
 
 int SPRITE_SetRot(lua_State *state)
 	{
-	double rots=LUA_GET_DOUBLE;
-	double rot=LUA_GET_DOUBLE;
+	double rots=LUA_GET_DOUBLE(state);
+	double rot=LUA_GET_DOUBLE(state);
 	SpriteEmitter *emi=LUA_GET_EMITTER;
 	Sprite *ls=emi->GetLastSprite();
 	ls->rotspeed=rots;
@@ -721,7 +721,7 @@ int SPRITE_SetRot(lua_State *state)
 
 int SPRITE_SetPos(lua_State *state)
 	{
-	int relative=LUA_GET_INT;
+	int relative=LUA_GET_INT(state);
 	Vector3d p=Vector3FromStack(state);
 	SpriteEmitter * emi=LUA_GET_EMITTER;
 
@@ -735,7 +735,7 @@ int SPRITE_SetPos(lua_State *state)
 
 int SPRITE_SetPhase(lua_State *state)
 	{
-	double rgb=LUA_GET_DOUBLE;
+	double rgb=LUA_GET_DOUBLE(state);
 	SpriteEmitter * emi=LUA_GET_EMITTER;
 
 	Sprite *ls=emi->GetLastSprite();

@@ -502,8 +502,8 @@ int FONT_ClearRemaps(lua_State *state)
 
 int FONT_AddRemap(lua_State *state)
 	{
-	std::string to=LUA_GET_STRING;
-	std::string from=LUA_GET_STRING;
+	std::string to=LUA_GET_STRING(state);
+	std::string from=LUA_GET_STRING(state);
 	g_Game()->GetFont()->AddRemap(from,to);
 	return 0;
 	}
@@ -516,22 +516,22 @@ int FONT_End(lua_State *state)
 
 int FONT_SetSize(lua_State *state)
 	{
-	float size=LUA_GET_DOUBLE;
+	float size=LUA_GET_DOUBLE(state);
 	g_Game()->GetFont()->SetSize(size);
 	return 0;
 	}
 
 int FONT_Goto(lua_State *state)
 	{
-	float y=LUA_GET_DOUBLE;
-	float x=LUA_GET_DOUBLE;
+	float y=LUA_GET_DOUBLE(state);
+	float x=LUA_GET_DOUBLE(state);
 	g_Game()->GetFont()->Goto(x,y);
 	return 0;
 	}
 
 int FONT_Load(lua_State *state)
 	{
-	std::string n=LUA_GET_STRING;
+	std::string n=LUA_GET_STRING(state);
 
 	g_Game()->GetFont()->Load(n);
 	return 0;
@@ -539,15 +539,15 @@ int FONT_Load(lua_State *state)
 
 int FONT_SetAlign(lua_State *state)
 	{
-	std::string v=LUA_GET_STRING;
-	std::string h=LUA_GET_STRING;
+	std::string v=LUA_GET_STRING(state);
+	std::string h=LUA_GET_STRING(state);
 	g_Game()->GetFont()->SetAlign(h,v);
 	return 0;
 	}
 
 int FONT_TextOut(lua_State *state)
 	{
-	std::string n=LUA_GET_STRING;
+	std::string n=LUA_GET_STRING(state);
 	g_Game()->GetFont()->TextOut(n);
 	return 0;
 	}

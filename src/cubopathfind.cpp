@@ -489,69 +489,69 @@ CuboPathGraph * CuboPathGraphServer::GetGraph(int i)
 
 int LuaPathfindingLib::PATH_GetNextMove(lua_State *state)
 	{
-	int endside=LUA_GET_INT;
-	int rot=LUA_GET_INT;
-	int startside=LUA_GET_INT;
-	int graph=LUA_GET_INT;
+	int endside=LUA_GET_INT(state);
+	int rot=LUA_GET_INT(state);
+	int startside=LUA_GET_INT(state);
+	int graph=LUA_GET_INT(state);
 	std::string res=g_PathGraphs()->GetGraph(graph)->GetNextMove(startside,rot,endside);
-	LUA_SET_STRING(res);
+	LUA_SET_STRING(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_GetEscapeMove(lua_State *state)
 	{
-	int endside=LUA_GET_INT;
-	int rot=LUA_GET_INT;
-	int startside=LUA_GET_INT;
-	int graph=LUA_GET_INT;
+	int endside=LUA_GET_INT(state);
+	int rot=LUA_GET_INT(state);
+	int startside=LUA_GET_INT(state);
+	int graph=LUA_GET_INT(state);
 	std::string res=g_PathGraphs()->GetGraph(graph)->GetEscapeMove(startside,rot,endside);
-	LUA_SET_STRING(res);
+	LUA_SET_STRING(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_GetRandomMove(lua_State *state)
 	{
-	int rot=LUA_GET_INT;
-	int startside=LUA_GET_INT;
-	int graph=LUA_GET_INT;
+	int rot=LUA_GET_INT(state);
+	int startside=LUA_GET_INT(state);
+	int graph=LUA_GET_INT(state);
 	std::string res=g_PathGraphs()->GetGraph(graph)->GetRandomMove(startside,rot);
-	LUA_SET_STRING(res);
+	LUA_SET_STRING(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_NewGraph(lua_State *state)
 	{
-	std::string cbfunc=LUA_GET_STRING;
-	int startside=LUA_GET_INT;
+	std::string cbfunc=LUA_GET_STRING(state);
+	int startside=LUA_GET_INT(state);
 	int res=g_PathGraphs()->New(startside,state,cbfunc);
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_GetNumNodes(lua_State *state)
 	{
-	int gr=LUA_GET_INT;
+	int gr=LUA_GET_INT(state);
 	int res=g_PathGraphs()->GetGraph(gr)->GetNumNodes();
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_GetNode(lua_State *state)
 	{
-	int n=LUA_GET_INT;
-	int gr=LUA_GET_INT;
+	int n=LUA_GET_INT(state);
+	int gr=LUA_GET_INT(state);
 	int res=g_PathGraphs()->GetGraph(gr)->GetNodeSideID(n);
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int LuaPathfindingLib::PATH_GetDistance(lua_State *state)
 	{
-	int endside=LUA_GET_INT;
-	int startside=LUA_GET_INT;
-	int graph=LUA_GET_INT;
+	int endside=LUA_GET_INT(state);
+	int startside=LUA_GET_INT(state);
+	int graph=LUA_GET_INT(state);
 	int res=g_PathGraphs()->GetGraph(graph)->GetDistance(startside,endside);
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 

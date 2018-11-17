@@ -408,17 +408,17 @@ std::string Keyboard::GetKeyName(int key)
 
 int KEYB_GetKeyConst(lua_State *state)
 	{
-	std::string k=LUA_GET_STRING;
+	std::string k=LUA_GET_STRING(state);
 	SDLKey res=  g_Game()->GetKeyboard()->GetKeyConstFor(k);
-	LUA_SET_INT(res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int KEYB_GetKeyName(lua_State *state)
 	{
-	int k=LUA_GET_INT;
+	int k=LUA_GET_INT(state);
 	std::string s=  g_Game()->GetKeyboard()->GetKeyName(k);
-	LUA_SET_STRING(s);
+	LUA_SET_STRING(state, s);
 	return 1;
 	}
 
