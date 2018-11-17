@@ -28,7 +28,7 @@ void CuboEnemy::SetType(int mid,std::string name)
 
 int ENEMY_New(lua_State *state)
 	{
-	std::string defname=LUA_GET_STRING;
+	std::string defname=LUA_GET_STRING(state);
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"enemy");
 	int res=g_Game()->AddEnemy(defname);
 	LUA_SET_INT(res);

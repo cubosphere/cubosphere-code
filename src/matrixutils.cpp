@@ -123,7 +123,7 @@ int MATRIX_Identity(lua_State *state)
 
 int MATRIX_AxisRotate(lua_State *state)
 	{
-	float angle=LUA_GET_DOUBLE;
+	float angle=LUA_GET_DOUBLE(state);
 	Vector3d v=Vector3FromStack(state);
 	glRotatef(angle,v.x,v.y,v.z);
 	return 0;
@@ -131,7 +131,7 @@ int MATRIX_AxisRotate(lua_State *state)
 
 int MATRIX_ScaleUniform(lua_State *state)
 	{
-	float f=LUA_GET_DOUBLE;
+	float f=LUA_GET_DOUBLE(state);
 	glScalef(f,f,f);
 	return 0;
 	}

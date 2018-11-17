@@ -491,15 +491,15 @@ class TLuaFileSysLib : public LuaCFunctions
 	protected:
 		static int FILESYS_PlatformFilename(lua_State *state)
 			{
-			std::string dironhdd=LUA_GET_STRING;
+			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=PlattformFilename(dironhdd);
 			LUA_SET_STRING(dironhdd);
 			return 1;
 			}
 		static int FILESYS_MountHDDDir(lua_State *state)
 			{
-			std::string mountbase=LUA_GET_STRING;
-			std::string dironhdd=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING(state);
+			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountHDDDir(dironhdd,mountbase);
 			LUA_SET_INT(res);
@@ -508,8 +508,8 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_MountWriteableHDDDir(lua_State *state)
 			{
-			std::string mountbase=LUA_GET_STRING;
-			std::string dironhdd=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING(state);
+			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountWriteableHDDDir(dironhdd,mountbase);
 			LUA_SET_INT(res);
@@ -518,8 +518,8 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_MountZip(lua_State *state)
 			{
-			std::string mountbase=LUA_GET_STRING;
-			std::string zipf=LUA_GET_STRING;
+			std::string mountbase=LUA_GET_STRING(state);
+			std::string zipf=LUA_GET_STRING(state);
 			cls_FileReadable *zf=gBaseFileSystem.GetFileForReading(zipf);
 			int res;
 			if (!zf) { res=0; }
@@ -540,12 +540,12 @@ class TLuaFileSysLib : public LuaCFunctions
 		static int FILESYS_StartListDirectory(lua_State *state)
 			{
 			entries.clear();
-			std::string mask=LUA_GET_STRING;
-			bool fullpath=LUA_GET_BOOL;
-			bool recu=LUA_GET_BOOL;
-			bool lsdirs=LUA_GET_BOOL;
-			bool lsfiles=LUA_GET_BOOL;
-			std::string dir=LUA_GET_STRING;
+			std::string mask=LUA_GET_STRING(state);
+			bool fullpath=LUA_GET_BOOL(state);
+			bool recu=LUA_GET_BOOL(state);
+			bool lsdirs=LUA_GET_BOOL(state);
+			bool lsfiles=LUA_GET_BOOL(state);
+			std::string dir=LUA_GET_STRING(state);
 			int typ=(fullpath ? CLS_FILE_LIST_FULLPATH : 0) | (recu ? CLS_FILE_LIST_RECURSIVE : 0) | (lsdirs ? CLS_FILE_LIST_DIRS : 0) | (lsfiles ? CLS_FILE_LIST_FILES : 0);
 			gBaseFileSystem.ListDirectoryEntries(dir,entries,typ,mask);
 			typ=entries.size();
@@ -555,7 +555,7 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_GetListDirectoryEntry(lua_State *state)
 			{
-			int index=LUA_GET_INT;
+			int index=LUA_GET_INT(state);
 			std::string res;
 			if (index<0 || index>=(int)entries.size()) { res=""; }
 			else { res=entries[index]; }
@@ -565,7 +565,7 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_FileExists(lua_State *state)
 			{
-			std::string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING(state);
 			CuboFile * cf=gBaseFileSystem.GetFileForReading(f);
 			if (cf)
 					{
@@ -578,7 +578,7 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_WillOverwrite(lua_State *state)
 			{
-			std::string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING(state);
 			cls_FileWriteable * cf=gBaseFileSystem.GetFileForWriting(f,false);
 			if (cf)
 					{
@@ -593,7 +593,7 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_Delete(lua_State *state)
 			{
-			std::string fname=LUA_GET_STRING;
+			std::string fname=LUA_GET_STRING(state);
 			cls_FileWriteable * f=gBaseFileSystem.GetFileForWriting(fname,false);
 			if (!f) {LUA_SET_INT(0); return 1;}
 			LUA_SET_INT(f->Delete());
@@ -603,10 +603,10 @@ class TLuaFileSysLib : public LuaCFunctions
 
 		static int FILESYS_AddFileMask(lua_State *state)
 			{
-			bool recu=LUA_GET_BOOL;
-			bool read=LUA_GET_BOOL;
-			bool list=LUA_GET_BOOL;
-			std::string fname=LUA_GET_STRING;
+			bool recu=LUA_GET_BOOL(state);
+			bool read=LUA_GET_BOOL(state);
+			bool list=LUA_GET_BOOL(state);
+			std::string fname=LUA_GET_STRING(state);
 			int mode=(recu==true ? CLS_FILE_MASK_RECURSIVE : 0) |  (read==true ? CLS_FILE_MASK_READ : 0) | (list==true ? CLS_FILE_MASK_LIST : 0);
 			gBaseFileSystem.SetFileMask(fname,mode,-1);
 			return 0;

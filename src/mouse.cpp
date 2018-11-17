@@ -194,7 +194,7 @@ int MOUSE_GetState(lua_State *state)
 
 int MOUSE_Snap(lua_State *state)
 	{
-	int s=LUA_GET_INT;
+	int s=LUA_GET_INT(state);
 	g_Game()->GetMouse()->Snap(s);
 	return 0;
 	}

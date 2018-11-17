@@ -542,7 +542,7 @@ void closelog()
 
 int LuaCuboLib::LOG_SetVerboseMode(lua_State *state)
 	{
-	int m=LUA_GET_INT;
+	int m=LUA_GET_INT(state);
 	g_VerboseMode(m);
 	return 0;
 	}
@@ -558,7 +558,7 @@ int LuaCuboLib::LOG_GetVerboseMode(lua_State *state)
 int LuaCuboLib::LOG_Mode(lua_State *state)
 	{
 	int prior=*g_LogMode();
-	*(g_LogMode())=LUA_GET_INT;
+	*(g_LogMode())=LUA_GET_INT(state);
 	if ((!prior) && (*(g_LogMode())))
 			{
 			std::string s=g_ProfileDir()+"/logfile.txt";
@@ -585,8 +585,8 @@ int LuaCuboLib::LOG_Mode(lua_State *state)
 
 int LUA_ExecInState(lua_State *state)
 	{
-	std::string cmd=LUA_GET_STRING;
-	std::string statename=LUA_GET_STRING;
+	std::string cmd=LUA_GET_STRING(state);
+	std::string statename=LUA_GET_STRING(state);
 	for (unsigned int i=0; i<LuaAccess::gAllLuaStates.size(); i++)
 			{
 			// coutlog("Comparing "+statename+" and "+TLuaAccess::gAllLuaStates[i]->GetFileName());
@@ -782,7 +782,7 @@ int LuaCuboLib::DEBUG(lua_State *state)
 int LuaCuboLib::GLOBAL_StartDeveloperMode(lua_State *state)
 	{
 
-	std::string consolekey=LUA_GET_STRING;
+	std::string consolekey=LUA_GET_STRING(state);
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(consolekey);
 	CuboConsole::GetInstance()->SetToggleKey(k);
 	return 0;
@@ -806,28 +806,28 @@ int LuaCuboLib::GLOBAL_GetElapsed(lua_State *state)
 
 int LuaCuboLib::GLOBAL_SetMaxElapsed(lua_State *state)
 	{
-	double t=LUA_GET_DOUBLE;
+	double t=LUA_GET_DOUBLE(state);
 	g_Game()->SetMaxPhysElapsed(t);
 	return 0;
 	}
 
 int LuaCuboLib::GLOBAL_SetMinFrames(lua_State *state)
 	{
-	double t=LUA_GET_DOUBLE;
+	double t=LUA_GET_DOUBLE(state);
 	g_Game()->SetMinFrames(t);
 	return 0;
 	}
 
 int LuaCuboLib::GLOBAL_SetMaxFrames(lua_State *state)
 	{
-	double t=LUA_GET_DOUBLE;
+	double t=LUA_GET_DOUBLE(state);
 	g_Game()->SetMaxFrames(t);
 	return 0;
 	}
 
 int LuaCuboLib::GLOBAL_VarDefined(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	int t=g_Vars()->VarDefined(s);
 	LUA_SET_INT(t);
 	return 1;
@@ -872,7 +872,7 @@ int LuaCuboLib::GLOBAL_SetVar(lua_State *state)
 
 int LuaCuboLib::SCORE_VarDefined(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	int t=g_HighScores()->VarDefined(s);
 	LUA_SET_INT(t);
 	return 1;
@@ -895,7 +895,7 @@ int LuaCuboLib::SCORE_SetVar(lua_State *state)
 
 int LuaCuboLib::SCORE_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	CuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_INT(0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_INT(0); return 1 ; }
@@ -915,7 +915,7 @@ int LuaCuboLib::SCORE_Load(lua_State *state)
 
 int LuaCuboLib::SAVE_Open(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_INT(0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
@@ -927,8 +927,8 @@ int LuaCuboLib::SAVE_Open(lua_State *state)
 
 int LuaCuboLib::SAVE_Write(lua_State *state)
 	{
-	std::string k=LUA_GET_STRING;
-	unsigned long int c=LUA_GET_ULINT;
+	std::string k=LUA_GET_STRING(state);
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	//string s="SCORE_SetVar(\""+k+"\","+g_HighScores()->GetVarString(k)+");\n";
 	fprintf(f,"%s",k.c_str());
@@ -937,7 +937,7 @@ int LuaCuboLib::SAVE_Write(lua_State *state)
 
 int LuaCuboLib::SAVE_Close(lua_State *state)
 	{
-	unsigned long int c=LUA_GET_ULINT;
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	fclose(f);
 	return 0;
@@ -945,7 +945,7 @@ int LuaCuboLib::SAVE_Close(lua_State *state)
 
 int LuaCuboLib::SAVE_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 
 	CuboFile *finfo=GetFileName(s,FILE_SAVEGAME,".sdef");
 	if (!finfo) {
@@ -973,7 +973,7 @@ int LuaCuboLib::SAVE_Load(lua_State *state)
 
 int LuaCuboLib::SCORE_Open(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_INT(0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
@@ -985,8 +985,8 @@ int LuaCuboLib::SCORE_Open(lua_State *state)
 
 int LuaCuboLib::SCORE_Write(lua_State *state)
 	{
-	std::string k=LUA_GET_STRING;
-	unsigned long int c=LUA_GET_ULINT;
+	std::string k=LUA_GET_STRING(state);
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	std::string s="SCORE_SetVar(\""+k+"\","+g_HighScores()->GetVarString(k)+");\n";
 	fprintf(f,"%s",s.c_str());
@@ -995,7 +995,7 @@ int LuaCuboLib::SCORE_Write(lua_State *state)
 
 int LuaCuboLib::SCORE_Close(lua_State *state)
 	{
-	unsigned long int c=LUA_GET_ULINT;
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	fclose(f);
 	return 0;
@@ -1010,7 +1010,7 @@ int TLuaCuboLib::MOD_ClearBlacklist(lua_State *state)
 */
 int LuaCuboLib::MOD_SetName(lua_State *state)
 	{
-	std::string nm=LUA_GET_STRING;
+	std::string nm=LUA_GET_STRING(state);
 	SetCurrentMod(nm);
 	return 0;
 	}
@@ -1018,7 +1018,7 @@ int LuaCuboLib::MOD_SetName(lua_State *state)
 /*
 int TLuaCuboLib::MOD_AddDirToBlackList(lua_State *state)
 {
-///TODO string nm=LUA_GET_STRING;
+///TODO string nm=LUA_GET_STRING(state);
 ///TODO AddToDirBlacklist(nm);
 ///TODO return 0;
 }
@@ -1087,7 +1087,7 @@ Vector4d Vector4FromStack(lua_State *state)
 
 int LuaCuboLib::USING(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 
 	if (s=="GL") { g_GLLib()->RegisterToState(state); }
 	else if (s=="PATH") {
@@ -1101,12 +1101,12 @@ int LuaCuboLib::USING(lua_State *state)
 
 int LuaCuboLib::INCLUDEABSOLUTE(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	CuboFile *finfo=g_BaseFileSystem()->GetFileForReading(s);
 	if (!finfo) {coutlog("Cannot include script "+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			std::string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING(state);
 
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
@@ -1118,11 +1118,11 @@ int LuaCuboLib::INCLUDEABSOLUTE(lua_State *state)
 
 int LuaCuboLib::INCLUDE(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	lua_getglobal(state,"LUA_DEF_DIRNAME");
-	std::string dn=LUA_GET_STRING;
+	std::string dn=LUA_GET_STRING(state);
 	lua_getglobal(state,"LUA_DEF_TYPE");
-	int typ=LUA_GET_INT;
+	int typ=LUA_GET_INT(state);
 
 ///TODO: this is a Hack for backwards compatibilty, since INCLUDE in the level-header doesn't work without it for Beta 0.2 or below
 	if (typ==FILE_USERLEVEL || typ==FILE_LEVEL) { dn="/levels/"; }
@@ -1132,7 +1132,7 @@ int LuaCuboLib::INCLUDE(lua_State *state)
 	if (!finfo) {coutlog("Cannot include script "+dn+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			std::string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING(state);
 
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
@@ -1143,7 +1143,7 @@ int LuaCuboLib::INCLUDE(lua_State *state)
 
 int LuaCuboLib::CONFIG_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	CuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_INT(0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_INT(0); return 1 ; }
@@ -1163,7 +1163,7 @@ int LuaCuboLib::CONFIG_Load(lua_State *state)
 
 int LuaCuboLib::CONFIG_Open(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	/* string dir=g_ProfileDir();
 	 s=dir+s;
 	 s=PlattformFilename(s);
@@ -1188,8 +1188,8 @@ int LuaCuboLib::CONFIG_Open(lua_State *state)
 
 int LuaCuboLib::CONFIG_Write(lua_State *state)
 	{
-	std::string k=LUA_GET_STRING;
-	unsigned long int c=LUA_GET_ULINT;
+	std::string k=LUA_GET_STRING(state);
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	std::string s="GLOBAL_SetVar(\""+k+"\","+g_Vars()->GetVarString(k)+");\n";
 	fprintf(f,"%s",s.c_str());
@@ -1198,7 +1198,7 @@ int LuaCuboLib::CONFIG_Write(lua_State *state)
 
 int LuaCuboLib::CONFIG_Close(lua_State *state)
 	{
-	unsigned long int c=LUA_GET_ULINT;
+	unsigned long int c=LUA_GET_ULINT(state);
 	FILE *f=(FILE *)c;
 	fclose(f);
 	return 0;
@@ -1210,7 +1210,7 @@ std::vector<std::string> lsfiles;
 /*
 int TLuaCuboLib::DIR_GetFiles(lua_State *state)
 {
-///TODO  string s=LUA_GET_STRING;
+///TODO  string s=LUA_GET_STRING(state);
 ///TODO  lsfiles=LSCuboSubDir(s);
 ///TODO  int r=lsfiles.size();
 ///TODO  LUA_SET_INT(r);
@@ -1235,7 +1235,7 @@ int LuaCuboLib::DIR_GetProfileDir(lua_State *state)
 /*
 int TLuaCuboLib::DIR_GetFile(lua_State *state)
 {
-///TODO int i=LUA_GET_INT;
+///TODO int i=LUA_GET_INT(state);
 ///TODO LUA_SET_STRING(lsfiles[i]);
 ///TODO return 1;
 }
@@ -1352,7 +1352,7 @@ void LuaVarHolder::GetVar(lua_State *state)
 	LuaBaseVar **ref=RefForRead(varname);
 	if (!ref) {
 			lua_getglobal(state,"LUA_DEF_NAME");
-			std::string f=LUA_GET_STRING;
+			std::string f=LUA_GET_STRING(state);
 
 			std::ostringstream os; os << "WARNING in " << f << ": Can't get member variable " << varname; coutlog(os.str(),2); return;
 			}
@@ -1376,14 +1376,14 @@ int LuaCuboLib::ARGS_Count(lua_State *state)
 
 int LuaCuboLib::ARGS_Key(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	LUA_SET_STRING(g_CmdLineKey(i));
 	return 1;
 	}
 
 int LuaCuboLib::ARGS_Val(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	LUA_SET_STRING(g_CmdLineVal(i));
 	return 1;
 	}
@@ -1423,8 +1423,8 @@ int LuaCuboLib::TRANS_Str(lua_State *state)
 
 int LuaCuboLib::TRANS_StrD(lua_State *state)
 	{
-	std::string def=LUA_GET_STRING;
-	std::string varname=LUA_GET_STRING;
+	std::string def=LUA_GET_STRING(state);
+	std::string varname=LUA_GET_STRING(state);
 	if (g_Translation()->VarDefined(varname))
 			{
 			LUA_SET_STRING(varname);
@@ -1457,7 +1457,7 @@ void ReloadLanguage()
 
 int LuaCuboLib::TRANS_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	LuaAccess lua;
 	CuboFile *finfo=GetFileName(s,FILE_LANGDEF,".ldef");
 	if (!finfo) {coutlog("Cannot load translation "+s+ ", since it was not found!",1); return 0;}

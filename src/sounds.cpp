@@ -485,20 +485,20 @@ void SoundServer::SetMusicLoop(double from,double to)
 
 int SOUND_SetPostEffect(lua_State *state)
 	{
-	double p3=LUA_GET_DOUBLE;
-	double p2=LUA_GET_DOUBLE;
-	double p1=LUA_GET_DOUBLE;
-	std::string pe=LUA_GET_STRING ;
+	double p3=LUA_GET_DOUBLE(state);
+	double p2=LUA_GET_DOUBLE(state);
+	double p1=LUA_GET_DOUBLE(state);
+	std::string pe=LUA_GET_STRING(state) ;
 	g_Sounds()->SetPostMix(pe,p1,p2,p3);
 	return 0;
 	}
 
 int SOUND_Init(lua_State *state)
 	{
-	int buffsize=LUA_GET_INT;
-	int stereo=LUA_GET_INT;
-	int bitsize=LUA_GET_INT;
-	int freq=LUA_GET_INT;
+	int buffsize=LUA_GET_INT(state);
+	int stereo=LUA_GET_INT(state);
+	int bitsize=LUA_GET_INT(state);
+	int freq=LUA_GET_INT(state);
 	int res=g_Sounds()->InitSound(freq,bitsize,stereo,buffsize);
 	LUA_SET_INT(res);
 	return 1;
@@ -506,7 +506,7 @@ int SOUND_Init(lua_State *state)
 
 int SOUND_AllocateChannels(lua_State *state)
 	{
-	int nchan=LUA_GET_INT;
+	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SetNumChannels(nchan); //Negative value => Get current numchans
 	LUA_SET_INT(res);
 	return 1;
@@ -514,7 +514,7 @@ int SOUND_AllocateChannels(lua_State *state)
 
 int SOUND_PlayedByChannel(lua_State *state)
 	{
-	int nchan=LUA_GET_INT;
+	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SoundPlayedByChannel(nchan); //Negative value => Get current numchans
 	LUA_SET_INT(res);
 	return 1;
@@ -523,7 +523,7 @@ int SOUND_PlayedByChannel(lua_State *state)
 
 int SOUND_Load(lua_State *state)
 	{
-	std::string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING(state);
 	CuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
 	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_INT(-1); return 1;}
 	int res=g_Sounds()->LoadSound(finfo);
@@ -534,7 +534,7 @@ int SOUND_Load(lua_State *state)
 
 int SOUND_LoadMusic(lua_State *state)
 	{
-	std::string fname=LUA_GET_STRING;
+	std::string fname=LUA_GET_STRING(state);
 	CuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
 	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_INT(-1); return 1;}
 //if (g_VerboseMode()) coutlog("Loading Music : "+fname);
@@ -555,8 +555,8 @@ int SOUND_LoadMusic(lua_State *state)
 
 int SOUND_Play(lua_State *state)
 	{
-	int channel=LUA_GET_INT;
-	int snd=LUA_GET_INT;
+	int channel=LUA_GET_INT(state);
+	int snd=LUA_GET_INT(state);
 	int res=g_Sounds()->PlaySound(snd,channel);
 	LUA_SET_INT(res);
 	return 1;
@@ -564,9 +564,9 @@ int SOUND_Play(lua_State *state)
 
 int SOUND_PlayLooped(lua_State *state)
 	{
-	int loops=LUA_GET_INT;
-	int channel=LUA_GET_INT;
-	int snd=LUA_GET_INT;
+	int loops=LUA_GET_INT(state);
+	int channel=LUA_GET_INT(state);
+	int snd=LUA_GET_INT(state);
 	int res=g_Sounds()->PlaySoundLooped(snd,channel,loops);
 	LUA_SET_INT(res);
 	return 1;
@@ -574,15 +574,15 @@ int SOUND_PlayLooped(lua_State *state)
 
 int SOUND_StopChannel(lua_State *state)
 	{
-	int channel=LUA_GET_INT;
+	int channel=LUA_GET_INT(state);
 	g_Sounds()->StopChannel(channel);
 	return 0;
 	}
 
 int SOUND_SetMusicLoop(lua_State *state)
 	{
-	double to=LUA_GET_DOUBLE;
-	double from=LUA_GET_DOUBLE;
+	double to=LUA_GET_DOUBLE(state);
+	double from=LUA_GET_DOUBLE(state);
 	g_Sounds()->SetMusicLoop(from,to);
 	return 0;
 	}
@@ -590,7 +590,7 @@ int SOUND_SetMusicLoop(lua_State *state)
 
 int SOUND_MusicJumpTo(lua_State *state)
 	{
-	double to=LUA_GET_DOUBLE;
+	double to=LUA_GET_DOUBLE(state);
 	g_Sounds()->MusicJumpTo(to);
 	return 0;
 	}
@@ -598,7 +598,7 @@ int SOUND_MusicJumpTo(lua_State *state)
 
 int SOUND_PlayMusic(lua_State *state)
 	{
-	int mus=LUA_GET_INT;
+	int mus=LUA_GET_INT(state);
 	int res=g_Sounds()->PlayMusic(mus);
 	LUA_SET_INT(res);
 	return 1;
@@ -619,23 +619,23 @@ int SOUND_RewindMusic(lua_State *state)
 
 int SOUND_SetMusicVolume(lua_State *state)
 	{
-	int perc=LUA_GET_INT;
+	int perc=LUA_GET_INT(state);
 	g_Sounds()->SetMusicVolume(perc);
 	return 0;
 	}
 
 int SOUND_SetVolume(lua_State *state)
 	{
-	int perc=LUA_GET_INT;
+	int perc=LUA_GET_INT(state);
 	g_Sounds()->SetVolume(perc);
 	return 0;
 	}
 
 int SOUND_Set3dFromCam(lua_State *state)
 	{
-	float maxdist=LUA_GET_DOUBLE;
+	float maxdist=LUA_GET_DOUBLE(state);
 	Vector3d p=Vector3FromStack(state);
-	int channel=LUA_GET_INT;
+	int channel=LUA_GET_INT(state);
 	Vector3d rel=g_Game()->GetCam()->getPos();
 	rel=p-rel;
 	float dist=rel.length();

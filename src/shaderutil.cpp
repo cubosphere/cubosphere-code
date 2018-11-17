@@ -367,7 +367,7 @@ int SHADER_Load(lua_State *state)
 	{
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
-	std::string name = LUA_GET_STRING;
+	std::string name = LUA_GET_STRING(state);
 
 	//string Texturename=GetFileName(name,FILE_TEXTURE)+".jpg";
 	int r=g_Game()->GetShaders()->AddShader(name);
@@ -379,7 +379,7 @@ int SHADER_Load(lua_State *state)
 
 int SHADER_Activate(lua_State *state)
 	{
-	int index= LUA_GET_INT;
+	int index= LUA_GET_INT(state);
 	g_Game()->GetShaders()->Activate(index);
 	return 0;
 	}
@@ -393,8 +393,8 @@ int SHADER_Deactivate(lua_State *state)
 
 int SHADER_SetInt(lua_State *state)
 	{
-	int i=LUA_GET_INT;
-	std::string s=LUA_GET_STRING;
+	int i=LUA_GET_INT(state);
+	std::string s=LUA_GET_STRING(state);
 
 	g_Game()->GetShaders()->SetInt(s,i);
 	return 0;
@@ -402,8 +402,8 @@ int SHADER_SetInt(lua_State *state)
 
 int SHADER_SetFloat(lua_State *state)
 	{
-	float f=LUA_GET_DOUBLE;
-	std::string s=LUA_GET_STRING;
+	float f=LUA_GET_DOUBLE(state);
+	std::string s=LUA_GET_STRING(state);
 
 	g_Game()->GetShaders()->SetFloat(s,f);
 	return 0;
@@ -417,7 +417,7 @@ int SHADER_SetVector3(lua_State *state)
 //stackDump(state); return 0;
 	Vector3d v=Vector3FromStack(state);
 	std::string s;
-	s=LUA_GET_STRING;
+	s=LUA_GET_STRING(state);
 
 	g_Game()->GetShaders()->SetVector3(s,v);
 	return 0;
@@ -429,7 +429,7 @@ int SHADER_SetVector4(lua_State *state)
 //stackDump(state); return 0;
 	Vector4d v=Vector4FromStack(state);
 	std::string s;
-	s=LUA_GET_STRING;
+	s=LUA_GET_STRING(state);
 
 	g_Game()->GetShaders()->SetVector4(s,v);
 	return 0;

@@ -819,9 +819,9 @@ void Matrix4d::Setup(Vector3d side,Vector3d up,Vector3d dir,Vector3d pos)
 
 int VECTOR_New(lua_State *state)
 	{
-	float z=(float)LUA_GET_DOUBLE;
-	float y=(float)LUA_GET_DOUBLE;
-	float x=(float)LUA_GET_DOUBLE;
+	float z=(float)LUA_GET_DOUBLE(state);
+	float y=(float)LUA_GET_DOUBLE(state);
+	float x=(float)LUA_GET_DOUBLE(state);
 	Vector3d v;
 	v.xyz(x,y,z);
 	LUA_SET_VECTOR3(v);
@@ -830,7 +830,7 @@ int VECTOR_New(lua_State *state)
 
 int VECTOR_Scale(lua_State *state)
 	{
-	float s=LUA_GET_DOUBLE;
+	float s=LUA_GET_DOUBLE(state);
 	Vector3d v=Vector3FromStack(state);
 	v=v*s;
 	LUA_SET_VECTOR3(v);
@@ -912,10 +912,10 @@ void LUA_VECTOR_RegisterLib()
 
 int COLOR_New(lua_State *state)
 	{
-	float a=(float)LUA_GET_DOUBLE;
-	float b=(float)LUA_GET_DOUBLE;
-	float g=(float)LUA_GET_DOUBLE;
-	float r=(float)LUA_GET_DOUBLE;
+	float a=(float)LUA_GET_DOUBLE(state);
+	float b=(float)LUA_GET_DOUBLE(state);
+	float g=(float)LUA_GET_DOUBLE(state);
+	float r=(float)LUA_GET_DOUBLE(state);
 	Vector4d v;
 	v.xyzw(r,g,b,a);
 	LUA_SET_COLOR(v);

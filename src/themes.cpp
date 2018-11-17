@@ -85,13 +85,13 @@ int THEME_Clear([[maybe_unused]] lua_State *state)
 	}
 int THEME_AddDir([[maybe_unused]] lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	Theme::AddDir(s);
 	return 0;
 	}
 int THEME_Load([[maybe_unused]] lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	Theme::Load(s);
 	return 0;
 	}

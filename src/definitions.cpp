@@ -187,7 +187,7 @@ void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
 
 int MENU_Load(lua_State *state)
 	{
-	std::string s=LUA_GET_STRING;
+	std::string s=LUA_GET_STRING(state);
 	g_Game()->GetMenu()->LoadDef(s);
 	return 0;
 	}

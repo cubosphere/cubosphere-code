@@ -1067,10 +1067,10 @@ int BASIS_New(lua_State *state)
 int BASIS_SetAxisRotate(lua_State *state)
 	{
 	Vector3d pos=Vector3FromStack(state);
-	float angle=LUA_GET_DOUBLE;
+	float angle=LUA_GET_DOUBLE(state);
 	Vector3d axis=Vector3FromStack(state);
 
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 
 	CuboBasis *b=g_Game()->GetBasis(index);
@@ -1086,7 +1086,7 @@ int BASIS_Set(lua_State *state)
 	Vector3d up=Vector3FromStack(state);
 	Vector3d side=Vector3FromStack(state);
 
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 
 	CuboBasis *b=g_Game()->GetBasis(index);
@@ -1098,7 +1098,7 @@ int BASIS_Set(lua_State *state)
 int BASIS_Invert(lua_State *state)
 	{
 
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 
 	CuboBasis *b=g_Game()->GetBasis(index);
@@ -1109,7 +1109,7 @@ int BASIS_Invert(lua_State *state)
 int BASIS_SetScale(lua_State *state)
 	{
 	Vector3d s=Vector3FromStack(state);
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 	g_Game()->GetBasis(index)->setScale(s);
 
@@ -1120,7 +1120,7 @@ int BASIS_SetScale(lua_State *state)
 int BASIS_SetPos(lua_State *state)
 	{
 	Vector3d s=Vector3FromStack(state);
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 	g_Game()->GetBasis(index)->setPos(s);
 
@@ -1129,7 +1129,7 @@ int BASIS_SetPos(lua_State *state)
 
 int BASIS_GetSide(lua_State *state)
 	{
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 	Vector3d v=g_Game()->GetBasis(index)->getSide();
 	LUA_SET_VECTOR3(v);
 	return 1;
@@ -1137,7 +1137,7 @@ int BASIS_GetSide(lua_State *state)
 
 int BASIS_GetUp(lua_State *state)
 	{
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 	Vector3d v=g_Game()->GetBasis(index)->getUp();
 	LUA_SET_VECTOR3(v);
 	return 1;
@@ -1145,7 +1145,7 @@ int BASIS_GetUp(lua_State *state)
 
 int BASIS_GetDir(lua_State *state)
 	{
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 	Vector3d v=g_Game()->GetBasis(index)->getDir();
 	LUA_SET_VECTOR3(v);
 	return 1;
@@ -1153,9 +1153,9 @@ int BASIS_GetDir(lua_State *state)
 
 int BASIS_AxisRotate(lua_State *state)
 	{
-	float angle=LUA_GET_DOUBLE;
+	float angle=LUA_GET_DOUBLE(state);
 	Vector3d s=Vector3FromStack(state);
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 
 	g_Game()->GetBasis(index)->rotateV(angle,s);
 
@@ -1164,7 +1164,7 @@ int BASIS_AxisRotate(lua_State *state)
 
 int BASIS_Push(lua_State *state)
 	{
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 	g_Game()->GetBasis(index)->think();
 // g_Game()->GetBasis(index)->PushMult();
 	return 0;
@@ -1172,15 +1172,15 @@ int BASIS_Push(lua_State *state)
 
 int BASIS_Pop(lua_State *state)
 	{
-	int index=LUA_GET_INT;
+	int index=LUA_GET_INT(state);
 	g_Game()->GetBasis(index)->postthink();
 	return 0;
 	}
 
 int BASIS_ChaseCam(lua_State *state)
 	{
-	int actor=LUA_GET_INT;
-	int index=LUA_GET_INT;
+	int actor=LUA_GET_INT(state);
+	int index=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->SetCamPos (g_Game()->GetBasis(index));
 	return 0;
 	}
@@ -1242,14 +1242,14 @@ int GAME_Render(lua_State *state)
 int GAME_SetGameLoopSource(lua_State *state)
 	{
 	std::string s;
-	s=LUA_GET_STRING;
+	s=LUA_GET_STRING(state);
 	g_Game()->SetGameLoopSource(s);
 	return 0;
 	}
 
 int GAME_SetFlushOrFinishBeforeSwap(lua_State *state)
 	{
-	int i=LUA_GET_INT;
+	int i=LUA_GET_INT(state);
 	g_Game()->SetFlushOrFinishBeforeSwap(i);
 	return 0;
 	}

@@ -26,12 +26,12 @@ if not, see <http://www.gnu.org/licenses/>.
 
 // TODO: use functions instead of defines
 
-#define LUA_GET_STRING lua_tostring(state,-1); lua_pop(state,1);
+#define LUA_GET_STRING(state) lua_tostring(state,-1); lua_pop(state,1);
 
-#define LUA_GET_BOOL (bool)lua_toboolean(state,-1); lua_pop(state,1);
-#define LUA_GET_INT (int)lua_tonumber(state,-1); lua_pop(state,1);
-#define LUA_GET_ULINT (unsigned long int)lua_tonumber(state,-1); lua_pop(state,1);
-#define LUA_GET_DOUBLE lua_tonumber(state,-1); lua_pop(state,1);
+#define LUA_GET_BOOL(state) (bool)lua_toboolean(state,-1); lua_pop(state,1);
+#define LUA_GET_INT(state) (int)lua_tonumber(state,-1); lua_pop(state,1);
+#define LUA_GET_ULINT(state) (unsigned long int)lua_tonumber(state,-1); lua_pop(state,1);
+#define LUA_GET_DOUBLE(state) lua_tonumber(state,-1); lua_pop(state,1);
 
 
 
