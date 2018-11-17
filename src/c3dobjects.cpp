@@ -734,28 +734,28 @@ void WorldObject::CalcMatrix()
 int CAM_GetPos(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getPos();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetDir(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getDir();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetSide(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getSide();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
 int CAM_GetUp(lua_State *state)
 	{
 	Vector3d v=g_Game()->GetCam()->getUp();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -822,7 +822,7 @@ int CAM_Distance(lua_State *state)
 	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
 	float dist=d.length();
-	LUA_SET_DOUBLE(dist);
+	LUA_SET_DOUBLE(state, dist);
 	return 1;
 	}
 
@@ -833,7 +833,7 @@ int CAM_ZDistance(lua_State *state)
 	d=d-c;
 	Vector3d camdir=-g_Game()->GetCam()->getDir();
 	float dist=d*camdir;
-	LUA_SET_DOUBLE(dist);
+	LUA_SET_DOUBLE(state, dist);
 	return 1;
 	}
 

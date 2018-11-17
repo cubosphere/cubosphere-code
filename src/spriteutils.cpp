@@ -498,7 +498,7 @@ int PARTICLE_CreateEnvOnActor(lua_State *state)
 	int act=LUA_GET_INT(state);
 	int ei=gSpriteEnvs.CreateEnv();
 	gSpriteEnvs.GetEnv(ei)->AttachOnActor(act);
-	LUA_SET_INT(ei);
+	LUA_SET_INT(state, ei);
 	return 1;
 	}
 
@@ -508,7 +508,7 @@ int PARTICLE_CreateEnvOnSide(lua_State *state)
 	int side=LUA_GET_INT(state);
 	int ei=gSpriteEnvs.CreateEnv();
 	gSpriteEnvs.GetEnv(ei)->AttachOnSide(side);
-	LUA_SET_INT(ei);
+	LUA_SET_INT(state, ei);
 	return 1;
 	}
 
@@ -516,7 +516,7 @@ int PARTICLE_LoadDef(lua_State *state)
 	{
 	std::string s=LUA_GET_STRING(state);
 	int r=gParticleDefs.AddDef(s);
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 	return 1;
 	}
 
@@ -533,7 +533,7 @@ int PARTICLE_AddEmitter(lua_State *state)
 	int envid=LUA_GET_INT(state);
 	int emdef=LUA_GET_INT(state);
 	unsigned int emid= gSpriteEnvs.GetEnv(envid)->AddEmitter(emdef);
-	LUA_SET_INT(emid);
+	LUA_SET_INT(state, emid);
 	return 1;
 	}
 
@@ -542,7 +542,7 @@ int EMITTER_NewSpriteType(lua_State *state)
 	int tind=LUA_GET_INT(state);
 	int pdefi=LUA_GET_INT(state);
 	int r=gParticleDefs.GetDefPtr(pdefi)->NewSpriteType(tind);
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 	return 1;
 	}
 
@@ -561,7 +561,7 @@ int EMITTER_GetActiveSprites(lua_State *state)
 	{
 	SpriteEmitter *em=LUA_GET_EMITTER;
 	int res=em->GetActiveSprites();
-	LUA_SET_INT(res);
+	LUA_SET_INT(state, res);
 	return 1;
 	}
 

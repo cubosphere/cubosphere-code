@@ -827,7 +827,7 @@ int TEXDEF_Load(lua_State *state)
 	int r=g_Game()->GetLevel()->LoadTexDef(name);
 
 
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 
 	return 1;
 	}
@@ -865,7 +865,7 @@ int TEXDEF_Render2d(lua_State *state)
 int TEXDEF_GetLastRenderedType(lua_State *state)
 	{
 	std::string tn=g_Game()->GetLevel()->GetLastRendered();
-	LUA_SET_STRING(tn);
+	LUA_SET_STRING(state, tn);
 	return 1;
 	}
 
@@ -895,10 +895,10 @@ int TEXTURE_LoadSkyTexture(lua_State *state)
 	{
 	std::string name = LUA_GET_STRING(state);
 	CuboFile* finfo=GetFileName(name,FILE_SKYBOX,".jpg");
-	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_INT(state, -1); return 1;}
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 	return 1;
 	}
 
@@ -922,11 +922,11 @@ int TEXTURE_Load(lua_State *state)
 	std::string name = LUA_GET_STRING(state);
 
 	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
-	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(state, -1); return 1;}
 // coutlog("Loading Texture "+Texturename);
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 
 	return 1;
 	}
@@ -938,13 +938,13 @@ int TEXTURE_LoadWithAlpha(lua_State *state)
 	std::string name = LUA_GET_STRING(state);
 
 	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
-	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(-1); return 1;}
+	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_INT(state, -1); return 1;}
 	CuboFile* finfoa=GetFileName(aname,FILE_TEXTURE,".jpg");
-	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_INT(-1); delete finfo; return 1;}
+	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_INT(state, -1); delete finfo; return 1;}
 
 	int r=g_Game()->GetTextures()->LoadTextureAndAlpha(finfo,finfoa);
 	delete finfo; delete finfoa;
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 
 	return 1;
 	}
@@ -953,7 +953,7 @@ int TEXTURE_GetTempTexture(lua_State *state)
 	{
 	std::string tname=LUA_GET_STRING(state);
 	int r=g_Game()->GetTextures()->TempTextureIndexFromName(tname);
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 	return 1;
 	}
 
@@ -971,7 +971,7 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 			r=g_Game()->GetTextures()->LoadTempTexture(tname,cf,false);
 			delete cf;
 			}
-	LUA_SET_INT(r);
+	LUA_SET_INT(state, r);
 
 	return 1;
 	}
@@ -987,7 +987,7 @@ int TEXTURE_SetMaxSize(lua_State *state)
 
 int TEXTURE_GetMaxSize(lua_State *state)
 	{
-	LUA_SET_INT(g_Game()->GetTextures()->GetMaxTextureSize());
+	LUA_SET_INT(state, g_Game()->GetTextures()->GetMaxTextureSize());
 	return 1;
 	}
 

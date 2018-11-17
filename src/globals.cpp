@@ -493,7 +493,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			{
 			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=PlattformFilename(dironhdd);
-			LUA_SET_STRING(dironhdd);
+			LUA_SET_STRING(state, dironhdd);
 			return 1;
 			}
 		static int FILESYS_MountHDDDir(lua_State *state)
@@ -502,7 +502,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountHDDDir(dironhdd,mountbase);
-			LUA_SET_INT(res);
+			LUA_SET_INT(state, res);
 			return 1;
 			}
 
@@ -512,7 +512,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			std::string dironhdd=LUA_GET_STRING(state);
 			dironhdd=(dironhdd);
 			int res=gBaseFileSystem.MountWriteableHDDDir(dironhdd,mountbase);
-			LUA_SET_INT(res);
+			LUA_SET_INT(state, res);
 			return 1;
 			}
 
@@ -525,7 +525,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			if (!zf) { res=0; }
 			else { res=gBaseFileSystem.MountZipFile(zf,mountbase); }
 			if (gBaseFileSystem.GetLastError(0)!="") { coutlog(gBaseFileSystem.GetLastError(1),1); }
-			LUA_SET_INT(res);
+			LUA_SET_INT(state, res);
 			return 1;
 			}
 
@@ -549,7 +549,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			int typ=(fullpath ? CLS_FILE_LIST_FULLPATH : 0) | (recu ? CLS_FILE_LIST_RECURSIVE : 0) | (lsdirs ? CLS_FILE_LIST_DIRS : 0) | (lsfiles ? CLS_FILE_LIST_FILES : 0);
 			gBaseFileSystem.ListDirectoryEntries(dir,entries,typ,mask);
 			typ=entries.size();
-			LUA_SET_INT(typ);
+			LUA_SET_INT(state, typ);
 			return 1;
 			}
 
@@ -559,7 +559,7 @@ class TLuaFileSysLib : public LuaCFunctions
 			std::string res;
 			if (index<0 || index>=(int)entries.size()) { res=""; }
 			else { res=entries[index]; }
-			LUA_SET_STRING(res);
+			LUA_SET_STRING(state, res);
 			return 1;
 			}
 
@@ -570,9 +570,9 @@ class TLuaFileSysLib : public LuaCFunctions
 			if (cf)
 					{
 					delete cf;
-					LUA_SET_INT(1);
+					LUA_SET_INT(state, 1);
 					}
-			else { LUA_SET_INT(0); }
+			else { LUA_SET_INT(state, 0); }
 			return 1;
 			}
 
@@ -583,11 +583,11 @@ class TLuaFileSysLib : public LuaCFunctions
 			if (cf)
 					{
 
-					LUA_SET_INT(cf->WillOverwrite());
+					LUA_SET_INT(state, cf->WillOverwrite());
 					delete cf;
 
 					}
-			else { LUA_SET_INT(0); }
+			else { LUA_SET_INT(state, 0); }
 			return 1;
 			}
 
@@ -595,8 +595,8 @@ class TLuaFileSysLib : public LuaCFunctions
 			{
 			std::string fname=LUA_GET_STRING(state);
 			cls_FileWriteable * f=gBaseFileSystem.GetFileForWriting(fname,false);
-			if (!f) {LUA_SET_INT(0); return 1;}
-			LUA_SET_INT(f->Delete());
+			if (!f) {LUA_SET_INT(state, 0); return 1;}
+			LUA_SET_INT(state, f->Delete());
 			delete f;
 			return 1;
 			}

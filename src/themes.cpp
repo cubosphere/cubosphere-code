@@ -99,7 +99,7 @@ int THEME_Load([[maybe_unused]] lua_State *state)
 int THEME_GetName([[maybe_unused]] lua_State *state)
 	{
 	std::string s=Theme::GetName();
-	LUA_SET_STRING(s);
+	LUA_SET_STRING(state, s);
 	return 1;
 	}
 

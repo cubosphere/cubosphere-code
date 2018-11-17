@@ -761,7 +761,7 @@ int ITEM_GetType(lua_State *state)
 	{
 	int ind=LUA_GET_INT(state);
 	std::string res=g_Game()->GetLevel()->GetItem(ind)->GetName();
-	LUA_SET_STRING(res);
+	LUA_SET_STRING(state, res);
 	return 1;
 	}
 
@@ -772,7 +772,7 @@ int ITEM_GetEditorInfo(lua_State *state)
 
 	int b=LUA_GET_INT(state);
 	std::string v=g_Game()->GetLevel()->GetItem(b)->GetEditorInfo(what,def);
-	LUA_SET_STRING(v);
+	LUA_SET_STRING(state, v);
 	return 1;
 	}
 
@@ -780,7 +780,7 @@ int ITEM_GetSide(lua_State *state)
 	{
 	int item=LUA_GET_INT(state);
 	int side=g_Game()->GetLevel()->GetItem(item)->GetSide()->GetID();
-	LUA_SET_INT(side);
+	LUA_SET_INT(state, side);
 	return 1;
 	}
 
@@ -820,7 +820,7 @@ int SIDE_GetTangent(lua_State *state)
 	{
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetTangent();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -828,7 +828,7 @@ int SIDE_GetNormal(lua_State *state)
 	{
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetNormal();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -836,7 +836,7 @@ int SIDE_GetMidpoint(lua_State *state)
 	{
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetMidpoint();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -865,7 +865,7 @@ int SIDE_FindOfType(lua_State *state)
 	int start=LUA_GET_INT(state);
 	std::string tn=LUA_GET_STRING(state);
 	int res=g_Game()->GetLevel()->GetSideOfType(tn,start,offs);
-	LUA_SET_INT(res);
+	LUA_SET_INT(state, res);
 	return 1;
 	}
 
@@ -896,7 +896,7 @@ int SIDE_GetBlock(lua_State *state)
 	int s=LUA_GET_INT(state);
 	s=g_Game()->GetLevel()->GetBlockSide(s)->GetID();
 	s/=6;
-	LUA_SET_INT(s);
+	LUA_SET_INT(state, s);
 	return 1;
 	}
 
@@ -904,7 +904,7 @@ int SIDE_GetType(lua_State *state)
 	{
 	int s=LUA_GET_INT(state);
 	std::string str=g_Game()->GetLevel()->GetBlockSide(s)->GetTypeName();
-	LUA_SET_STRING(str);
+	LUA_SET_STRING(state, str);
 	return 1;
 	}
 
@@ -924,7 +924,7 @@ int SIDE_GetEditorInfo(lua_State *state)
 
 	int b=LUA_GET_INT(state);
 	std::string v=g_Game()->GetLevel()->GetBlockSide(b)->GetEditorInfo(what,def);
-	LUA_SET_STRING(v);
+	LUA_SET_STRING(state, v);
 	return 1;
 	}
 
@@ -958,7 +958,7 @@ int BLOCK_GetNeighbor(lua_State *state)
 	Vector3d norm=Vector3FromStack(state);
 	int blockid=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(blockid)->GetNeighbor(norm);
-	LUA_SET_INT(res);
+	LUA_SET_INT(state, res);
 	return 1;
 	}
 
@@ -998,7 +998,7 @@ int BLOCK_HasTransparency(lua_State *state)
 	{
 	int block=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(block)->HasNoTransparency();
-	LUA_SET_INT(!res);
+	LUA_SET_INT(state, !res);
 	return 1;
 	}
 
@@ -1017,7 +1017,7 @@ int BLOCK_GetPos(lua_State *state)
 	{
 	int b=LUA_GET_INT(state);
 	Vector3d v=g_Game()->GetLevel()->GetBlock(b)->GetPos();
-	LUA_SET_VECTOR3(v);
+	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
@@ -1028,7 +1028,7 @@ int BLOCK_GetEditorInfo(lua_State *state)
 
 	int b=LUA_GET_INT(state);
 	std::string v=g_Game()->GetLevel()->GetBlock(b)->GetEditorInfo(what,def);
-	LUA_SET_STRING(v);
+	LUA_SET_STRING(state, v);
 	return 1;
 	}
 
@@ -1040,7 +1040,7 @@ int BLOCK_AtPos(lua_State *state)
 	int i;
 	if (b) { i=b->GetID(); }
 	else { i=-1; }
-	LUA_SET_INT(i);
+	LUA_SET_INT(state, i);
 	return 1;
 	}
 
@@ -1061,7 +1061,7 @@ int BLOCK_GetBlocking(lua_State *state)
 	if (b>=0) {
 			res=g_Game()->GetLevel()->GetBlock(b)->Blocking();
 			}
-	LUA_SET_INT(res);
+	LUA_SET_INT(state, res);
 	return 1;
 	}
 
@@ -1078,7 +1078,7 @@ int BLOCK_GetScale(lua_State *state)
 	{
 	int b=LUA_GET_INT(state);
 	float v=g_Game()->GetLevel()->GetBlock(b)->GetScale();
-	LUA_SET_DOUBLE(v);
+	LUA_SET_DOUBLE(state, v);
 	return 1;
 	}
 

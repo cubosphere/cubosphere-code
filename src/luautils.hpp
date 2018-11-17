@@ -62,11 +62,11 @@ inline double LUA_GET_DOUBLE(lua_State* state)
 	return res;
 }
 
-#define LUA_SET_INT(r) lua_pushnumber(state,r);
-#define LUA_SET_DOUBLE(r) lua_pushnumber(state,r);
-#define LUA_SET_STRING(s) lua_pushstring(state,s.c_str());
+#define LUA_SET_INT(state, r) lua_pushnumber(state,r);
+#define LUA_SET_DOUBLE(state, r) lua_pushnumber(state,r);
+#define LUA_SET_STRING(state, s) lua_pushstring(state,s.c_str());
 
-#define LUA_SET_VECTOR3(v) lua_newtable(state);  \
+#define LUA_SET_VECTOR3(state, v) lua_newtable(state);  \
 	lua_pushstring(state, "x"); \
 	lua_pushnumber(state, (double)(v.x));\
 	lua_settable(state, -3);\
@@ -77,7 +77,7 @@ inline double LUA_GET_DOUBLE(lua_State* state)
 	lua_pushnumber(state, (double)(v.z));\
 	lua_settable(state, -3);
 
-#define LUA_SET_COLOR(v) lua_newtable(state);  \
+#define LUA_SET_COLOR(state, v) lua_newtable(state);  \
 	lua_pushstring(state, "r"); \
 	lua_pushnumber(state, (double)(v.x));\
 	lua_settable(state, -3);\
