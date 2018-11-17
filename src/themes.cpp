@@ -21,12 +21,12 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-std::string Theme::momThemeName;
+std::string Theme::activeTheme;
 std::vector<std::string> Theme::themedirs;
 
 std::string Theme::GetName()
 	{
-	return momThemeName;
+	return activeTheme;
 	}
 
 
@@ -57,12 +57,12 @@ void Theme::AddDir(std::string subdir)
 
 void Theme::Load(std::string n)
 	{
-	if (n!=momThemeName)
+	if (n!=activeTheme)
 			{
-			//Make sure to clear everythink
+			//Make sure to clear everything
 			g_Game()->FreeMedia();
 			}
-	momThemeName=n;
+	activeTheme=n;
 
 	LuaAccess lua;
 	CuboFile *finfo=GetFileName(n,FILE_THEMEDEF,".themedef");

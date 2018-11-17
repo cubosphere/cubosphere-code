@@ -27,7 +27,7 @@ class Theme {
 		static void AddDir(std::string subdir);
 		static void Load(std::string n);
 	protected:
-		static std::string momThemeName;
+		static std::string activeTheme;
 		static std::vector<std::string> themedirs;
 	};
 
