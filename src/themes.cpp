@@ -21,16 +21,16 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-static std::vector<std::string> themedirs;
-static std::string momThemeName="";
+std::string Theme::momThemeName;
+std::vector<std::string> Theme::themedirs;
 
-std::string GetThemeName()
+std::string Theme::GetName()
 	{
 	return momThemeName;
 	}
 
 
-std::string ThemeFileName(std::string dir,std::string fname,std::string ext)
+std::string Theme::FileName(std::string dir,std::string fname,std::string ext)
 	{
 //Parsing all sub dirs... If no file is found return the normal dirname
 
@@ -46,16 +46,16 @@ std::string ThemeFileName(std::string dir,std::string fname,std::string ext)
 	return dir+"/"+fname+ext;
 	}
 
-void ThemeClear()
+void Theme::Clear()
 	{
 	themedirs.clear();
 	}
-void ThemeAddDir(std::string subdir)
+void Theme::AddDir(std::string subdir)
 	{
 	themedirs.push_back(subdir);
 	}
 
-void ThemeLoad(std::string n)
+void Theme::Load(std::string n)
 	{
 	if (n!=momThemeName)
 			{
@@ -80,25 +80,25 @@ void ThemeLoad(std::string n)
 
 int THEME_Clear([[maybe_unused]] lua_State *state)
 	{
-	ThemeClear();
+	Theme::Clear();
 	return 0;
 	}
 int THEME_AddDir([[maybe_unused]] lua_State *state)
 	{
 	std::string s=LUA_GET_STRING;
-	ThemeAddDir(s);
+	Theme::AddDir(s);
 	return 0;
 	}
 int THEME_Load([[maybe_unused]] lua_State *state)
 	{
 	std::string s=LUA_GET_STRING;
-	ThemeLoad(s);
+	Theme::Load(s);
 	return 0;
 	}
 
 int THEME_GetName([[maybe_unused]] lua_State *state)
 	{
-	std::string s=GetThemeName();
+	std::string s=Theme::GetName();
 	LUA_SET_STRING(s);
 	return 1;
 	}

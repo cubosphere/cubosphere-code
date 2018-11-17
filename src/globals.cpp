@@ -206,7 +206,7 @@ std::string GetFileNameForMod(std::string subname,int type,std::string ext,std::
 			if (subname=="") { res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]); }
 			else {
 					if (g_SubDirUsesTheme[type]) {
-							res=ThemeFileName(g_DataDir()+modstr+g_SubDirs[type],subname,ext);
+							res=Theme::FileName(g_DataDir()+modstr+g_SubDirs[type],subname,ext);
 							}
 					else {
 							res=PlattformFilename(g_DataDir()+modstr+g_SubDirs[type]+"/"+subname+ext);
@@ -238,7 +238,7 @@ CuboFile* GetFileName(std::string subname,int type,std::string ext)
 			///TODO: Mod-Zeugs, Dir Getting
 			std::string res;
 			if (g_SubDirUsesTheme[type]) {
-					res=ThemeFileName(g_SubDirs[type],subname,ext);
+					res=Theme::FileName(g_SubDirs[type],subname,ext);
 					}
 			else {
 					res=(g_SubDirs[type]+"/"+subname+ext);

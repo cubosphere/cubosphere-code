@@ -15,12 +15,21 @@ if not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include <string>
+#include <vector>
 
-extern std::string ThemeFileName(std::string dir,std::string fname,std::string ext);
-extern std::string GetThemeName();
-extern void ThemeClear();
-extern void ThemeAddDir(std::string subdir);
-extern void ThemeLoad(std::string n);
+class Theme {
+	public:
+		Theme() = delete;
+		~Theme() = delete;
+		static std::string FileName(std::string dir,std::string fname,std::string ext);
+		static std::string GetName();
+		static void Clear();
+		static void AddDir(std::string subdir);
+		static void Load(std::string n);
+	protected:
+		static std::string momThemeName;
+		static std::vector<std::string> themedirs;
+	};
 
 extern void LUA_THEME_RegisterLib();
 
