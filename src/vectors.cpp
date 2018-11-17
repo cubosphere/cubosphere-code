@@ -851,7 +851,7 @@ int VECTOR_Dot(lua_State *state)
 	Vector3d v2=Vector3FromStack(state);
 	Vector3d v1=Vector3FromStack(state);
 	double d=v1*v2;
-	LUA_SET_DOUBLE(state, d);
+	LUA_SET_NUMBER(state, d);
 	return 1;
 	}
 
@@ -879,7 +879,7 @@ int VECTOR_Length(lua_State *state)
 	{
 	Vector3d v1=Vector3FromStack(state);
 	double res=v1.length();
-	LUA_SET_DOUBLE(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 

@@ -231,7 +231,7 @@ int EFFECT_CreateTempTexture(lua_State *state)
 	int h=LUA_GET_INT(state);
 	int w=LUA_GET_INT(state);
 	if (g_PostEffect()) { w=g_PostEffect()->CreateTempTexture(w,h,wdepth); }
-	LUA_SET_INT(state, w);
+	LUA_SET_NUMBER(state, w);
 	return 1;
 	}
 

@@ -25,71 +25,83 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "filesystem.hpp"
 
 inline std::string LUA_GET_STRING(lua_State* state) // Complicated due to zero-terminators and garbage collection
-{
+	{
 	size_t len;
 	auto pointer = lua_tolstring(state, -1, &len);
 	auto str = std::string(pointer, len);
 	lua_pop(state,1);
 	return str;
-}
+	}
 
 inline bool LUA_GET_BOOL(lua_State* state)
-{
+	{
 	bool res = lua_toboolean(state,-1);
 	lua_pop(state,1);
 	return res;
-}
+	}
 
 inline int LUA_GET_INT(lua_State* state)
-{
+	{
 	int res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
-}
+	}
 
 inline unsigned long int LUA_GET_ULINT(lua_State* state)
-{
+	{
 	unsigned long int res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
-}
+	}
 
 
 inline double LUA_GET_DOUBLE(lua_State* state)
-{
+	{
 	double res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
-}
+	}
 
-#define LUA_SET_INT(state, r) lua_pushnumber(state,r);
-#define LUA_SET_DOUBLE(state, r) lua_pushnumber(state,r);
-#define LUA_SET_STRING(state, s) lua_pushstring(state,s.c_str());
+inline void LUA_SET_NUMBER(lua_State* state, const lua_Number& num)
+	{
+	lua_pushnumber(state,num);
+	}
 
-#define LUA_SET_VECTOR3(state, v) lua_newtable(state);  \
-	lua_pushstring(state, "x"); \
-	lua_pushnumber(state, (double)(v.x));\
-	lua_settable(state, -3);\
-	lua_pushstring(state, "y");\
-	lua_pushnumber(state, (double)(v.y));\
-	lua_settable(state, -3);\
-	lua_pushstring(state, "z");\
-	lua_pushnumber(state, (double)(v.z));\
+inline void LUA_SET_STRING(lua_State* state, const std::string& str)
+	{
+	lua_pushlstring(state,str.c_str(),str.length());
+	}
+
+inline void LUA_SET_VECTOR3(lua_State* state, const Vector3d& v)
+	{
+	lua_newtable(state);
+	lua_pushstring(state, "x");
+	lua_pushnumber(state, v.x);
 	lua_settable(state, -3);
-
-#define LUA_SET_COLOR(state, v) lua_newtable(state);  \
-	lua_pushstring(state, "r"); \
-	lua_pushnumber(state, (double)(v.x));\
-	lua_settable(state, -3);\
-	lua_pushstring(state, "g");\
-	lua_pushnumber(state, (double)(v.y));\
-	lua_settable(state, -3);\
-	lua_pushstring(state, "b");\
-	lua_pushnumber(state, (double)(v.z));\
-	lua_settable(state, -3); \
-	lua_pushstring(state, "a");\
-	lua_pushnumber(state, (double)(v.w));\
+	lua_pushstring(state, "y");
+	lua_pushnumber(state, v.y);
 	lua_settable(state, -3);
+	lua_pushstring(state, "z");
+	lua_pushnumber(state, v.z);
+	lua_settable(state, -3);
+	}
+
+inline void LUA_SET_COLOR(lua_State* state, const Vector4d& v)
+	{
+	lua_newtable(state);
+	lua_pushstring(state, "r");
+	lua_pushnumber(state, v.x);
+	lua_settable(state, -3);
+	lua_pushstring(state, "g");
+	lua_pushnumber(state, v.y);
+	lua_settable(state, -3);
+	lua_pushstring(state, "b");
+	lua_pushnumber(state, v.z);
+	lua_settable(state, -3);
+	lua_pushstring(state, "a");
+	lua_pushnumber(state, v.w);
+	lua_settable(state, -3);
+	}
 
 extern Vector3d Vector3FromStack(lua_State *state);
 extern Vector4d Vector4FromStack(lua_State *state);

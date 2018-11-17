@@ -822,7 +822,7 @@ int CAM_Distance(lua_State *state)
 	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
 	float dist=d.length();
-	LUA_SET_DOUBLE(state, dist);
+	LUA_SET_NUMBER(state, dist);
 	return 1;
 	}
 
@@ -833,7 +833,7 @@ int CAM_ZDistance(lua_State *state)
 	d=d-c;
 	Vector3d camdir=-g_Game()->GetCam()->getDir();
 	float dist=d*camdir;
-	LUA_SET_DOUBLE(state, dist);
+	LUA_SET_NUMBER(state, dist);
 	return 1;
 	}
 

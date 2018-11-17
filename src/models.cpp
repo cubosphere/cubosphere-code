@@ -629,7 +629,7 @@ int MDLDEF_Load(lua_State *state)
 	{
 	std::string s=LUA_GET_STRING(state);
 	int r=g_Game()->GetModelDefs()->AddDef(s);
-	LUA_SET_INT(state, r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
@@ -676,10 +676,10 @@ int MODEL_LoadOBJ(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING(state);
 	CuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
-	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_INT(state, -1) ; return 1;}
+	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_NUMBER(state, -1) ; return 1;}
 	int r=g_Game()->GetModels()->AddOBJ(finfo);
 	delete finfo;
-	LUA_SET_INT(state, r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 

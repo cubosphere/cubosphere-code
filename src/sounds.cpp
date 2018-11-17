@@ -500,7 +500,7 @@ int SOUND_Init(lua_State *state)
 	int bitsize=LUA_GET_INT(state);
 	int freq=LUA_GET_INT(state);
 	int res=g_Sounds()->InitSound(freq,bitsize,stereo,buffsize);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -508,7 +508,7 @@ int SOUND_AllocateChannels(lua_State *state)
 	{
 	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SetNumChannels(nchan); //Negative value => Get current numchans
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -516,7 +516,7 @@ int SOUND_PlayedByChannel(lua_State *state)
 	{
 	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SoundPlayedByChannel(nchan); //Negative value => Get current numchans
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -525,10 +525,10 @@ int SOUND_Load(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING(state);
 	CuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
-	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_INT(state, -1); return 1;}
+	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	int res=g_Sounds()->LoadSound(finfo);
 	delete finfo;
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -536,11 +536,11 @@ int SOUND_LoadMusic(lua_State *state)
 	{
 	std::string fname=LUA_GET_STRING(state);
 	CuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
-	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_INT(state, -1); return 1;}
+	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 //if (g_VerboseMode()) coutlog("Loading Music : "+fname);
 	int res=g_Sounds()->LoadMusic(finfo);
 	delete finfo;
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 
 	finfo=GetFileName(fname,FILE_MUSIC,".mdef");
 	if (finfo) {
@@ -558,7 +558,7 @@ int SOUND_Play(lua_State *state)
 	int channel=LUA_GET_INT(state);
 	int snd=LUA_GET_INT(state);
 	int res=g_Sounds()->PlaySound(snd,channel);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -568,7 +568,7 @@ int SOUND_PlayLooped(lua_State *state)
 	int channel=LUA_GET_INT(state);
 	int snd=LUA_GET_INT(state);
 	int res=g_Sounds()->PlaySoundLooped(snd,channel,loops);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -600,14 +600,14 @@ int SOUND_PlayMusic(lua_State *state)
 	{
 	int mus=LUA_GET_INT(state);
 	int res=g_Sounds()->PlayMusic(mus);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int SOUND_PlayingMusic(lua_State *state)
 	{
 	int r= g_Sounds()->PlayingMusic();
-	LUA_SET_INT(state, r);
+	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 

@@ -1060,7 +1060,7 @@ void CuboBasis::InvertMatrix()
 int BASIS_New(lua_State *state)
 	{
 	int res=g_Game()->AddBasis();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1229,7 +1229,7 @@ int GAME_HandleInput(lua_State *state)
 
 int GAME_GetRenderPassID(lua_State *state)
 	{
-	LUA_SET_INT(state, g_Game()->GetRenderPassID());
+	LUA_SET_NUMBER(state, g_Game()->GetRenderPassID());
 	return 1;
 	}
 
@@ -1257,7 +1257,7 @@ int GAME_SetFlushOrFinishBeforeSwap(lua_State *state)
 int GAME_GetFlushOrFinishBeforeSwap(lua_State *state)
 	{
 	int i= g_Game()->GetFlushOrFinishBeforeSwap();
-	LUA_SET_INT(state, i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 

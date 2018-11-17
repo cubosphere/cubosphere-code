@@ -924,7 +924,7 @@ int LEVEL_GetEditorSelector(lua_State *state)
 	int i;
 	if (b) { i=b->GetID(); }
 	else { i=-1; }
-	LUA_SET_INT(state, i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
@@ -1019,13 +1019,13 @@ int LEVEL_AddItem(lua_State *state)
 	else {
 			res=g_Game()->GetLevel()->AddItem(blockid,sidestr,nidefname);
 			}
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 int LEVEL_LastBlock(lua_State *state)
 	{
 	int b=g_Game()->GetLevel()->LastBlock()->GetID();
-	LUA_SET_INT(state, b);
+	LUA_SET_NUMBER(state, b);
 	return 1;
 	}
 int LEVEL_LoadSky(lua_State *state)
@@ -1101,7 +1101,7 @@ int LEVEL_NumItems(lua_State *state)
 	{
 	std::string iname=LUA_GET_STRING(state);
 	int num=g_Game()->GetLevel()->NumItemsOfType(iname);
-	LUA_SET_INT(state, num);
+	LUA_SET_NUMBER(state, num);
 	return 1;
 	}
 
@@ -1109,7 +1109,7 @@ int LEVEL_NumBlocks(lua_State *state)
 	{
 //string iname=LUA_GET_STRING(state);
 	int num=g_Game()->GetLevel()->GetNumBlocks();
-	LUA_SET_INT(state, num);
+	LUA_SET_NUMBER(state, num);
 	return 1;
 	}
 
@@ -1124,14 +1124,14 @@ int LEVEL_GetCenter(lua_State *state)
 int LEVEL_GetTime(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->Time();
-	LUA_SET_DOUBLE(state, c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 
 int LEVEL_GetElapsed(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->Elapsed();
-	LUA_SET_DOUBLE(state, c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 
@@ -1148,13 +1148,13 @@ int LEVEL_SetTimeScale(lua_State *state)
 	{
 	double c=LUA_GET_DOUBLE(state);
 	g_Game()->GetLevel()->SetTimeScale(c);
-//LUA_SET_DOUBLE(state, 0.0);
+//LUA_SET_NUMBER(state, 0.0);
 	return 0;
 	}
 
 int LEVEL_GetTimeScale(lua_State *state)
 	{
-	LUA_SET_DOUBLE(state, g_Game()->GetLevel()->GetTimeScale());
+	LUA_SET_NUMBER(state, g_Game()->GetLevel()->GetTimeScale());
 	return 1;
 	}
 
@@ -1164,8 +1164,8 @@ int LEVEL_FileBegin(lua_State *state)
 
 	std::string s=LUA_GET_STRING(state);
 	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
-	if (!fw) {LUA_SET_INT(state, 0); return 1;}
-	if (!fw->IsHDDFile()) {LUA_SET_INT(state, 0); return 1;}
+	if (!fw) {LUA_SET_NUMBER(state, 0); return 1;}
+	if (!fw->IsHDDFile()) {LUA_SET_NUMBER(state, 0); return 1;}
 	s=fw->GetHDDName();
 	delete fw;
 
@@ -1178,7 +1178,7 @@ int LEVEL_FileBegin(lua_State *state)
 
 	FILE* f=fopen(s.c_str(),"wt");
 	unsigned long int i=(unsigned long int)f;
-	LUA_SET_INT(state, i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
@@ -1212,7 +1212,7 @@ int LEVEL_FileEnd(lua_State *state)
 int LEVEL_GetRadius(lua_State *state)
 	{
 	double c=g_Game()->GetLevel()->GetRadius();
-	LUA_SET_DOUBLE(state, c);
+	LUA_SET_NUMBER(state, c);
 	return 1;
 	}
 

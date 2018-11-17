@@ -104,7 +104,7 @@ class TLuaGLLib : public LuaCFunctions
 			{
 			int num=LUA_GET_INT(state);
 			num=glGenLists((GLsizei)num);
-			LUA_SET_INT(state, num);
+			LUA_SET_NUMBER(state, num);
 			return 1;
 			}
 
@@ -445,14 +445,14 @@ int DEVICE_GetVideoModes(lua_State *state)
 	int fs=LUA_GET_INT(state);
 	int hw=LUA_GET_INT(state);
 	int i=GetModes(hw,fs);
-	LUA_SET_INT(state, i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
 int DEVICE_GetVideoWidths(lua_State *state)
 	{
 	int index=LUA_GET_INT(state);
-	LUA_SET_INT(state, videowidths[index]);
+	LUA_SET_NUMBER(state, videowidths[index]);
 	return 1;
 	}
 
@@ -478,7 +478,7 @@ int DEVICE_SaveFramePic(lua_State *state)
 
 int DEVICE_HasGLSL(lua_State *state)
 	{
-	LUA_SET_INT(state, g_Game()->HasGLSL());
+	LUA_SET_NUMBER(state, g_Game()->HasGLSL());
 	return 1;
 	}
 
@@ -491,14 +491,14 @@ int DEVICE_Init(lua_State *state)
 	int h=LUA_GET_INT(state);
 	int w=LUA_GET_INT(state);
 	bool res=g_Game()->InitGL(w,h,hw,fs,bpp);
-	LUA_SET_INT(state, (res==true ? 1 : 0));
+	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
 	return 1;
 	}
 
 int DEVICE_GetVideoHeights(lua_State *state)
 	{
 	int index=LUA_GET_INT(state);
-	LUA_SET_INT(state, videoheights[index]);
+	LUA_SET_NUMBER(state, videoheights[index]);
 	return 1;
 	}
 

@@ -780,7 +780,7 @@ int ITEM_GetSide(lua_State *state)
 	{
 	int item=LUA_GET_INT(state);
 	int side=g_Game()->GetLevel()->GetItem(item)->GetSide()->GetID();
-	LUA_SET_INT(state, side);
+	LUA_SET_NUMBER(state, side);
 	return 1;
 	}
 
@@ -865,7 +865,7 @@ int SIDE_FindOfType(lua_State *state)
 	int start=LUA_GET_INT(state);
 	std::string tn=LUA_GET_STRING(state);
 	int res=g_Game()->GetLevel()->GetSideOfType(tn,start,offs);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -896,7 +896,7 @@ int SIDE_GetBlock(lua_State *state)
 	int s=LUA_GET_INT(state);
 	s=g_Game()->GetLevel()->GetBlockSide(s)->GetID();
 	s/=6;
-	LUA_SET_INT(state, s);
+	LUA_SET_NUMBER(state, s);
 	return 1;
 	}
 
@@ -958,7 +958,7 @@ int BLOCK_GetNeighbor(lua_State *state)
 	Vector3d norm=Vector3FromStack(state);
 	int blockid=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(blockid)->GetNeighbor(norm);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -998,7 +998,7 @@ int BLOCK_HasTransparency(lua_State *state)
 	{
 	int block=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(block)->HasNoTransparency();
-	LUA_SET_INT(state, !res);
+	LUA_SET_NUMBER(state, !res);
 	return 1;
 	}
 
@@ -1040,7 +1040,7 @@ int BLOCK_AtPos(lua_State *state)
 	int i;
 	if (b) { i=b->GetID(); }
 	else { i=-1; }
-	LUA_SET_INT(state, i);
+	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
 
@@ -1061,7 +1061,7 @@ int BLOCK_GetBlocking(lua_State *state)
 	if (b>=0) {
 			res=g_Game()->GetLevel()->GetBlock(b)->Blocking();
 			}
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1078,7 +1078,7 @@ int BLOCK_GetScale(lua_State *state)
 	{
 	int b=LUA_GET_INT(state);
 	float v=g_Game()->GetLevel()->GetBlock(b)->GetScale();
-	LUA_SET_DOUBLE(state, v);
+	LUA_SET_NUMBER(state, v);
 	return 1;
 	}
 

@@ -410,7 +410,7 @@ int KEYB_GetKeyConst(lua_State *state)
 	{
 	std::string k=LUA_GET_STRING(state);
 	SDLKey res=  g_Game()->GetKeyboard()->GetKeyConstFor(k);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 

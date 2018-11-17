@@ -1641,7 +1641,7 @@ int ACTOR_IsPlayer(lua_State *state)
 	int temp=g_Game()->GetActorMovement(a)->IsPlayer();
 
 
-	LUA_SET_INT(state, temp);
+	LUA_SET_NUMBER(state, temp);
 	return 1;
 
 	}
@@ -1706,7 +1706,7 @@ int ACTOR_New(lua_State *state)
 	std::string defname=LUA_GET_STRING(state);
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"actor");
 	int res=g_Game()->AddActor(defname);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 
 	}
@@ -1723,7 +1723,7 @@ int ACTOR_GetStartRotation(lua_State *state)
 	{
 	int ind=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(ind)->GetStartRotation();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1787,7 +1787,7 @@ int ACTOR_GetJumpDistBlocks(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetJumpDistBlocks();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1804,7 +1804,7 @@ int ACTOR_GetOnSide(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetOnSideID();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1812,7 +1812,7 @@ int ACTOR_PrevOnSide(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetPrevOnSideID();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1820,14 +1820,14 @@ int ACTOR_GetLastOnSide(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetLastOnSideID();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int ACTOR_NumActors(lua_State *state)
 	{
 	int res=g_Game()->GetNumActors();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1835,7 +1835,7 @@ int ACTOR_TraceOnSide(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->TraceOnSideID();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -1843,7 +1843,7 @@ int ACTOR_GetRadius(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	double rad=g_Game()->GetActorMovement(actorid)->GetRadius();
-	LUA_SET_DOUBLE(state, rad);
+	LUA_SET_NUMBER(state, rad);
 	return 1;
 
 	}
@@ -1862,7 +1862,7 @@ int ACTOR_GetGroundOffset(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	double rad=g_Game()->GetActorMovement(actorid)->GetGroundOffset();
-	LUA_SET_DOUBLE(state, rad);
+	LUA_SET_NUMBER(state, rad);
 	return 1;
 
 	}
@@ -1947,7 +1947,7 @@ int ACTOR_GetSpeed(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	double v=g_Game()->GetActorMovement(actorid)->GetSpeed();
-	LUA_SET_DOUBLE(state, v);
+	LUA_SET_NUMBER(state, v);
 	return 1;
 
 	}
@@ -1984,7 +1984,7 @@ int ACTOR_InsideLevel(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->PointInBBox(g_Game()->GetActorMovement(actorid)->GetPos());
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 
 	}
@@ -2019,7 +2019,7 @@ int ACTOR_GetTemporaryMoveSpeedMultiplier(lua_State *state)
 
 	int actorid=LUA_GET_INT(state);
 	double mlt=g_Game()->GetActorMovement(actorid)->GetTemporaryMoveSpeedMultiplier();
-	LUA_SET_DOUBLE(state, mlt);
+	LUA_SET_NUMBER(state, mlt);
 	return 1;
 	}
 
@@ -2028,7 +2028,7 @@ int ACTOR_GetUpVel(lua_State *state)
 	{
 	int actorid=LUA_GET_INT(state);
 	double uv=g_Game()->GetActorMovement(actorid)->GetUpVel();
-	LUA_SET_DOUBLE(state, uv);
+	LUA_SET_NUMBER(state, uv);
 	return 1;
 	}
 
@@ -2106,7 +2106,7 @@ int ACTOR_ChangeGravity(lua_State *state)
 	Vector3d ng=Vector3FromStack(state);
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->ChangeGravity(ng,np,speed,do_at_same_grav);
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -2123,7 +2123,7 @@ int ACTOR_GetPlayer(lua_State *state)
 	{
 	int actor=LUA_GET_INT(state);
 	int plr=g_Game()->GetActorMovement(actor)->GetPlayer();
-	LUA_SET_INT(state, plr);
+	LUA_SET_NUMBER(state, plr);
 	return 1;
 	}
 
@@ -2148,7 +2148,7 @@ int ACTOR_GetLookPos(lua_State *state)
 	{
 	int actor=LUA_GET_INT(state);
 	double lp=g_Game()->GetActorMovement(actor)->GetLookPos();
-	LUA_SET_DOUBLE(state, lp);
+	LUA_SET_NUMBER(state, lp);
 	return 1;
 	}
 
@@ -2172,7 +2172,7 @@ int ACTOR_GetMovementCheck(lua_State *state)
 	{
 	int actor=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actor)->GetMovementCheck();
-	LUA_SET_INT(state, res);
+	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
@@ -2276,7 +2276,7 @@ int PLAYER_GetActiveActor(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->GetActiveActor();
-	LUA_SET_INT(state, act);
+	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
@@ -2284,7 +2284,7 @@ int PLAYER_NumActors(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->NumActors();
-	LUA_SET_INT(state, act);
+	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
@@ -2293,7 +2293,7 @@ int PLAYER_GetActor(lua_State *state)
 	int act=LUA_GET_INT(state);
 	int plr=LUA_GET_INT(state);
 	act=g_Game()->GetPlayer(plr)->GetActor(act);
-	LUA_SET_INT(state, act);
+	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
@@ -2301,7 +2301,7 @@ int PLAYER_NextActor(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->NextActor();
-	LUA_SET_INT(state, act);
+	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
@@ -2309,7 +2309,7 @@ int PLAYER_InCameraPan(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->InCameraPan();
-	LUA_SET_INT(state, act);
+	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
@@ -2326,7 +2326,7 @@ int PLAYER_SelectActor(lua_State *state)
 	int aid=LUA_GET_INT(state);
 	int plr=LUA_GET_INT(state);
 	aid=g_Game()->GetPlayer(plr)->SelectActor(aid);
-	LUA_SET_INT(state, aid);
+	LUA_SET_NUMBER(state, aid);
 	return 1;
 	}
 
@@ -2334,7 +2334,7 @@ int PLAYER_GetLastActiveActor(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	plr=g_Game()->GetPlayer(plr)->GetLastActiveActor();
-	LUA_SET_INT(state, plr);
+	LUA_SET_NUMBER(state, plr);
 	return 1;
 	}
 
@@ -2342,7 +2342,7 @@ int PLAYER_GetCamInterpolation(lua_State *state)
 	{
 	int plr=LUA_GET_INT(state);
 	double ci=g_Game()->GetPlayer(plr)->GetCamInterpolation();
-	LUA_SET_DOUBLE(state, ci);
+	LUA_SET_NUMBER(state, ci);
 	return 1;
 	}
 

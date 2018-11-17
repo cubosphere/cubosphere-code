@@ -371,7 +371,7 @@ int SHADER_Load(lua_State *state)
 
 	//string Texturename=GetFileName(name,FILE_TEXTURE)+".jpg";
 	int r=g_Game()->GetShaders()->AddShader(name);
-	LUA_SET_INT(state, r);
+	LUA_SET_NUMBER(state, r);
 
 	return 1;
 	}
