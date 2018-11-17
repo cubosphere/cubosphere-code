@@ -16,15 +16,10 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include "luautils.hpp"
 
 #define CUBO_CONSOLE_MAX_LINES 512
-
-using ConsoleBinding = struct
-	{
-	int k;
-	std::string cmd;
-	};
 
 class CuboConsole
 	{
@@ -43,13 +38,13 @@ class CuboConsole
 		int togglekey;
 		void ParseCmdLine(std::string cmdl="");
 		LuaAccess lua;
-		std::vector<ConsoleBinding> binds;
-		int Bind(std::vector<std::string> & extratoks,int unbind);
+		std::unordered_map<int,std::string> binds;
+		bool Bind(std::vector<std::string> & extratoks,bool unbind);
 	public:
 		static CuboConsole* GetInstance();
 
 		void Init();
-		int CheckBindKey(int ident,int down,int toggle);
+		bool CheckBindKey(int ident,bool down,bool toggle);
 		int GetToggleKey();
 		void SetToggleKey(int tk);
 		int GetLineIndex(int offs);

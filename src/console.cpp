@@ -105,49 +105,46 @@ void CuboConsole::AddLine(std::string s,int typ)
 void CuboConsole::SetToggleKey(int tk) {togglekey=tk;}
 int CuboConsole::GetToggleKey() {return togglekey;}
 
-
-
 CuboConsole::~CuboConsole()
 	{
 
 	}
 
-int CuboConsole::CheckBindKey(int ident,int down,int toggle)
+bool CuboConsole::CheckBindKey(int ident,bool down,bool toggle)
 	{
-	for (unsigned int i=0; i<binds.size(); i++)
-			{
-			if (ident==binds[i].k)
-					{
-					if (down && toggle) { ParseCmdLine(binds[i].cmd); }
-					return 1;
+	if (down and toggle) {
+			try {
+					auto cmd = binds.at(ident);
+					ParseCmdLine(cmd);
+					}
+			catch(std::out_of_range) {
+					return false;
 					}
 			}
-	return 0;
+	return true;
 	}
 
-int CuboConsole::Bind(std::vector<std::string> & extratoks,int unbind)
+bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind)
 	{
-	if (!extratoks.size()) {coutlog("Key expected!",2); return 0;}
+	if (!extratoks.size()) {coutlog("Key expected!",2); return false;}
 	std::string key=extratoks[0];
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(key);
 	if (!k) {coutlog("Unknown key: "+key,2); return 0;}
 
-	int bindex=-1;
-	for (unsigned int i=0; i<binds.size(); i++) if (binds[i].k==k) {bindex=i; break;}
-
-	if (unbind || extratoks.size()==1) {
-			if (bindex==-1) {if (unbind) coutlog("Key "+key+" was not bound to any command",2); return 0;}
-			binds.erase(binds.begin()+bindex);
+	bool have_binding = binds.count(k);
+	if (unbind || (extratoks.size() == 1)) {
+			if (not have_binding) {
+					if (unbind) coutlog("Key "+key+" was not bound to any command", 2);
+					return false;
+					}
+			binds.erase(k);
 			}
 	else {
-			if (bindex==-1) { bindex=binds.size(); } binds.push_back(ConsoleBinding());
 			std::string cmd="";
 
 			for (unsigned int i=1; i<extratoks.size(); i++) { cmd+=extratoks[i]+" "; }
 
-			// ostringstream oss; oss << "Hallo: " << cmd << " key: " << k << "  index " << bindex << endl;
-			// coutlog(oss.str());
-			binds[bindex].k=k; binds[bindex].cmd=cmd;
+			binds[k]=cmd;
 			}
 
 	return 1;

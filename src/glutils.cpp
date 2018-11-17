@@ -17,10 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "game.hpp"
 #include "globals.hpp"
 
-
-
-
-class TLuaGLLib : public LuaCFunctions
+class LuaGLLib : public LuaCFunctions
 	{
 	protected:
 
@@ -202,7 +199,7 @@ class TLuaGLLib : public LuaCFunctions
 
 
 	public:
-		TLuaGLLib()
+		LuaGLLib()
 			{
 			AddFunc("glBegin",LglBegin);
 			AddFunc("glEnd",LglEnd);
@@ -225,7 +222,7 @@ class TLuaGLLib : public LuaCFunctions
 			}
 	};
 
-static TLuaGLLib g_gllib;
+static LuaGLLib g_gllib;
 LuaCFunctions* g_GLLib() {return &g_gllib;}
 
 
