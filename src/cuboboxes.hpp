@@ -30,8 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 
-class BlockDef : public BaseLuaDef
-	{
+class BlockDef : public BaseLuaDef {
 	public:
 		virtual int GetType() {return FILE_BLOCKDEF;}
 		void Call_RenderSide(int sideid);
@@ -57,8 +56,7 @@ class BlockDef : public BaseLuaDef
 
 using BlockDefServer = BaseDefServer<BlockDef>;
 
-class ItemDef : public BaseLuaDef
-	{
+class ItemDef : public BaseLuaDef {
 	public:
 		virtual ~ItemDef() {}
 		virtual int GetType() {return FILE_ITEMDEF;}
@@ -106,8 +104,7 @@ static const std::string s_CuboSideNames[6]= {"up","down","left","right","front"
 class CuboBlock;
 class CuboItem;
 
-class CuboBlockSide
-	{
+class CuboBlockSide {
 	protected:
 		int side;
 		int sidetype;
@@ -141,8 +138,7 @@ class CuboBlockSide
 		CuboBlock *GetBlock() {return parent;}
 	};
 
-class CuboItem
-	{
+class CuboItem {
 	protected:
 		int itemtype;
 		int myid;
@@ -165,8 +161,7 @@ class CuboItem
 		void SetID(int id) {myid=id;}
 	};
 
-class CuboBlock
-	{
+class CuboBlock {
 	protected:
 		int id;
 		Vector3d pos;

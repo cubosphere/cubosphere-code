@@ -68,8 +68,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define CUBO_FALL_TILL_LOOKDOWN 0.4
 
-class CuboPlayer
-	{
+class CuboPlayer {
 	protected:
 		int id;
 		float caminterpolation;
@@ -100,8 +99,7 @@ class CuboPlayer
 
 
 
-class ActorDef : public BaseLuaDef
-	{
+class ActorDef : public BaseLuaDef {
 	public:
 		virtual ~ActorDef() {}
 		virtual int GetType() {return FILE_ACTORDEF;}
@@ -122,8 +120,7 @@ class ActorDef : public BaseLuaDef
 		std::string Call_GetEditorInfo(std::string what,std::string std);
 	};
 
-class ActorDefServer : public BaseDefServer<ActorDef>
-	{
+class ActorDefServer : public BaseDefServer<ActorDef> {
 	public:
 		int GetDef(std::string name, int forplayer=1);
 		int AddEDef(std::string name);
@@ -138,8 +135,7 @@ const std::string s_CuboMoveStringsMove[]= {"none","forward","up","down","left",
 
 using TBasis = Vector3d[3];
 
-class TCuboMovement
-	{
+class TCuboMovement {
 	protected:
 		int defindex;
 		int id;

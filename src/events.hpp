@@ -37,8 +37,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.hpp"
 #include "joystick.hpp"
 
-class EventManager
-	{
+class EventManager {
 	protected:
 		int windowclose;
 		Keyboard *keyb;

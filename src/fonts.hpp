@@ -34,8 +34,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL/SDL_ttf.h>
 #endif
 
-class SizedFont
-	{
+class SizedFont {
 	protected:
 		int size;
 		TTF_Font* font;
@@ -51,8 +50,7 @@ class SizedFont
 
 constexpr std::array<int, 6> g_FontSizes = {12,14,18,24,32,64};
 
-class LoadedFont
-	{
+class LoadedFont {
 	protected:
 		std::string fname; //Name of the font
 		std::vector<SizedFont*> sized; //Storing the sized fonts
@@ -68,8 +66,7 @@ class LoadedFont
 	};
 
 //Stores a Surface with a text
-class FontCache
-	{
+class FontCache {
 	protected:
 		int mysize,fontsize;
 		std::string mytext;
@@ -94,8 +91,7 @@ class FontCache
 
 
 constexpr unsigned int MAX_FONT_CACHE = 16;
-class FontCaches
-	{
+class FontCaches {
 	protected:
 		std::vector<FontCache*> caches;
 
@@ -106,14 +102,12 @@ class FontCaches
 		FontCache *GetCache(LoadedFont *font,std::string text, int size);
 	};
 
-using FontRemap = struct
-	{
+using FontRemap = struct {
 	std::string oldc;
 	std::string newc;
 	};
 
-class Font
-	{
+class Font {
 	protected:
 		std::string valign; //top, center, bottom
 		std::string halign; //left, center, right

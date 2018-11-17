@@ -15,8 +15,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboenemies.hpp"
 #include "game.hpp"
 
-void CuboEnemy::SetType(int mid,std::string name)
-	{
+void CuboEnemy::SetType(int mid,std::string name) {
 	id=mid;
 	defindex=g_Game()->GetActorDefs()->AddEDef(name);
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Constructor(id);
@@ -26,8 +25,7 @@ void CuboEnemy::SetType(int mid,std::string name)
 
 /////LUA IMPLEMENT//////////////
 
-int ENEMY_New(lua_State *state)
-	{
+int ENEMY_New(lua_State *state) {
 	std::string defname=LUA_GET_STRING(state);
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"enemy");
 	int res=g_Game()->AddEnemy(defname);
@@ -36,8 +34,7 @@ int ENEMY_New(lua_State *state)
 
 	}
 
-void LUA_ENEMY_RegisterLib()
-	{
+void LUA_ENEMY_RegisterLib() {
 	g_CuboLib()->AddFunc("ENEMY_New",ENEMY_New);
 	}
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

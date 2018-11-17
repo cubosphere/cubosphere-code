@@ -38,8 +38,8 @@ DECLARE_HANDLE(HZIP);
 typedef DWORD ZRESULT;
 // return codes from any of the zip functions. Listed later.
 
-typedef struct
-	{	int index;                 // index of this file within the zip
+typedef struct {
+	int index;                 // index of this file within the zip
 	TCHAR name[MAX_PATH];      // filename within the zip
 	DWORD attr;                // attributes, as in GetFileAttributes.
 	FILETIME atime,ctime,mtime;// access, create, modify filetimes

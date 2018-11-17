@@ -24,8 +24,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "vectors.hpp"
 
-std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
-	{
+std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t") {
 	auto p2 = Src.find_last_not_of(c);
 	if (p2 == std::string::npos) { return std::string(); }
 	auto p1 = Src.find_first_not_of(c);
@@ -33,30 +32,26 @@ std::string TrimStr(const std::string& Src, const std::string& c = " \r\n\t")
 	return Src.substr(p1, (p2-p1)+1);
 	}
 
-void TrimSpaces( std::string& str)
-	{
+void TrimSpaces( std::string& str) {
 	str=TrimStr(str);
 	}
 
 
 void Tokenize(const std::string& str,
 		std::vector<std::string>& tokens,
-		const std::string& delimiters)
-	{
+		const std::string& delimiters) {
 	TokenizeFull(str, tokens, delimiters, str.find_first_not_of(delimiters, 0));
 	}
 
 void TokenizeFull(const std::string& str,
 		std::vector<std::string>& tokens,
 		const std::string& delimiters,
-		const int& first)
-	{
+		const int& first) {
 	// Skip delimiters at beginning.
 	auto lastPos = first;
 	// Find first "non-delimiter".
 	auto pos     = str.find_first_of(delimiters, lastPos);
-	while (std::string::npos != pos || std::string::npos != lastPos)
-			{
+	while (std::string::npos != pos || std::string::npos != lastPos) {
 			// Found a token, add it to the vector.
 			tokens.push_back(str.substr(lastPos, pos - lastPos));
 			// Skip delimiters.  Note the "not_of"
@@ -68,8 +63,7 @@ void TokenizeFull(const std::string& str,
 
 
 
-bool BeginsWith(const std::string& str,const std::string& with)
-	{
+bool BeginsWith(const std::string& str,const std::string& with) {
 	return str.substr(0, with.length()) == with;
 	}
 

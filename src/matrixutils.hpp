@@ -16,8 +16,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "vectors.hpp"
 
-class GlutMatrix4d: public Matrix4d
-	{
+class GlutMatrix4d: public Matrix4d {
 	protected:
 	public:
 		int mode;

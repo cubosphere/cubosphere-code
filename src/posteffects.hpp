@@ -33,16 +33,14 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-using TempTexture = struct
-	{
+using TempTexture = struct {
 	GLuint tindex;
 	GLuint fbo;
 	GLuint depth;
 	int w,h;
 	};
 
-class PostEffect : public BaseLuaDef
-	{
+class PostEffect : public BaseLuaDef {
 	protected:
 		//TLuaAccess lua;
 		std::vector<TempTexture> ttexts;

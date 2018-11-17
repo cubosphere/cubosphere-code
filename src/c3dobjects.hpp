@@ -18,25 +18,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "vectors.hpp"
 #include "matrixutils.hpp"
 
-#ifdef WIN32
-
-#include <windows.h>
-
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
 #include <SDL.h>
-
-
-#else
-
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 #define BASE_DIR_SIDE 0
 #define BASE_DIR_UP 1
@@ -65,8 +48,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define SPEED_MODE_LOCAL 1
 #define SPEED_MODE_LOCAL_AFTER_ROT 2
 
-class MatrixObject
-	{
+class MatrixObject {
 	protected:
 		Matrix3d base;
 		Vector3d vPos,vScale,vPitchYawRoll;
@@ -151,8 +133,7 @@ class MatrixObject
 		virtual int GetMirror();
 	};
 
-class Camera : public MatrixObject
-	{
+class Camera : public MatrixObject {
 	protected:
 		Vector2d nearfar;
 		Vector2d screenwh;
@@ -192,8 +173,7 @@ class Camera : public MatrixObject
 
 	};
 
-class WorldObject : public MatrixObject
-	{
+class WorldObject : public MatrixObject {
 	protected:
 
 	public:

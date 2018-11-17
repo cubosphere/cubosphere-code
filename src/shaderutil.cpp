@@ -56,8 +56,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include "game.hpp"
 
-GLboolean ExtensionSupported(std::string name)
-	{
+GLboolean ExtensionSupported(std::string name) {
 	char *extensions = (char *)glGetString(GL_EXTENSIONS);
 // Check your extension
 	if (strstr(extensions, name.c_str())) {
@@ -71,8 +70,7 @@ GLboolean ExtensionSupported(std::string name)
 
 
 
-GLint BaseShader::GetUniformLocation(std::string name)
-	{
+GLint BaseShader::GetUniformLocation(std::string name) {
 	for (unsigned int i=0; i<ulocs.size(); i++) {if(ulocs[i].name==name) return ulocs[i].loc;}
 
 	GLint loc   = glGetUniformLocation(programref, name.c_str());
@@ -82,8 +80,7 @@ GLint BaseShader::GetUniformLocation(std::string name)
 	return loc;
 	}
 
-GLint BaseShader::GetAttributeLocation(std::string name)
-	{
+GLint BaseShader::GetAttributeLocation(std::string name) {
 	for (unsigned int i=0; i<alocs.size(); i++) {if(alocs[i].name==name) return alocs[i].loc;}
 
 	GLint loc   = glGetAttribLocation(programref, name.c_str());
@@ -94,8 +91,7 @@ GLint BaseShader::GetAttributeLocation(std::string name)
 	}
 
 
-void BaseShader::Load(ShaderServer *ss,std::string fname)
-	{
+void BaseShader::Load(ShaderServer *ss,std::string fname) {
 	this->filename=fname;
 	CuboFile *temp1=GetFileName(fname,FILE_SHADER,".vert");
 	CuboFile *temp2=GetFileName(fname,FILE_SHADER,".frag");
@@ -113,27 +109,23 @@ void BaseShader::Load(ShaderServer *ss,std::string fname)
 	}
 
 
-void BaseShader::Activate()
-	{
+void BaseShader::Activate() {
 	glUseProgram(programref);
 	}
 
-BaseShader::~BaseShader()
-	{
+BaseShader::~BaseShader() {
 	glDeleteProgram(programref);
 	glDeleteShader(fragmentref);
 	glDeleteShader(vertexref);
 	}
 
 
-void BaseShader::Deactivate()
-	{
+void BaseShader::Deactivate() {
 	glUseProgram(0);
 	}
 
 GLuint
-ShaderServer::CompileShaderText(GLenum shaderType, const char *text)
-	{
+ShaderServer::CompileShaderText(GLenum shaderType, const char *text) {
 	GLuint shader;
 	GLint stat;
 
@@ -160,8 +152,7 @@ ShaderServer::CompileShaderText(GLenum shaderType, const char *text)
  * Read a shader from a file.
  */
 GLuint
-ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
-	{
+ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename) {
 	const int max = 100*1000;
 	int n;
 	char *buffer = (char*) malloc(max);
@@ -192,8 +183,7 @@ ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename)
 	}
 
 
-GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo)
-	{
+GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo) {
 	if (finfo->IsHDDFile()) {return CompileShaderFile(shaderType,finfo->GetHDDName().c_str());}
 	else {
 			char * buffer=(char*)finfo->GetData();  buffer[finfo->GetSize()]='\0';
@@ -202,8 +192,7 @@ GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo)
 	}
 
 GLuint
-ShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
-	{
+ShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader) {
 	GLuint program = glCreateProgram();
 	assert(vertShader || fragShader);
 
@@ -235,8 +224,7 @@ ShaderServer::LinkShaders(GLuint vertShader, GLuint fragShader)
 
 
 GLboolean
-ShaderServer::ValidateShaderProgram(GLuint program)
-	{
+ShaderServer::ValidateShaderProgram(GLuint program) {
 	GLint stat;
 	glValidateProgram(program);
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &stat);
@@ -257,37 +245,30 @@ ShaderServer::ValidateShaderProgram(GLuint program)
 
 
 
-BaseShader *ShaderServer::GetShaderPtr(std::string name)
-	{
-	for (unsigned int i=0; i<shaderlist.size(); i++)
-			{
+BaseShader *ShaderServer::GetShaderPtr(std::string name) {
+	for (unsigned int i=0; i<shaderlist.size(); i++) {
 			if (shaderlist[i]->GetName()==name) { return shaderlist[i]; }
 			}
 	return NULL;
 	}
 
-int ShaderServer::GetShader(std::string name)
-	{
-	for (unsigned int i=0; i<shaderlist.size(); i++)
-			{
+int ShaderServer::GetShader(std::string name) {
+	for (unsigned int i=0; i<shaderlist.size(); i++) {
 			if (shaderlist[i]->GetName()==name) { return i; }
 			}
 	return -1;
 	}
 
 
-bool ShaderServer::FreeShaders()
-	{
-	for (unsigned int i=0; i<shaderlist.size(); i++)
-			{
+bool ShaderServer::FreeShaders() {
+	for (unsigned int i=0; i<shaderlist.size(); i++) {
 			if (shaderlist[i]) { delete shaderlist[i]; }
 			}
 	shaderlist.resize(0);
 	return true;
 	}
 
-int ShaderServer::AddShader(std::string name)
-	{
+int ShaderServer::AddShader(std::string name) {
 	int f=GetShader(name);
 	if (f>-1) { return f; }
 	if (g_VerboseMode()) { coutlog("Loading Shader: "+name); }
@@ -298,16 +279,14 @@ int ShaderServer::AddShader(std::string name)
 	}
 
 
-bool ShaderServer::Activate(int index)
-	{
+bool ShaderServer::Activate(int index) {
 	if (index==momshader) { return true; }
 	momshader=index;
 	shaderlist[momshader]->Activate();
 	return true;
 	}
 
-bool ShaderServer::Deactivate()
-	{
+bool ShaderServer::Deactivate() {
 	if (momshader>=0) {
 			shaderlist[momshader]->Deactivate();   g_Game()->GetTextures()->DeactivateStage(0);
 			}
@@ -315,42 +294,35 @@ bool ShaderServer::Deactivate()
 	return true;
 	}
 
-void ShaderServer::SetInt(std::string ref,int i)
-	{
+void ShaderServer::SetInt(std::string ref,int i) {
 	if (momshader<0) { return; }
 	glUniform1i(shaderlist[momshader]->GetUniformLocation(ref), i);
 	}
 
-void ShaderServer::SetFloat(std::string ref,float f)
-	{
+void ShaderServer::SetFloat(std::string ref,float f) {
 
 	if (momshader<0) { return; }
 	glUniform1f(shaderlist[momshader]->GetUniformLocation(ref), f);
 	}
 
-void ShaderServer::SetVector3(std::string ref,Vector3d v)
-	{
+void ShaderServer::SetVector3(std::string ref,Vector3d v) {
 	if (momshader<0) { return; }
 	glUniform3f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z);
 	}
 
-void ShaderServer::SetVector4(std::string ref,Vector4d v)
-	{
+void ShaderServer::SetVector4(std::string ref,Vector4d v) {
 	if (momshader<0) { return; }
 	glUniform4f(shaderlist[momshader]->GetUniformLocation(ref), v.x,v.y,v.z,v.w);
 	}
 
-GLint ShaderServer::GetAttributeLocation(std::string name)
-	{
+GLint ShaderServer::GetAttributeLocation(std::string name) {
 	return shaderlist[momshader]->GetAttributeLocation(name);
 	}
 
 
-void ShaderServer::clear()
-	{
+void ShaderServer::clear() {
 
-	for (unsigned int i=0; i<shaderlist.size(); i++)
-			{
+	for (unsigned int i=0; i<shaderlist.size(); i++) {
 			if (shaderlist[i]) { delete shaderlist[i]; }
 			shaderlist[i]=NULL;
 			}
@@ -363,8 +335,7 @@ void ShaderServer::clear()
 /////////////LUA-IMPLEMENT///////////////////////
 
 
-int SHADER_Load(lua_State *state)
-	{
+int SHADER_Load(lua_State *state) {
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
 	std::string name = LUA_GET_STRING(state);
@@ -377,22 +348,19 @@ int SHADER_Load(lua_State *state)
 	}
 
 
-int SHADER_Activate(lua_State *state)
-	{
+int SHADER_Activate(lua_State *state) {
 	int index= LUA_GET_INT(state);
 	g_Game()->GetShaders()->Activate(index);
 	return 0;
 	}
 
-int SHADER_Deactivate(lua_State *state)
-	{
+int SHADER_Deactivate(lua_State *state) {
 	g_Game()->GetShaders()->Deactivate();
 	return 0;
 	}
 
 
-int SHADER_SetInt(lua_State *state)
-	{
+int SHADER_SetInt(lua_State *state) {
 	int i=LUA_GET_INT(state);
 	std::string s=LUA_GET_STRING(state);
 
@@ -400,8 +368,7 @@ int SHADER_SetInt(lua_State *state)
 	return 0;
 	}
 
-int SHADER_SetFloat(lua_State *state)
-	{
+int SHADER_SetFloat(lua_State *state) {
 	float f=LUA_GET_DOUBLE(state);
 	std::string s=LUA_GET_STRING(state);
 
@@ -411,8 +378,7 @@ int SHADER_SetFloat(lua_State *state)
 
 
 
-int SHADER_SetVector3(lua_State *state)
-	{
+int SHADER_SetVector3(lua_State *state) {
 
 //stackDump(state); return 0;
 	Vector3d v=Vector3FromStack(state);
@@ -423,8 +389,7 @@ int SHADER_SetVector3(lua_State *state)
 	return 0;
 	}
 
-int SHADER_SetVector4(lua_State *state)
-	{
+int SHADER_SetVector4(lua_State *state) {
 
 //stackDump(state); return 0;
 	Vector4d v=Vector4FromStack(state);
@@ -437,8 +402,7 @@ int SHADER_SetVector4(lua_State *state)
 
 
 
-void LUA_SHADER_RegisterLib()
-	{
+void LUA_SHADER_RegisterLib() {
 	g_CuboLib()->AddFunc("SHADER_Load",SHADER_Load);
 	g_CuboLib()->AddFunc("SHADER_Activate",SHADER_Activate);
 	g_CuboLib()->AddFunc("SHADER_Deactivate",SHADER_Deactivate);

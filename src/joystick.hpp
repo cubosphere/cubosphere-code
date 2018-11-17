@@ -29,8 +29,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 class JoystickServer;
 
-class Joystick
-	{
+class Joystick {
 	protected:
 		JoystickServer *server;
 		int index;
@@ -59,8 +58,7 @@ using JoystickAxisFunc = void(*)(int,int,float,float);
 // Stick-Index, Button-Index, dir(for axis), value, toggle
 using JoystickButtonFunc = void(*)(int,int,int,int,int);
 
-class JoystickServer
-	{
+class JoystickServer {
 	protected:
 		std::vector<Joystick*> sticks;
 		JoystickAxisFunc axishandler;

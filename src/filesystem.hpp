@@ -36,8 +36,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <libgen.h>
 #endif
 
-class cls_FileBaseClass
-	{
+class cls_FileBaseClass {
 	protected:
 		std::string dirname; //Stores the dirname in absolute path
 		std::string basename; //The base name
@@ -57,8 +56,7 @@ class cls_FileBaseClass
 
 	};
 
-class cls_FileReadable : public cls_FileBaseClass
-	{
+class cls_FileReadable : public cls_FileBaseClass {
 	public:
 		cls_FileReadable(const std::string nam,const std::string dnam) : cls_FileBaseClass(nam,dnam) {}
 		virtual unsigned long GetSize(const int binary=1) const=0;
@@ -74,8 +72,7 @@ class cls_FileReadable : public cls_FileBaseClass
 ///Added for Cubo
 using CuboFile = cls_FileReadable;
 
-class cls_FileWriteable : public cls_FileBaseClass
-	{
+class cls_FileWriteable : public cls_FileBaseClass {
 	public:
 		cls_FileWriteable(const std::string nam,const std::string dnam) : cls_FileBaseClass(nam,dnam) {}
 //    virtual void Open(const int binary)=0; //If not called, no writing happens.. Thus, possible to check writeability by getting this object without calling open
@@ -111,8 +108,7 @@ class cls_FileWriteable : public cls_FileBaseClass
 
 #define CLS_FILE_LIST_DEFAULT (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_FILES )
 
-class cls_FileSystem
-	{
+class cls_FileSystem {
 	private:
 		void * info;
 	public:

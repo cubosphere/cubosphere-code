@@ -40,8 +40,7 @@ CuboConsole* CuboConsole::GetInstance() { // TODO: return reference instead
 	return &console;
 	}
 
-int CuboConsole::Toggle()
-	{
+int CuboConsole::Toggle() {
 	isactive=!isactive;
 	if (isactive) {
 			g_Game()->GetKeyboard()->SetKeyRepeatTimes(0.5,0.025);
@@ -57,24 +56,20 @@ int CuboConsole::Toggle()
 	return isactive;
 	}
 
-int CuboConsole::IsActive()
-	{
+int CuboConsole::IsActive() {
 	return isactive;
 	}
 
-CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  screenlines(23), lowerline_ypos(0.5),  togglekey(-2)
-	{
+CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  screenlines(23), lowerline_ypos(0.5),  togglekey(-2) {
 	history.push_back("");
 	hisbackup=""; hisindex=0;
 	lua.Include(g_CuboLib());
 	}
 
-void CuboConsole::Init()
-	{
+void CuboConsole::Init() {
 	CuboFile * cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
 	lua.Include(g_CuboLib());
-	if (cscript)
-			{
+	if (cscript) {
 			char *c=(char*)cscript->GetData(0);
 			c[cscript->GetSize()]='\0';
 			std::vector<std::string> lines;
@@ -85,13 +80,11 @@ void CuboConsole::Init()
 	}
 
 
-void CuboConsole::AddLine(std::string s,int typ)
-	{
+void CuboConsole::AddLine(std::string s,int typ) {
 	std::vector<std::string> toks;
 	Tokenize(s,toks,"\n");
 
-	for (unsigned int i=0; i<toks.size(); i++)
-			{
+	for (unsigned int i=0; i<toks.size(); i++) {
 			if (lines.size()<CUBO_CONSOLE_MAX_LINES) { lines.push_back(toks[i]); types.push_back(typ); if (scrolloffs) scrolloffs++;}
 			else {
 					currentline++;
@@ -105,29 +98,23 @@ void CuboConsole::AddLine(std::string s,int typ)
 void CuboConsole::SetToggleKey(int tk) {togglekey=tk;}
 int CuboConsole::GetToggleKey() {return togglekey;}
 
-CuboConsole::~CuboConsole()
-	{
+CuboConsole::~CuboConsole() {
 
 	}
 
-bool CuboConsole::CheckBindKey(int ident,bool down,bool toggle)
-	{
-	if (down and toggle) {
-			try {
-					auto cmd = binds.at(ident);
-					ParseCmdLine(cmd);
-					}
-			catch(std::out_of_range) {
-					return false;
-					}
+bool CuboConsole::CheckBindKey(int ident,bool down,bool toggle) {
+	if (binds.count(ident)) {
+			if (down && toggle) ParseCmdLine(binds[ident]);
+			return true;
 			}
-	return true;
+	else {
+			return false;
+			}
 	}
 
-bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind)
-	{
-	if (!extratoks.size()) {coutlog("Key expected!",2); return false;}
-	std::string key=extratoks[0];
+bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind) {
+	if (extratoks.size() == 0) {coutlog("Key expected!",2); return false;}
+	std::string key = extratoks[0];
 	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(key);
 	if (!k) {coutlog("Unknown key: "+key,2); return 0;}
 
@@ -144,14 +131,13 @@ bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind)
 
 			for (unsigned int i=1; i<extratoks.size(); i++) { cmd+=extratoks[i]+" "; }
 
-			binds[k]=cmd;
+			binds[k]=std::move(cmd);
 			}
 
 	return 1;
 	}
 
-void CuboConsole::ParseCmdLine(std::string cmdl)
-	{
+void CuboConsole::ParseCmdLine(std::string cmdl) {
 	std::string cmdline=history.back();
 	if (cmdl!="") { cmdline=cmdl; }
 	else { hisindex=0; }
@@ -174,8 +160,7 @@ void CuboConsole::ParseCmdLine(std::string cmdl)
 	parts.push_back(cmdline); ///TODO: Sep into Lua, " "-Parts and normal console statements
 
 
-	for (unsigned int p=0; p<parts.size(); p++)
-			{
+	for (unsigned int p=0; p<parts.size(); p++) {
 
 
 			std::string cmdlinepart=parts[p];
@@ -248,15 +233,13 @@ void CuboConsole::ParseCmdLine(std::string cmdl)
 
 			}
 
-	if (cmdl=="")
-			{
+	if (cmdl=="") {
 			if (history.size()>=2 && (history.back()==history[history.size()-2])) { history.back()=""; }
 			else { history.push_back(""); }
 			}
 	}
 
-void CuboConsole::KeyHandle(int ident,int down,int toggle)
-	{
+void CuboConsole::KeyHandle(int ident,int down,int toggle) {
 	if ((!toggle) || (!down)) { return; }
 
 	SDL_keysym sim=g_Game()->GetKeyboard()->GetLastKeySim();
@@ -284,13 +267,12 @@ void CuboConsole::KeyHandle(int ident,int down,int toggle)
 					}
 			history.back()=history[history.size()-1-hisindex];
 			}
-	else if (ident2==SDLK_DOWN && hisindex>0)
-			{	hisindex--;
+	else if (ident2==SDLK_DOWN && hisindex>0) {
+			hisindex--;
 			if (hisindex==0) { history.back()=hisbackup; }
 			else { history.back()=history[history.size()-1-hisindex]; }
 			}
-	else if (sim.unicode >0 && (sim.unicode & 0xFF80) == 0)
-			{
+	else if (sim.unicode >0 && (sim.unicode & 0xFF80) == 0) {
 			wchar_t c=sim.unicode & 0x7F;
 			history.back()+=c;
 
@@ -309,24 +291,20 @@ void CuboConsole::KeyHandle(int ident,int down,int toggle)
 
 	}
 
-int CuboConsole::GetLineIndex(int offs)
-	{
-	if (lines.size()>=CUBO_CONSOLE_MAX_LINES)
-			{
+int CuboConsole::GetLineIndex(int offs) {
+	if (lines.size()>=CUBO_CONSOLE_MAX_LINES) {
 			if (offs>=CUBO_CONSOLE_MAX_LINES) { return -1; }
 			return (currentline+lines.size()-offs) % lines.size();
 
 			}
-	else
-			{
+	else {
 			int pos=lines.size()-1-offs;
 			if (pos<0) { return -1; }
 			else { return pos; }
 			}
 	}
 
-void CuboConsole::Render()
-	{
+void CuboConsole::Render() {
 	if ((!isactive) && lowerline_ypos>=0.5) { return; }
 
 	if (isactive==false)  {
@@ -372,8 +350,7 @@ void CuboConsole::Render()
 
 
 //glDisable(GL_DEPTH_TEST);
-	if (scrolloffs>0) //Scroll Arrows
-			{
+	if (scrolloffs>0) { //Scroll Arrows
 			glBegin(GL_TRIANGLES);
 			glColor4f(0.8,0.8,0.8,1);
 			glVertex3f(0.49, lowerline_ypos+0.05, -10);
@@ -381,8 +358,7 @@ void CuboConsole::Render()
 			glVertex3f(0.48, lowerline_ypos+0.01, -10);
 			glEnd();
 			}
-	if (scrolloffs<(int)lines.size()-screenlines/2)
-			{
+	if (scrolloffs<(int)lines.size()-screenlines/2) {
 			glBegin(GL_TRIANGLES);
 			glColor4f(0.8,0.8,0.8,1);
 			glVertex3f(0.47, 0.45, -10);
@@ -407,15 +383,13 @@ void CuboConsole::Render()
 
 	float linkrement=distfactor*fontsize;
 
-	for (int c=0; c<screenlines; c++)
-			{
+	for (int c=0; c<screenlines; c++) {
 			float ypos=lowerline_ypos+(c+1.5)*linkrement;
 			if (ypos>0.5) { break; }
 			int lindex=GetLineIndex(c+scrolloffs);
 			if (lindex<0) { break; }
 			g_Game()->GetFont()->Goto(-0.495,ypos);
-			switch (types[lindex])
-					{
+			switch (types[lindex]) {
 					case 1: glColor4f(0.8,0.2,0.2,1); break;
 					case 2: glColor4f(0.8,0.8,0.2,1); break;
 					case 3: glColor4f(0.2,0.2,0.8,1); break;

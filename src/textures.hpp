@@ -44,8 +44,7 @@ if not, see <http://www.gnu.org/licenses/>.
 ////Texture Defs
 
 
-class TextureDef : public BaseLuaDef
-	{
+class TextureDef : public BaseLuaDef {
 	public:
 		virtual int GetType() {return FILE_TEXTUREDEF;}
 		void Call_Render(int sideid);
@@ -56,8 +55,7 @@ class TextureDef : public BaseLuaDef
 using TextureDefServer = BaseDefServer<TextureDef>;
 
 //Inherited the different formats herefrom
-class Texture
-	{
+class Texture {
 	protected:
 		int width,height;
 	public:
@@ -74,8 +72,7 @@ class Texture
 	};
 
 
-class JPEGTexture: public Texture
-	{
+class JPEGTexture: public Texture {
 	protected:
 		void * raw;
 		int trans,channels;
@@ -110,14 +107,12 @@ class JPEGTexture: public Texture
 
 
 
-using FontExtend = struct
-	{
+using FontExtend = struct {
 	float u1,v1,u2,v2;
 	};
 
 
-class TextureContainer
-	{
+class TextureContainer {
 	protected:
 		GLuint tind;
 		std::vector<FontExtend> chars;
@@ -132,8 +127,7 @@ class TextureContainer
 		TextureContainer() :tind(0) {}
 	};
 
-class TextureServer
-	{
+class TextureServer {
 	protected:
 		std::vector<TextureContainer> Textures;
 		std::vector<std::string> filenames,alphanames;

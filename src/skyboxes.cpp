@@ -41,30 +41,25 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 
 
-void SkyBox::Render()
-	{
+void SkyBox::Render() {
 	if (lua.FuncExists("Render")) {
 			lua.CallVA("Render","");
 			}
 
 	}
 
-void SkyBox::SpecialRender(std::string nam,int defrender)
-	{
-	if (lua.FuncExists("SpecialRender"))
-			{
+void SkyBox::SpecialRender(std::string nam,int defrender) {
+	if (lua.FuncExists("SpecialRender")) {
 			lua.CallVA("SpecialRender","s",nam.c_str());
 			}
-	else
-			{
+	else {
 			if (defrender==1) { Render(); }
 			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"sky",0); }
 			}
 
 	}
 
-void SkyBox::LoadSkybox(std::string basename)
-	{
+void SkyBox::LoadSkybox(std::string basename) {
 	if (basename=="") { basename="skybox"; }
 	SetName(basename);
 	LoadDef();

@@ -24,18 +24,15 @@ if not, see <http://www.gnu.org/licenses/>.
 std::string Theme::activeTheme;
 std::vector<std::string> Theme::themedirs;
 
-std::string Theme::GetName()
-	{
+std::string Theme::GetName() {
 	return activeTheme;
 	}
 
 
-std::string Theme::FileName(std::string dir,std::string fname,std::string ext)
-	{
+std::string Theme::FileName(std::string dir,std::string fname,std::string ext) {
 //Parsing all sub dirs... If no file is found return the normal dirname
 
-	for (unsigned int i=0; i<themedirs.size(); i++)
-			{
+	for (unsigned int i=0; i<themedirs.size(); i++) {
 			std::string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
 			CuboFile *finfo=GetCuboFileFromRelativeName(testname);
 			if (finfo) {
@@ -46,19 +43,15 @@ std::string Theme::FileName(std::string dir,std::string fname,std::string ext)
 	return dir+"/"+fname+ext;
 	}
 
-void Theme::Clear()
-	{
+void Theme::Clear() {
 	themedirs.clear();
 	}
-void Theme::AddDir(std::string subdir)
-	{
+void Theme::AddDir(std::string subdir) {
 	themedirs.push_back(subdir);
 	}
 
-void Theme::Load(std::string n)
-	{
-	if (n!=activeTheme)
-			{
+void Theme::Load(std::string n) {
+	if (n!=activeTheme) {
 			//Make sure to clear everything
 			g_Game()->FreeMedia();
 			}
@@ -78,33 +71,28 @@ void Theme::Load(std::string n)
 /////////////////LUA IMPLEMENT/////////////////7
 
 
-int THEME_Clear([[maybe_unused]] lua_State *state)
-	{
+int THEME_Clear([[maybe_unused]] lua_State *state) {
 	Theme::Clear();
 	return 0;
 	}
-int THEME_AddDir([[maybe_unused]] lua_State *state)
-	{
+int THEME_AddDir([[maybe_unused]] lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 	Theme::AddDir(s);
 	return 0;
 	}
-int THEME_Load([[maybe_unused]] lua_State *state)
-	{
+int THEME_Load([[maybe_unused]] lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 	Theme::Load(s);
 	return 0;
 	}
 
-int THEME_GetName([[maybe_unused]] lua_State *state)
-	{
+int THEME_GetName([[maybe_unused]] lua_State *state) {
 	std::string s=Theme::GetName();
 	LUA_SET_STRING(state, s);
 	return 1;
 	}
 
-void LUA_THEME_RegisterLib()
-	{
+void LUA_THEME_RegisterLib() {
 	g_CuboLib()->AddFunc("THEME_Clear",THEME_Clear);
 	g_CuboLib()->AddFunc("THEME_AddDir",THEME_AddDir);
 	g_CuboLib()->AddFunc("THEME_Load",THEME_Load);

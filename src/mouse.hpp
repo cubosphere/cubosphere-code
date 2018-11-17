@@ -42,14 +42,12 @@ if not, see <http://www.gnu.org/licenses/>.
 // BUTTON, CLICK OR RELEASE, x,y
 using MouseButtonFunc = void(*)(int,int,int,int);
 
-using MouseButton = struct
-	{
+using MouseButton = struct {
 	int pressed;
 	int lastx,lasty,relx,rely;
 	};
 
-class Mouse
-	{
+class Mouse {
 	protected:
 		int snapping;
 		int x,y,dx,dy,WarpMode;

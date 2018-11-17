@@ -38,8 +38,7 @@ if not, see <http://www.gnu.org/licenses/>.
 // (IDENT-CODE, PRESS or RELEASE, First-Time-Down (toggle)
 using KeyboardFunc = void(*)(int,int,int);
 
-class Keyboard
-	{
+class Keyboard {
 	protected:
 		int keynum;
 		Uint8 *keydown;

@@ -26,8 +26,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define COND_LUA_CALL(nam,stret,pspec,...) if (!(lua.FuncExists(nam))) return stret; lua.CallVA(nam,pspec, ##__VA_ARGS__)
 
 
-class BaseLuaDef
-	{
+class BaseLuaDef {
 	protected:
 		std::string name;
 		std::string fname;
@@ -47,31 +46,25 @@ class BaseLuaDef
 		virtual void Reload();
 	};
 
-template<typename T> class BaseDefServer
-	{
+template<typename T> class BaseDefServer {
 	protected:
 		std::vector<T*> defs;
 	public:
-		void clear()
-			{
+		void clear() {
 			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]) { delete defs[i]; defs[i]=NULL;}
 			defs.resize(0);
 			}
-		virtual ~BaseDefServer()
-			{
+		virtual ~BaseDefServer() {
 			clear();
 			}
-		int GetDef(std::string name)
-			{
+		int GetDef(std::string name) {
 			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) { return (i); }
 			return -1;
 			}
-		void Reload()
-			{
+		void Reload() {
 			for (unsigned int i=0; i<defs.size(); i++) { defs[i]->Reload(); }
 			}
-		int AddDef(std::string name)
-			{
+		int AddDef(std::string name) {
 			int def=GetDef(name);
 			if (def>-1) { return def; } //Have it already
 			defs.push_back(new T());
@@ -86,8 +79,7 @@ template<typename T> class BaseDefServer
 
 ////////////////////////////////////
 
-class Menu : public BaseLuaDef
-	{
+class Menu : public BaseLuaDef {
 	protected:
 		int change;
 		std::string nextname;

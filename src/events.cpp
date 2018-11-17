@@ -34,8 +34,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "events.hpp"
 #include <iostream>
 
-void EventManager::HandleEvents()
-	{
+void EventManager::HandleEvents() {
 	SDL_Event event;
 	if (mouse) { mouse->BeginDispatch(); }
 	while(SDL_PollEvent(&event)) {

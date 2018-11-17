@@ -40,55 +40,46 @@ GlutMatrix4d::GlutMatrix4d(): mode(GL_MODELVIEW) {}
 GlutMatrix4d::GlutMatrix4d(float scal): Matrix4d(scal), mode(GL_MODELVIEW) {}
 
 
-void GlutMatrix4d::glPushMult()
-	{
+void GlutMatrix4d::glPushMult() {
 //glMatrixMode(mode);
 	glPushMatrix();
 	glMultMatrixf((GLfloat*)(&m));
 	}
 
-void GlutMatrix4d::glMult()
-	{
+void GlutMatrix4d::glMult() {
 //glMatrixMode(mode);
 	glMultMatrixf((GLfloat*)(&m));
 	}
 
 
-void GlutMatrix4d::glPop()
-	{
+void GlutMatrix4d::glPop() {
 //glMatrixMode(mode);
 	glPopMatrix();
 	}
 
-void GlutMatrix4d::glPushLoad()
-	{
+void GlutMatrix4d::glPushLoad() {
 //glMatrixMode(mode);
 	glPushMatrix();
 	glLoadMatrixf((GLfloat*)(&m));
 	}
 
-void GlutMatrix4d::glLoad()
-	{
+void GlutMatrix4d::glLoad() {
 //glMatrixMode(mode);
 	glLoadMatrixf((GLfloat*)(&m));
 	}
 
-const Vector3d GlutMatrix4d::getPos() //Returns the last col
-	{
+const Vector3d GlutMatrix4d::getPos() { //Returns the last col
 	Vector3d res(m[12],m[13],m[14]);
 	return res;
 	}
 
-void GlutMatrix4d::setPos(const Vector3d& v) //sets the last c
-	{
+void GlutMatrix4d::setPos(const Vector3d& v) { //sets the last c
 	setCol(3,v);
 	}
 
-void GlutMatrix4d::assign(Matrix4d* other)
-	{
+void GlutMatrix4d::assign(Matrix4d* other) {
 	float* mom=other->getValueMem();
-	for (int i=0; i<16; i++)
-			{
+	for (int i=0; i<16; i++) {
 			Matrix4d::m[i]=mom[i];
 			}
 	}
@@ -97,54 +88,46 @@ void GlutMatrix4d::assign(Matrix4d* other)
 /////////////LUA-IMPLEMENT///////////////////
 
 
-int MATRIX_Push(lua_State *state)
-	{
+int MATRIX_Push(lua_State *state) {
 	glPushMatrix();
 	return 0;
 	}
 
-int MATRIX_Pop(lua_State *state)
-	{
+int MATRIX_Pop(lua_State *state) {
 	glPopMatrix();
 	return 0;
 	}
-int MATRIX_Translate(lua_State *state)
-	{
+int MATRIX_Translate(lua_State *state) {
 	Vector3d v=Vector3FromStack(state);
 	glTranslatef(v.x,v.y,v.z);
 	return 0;
 	}
 
-int MATRIX_Identity(lua_State *state)
-	{
+int MATRIX_Identity(lua_State *state) {
 	glLoadIdentity();
 	return 0;
 	}
 
-int MATRIX_AxisRotate(lua_State *state)
-	{
+int MATRIX_AxisRotate(lua_State *state) {
 	float angle=LUA_GET_DOUBLE(state);
 	Vector3d v=Vector3FromStack(state);
 	glRotatef(angle,v.x,v.y,v.z);
 	return 0;
 	}
 
-int MATRIX_ScaleUniform(lua_State *state)
-	{
+int MATRIX_ScaleUniform(lua_State *state) {
 	float f=LUA_GET_DOUBLE(state);
 	glScalef(f,f,f);
 	return 0;
 	}
 
-int MATRIX_Scale(lua_State *state)
-	{
+int MATRIX_Scale(lua_State *state) {
 	Vector3d v=Vector3FromStack(state);
 	glScalef(v.x,v.y,v.z);
 	return 0;
 	}
 
-int MATRIX_MultBase(lua_State *state)
-	{
+int MATRIX_MultBase(lua_State *state) {
 	Vector3d p=Vector3FromStack(state);
 	Vector3d d=Vector3FromStack(state);
 	Vector3d u=Vector3FromStack(state);
@@ -164,8 +147,7 @@ int MATRIX_MultBase(lua_State *state)
 
 
 
-void LUA_MATRIX_RegisterLib()
-	{
+void LUA_MATRIX_RegisterLib() {
 	g_CuboLib()->AddFunc("MATRIX_Push",MATRIX_Push);
 	g_CuboLib()->AddFunc("MATRIX_Pop",MATRIX_Pop);
 	g_CuboLib()->AddFunc("MATRIX_Translate",MATRIX_Translate);

@@ -20,8 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 
 //A node indexing a block-side and its neighbours, which can be reached by the movement into the four directions
-class CuboPathNode
-	{
+class CuboPathNode {
 	protected:
 		int sideindex; //Index to the side of this node
 //  TCuboPathNode * next[4]; //When t is the tangential vector and n the normal vector, then the neighbours are defined as follows
@@ -40,8 +39,7 @@ class CuboPathNode
 	};
 
 //A graph of nodes (sides) and
-class CuboPathGraph
-	{
+class CuboPathGraph {
 	protected:
 		lua_State *cstate;
 		std::string callbfunc;
@@ -64,8 +62,7 @@ class CuboPathGraph
 	};
 
 
-class CuboPathGraphServer
-	{
+class CuboPathGraphServer {
 	protected:
 		std::vector<CuboPathGraph> pgs;
 	public:
@@ -80,8 +77,7 @@ extern CuboPathGraphServer * g_PathGraphs();
 
 
 
-class LuaPathfindingLib : public LuaCFunctions
-	{
+class LuaPathfindingLib : public LuaCFunctions {
 	protected:
 		static int PATH_NewGraph(lua_State *state);
 		static int PATH_GetNextMove(lua_State *state);

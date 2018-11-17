@@ -22,23 +22,19 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboenemies.hpp"
 
 
-void CuboPlayer::AddActor(int i)
-	{
+void CuboPlayer::AddActor(int i) {
 
 	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) { return ; } actorids.push_back(i);
 	g_Game()->GetActorMovement(actorids.back())->SetPlayer(id);
 	}
 
-void CuboPlayer::RemoveActor(int i)
-	{
+void CuboPlayer::RemoveActor(int i) {
 	for (unsigned int j=0; j<actorids.size(); j++) if (actorids[j]==i) { actorids.erase(actorids.begin()+j);  break; }
 	if (activeact<0 || activeact>=(int)actorids.size()) { if (actorids.empty()) activeact=0; else activeact=actorids.size()-1; }
 	}
 
-void CuboPlayer::CamMove(int newactor)
-	{
-	if (newactor!=activeact)
-			{
+void CuboPlayer::CamMove(int newactor) {
+	if (newactor!=activeact) {
 			lastact=activeact;
 			//Prepare the matrices for the camera movement
 
@@ -62,8 +58,7 @@ void CuboPlayer::CamMove(int newactor)
 			}
 	}
 
-int CuboPlayer::NextActor()
-	{
+int CuboPlayer::NextActor() {
 	int newactor=activeact;
 	do { newactor=(newactor+1)%(actorids.size());  }
 	while ( !(g_Game()->GetActorMovement(actorids[newactor])->IsSelectable()) && newactor!=activeact);
@@ -71,8 +66,7 @@ int CuboPlayer::NextActor()
 	return GetActiveActor();
 	}
 
-int CuboPlayer::SelectActor(int actorind)
-	{
+int CuboPlayer::SelectActor(int actorind) {
 	int found=-1;
 	for (unsigned int i=0; i<actorids.size(); i++) if (actorids[i]==actorind)  {found=i; break;}
 	if (found==-1) { return -1; }
@@ -80,8 +74,7 @@ int CuboPlayer::SelectActor(int actorind)
 	CamMove(found); return 1;
 	}
 
-void CuboPlayer::SetCameraPos(float elapsed,MatrixObject *cam)
-	{
+void CuboPlayer::SetCameraPos(float elapsed,MatrixObject *cam) {
 
 //only call if in movement!
 	float l=caminterpolation+elapsed*camspeed;
@@ -101,20 +94,17 @@ void CuboPlayer::SetCameraPos(float elapsed,MatrixObject *cam)
 	}
 
 
-void BaseIdentity(TBasis *res)
-	{
+void BaseIdentity(TBasis *res) {
 	(*res)[0].xyz(1,0,0);
 	(*res)[1].xyz(0,1,0);
 	(*res)[2].xyz(0,0,1);
 	}
 
-void BaseCp(TBasis *from,TBasis *to)
-	{
+void BaseCp(TBasis *from,TBasis *to) {
 	for (int i=0; i<3; i++) { (*to)[i]=(*from)[i]; }
 	}
 
-void BaseDiscretize(TBasis *b)
-	{
+void BaseDiscretize(TBasis *b) {
 	for (int i=0; i<3; i++) {
 			float absmax=(*b)[i].x*(*b)[i].x; int absmaxind=0; float sign=((*b)[i].x>=0 ? 1 : -1);
 			if ((*b)[i].y*(*b)[i].y>absmax) {absmax=(*b)[i].y*(*b)[i].y; absmaxind=1; sign=((*b)[i].y>=0 ? 1 : -1);}
@@ -125,8 +115,7 @@ void BaseDiscretize(TBasis *b)
 	}
 
 
-void BaseInterpolate(TBasis *from1,TBasis *from2, float t,TBasis *to)
-	{
+void BaseInterpolate(TBasis *from1,TBasis *from2, float t,TBasis *to) {
 	float t1=cos(t*M_PI/2.0);
 	float t2=sin(t*M_PI/2.0);
 	for (int i=0; i<3; i++) {
@@ -139,18 +128,15 @@ void BaseInterpolate(TBasis *from1,TBasis *from2, float t,TBasis *to)
 			}
 	}
 
-std::string TCuboMovement::GetEditorInfo(std::string what,std::string def)
-	{
+std::string TCuboMovement::GetEditorInfo(std::string what,std::string def) {
 	return (g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_GetEditorInfo(what,def));
 	}
 
-TCuboMovement::~TCuboMovement()
-	{
+TCuboMovement::~TCuboMovement() {
 	if (player>=0) { g_Game()->GetPlayer(player)->RemoveActor(this->id); }
 	}
 
-Vector3d TCuboMovement::AtBlockPos(CuboBlock *b,int s)
-	{
+Vector3d TCuboMovement::AtBlockPos(CuboBlock *b,int s) {
 	Vector3d res;
 	res=b->GetPos();
 	Vector3d offs=s_CuboNormals[s];
@@ -158,24 +144,21 @@ Vector3d TCuboMovement::AtBlockPos(CuboBlock *b,int s)
 	return res;
 	}
 
-int TCuboMovement::DirVectToSide(Vector3d dirvect)
-	{
+int TCuboMovement::DirVectToSide(Vector3d dirvect) {
 	auto n = dirvect;
 	n.normalize();
-	for (int i=0; i<6; i++)
-			{	Vector3d kn;
+	for (int i=0; i<6; i++) {
+			Vector3d kn;
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) { return i; }
 			}
 	return -1;
 	}
 
-void TCuboMovement::Init(CuboLevel *level)
-	{
+void TCuboMovement::Init(CuboLevel *level) {
 //id=0; //Only one player for now
 	lvl=level;
-	if (!startposset)
-			{
+	if (!startposset) {
 			BaseIdentity(&base);
 			BaseIdentity(&oldbase);
 			BaseIdentity(&newbase);
@@ -205,8 +188,7 @@ void TCuboMovement::Init(CuboLevel *level)
 
 	}
 
-void TCuboMovement::SetStartPos(CuboBlockSide *sside,int srot)
-	{
+void TCuboMovement::SetStartPos(CuboBlockSide *sside,int srot) {
 
 	onBlock=sside->GetBlock();
 	BlockUnderMe=onBlock;
@@ -226,8 +208,7 @@ void TCuboMovement::SetStartPos(CuboBlockSide *sside,int srot)
 	base[CUBO_UPV]=sside->GetNormal();
 
 	startrot=srot % 4;
-	switch (startrot)
-			{
+	switch (startrot) {
 			case 0:
 				base[CUBO_DIRV]=sside->GetTangent()*(-1);
 				base[CUBO_SIDEV]=base[CUBO_UPV].cross(base[CUBO_DIRV]);
@@ -251,8 +232,7 @@ void TCuboMovement::SetStartPos(CuboBlockSide *sside,int srot)
 	startposset=1;
 	}
 
-void TCuboMovement::SetType(int mid,std::string name)
-	{
+void TCuboMovement::SetType(int mid,std::string name) {
 
 	id=mid;
 	defindex=g_Game()->GetActorDefs()->AddDef(name);
@@ -261,41 +241,33 @@ void TCuboMovement::SetType(int mid,std::string name)
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Constructor(id);
 	}
 
-void TCuboMovement::Call_ChangeMove()
-	{
+void TCuboMovement::Call_ChangeMove() {
 	std::string movestr=s_CuboMoveStringsMove[inmove];
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_ChangeMove(id,movestr);
 	}
 
-void TCuboMovement::SpecialRender(std::string nam,int defrender)
-	{
+void TCuboMovement::SpecialRender(std::string nam,int defrender) {
 	if (  g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_SpecialRender(nam,id)) {}
-	else
-			{
+	else {
 			if (defrender==1) { Render(); }
 			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"actor",id); }
 			}
 	}
 
-void TCuboMovement::Render()
-	{
-	if ((!IsPlayer())  && !(g_Game()->GetCam()->SphereInFrustum(pos,2*CUBO_SCALE)))
-			{
+void TCuboMovement::Render() {
+	if ((!IsPlayer())  && !(g_Game()->GetCam()->SphereInFrustum(pos,2*CUBO_SCALE))) {
 			return ;
 			}
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Render(id);
 	}
 
-void TCuboMovement::DistRender()
-	{
+void TCuboMovement::DistRender() {
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_DistRender(id);
 	}
 
-void TCuboMovement::PostLevelThink()
-	{
+void TCuboMovement::PostLevelThink() {
 	if ((onBlock) && (this->inmove!=CUBO_MOVE_JUMP_AHEAD) && (this->inmove!=CUBO_MOVE_JUMP_FAR)) {
-			if (onBlock->Moving())
-					{
+			if (onBlock->Moving()) {
 					Vector3d moffs=onBlock->GetMovementDelta();
 					pos=pos+moffs;
 					oldpos=oldpos+moffs;
@@ -305,63 +277,52 @@ void TCuboMovement::PostLevelThink()
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_PostThink(id);
 	}
 
-void TCuboMovement::Think()
-	{
+void TCuboMovement::Think() {
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Think(id);
 	}
 
-void TCuboMovement::SendKey(int key,int down,int toggle)
-	{
+void TCuboMovement::SendKey(int key,int down,int toggle) {
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->SendKey(id,key,down,toggle);
 	}
 
-void TCuboMovement::SendJoyButton(int stick,int button,int dir,int down,int toggle)
-	{
+void TCuboMovement::SendJoyButton(int stick,int button,int dir,int down,int toggle) {
 	g_Game()->GetActorDefs()->GetDefPtr(defindex)->SendJoyButton(id,stick,button,dir,down,toggle);
 	}
 
-int TCuboMovement::GetJumpDistBlocks()
-	{
+int TCuboMovement::GetJumpDistBlocks() {
 	if (!inAir) { return 0; }
 	return (int)((j_desdist-j_dist)/(2*CUBO_SCALE));
 	}
 
-void TCuboMovement::SetJumpDistBlocks(int d)
-	{
+void TCuboMovement::SetJumpDistBlocks(int d) {
 	if (!inAir) { return; }
 	j_desdist=(((int)((j_dist+d*2*CUBO_SCALE)/(2*CUBO_SCALE))))*2*CUBO_SCALE;
 	}
 
-CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,Vector3d dir)
-	{
+CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,Vector3d dir) {
 	return GetRelBlock(b,DirVectToSide(dir));
 	}
-CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,int side)
-	{
+CuboBlock *TCuboMovement::GetRelBlock(CuboBlock *b,int side) {
 	if (!b) { return NULL; }
 	return b->GetNext(side);
 	}
 
-int TCuboMovement::MayMove(int typ)
-	{
+int TCuboMovement::MayMove(int typ) {
 	if (!BlockUnderMe) { return 1; }
 	std::string typstr=s_CuboMoveStringsDir[typ];
 	return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_MayMove(id,typstr);
 	}
 
-void TCuboMovement::MoveForward()
-	{
+void TCuboMovement::MoveForward() {
 	if (inmove==CUBO_MOVE_NONE) {
 			forwardpresstime=0;
 
 			}
 	if (inmove) {
-			if (inmove==CUBO_MOVE_JUMP_UP)
-					{
+			if (inmove==CUBO_MOVE_JUMP_UP) {
 					//   ostringstream oss; oss << "Forward pressed in air!  " << lateforwardjumptime;
 					// coutlog(oss.str());
-					if (lateforwardjumptime>=0)
-							{
+					if (lateforwardjumptime>=0) {
 							inmove=CUBO_MOVE_JUMP_AHEAD; jumptype="jumpforward"; Call_ChangeMove();
 							j_desdist=distance_normjump*2*CUBO_SCALE;
 							//   j_heightoverground=0;
@@ -384,8 +345,7 @@ void TCuboMovement::MoveForward()
 	checkvect=checkvect+rv*(2*CUBO_SCALE);
 	CuboBlock *b;
 	b=lvl->GetBlockAtPos(checkvect);
-	if (b && (b->Blocking())) //ROLL UPWARDS!
-			{
+	if (b && (b->Blocking())) { //ROLL UPWARDS!
 			// prevBlock=onBlock;
 			onBlock=b;
 			//cout << "DEBUG UPW " << onSide << endl;
@@ -400,11 +360,9 @@ void TCuboMovement::MoveForward()
 			inmove=CUBO_MOVE_UP;
 			Call_ChangeMove();
 			}
-	else //May be we can roll simply forward
-			{
+	else { //May be we can roll simply forward
 			b=GetRelBlock(onBlock,base[CUBO_DIRV]);
-			if (b) //Yes: We can... Obama greetz!
-					{
+			if (b) { //Yes: We can... Obama greetz!
 
 					BaseCp(&base,&oldbase);
 
@@ -420,18 +378,14 @@ void TCuboMovement::MoveForward()
 					inmove=CUBO_MOVE_AHEAD;
 					Call_ChangeMove();
 					}
-			else  //Can we roll downwards?
-					{
+			else { //Can we roll downwards?
 					//We may not have left or right neighbors
 					b=GetRelBlock(onBlock,base[CUBO_SIDEV]);
 					CuboBlock *b2=GetRelBlock(onBlock,-base[CUBO_SIDEV]);
-					if (b || b2 || (movementcheck && (!MayMove(CUBO_MOVE_DOWN))))
-							{
+					if (b || b2 || (movementcheck && (!MayMove(CUBO_MOVE_DOWN)))) {
 							//Ok, check if we can slide down
-							if (BlockUnderMe && (BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))
-									{
-									if (BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_MaySlideDown(id) || movementcheck==0)
-											{
+							if (BlockUnderMe && (BlockSideUnderMe>=0) && (BlockSideUnderMe<=5)) {
+									if (BlockUnderMe->GetBlockSide(BlockSideUnderMe)->Call_MaySlideDown(id) || movementcheck==0) {
 
 
 											BaseCp(&base,&oldbase);
@@ -476,13 +430,11 @@ void TCuboMovement::MoveForward()
 
 
 
-void TCuboMovement::RotateLeft()
-	{
+void TCuboMovement::RotateLeft() {
 	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) { return; }
 	if (!MayMove(CUBO_MOVE_ROTATE_LEFT)) { return; }
 
-	if (lastmove==CUBO_MOVE_ROTATE_LEFT)
-			{
+	if (lastmove==CUBO_MOVE_ROTATE_LEFT) {
 			if (rotatestoptime>0) { return ; }
 			}
 
@@ -492,8 +444,7 @@ void TCuboMovement::RotateLeft()
 	newbase[CUBO_DIRV]=base[CUBO_SIDEV];
 
 
-	if (!inmove)
-			{
+	if (!inmove) {
 			oldpos=pos;
 			newpos=pos;
 
@@ -510,13 +461,11 @@ void TCuboMovement::RotateLeft()
 	BaseCp(&newbase,&base); ///TODO: intepolate move
 	}
 
-void TCuboMovement::RotateRight()
-	{
+void TCuboMovement::RotateRight() {
 	if (inmove && ((inmove!=CUBO_MOVE_JUMP_UP) || yvel<0)) { return; }
 	if (!MayMove(CUBO_MOVE_ROTATE_RIGHT)) { return; }
 
-	if (lastmove==CUBO_MOVE_ROTATE_RIGHT)
-			{
+	if (lastmove==CUBO_MOVE_ROTATE_RIGHT) {
 			if (rotatestoptime>0) { return ; }
 			}
 
@@ -527,8 +476,7 @@ void TCuboMovement::RotateRight()
 	newbase[CUBO_UPV]=base[CUBO_UPV];
 	newbase[CUBO_DIRV]=-base[CUBO_SIDEV];
 
-	if (!inmove)
-			{
+	if (!inmove) {
 			oldpos=pos;
 			newpos=pos;
 
@@ -546,8 +494,7 @@ void TCuboMovement::RotateRight()
 	}
 
 
-void TCuboMovement::AirMove(float elapsed)
-	{
+void TCuboMovement::AirMove(float elapsed) {
 
 //Apply gravity
 //elapsed*=timemultiplicator;
@@ -564,24 +511,20 @@ void TCuboMovement::AirMove(float elapsed)
 //pos=pos+yspeed;
 
 	//Recalc the d_vel
-	if (j_heightoverground>0)
-			{
+	if (j_heightoverground>0) {
 			float vdurchg=yvel/(CUBO_GRAVITY_G);
 			float tres=vdurchg+sqrt(vdurchg*vdurchg+2*j_heightoverground/(CUBO_GRAVITY_G));
 
 			dvel=(j_desdist-j_dist)/(tres+elapsed);
-			if (inhighjump)
-					{
+			if (inhighjump) {
 					dvel*=1.75;
 					}
 			}
-	else
-			{
+	else {
 			dvel=0;
 			}
 
-	if (j_heightoverground<=0)
-			{
+	if (j_heightoverground<=0) {
 			dvel=0;
 			j_dist=j_desdist;
 			/*Vector3d temp=base[CUBO_DIRV];
@@ -622,18 +565,15 @@ void TCuboMovement::AirMove(float elapsed)
 	CuboBlock *b;
 	Vector3d checkpos;
 
-	if ((yvel<0))
-			{
+	if ((yvel<0)) {
 			falltime+=elapsed;
 			if (falltime>CUBO_FALL_TILL_LOOKDOWN) { LookDown(); }
 			checkpos=base[CUBO_UPV]*(-1*GetRadius());
 			checkpos=pos+checkpos;
 			b=lvl->GetBlockAtPos(checkpos);
-			if (b && (b->Blocking()) && lvl->GetCollisionChecksActive())
-					{
+			if (b && (b->Blocking()) && lvl->GetCollisionChecksActive()) {
 					inhighjump=0;
-					if (inmove==CUBO_MOVE_ROTATE_LEFT || inmove==CUBO_MOVE_ROTATE_RIGHT)
-							{
+					if (inmove==CUBO_MOVE_ROTATE_LEFT || inmove==CUBO_MOVE_ROTATE_RIGHT) {
 							BaseCp(&newbase,&base);
 							BaseCp(&newbase,&oldbase);
 							}
@@ -653,8 +593,7 @@ void TCuboMovement::AirMove(float elapsed)
 					ps=base[CUBO_UPV]*(1.1*(CUBO_GROUND_DIST+CUBO_GROUND_DIST_OFFS));
 					ps=pos-ps;
 					BlockUnderMe=lvl->GetBlockAtPos(ps);
-					if (BlockUnderMe && (BlockUnderMe->Blocking()))
-							{
+					if (BlockUnderMe && (BlockUnderMe->Blocking())) {
 							Vector3d relpos;
 							relpos=BlockUnderMe->GetPos();
 							relpos=pos-relpos;
@@ -670,8 +609,7 @@ void TCuboMovement::AirMove(float elapsed)
 									return;
 
 									}
-							if (lvl->GetCollisionChecksActive())
-									{
+							if (lvl->GetCollisionChecksActive()) {
 									BlockUnderMe->Call_OnBlockEvent(id);
 									g_Game()->GetActorDefs()->GetDefPtr(defindex)->Call_Event(id,"hitground");
 									}
@@ -684,21 +622,18 @@ void TCuboMovement::AirMove(float elapsed)
 					else { BlockUnderMe=NULL; }
 					}
 			}
-	else if ((yvel>0))
-			{
+	else if ((yvel>0)) {
 			checkpos=base[CUBO_UPV]*(1*GetRadius());
 			checkpos=pos+checkpos;
 			b=lvl->GetBlockAtPos(checkpos);
-			if (b && (b->Blocking()))
-					{
+			if (b && (b->Blocking())) {
 
 					inhighjump=0;
 					yvel=-yvel*0.7;
 					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_UPV])]);
 					Vector3d hn=hs->GetNormal();
 					Vector3d hpd=hs->GetMidpoint();
-					if (j_desdist>0)
-							{
+					if (j_desdist>0) {
 							hpd=oldpos-hpd;
 							j_desdist=hpd*hn;
 							}
@@ -709,8 +644,7 @@ void TCuboMovement::AirMove(float elapsed)
 
 //Check collision with front side
 
-	if (dvel>0)
-			{
+	if (dvel>0) {
 
 			checkpos=base[CUBO_DIRV]*(1*GetRadius());
 			checkpos=pos+checkpos;
@@ -722,8 +656,7 @@ void TCuboMovement::AirMove(float elapsed)
 					b=lvl->GetBlockAtPos(checkpos2);
 					}
 
-			if (b && (b->Blocking()))
-					{
+			if (b && (b->Blocking())) {
 
 					inhighjump=0;
 					CuboBlockSide* hs=b->GetBlockSide(s_CuboOpposingDir[DirVectToSide(base[CUBO_DIRV])]);
@@ -742,8 +675,7 @@ void TCuboMovement::AirMove(float elapsed)
 	}
 
 
-void TCuboMovement::FrontSideRebounce()
-	{
+void TCuboMovement::FrontSideRebounce() {
 	inhighjump=0;
 	Vector3d hn=base[CUBO_DIRV]*(-1);
 	Vector3d hpd=hn*(CUBO_SCALE);
@@ -756,73 +688,60 @@ void TCuboMovement::FrontSideRebounce()
 
 	}
 
-float clampinterpolation(float in,float ls,float rs)
-	{
+float clampinterpolation(float in,float ls,float rs) {
 	if (in<ls) { return 0; }
 	if (in>rs) { return 1; }
 	return (in-ls)/(rs-ls);
 	}
 
-void TCuboMovement::SetRotSpeed(float v)
-	{
+void TCuboMovement::SetRotSpeed(float v) {
 	CUBO_ROTSPEED=v;
 	}
 
-float TCuboMovement::s_MoveSpeed(int move)
-	{
+float TCuboMovement::s_MoveSpeed(int move) {
 	double mvs[]= {0,CUBO_MOVESPEED,CUBO_ROTUPSPEED,CUBO_ROTDOWNSPEED,CUBO_ROTSPEED,CUBO_ROTSPEED,CUBO_MOVESPEED,CUBO_MOVESPEED,CUBO_MOVESPEED,CUBO_MOVESPEED,CUBO_MOVESPEED};
 	return mvs[move];
 	}
 
-void TCuboMovement::FinalizeMove()
-	{
-	if (falltime<=CUBO_FALL_TILL_LOOKDOWN)
-			{
+void TCuboMovement::FinalizeMove() {
+	if (falltime<=CUBO_FALL_TILL_LOOKDOWN) {
 			lookdir=0;
 			}
 	}
 
-void TCuboMovement::InterpolateMove(double elapsed)
-	{
+void TCuboMovement::InterpolateMove(double elapsed) {
 	elapsed*=timemultiplicator*tempmovespeedmultiply;
 	// cout <<"Time multi" << timemultiplicator << endl;
 
 
 
 	if (inmove!=CUBO_MOVE_NONE) { lastmove=inmove; }
-	if (!lookdir)
-			{
+	if (!lookdir) {
 			if (lookpos>0) {
 					if (resetview) { lookpos-=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED; }
 					if (lookpos<0) { lookpos=0; resetview=0;}
 					}
-			else if (lookpos<0)
-					{
+			else if (lookpos<0) {
 					if (resetview) { lookpos+=elapsed/tempmovespeedmultiply*CUBO_LOOK_RELAX_SPEED; }
 					if (lookpos>0) { lookpos=0; resetview=0;}
 					}
 			}
-	else
-			{
+	else {
 			lookpos+=elapsed*lookdir/tempmovespeedmultiply*CUBO_LOOK_SPEED;
 			if (lookpos*lookdir>1) { lookpos=lookdir; }
 			}
 
 
-	if (inmove==CUBO_MOVE_GRAVITY_CHANGE)
-			{
+	if (inmove==CUBO_MOVE_GRAVITY_CHANGE) {
 			double ipos;
-			if (!grav180rot)
-					{
+			if (!grav180rot) {
 					moveInterpolate+=elapsed*gravitychangespeed;
 					ipos=moveInterpolate;
 					}
-			else
-					{
+			else {
 					moveInterpolate+=elapsed*gravitychangespeed*(1.5);
 					ipos=moveInterpolate*0.5;
-					if (grav180rot==1 && moveInterpolate>=1.0)
-							{
+					if (grav180rot==1 && moveInterpolate>=1.0) {
 							Vector3d tupv=newbase[CUBO_UPV]; //Might be wrong!
 							Vector3d tsidev=newbase[CUBO_SIDEV];
 
@@ -865,12 +784,10 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	if (BlockUnderMe) if ((!BlockUnderMe->Blocking()) && lvl->GetCollisionChecksActive()) { BlockUnderMe=NULL; }
 	//Call the blocks OnBlockScript
 
-	if (inAir)
-			{
+	if (inAir) {
 			BlockUnderMe=NULL;
 			}
-	if (BlockUnderMe)
-			{
+	if (BlockUnderMe) {
 
 			//Call the Sides OnSideScript
 			BlockUnderMe->Call_OnBlockEvent(id);
@@ -887,8 +804,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			}
 
 
-	if ((inmove==CUBO_MOVE_NONE) && (!BlockUnderMe) )
-			{
+	if ((inmove==CUBO_MOVE_NONE) && (!BlockUnderMe) ) {
 
 
 			onBlock=NULL;
@@ -938,16 +854,13 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 
 
-	if (inAir)
-			{
+	if (inAir) {
 			BlockUnderMe=NULL;
 			AirMove(elapsed);
 			//BaseCp(&newbase,&base);
-			if (inmove==CUBO_MOVE_ROTATE_LEFT || inmove==CUBO_MOVE_ROTATE_RIGHT)
-					{
+			if (inmove==CUBO_MOVE_ROTATE_LEFT || inmove==CUBO_MOVE_ROTATE_RIGHT) {
 					BaseInterpolate(&oldbase,&newbase,moveInterpolate,&base);
-					if (moveInterpolate>=1)
-							{
+					if (moveInterpolate>=1) {
 							BaseCp(&newbase,&base);
 							BaseCp(&newbase,&oldbase);
 							inmove=CUBO_MOVE_JUMP_UP;
@@ -962,8 +875,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 
 	if (!inAir) { falltime=0; }
 
-	if (moveInterpolate>1 || moveInterpolate<0)
-			{
+	if (moveInterpolate>1 || moveInterpolate<0) {
 			movementcheck=1;
 			if (moveInterpolate>0) {
 					BaseCp(&newbase,&base);
@@ -971,8 +883,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 					pos=newpos;
 					oldpos=newpos;
 					}
-			else
-					{
+			else {
 
 					BaseCp(&oldbase,&newbase);
 					BaseCp(&newbase,&base);
@@ -992,8 +903,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			if (BlockUnderMe) if (!BlockUnderMe->Blocking()) { BlockUnderMe=NULL;  }
 			onBlock=BlockUnderMe;
 			onSide= DirVectToSide(base[CUBO_UPV]);;
-			if ((inmove==CUBO_MOVE_SLIDE_DOWN) || (!BlockUnderMe) )
-					{
+			if ((inmove==CUBO_MOVE_SLIDE_DOWN) || (!BlockUnderMe) ) {
 					tempmovespeedmultiply=1;
 					inmove=CUBO_MOVE_FALLING;
 					// inmove=0;
@@ -1022,8 +932,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	float pt=moveInterpolate;
 
 	//First try a linear interpolation for the pos
-	if ((inmove==CUBO_MOVE_UP) || (inmove==CUBO_MOVE_DOWN))
-			{
+	if ((inmove==CUBO_MOVE_UP) || (inmove==CUBO_MOVE_DOWN)) {
 			Vector3d p1=oldpos;
 			Vector3d diff=newpos-oldpos;
 			float proj1=diff*oldbase[CUBO_DIRV];
@@ -1032,8 +941,7 @@ void TCuboMovement::InterpolateMove(double elapsed)
 					p1=oldbase[CUBO_DIRV]*(proj1*2*pt);
 					pos=oldpos+p1;
 					}
-			else
-					{
+			else {
 					p1=oldbase[CUBO_DIRV]*(proj1);
 					pos=oldpos+p1;
 					pt-=0.5;
@@ -1043,10 +951,8 @@ void TCuboMovement::InterpolateMove(double elapsed)
 			float btborder=0.15;
 			if (inmove==CUBO_MOVE_DOWN) { bt=clampinterpolation(bt,btborder,1-btborder); }
 			}
-	else
-			{
-			if (!inAir)
-					{
+	else {
+			if (!inAir) {
 					Vector3d p1=oldpos*(1-pt);
 					Vector3d p2=newpos*pt;
 					pos=p1+p2;
@@ -1057,15 +963,12 @@ void TCuboMovement::InterpolateMove(double elapsed)
 	BaseInterpolate(&oldbase,&newbase,bt,&base);
 	}
 
-std::string TCuboMovement::GetType()
-	{
+std::string TCuboMovement::GetType() {
 	return g_Game()->GetActorDefs()->GetDefPtr(this->defindex)->GetName();
 	}
 
-int TCuboMovement::GetOnSideID()
-	{
-	if (BlockUnderMe)
-			{
+int TCuboMovement::GetOnSideID() {
+	if (BlockUnderMe) {
 			if ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5) && (!inAir)) {
 					return BlockUnderMe->GetBlockSide(BlockSideUnderMe)->GetID();
 					}
@@ -1074,23 +977,19 @@ int TCuboMovement::GetOnSideID()
 	else { return -1; }
 	}
 
-int TCuboMovement::GetPrevOnSideID()
-	{
+int TCuboMovement::GetPrevOnSideID() {
 
 	return prevSide;
 	}
 
 
-int TCuboMovement::GetLastOnSideID()
-	{
+int TCuboMovement::GetLastOnSideID() {
 	//cout << "BlockSideUnderMe: " << laststaticside <<  " " << endl;
 	return laststaticside;
 	}
 
-int TCuboMovement::TraceOnSideID()
-	{
-	if (!inAir)
-			{
+int TCuboMovement::TraceOnSideID() {
+	if (!inAir) {
 
 			TraceResult tr;
 			Vector3d d=base[CUBO_UPV]*(-1.0);
@@ -1103,21 +1002,18 @@ int TCuboMovement::TraceOnSideID()
 	}
 
 
-void TCuboMovement::SetCamParams(std::string what,Vector3d params)
-	{
+void TCuboMovement::SetCamParams(std::string what,Vector3d params) {
 	if (what=="normal") { camfloats=params; }
 	else if (what=="lookup") { lookupfloats=params; }
 	else if (what=="lookdown") { lookdownfloats=params; }
 	}
 
-void TCuboMovement::SetCamZRotation(float zr,int mirror)
-	{
+void TCuboMovement::SetCamZRotation(float zr,int mirror) {
 	cammirror=mirror;
 	camzrot=zr;
 	}
 
-void TCuboMovement::SetCamPos(MatrixObject *cam)
-	{
+void TCuboMovement::SetCamPos(MatrixObject *cam) {
 //Get the Position
 	Vector3d res;
 	res=pos;
@@ -1159,8 +1055,7 @@ void TCuboMovement::SetCamPos(MatrixObject *cam)
 	cam->SetMirror(cammirror);
 	}
 
-void TCuboMovement::Rebounce(TCuboMovement *other)
-	{
+void TCuboMovement::Rebounce(TCuboMovement *other) {
 	jumptype="farjump";
 	inmove=CUBO_MOVE_JUMP_FAR;
 	Call_ChangeMove();
@@ -1187,8 +1082,7 @@ void TCuboMovement::Rebounce(TCuboMovement *other)
 	oldpos=pos;
 	}
 
-void TCuboMovement::FarJump()
-	{
+void TCuboMovement::FarJump() {
 	if (inAir) { return; }
 	inhighjump=0;
 	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) { return; }
@@ -1200,8 +1094,7 @@ void TCuboMovement::FarJump()
 	j_heightoverground=0;
 	j_flytime=0;
 	j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
-	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
-			{
+	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) { ///MAYBE THIS FIXES IT
 			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 			Vector3d mp=bs->GetMidpoint();
 			mp=pos-mp;
@@ -1221,8 +1114,7 @@ void TCuboMovement::FarJump()
 	}
 
 
-void TCuboMovement::HighJump()
-	{
+void TCuboMovement::HighJump() {
 	if (inAir) { return; }
 	if (!((inmove==CUBO_MOVE_AHEAD) || ( ( (inmove==CUBO_MOVE_NONE) || (inmove==CUBO_MOVE_DOWN) || (inmove==CUBO_MOVE_SLIDE_DOWN) ) && (forwardpresstime<FORWARD_PRESS_TIME)))) { return; }
 	inmove=CUBO_MOVE_JUMP_AHEAD; jumptype="highjump"; Call_ChangeMove(); //TODO: Add a new movetype for farjumping
@@ -1230,8 +1122,7 @@ void TCuboMovement::HighJump()
 	j_heightoverground=0;
 	j_flytime=0;
 	j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
-	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
-			{
+	if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) { ///MAYBE THIS FIXES IT
 			CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 			Vector3d mp=bs->GetMidpoint();
 			mp=pos-mp;
@@ -1251,8 +1142,7 @@ void TCuboMovement::HighJump()
 	}
 
 
-int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespeed,int do_at_same_gravity)
-	{
+int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespeed,int do_at_same_gravity) {
 	if (inmove==CUBO_MOVE_GRAVITY_CHANGE) { return -1; }
 	//Test the change
 
@@ -1261,8 +1151,7 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 	BaseCp(&newbase,&tb);
 	grav180rot=0;
 	double dot=newgrav*tb[CUBO_UPV];
-	if (dot<-0.8)
-			{
+	if (dot<-0.8) {
 			if (do_at_same_gravity==0) {
 					return 5;
 					}
@@ -1293,17 +1182,14 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 
 	int res=0;
 
-	if (do_at_same_gravity!=0)
-			{
+	if (do_at_same_gravity!=0) {
 			res=5;
 			}
-	else if (dot*dot<0.1)  //Four cases...
-			{
+	else if (dot*dot<0.1) { //Four cases...
 			double rdot=newgrav*tb[CUBO_SIDEV];
 			if (rdot>0.8) {   newbase[CUBO_SIDEV]=tb[CUBO_UPV];  newbase[CUBO_UPV]=-tb[CUBO_SIDEV];  newbase[CUBO_DIRV]=tb[CUBO_DIRV]; res=1;} //Left
 			else if (rdot<-0.8) {  newbase[CUBO_SIDEV]=-tb[CUBO_UPV];  newbase[CUBO_UPV]=tb[CUBO_SIDEV];  newbase[CUBO_DIRV]=tb[CUBO_DIRV]; res=2;} //Right
-			else
-					{
+			else {
 					double ddot=newgrav*tb[CUBO_DIRV];
 					if (ddot>0.8) { newbase[CUBO_SIDEV]=tb[CUBO_SIDEV];  newbase[CUBO_UPV]=-tb[CUBO_DIRV];  newbase[CUBO_DIRV]=tb[CUBO_UPV]; res=3;} //Front
 					else if (ddot<-0.8) { newbase[CUBO_SIDEV]=tb[CUBO_SIDEV];  newbase[CUBO_UPV]=tb[CUBO_DIRV];  newbase[CUBO_DIRV]=-tb[CUBO_UPV]; res=4;} //Back
@@ -1311,8 +1197,7 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 					}
 
 			}
-	else  // 180-degrees
-			{
+	else { // 180-degrees
 			grav180rot=1;
 
 			newbase[CUBO_SIDEV]=tb[CUBO_UPV];  newbase[CUBO_UPV]=-tb[CUBO_SIDEV];  newbase[CUBO_DIRV]=tb[CUBO_DIRV];
@@ -1327,8 +1212,7 @@ int TCuboMovement::ChangeGravity(Vector3d newgrav,Vector3d newp,double changespe
 	return res;
 	}
 
-void TCuboMovement::Jump()
-	{
+void TCuboMovement::Jump() {
 	if (inAir) { return; }
 	inhighjump=0;
 	//We have to check, if we are moving
@@ -1344,8 +1228,7 @@ void TCuboMovement::Jump()
 			j_heightoverground=0;
 			j_flytime=0;
 			j_dist=0; ///TODO: it is not always really zero! We can be walked forward a bit... get it
-			if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) ///MAYBE THIS FIXES IT
-					{
+			if (BlockUnderMe && ((BlockSideUnderMe>=0) && (BlockSideUnderMe<=5))) { ///MAYBE THIS FIXES IT
 					CuboBlockSide *bs=BlockUnderMe->GetBlockSide(BlockSideUnderMe);
 					Vector3d mp=bs->GetMidpoint();
 					mp=pos-mp;
@@ -1362,8 +1245,7 @@ void TCuboMovement::Jump()
 			BaseCp(&oldbase,&base);
 			oldpos=pos;
 			}
-	else if (inmove==CUBO_MOVE_NONE)
-			{
+	else if (inmove==CUBO_MOVE_NONE) {
 			if (!MayMove(CUBO_MOVE_JUMP_UP)) { return; }
 
 			if (forwardpresstime!=1000)
@@ -1386,10 +1268,8 @@ void TCuboMovement::Jump()
 	}
 
 
-std::string TCuboMovement::GetMoveType()
-	{
-	switch (inmove)
-			{
+std::string TCuboMovement::GetMoveType() {
+	switch (inmove) {
 			case CUBO_MOVE_NONE: return "none"; break;
 			case CUBO_MOVE_AHEAD: return "forward"; break;
 			case CUBO_MOVE_UP: return "up"; break;
@@ -1409,36 +1289,31 @@ std::string TCuboMovement::GetMoveType()
 	return "unknown";
 	}
 
-void TCuboMovement::LookUp()
-	{
+void TCuboMovement::LookUp() {
 	if (lookdir>=0) { lookdir=1; }
 	resetview=0;
 	}
 
 
-void TCuboMovement::LookDown()
-	{
+void TCuboMovement::LookDown() {
 // if (lookdir<=0)
 	lookdir=-1;
 	resetview=0;
 	}
 
-void TCuboMovement::LookReset()
-	{
+void TCuboMovement::LookReset() {
 	resetview=1;
 	}
 
 
 
-void TCuboMovement::JumpUp()
-	{
+void TCuboMovement::JumpUp() {
 	forwardpresstime=1000;
 	Jump();
 	}
 
 
-void TCuboMovement::CheckEnemyCollision(TCuboMovement* other)
-	{
+void TCuboMovement::CheckEnemyCollision(TCuboMovement* other) {
 //Radial check
 	Vector3d p1=this->GetPos();
 	Vector3d p2=other->GetPos();
@@ -1446,15 +1321,13 @@ void TCuboMovement::CheckEnemyCollision(TCuboMovement* other)
 	float dsqr=p1*p1;
 	float rsqr=this->GetRadius()+other->GetRadius();
 	rsqr*=rsqr;
-	if (dsqr<rsqr)
-			{
+	if (dsqr<rsqr) {
 			//Call a collision
 			g_Game()->GetActorDefs()->GetDefPtr(this->defindex)->Call_ActorCollide(this->GetID(),other->GetID());
 			}
 	}
 
-void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
-	{
+void TCuboMovement::CheckPlayerCollision(TCuboMovement* other) {
 //Radial check
 	Vector3d p1=this->GetPos();
 	Vector3d p2=other->GetPos();
@@ -1462,8 +1335,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 	float dsqr=p1*p1;
 	float rsqr=this->GetRadius()+other->GetRadius();
 	rsqr*=rsqr;
-	if (dsqr<rsqr)
-			{
+	if (dsqr<rsqr) {
 			//Call a collision
 			g_Game()->GetActorDefs()->GetDefPtr(this->defindex)->Call_ActorCollidePlayer(this->GetID(),other->GetID());
 			}
@@ -1475,8 +1347,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other)
 
 
 
-int ActorDefServer::AddEDef(std::string name)
-	{
+int ActorDefServer::AddEDef(std::string name) {
 	int def=GetDef(name,0);
 	if (def>-1) { return def; } //Have it already
 	defs.push_back(new EnemyDef());
@@ -1487,118 +1358,93 @@ int ActorDefServer::AddEDef(std::string name)
 	return def;
 	}
 
-int ActorDefServer::GetDef(std::string name,int forplayer)
-	{
+int ActorDefServer::GetDef(std::string name,int forplayer) {
 	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) { return (i); }
 	return -1;
 	}
 
 
 
-void ActorDef::Call_Constructor(int id)
-	{
-	if (lua.FuncExists("Constructor"))
-			{
+void ActorDef::Call_Constructor(int id) {
+	if (lua.FuncExists("Constructor")) {
 			lua.CallVA("Constructor","i",id);
 			}
 
 	}
 
-void ActorDef::Call_ActorCollide(int id,int oid)
-	{
-	if (lua.FuncExists("ActorCollide"))
-			{
+void ActorDef::Call_ActorCollide(int id,int oid) {
+	if (lua.FuncExists("ActorCollide")) {
 			lua.CallVA("ActorCollide","ii",id,oid);
 			}
 
 	}
 
 
-void ActorDef::Call_ActorCollidePlayer(int id,int oid)
-	{
-	if (lua.FuncExists("ActorCollidePlayer"))
-			{
+void ActorDef::Call_ActorCollidePlayer(int id,int oid) {
+	if (lua.FuncExists("ActorCollidePlayer")) {
 			lua.CallVA("ActorCollidePlayer","ii",id,oid);
 			}
 
 	}
 
-void ActorDef::Call_Render(int id)
-	{
-	if (lua.FuncExists("Render"))
-			{
+void ActorDef::Call_Render(int id) {
+	if (lua.FuncExists("Render")) {
 			lua.CallVA("Render","i",id);
 			}
 
 	}
 
-int ActorDef::Call_SpecialRender(std::string nam,int index)
-	{
-	if (lua.FuncExists("SpecialRender"))
-			{
+int ActorDef::Call_SpecialRender(std::string nam,int index) {
+	if (lua.FuncExists("SpecialRender")) {
 			lua.CallVA("SpecialRender","i",nam.c_str(),index);
 			return 1;
 			}
 	return 0;
 	}
 
-void ActorDef::Call_DistRender(int id)
-	{
-	if (lua.FuncExists("DistRender"))
-			{
+void ActorDef::Call_DistRender(int id) {
+	if (lua.FuncExists("DistRender")) {
 			lua.CallVA("DistRender","i",id);
 			}
 
 	}
 
-void ActorDef::Call_PostThink(int id)
-	{
-	if (lua.FuncExists("PostThink"))
-			{
+void ActorDef::Call_PostThink(int id) {
+	if (lua.FuncExists("PostThink")) {
 			lua.CallVA("PostThink","i",id);
 			}
 
 	}
 
-void ActorDef::Call_Think(int id)
-	{
-	if (lua.FuncExists("Think"))
-			{
+void ActorDef::Call_Think(int id) {
+	if (lua.FuncExists("Think")) {
 			lua.CallVA("Think","i",id);
 			}
 
 	}
 
-void ActorDef::SendKey(int actor,int key,int down,int toggle)
-	{
-	if (lua.FuncExists("OnKeyPressed"))
-			{
+void ActorDef::SendKey(int actor,int key,int down,int toggle) {
+	if (lua.FuncExists("OnKeyPressed")) {
 			lua.CallVA("OnKeyPressed","iiii",actor,key,down,toggle);
 			}
 	}
 
-void ActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle)
-	{
-	if (lua.FuncExists("OnJoyButton"))
-			{
+void ActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle) {
+	if (lua.FuncExists("OnJoyButton")) {
 			lua.CallVA("OnJoyButton","iiiiii",actor,stick,button,dir,down,toggle);
 			}
 	}
 
 
-void ActorDef::Call_ChangeMove(int id,std::string newmove)
-	{
-	if (lua.FuncExists("ChangeMove"))
-			{
+void ActorDef::Call_ChangeMove(int id,std::string newmove) {
+	if (lua.FuncExists("ChangeMove")) {
 			lua.CallVA("ChangeMove","is",id,newmove.c_str());
 			}
 
 	}
 
-int ActorDef::Call_CheckLandingOnSide(int id,int side)
-	{
-	if (lua.FuncExists("CheckLandingOnSide"))
-			{
+int ActorDef::Call_CheckLandingOnSide(int id,int side) {
+	if (lua.FuncExists("CheckLandingOnSide")) {
 			int res;
 			lua.CallVA("CheckLandingOnSide","ii>i",id,side,&res);
 			return res;
@@ -1606,19 +1452,15 @@ int ActorDef::Call_CheckLandingOnSide(int id,int side)
 	return 1;
 	}
 
-void ActorDef::Call_Event(int id,std::string ev)
-	{
-	if (lua.FuncExists("Event"))
-			{
+void ActorDef::Call_Event(int id,std::string ev) {
+	if (lua.FuncExists("Event")) {
 			lua.CallVA("Event","is",id,ev.c_str());
 			}
 
 	}
 
-std::string ActorDef::Call_GetEditorInfo(std::string what,std::string std)
-	{
-	if (lua.FuncExists("GetEditorInfo"))
-			{
+std::string ActorDef::Call_GetEditorInfo(std::string what,std::string std) {
+	if (lua.FuncExists("GetEditorInfo")) {
 			char *res;
 			lua.CallVA("GetEditorInfo","ss>s",what.c_str(),std.c_str(),&res);
 
@@ -1635,8 +1477,7 @@ std::string ActorDef::Call_GetEditorInfo(std::string what,std::string std)
 
 
 
-int ACTOR_IsPlayer(lua_State *state)
-	{
+int ACTOR_IsPlayer(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	int temp=g_Game()->GetActorMovement(a)->IsPlayer();
 
@@ -1646,8 +1487,7 @@ int ACTOR_IsPlayer(lua_State *state)
 
 	}
 
-int ACTOR_GetVar(lua_State *state)
-	{
+int ACTOR_GetVar(lua_State *state) {
 	int actor=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 
@@ -1657,8 +1497,7 @@ int ACTOR_GetVar(lua_State *state)
 	return 1;
 	}
 
-int ACTOR_SetTimeMultiplicator(lua_State *state)
-	{
+int ACTOR_SetTimeMultiplicator(lua_State *state) {
 	double tm=LUA_GET_DOUBLE(state);
 	int actor=LUA_GET_INT(state);
 
@@ -1667,8 +1506,7 @@ int ACTOR_SetTimeMultiplicator(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_SetVar(lua_State *state)
-	{
+int ACTOR_SetVar(lua_State *state) {
 	int actor=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetActorMovement(actor)->GetVarHolder()->StoreVar(state);
@@ -1676,8 +1514,7 @@ int ACTOR_SetVar(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_SendJoyButton(lua_State *state)
-	{
+int ACTOR_SendJoyButton(lua_State *state) {
 	int toggle=LUA_GET_INT(state);
 	int down=LUA_GET_INT(state);
 	int dir=LUA_GET_INT(state);
@@ -1688,8 +1525,7 @@ int ACTOR_SendJoyButton(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_SendKey(lua_State *state)
-	{
+int ACTOR_SendKey(lua_State *state) {
 	int toggle=LUA_GET_INT(state);
 	int down=LUA_GET_INT(state);
 	int key=LUA_GET_INT(state);
@@ -1701,8 +1537,7 @@ int ACTOR_SendKey(lua_State *state)
 
 
 
-int ACTOR_New(lua_State *state)
-	{
+int ACTOR_New(lua_State *state) {
 	std::string defname=LUA_GET_STRING(state);
 	defname=g_Game()->GetLevel()->CheckDefExchange(defname,"actor");
 	int res=g_Game()->AddActor(defname);
@@ -1711,16 +1546,14 @@ int ACTOR_New(lua_State *state)
 
 	}
 
-int ACTOR_Delete(lua_State *state)
-	{
+int ACTOR_Delete(lua_State *state) {
 	int ind=LUA_GET_INT(state);
 	g_Game()->DeleteActor(ind);
 //cout << "Called actor delete" << endl;
 	return 0;
 	}
 
-int ACTOR_GetStartRotation(lua_State *state)
-	{
+int ACTOR_GetStartRotation(lua_State *state) {
 	int ind=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(ind)->GetStartRotation();
 	LUA_SET_NUMBER(state, res);
@@ -1729,8 +1562,7 @@ int ACTOR_GetStartRotation(lua_State *state)
 
 
 
-int ACTOR_GetType(lua_State *state)
-	{
+int ACTOR_GetType(lua_State *state) {
 	int ind=LUA_GET_INT(state);
 	std::string res=g_Game()->GetActorMovement(ind)->GetType();
 	LUA_SET_STRING(state, res);
@@ -1738,8 +1570,7 @@ int ACTOR_GetType(lua_State *state)
 	}
 
 
-int ACTOR_GetPos(lua_State *state)
-	{
+int ACTOR_GetPos(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	Vector3d p=g_Game()->GetActorMovement(a)->GetPos();
 	LUA_SET_VECTOR3(state, p);
@@ -1747,8 +1578,7 @@ int ACTOR_GetPos(lua_State *state)
 
 	}
 
-int ACTOR_GetOldPos(lua_State *state)
-	{
+int ACTOR_GetOldPos(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	Vector3d p=g_Game()->GetActorMovement(a)->GetOldPos();
 	LUA_SET_VECTOR3(state, p);
@@ -1756,8 +1586,7 @@ int ACTOR_GetOldPos(lua_State *state)
 	}
 
 
-int ACTOR_GetSide(lua_State *state)
-	{
+int ACTOR_GetSide(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	Vector3d p=g_Game()->GetActorMovement(a)->GetSide();
 	LUA_SET_VECTOR3(state, p);
@@ -1765,16 +1594,14 @@ int ACTOR_GetSide(lua_State *state)
 
 	}
 
-int ACTOR_GetUp(lua_State *state)
-	{
+int ACTOR_GetUp(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	Vector3d p=g_Game()->GetActorMovement(a)->GetUp();
 	LUA_SET_VECTOR3(state, p);
 	return 1;
 	}
 
-int ACTOR_GetDir(lua_State *state)
-	{
+int ACTOR_GetDir(lua_State *state) {
 	int a=LUA_GET_INT(state);
 	Vector3d p=g_Game()->GetActorMovement(a)->GetDir();
 	LUA_SET_VECTOR3(state, p);
@@ -1783,8 +1610,7 @@ int ACTOR_GetDir(lua_State *state)
 	}
 
 //How many blocks will we jump more
-int ACTOR_GetJumpDistBlocks(lua_State *state)
-	{
+int ACTOR_GetJumpDistBlocks(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetJumpDistBlocks();
 	LUA_SET_NUMBER(state, res);
@@ -1792,55 +1618,48 @@ int ACTOR_GetJumpDistBlocks(lua_State *state)
 	}
 
 //How many blocks will we jump more
-int ACTOR_SetJumpDistBlocks(lua_State *state)
-	{
+int ACTOR_SetJumpDistBlocks(lua_State *state) {
 	int b=LUA_GET_INT(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetJumpDistBlocks(b);
 	return 0;
 	}
 
-int ACTOR_GetOnSide(lua_State *state)
-	{
+int ACTOR_GetOnSide(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetOnSideID();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_PrevOnSide(lua_State *state)
-	{
+int ACTOR_PrevOnSide(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetPrevOnSideID();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_GetLastOnSide(lua_State *state)
-	{
+int ACTOR_GetLastOnSide(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->GetLastOnSideID();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_NumActors(lua_State *state)
-	{
+int ACTOR_NumActors(lua_State *state) {
 	int res=g_Game()->GetNumActors();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_TraceOnSide(lua_State *state)
-	{
+int ACTOR_TraceOnSide(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actorid)->TraceOnSideID();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_GetRadius(lua_State *state)
-	{
+int ACTOR_GetRadius(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	double rad=g_Game()->GetActorMovement(actorid)->GetRadius();
 	LUA_SET_NUMBER(state, rad);
@@ -1848,8 +1667,7 @@ int ACTOR_GetRadius(lua_State *state)
 
 	}
 
-int ACTOR_SetRadius(lua_State *state)
-	{
+int ACTOR_SetRadius(lua_State *state) {
 	double rad=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetRadius(rad);
@@ -1858,8 +1676,7 @@ int ACTOR_SetRadius(lua_State *state)
 	}
 
 
-int ACTOR_GetGroundOffset(lua_State *state)
-	{
+int ACTOR_GetGroundOffset(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	double rad=g_Game()->GetActorMovement(actorid)->GetGroundOffset();
 	LUA_SET_NUMBER(state, rad);
@@ -1867,8 +1684,7 @@ int ACTOR_GetGroundOffset(lua_State *state)
 
 	}
 
-int ACTOR_SetGroundOffset(lua_State *state)
-	{
+int ACTOR_SetGroundOffset(lua_State *state) {
 	double rad=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetGroundOffset(rad);
@@ -1877,8 +1693,7 @@ int ACTOR_SetGroundOffset(lua_State *state)
 	}
 
 
-int ACTOR_SetJumpTiming(lua_State *state)
-	{
+int ACTOR_SetJumpTiming(lua_State *state) {
 	double latefw=LUA_GET_DOUBLE(state);
 	double fwptj=LUA_GET_DOUBLE(state);
 	double fwpt=LUA_GET_DOUBLE(state);
@@ -1887,8 +1702,7 @@ int ACTOR_SetJumpTiming(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_SetJumpParams(lua_State *state)
-	{
+int ACTOR_SetJumpParams(lua_State *state) {
 	double mspeed=LUA_GET_DOUBLE(state);
 	double grav=LUA_GET_DOUBLE(state);
 	double huv=LUA_GET_DOUBLE(state);
@@ -1901,8 +1715,7 @@ int ACTOR_SetJumpParams(lua_State *state)
 
 	}
 
-int ACTOR_SetJumpDistances(lua_State *state)
-	{
+int ACTOR_SetJumpDistances(lua_State *state) {
 	double huv=LUA_GET_DOUBLE(state);
 	double faruv=LUA_GET_DOUBLE(state);
 	double uv=LUA_GET_DOUBLE(state);
@@ -1912,8 +1725,7 @@ int ACTOR_SetJumpDistances(lua_State *state)
 
 	}
 
-int ACTOR_GetEditorInfo(lua_State *state)
-	{
+int ACTOR_GetEditorInfo(lua_State *state) {
 	std::string def=LUA_GET_STRING(state);
 	std::string what=LUA_GET_STRING(state);
 
@@ -1923,8 +1735,7 @@ int ACTOR_GetEditorInfo(lua_State *state)
 	return 1;
 	}
 
-int ACTOR_SetCamParams(lua_State *state)
-	{
+int ACTOR_SetCamParams(lua_State *state) {
 	Vector3d p=Vector3FromStack(state);
 	std::string what=LUA_GET_STRING(state);
 	int actorid=LUA_GET_INT(state);
@@ -1933,8 +1744,7 @@ int ACTOR_SetCamParams(lua_State *state)
 
 	}
 
-int ACTOR_SetCamZRotation(lua_State *state)
-	{
+int ACTOR_SetCamZRotation(lua_State *state) {
 	int mirr=LUA_GET_INT(state);
 	double rot=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
@@ -1943,8 +1753,7 @@ int ACTOR_SetCamZRotation(lua_State *state)
 
 	}
 
-int ACTOR_GetSpeed(lua_State *state)
-	{
+int ACTOR_GetSpeed(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	double v=g_Game()->GetActorMovement(actorid)->GetSpeed();
 	LUA_SET_NUMBER(state, v);
@@ -1952,8 +1761,7 @@ int ACTOR_GetSpeed(lua_State *state)
 
 	}
 
-int ACTOR_SetSpeed(lua_State *state)
-	{
+int ACTOR_SetSpeed(lua_State *state) {
 	double v=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetSpeed(v);
@@ -1961,16 +1769,14 @@ int ACTOR_SetSpeed(lua_State *state)
 
 	}
 
-int ACTOR_SetRotSpeed(lua_State *state)
-	{
+int ACTOR_SetRotSpeed(lua_State *state) {
 	double v=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetRotSpeed(v);
 	return 0;
 	}
 
-int ACTOR_SetStart(lua_State *state)
-	{
+int ACTOR_SetStart(lua_State *state) {
 	int rot=LUA_GET_INT(state);
 	int sind=LUA_GET_INT(state);
 	int actorid=LUA_GET_INT(state);
@@ -1980,8 +1786,7 @@ int ACTOR_SetStart(lua_State *state)
 	}
 
 
-int ACTOR_InsideLevel(lua_State *state)
-	{
+int ACTOR_InsideLevel(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->PointInBBox(g_Game()->GetActorMovement(actorid)->GetPos());
 	LUA_SET_NUMBER(state, res);
@@ -1989,16 +1794,14 @@ int ACTOR_InsideLevel(lua_State *state)
 
 	}
 
-int ACTOR_CurrentMove(lua_State *state)
-	{
+int ACTOR_CurrentMove(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	std::string s=g_Game()->GetActorMovement(actorid)->GetMoveType();
 	LUA_SET_STRING(state, s);
 	return 1;
 	}
 
-int ACTOR_SetRotateStopTime(lua_State *state)
-	{
+int ACTOR_SetRotateStopTime(lua_State *state) {
 	double def=LUA_GET_DOUBLE(state);
 	double now=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
@@ -2006,16 +1809,14 @@ int ACTOR_SetRotateStopTime(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_SetTemporaryMoveSpeedMultiplier(lua_State *state)
-	{
+int ACTOR_SetTemporaryMoveSpeedMultiplier(lua_State *state) {
 	double mlt=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetTemporaryMoveSpeedMultiplier(mlt);
 	return 0;
 	}
 
-int ACTOR_GetTemporaryMoveSpeedMultiplier(lua_State *state)
-	{
+int ACTOR_GetTemporaryMoveSpeedMultiplier(lua_State *state) {
 
 	int actorid=LUA_GET_INT(state);
 	double mlt=g_Game()->GetActorMovement(actorid)->GetTemporaryMoveSpeedMultiplier();
@@ -2024,82 +1825,67 @@ int ACTOR_GetTemporaryMoveSpeedMultiplier(lua_State *state)
 	}
 
 
-int ACTOR_GetUpVel(lua_State *state)
-	{
+int ACTOR_GetUpVel(lua_State *state) {
 	int actorid=LUA_GET_INT(state);
 	double uv=g_Game()->GetActorMovement(actorid)->GetUpVel();
 	LUA_SET_NUMBER(state, uv);
 	return 1;
 	}
 
-int ACTOR_SetUpVel(lua_State *state)
-	{
+int ACTOR_SetUpVel(lua_State *state) {
 	double uv=LUA_GET_DOUBLE(state);
 	int actorid=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actorid)->SetUpVel(uv);
 	return 0;
 	}
 
-int ACTOR_CallMove(lua_State *state)
-	{
+int ACTOR_CallMove(lua_State *state) {
 	std::string move=LUA_GET_STRING(state);
 	int actorid=LUA_GET_INT(state);
 ///TODO: Get the right actor
 	TCuboMovement *mv=g_Game()->GetActorMovement(actorid);
-	if (move=="forward")
-			{
+	if (move=="forward") {
 			mv->MoveForward();
 			}
-	else if (move=="jump")
-			{
+	else if (move=="jump") {
 			mv->Jump();
 			}
-	else if (move=="jumpup")
-			{
+	else if (move=="jumpup") {
 			mv->JumpUp();
 			}
-	else if (move=="left")
-			{
+	else if (move=="left") {
 			mv->RotateLeft();
 			}
-	else if (move=="right")
-			{
+	else if (move=="right") {
 			mv->RotateRight();
 			}
-	else if (move=="farjump")
-			{
+	else if (move=="farjump") {
 			mv->FarJump();
 			}
-	else if (move=="highjump")
-			{
+	else if (move=="highjump") {
 			mv->HighJump();
 			}
-	else if (move=="lookup")
-			{
+	else if (move=="lookup") {
 			mv->LookUp();
 			}
-	else if (move=="lookdown")
-			{
+	else if (move=="lookdown") {
 			mv->LookDown();
 			}
-	else if (move=="lookreset")
-			{
+	else if (move=="lookreset") {
 			mv->LookReset();
 			}
 	return 0;
 
 	}
 
-int ACTOR_DistanceRender(lua_State *state)
-	{
+int ACTOR_DistanceRender(lua_State *state) {
 	float dist=LUA_GET_DOUBLE(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetLevel()->AddDistRenderItem(actor,DIST_RENDER_ACTOR,dist,state);
 	return 0;
 	}
 
-int ACTOR_ChangeGravity(lua_State *state)
-	{
+int ACTOR_ChangeGravity(lua_State *state) {
 	int do_at_same_grav=LUA_GET_INT(state);
 	double speed=LUA_GET_DOUBLE(state);
 	Vector3d np=Vector3FromStack(state);
@@ -2110,8 +1896,7 @@ int ACTOR_ChangeGravity(lua_State *state)
 	return 1;
 	}
 
-int ACTOR_SetForwardPressTime(lua_State *state)
-	{
+int ACTOR_SetForwardPressTime(lua_State *state) {
 	double fpt=LUA_GET_DOUBLE(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->SetForwardPressTime(fpt);
@@ -2119,24 +1904,21 @@ int ACTOR_SetForwardPressTime(lua_State *state)
 	return 0;
 	}
 
-int ACTOR_GetPlayer(lua_State *state)
-	{
+int ACTOR_GetPlayer(lua_State *state) {
 	int actor=LUA_GET_INT(state);
 	int plr=g_Game()->GetActorMovement(actor)->GetPlayer();
 	LUA_SET_NUMBER(state, plr);
 	return 1;
 	}
 
-int ACTOR_SetSelectable(lua_State *state)
-	{
+int ACTOR_SetSelectable(lua_State *state) {
 	int selectable=LUA_GET_INT(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->SetSelectable(selectable);
 	return 0;
 	}
 
-int ACTOR_SetLookPos(lua_State *state)
-	{
+int ACTOR_SetLookPos(lua_State *state) {
 	float lp=LUA_GET_DOUBLE(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->SetLookPos(lp);
@@ -2144,48 +1926,42 @@ int ACTOR_SetLookPos(lua_State *state)
 	}
 
 
-int ACTOR_GetLookPos(lua_State *state)
-	{
+int ACTOR_GetLookPos(lua_State *state) {
 	int actor=LUA_GET_INT(state);
 	double lp=g_Game()->GetActorMovement(actor)->GetLookPos();
 	LUA_SET_NUMBER(state, lp);
 	return 1;
 	}
 
-int ACTOR_Rebounce(lua_State *state)
-	{
+int ACTOR_Rebounce(lua_State *state) {
 	int oth=LUA_GET_INT(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->Rebounce(g_Game()->GetActorMovement(oth));
 	return 0;
 	}
 
-int ACTOR_SetMovementCheck(lua_State *state)
-	{
+int ACTOR_SetMovementCheck(lua_State *state) {
 	int mv=LUA_GET_INT(state);
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->SetMovementCheck(mv);
 	return 0;
 	}
 
-int ACTOR_GetMovementCheck(lua_State *state)
-	{
+int ACTOR_GetMovementCheck(lua_State *state) {
 	int actor=LUA_GET_INT(state);
 	int res=g_Game()->GetActorMovement(actor)->GetMovementCheck();
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int ACTOR_FrontSideRebounce(lua_State *state)
-	{
+int ACTOR_FrontSideRebounce(lua_State *state) {
 	int actor=LUA_GET_INT(state);
 	g_Game()->GetActorMovement(actor)->FrontSideRebounce();
 	return 0;
 	}
 
 
-void LUA_ACTOR_RegisterLib()
-	{
+void LUA_ACTOR_RegisterLib() {
 	g_CuboLib()->AddFunc("ACTOR_FrontSideRebounce",ACTOR_FrontSideRebounce);
 	g_CuboLib()->AddFunc("ACTOR_GetMovementCheck",ACTOR_GetMovementCheck);
 	g_CuboLib()->AddFunc("ACTOR_SetMovementCheck",ACTOR_SetMovementCheck);
@@ -2247,8 +2023,7 @@ void LUA_ACTOR_RegisterLib()
 
 /////////////////////////////////////////////////////////
 
-int PLAYER_GetVar(lua_State *state)
-	{
+int PLAYER_GetVar(lua_State *state) {
 	int plr=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetPlayer(plr)->GetVarHolder()->GetVar(state);
@@ -2256,40 +2031,35 @@ int PLAYER_GetVar(lua_State *state)
 	}
 
 
-int PLAYER_SetVar(lua_State *state)
-	{
+int PLAYER_SetVar(lua_State *state) {
 	int plr=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetPlayer(plr)->GetVarHolder()->StoreVar(state);
 	return 0;
 	}
 
-int PLAYER_AddActor(lua_State *state)
-	{
+int PLAYER_AddActor(lua_State *state) {
 	int act=LUA_GET_INT(state);
 	int plr=LUA_GET_INT(state);
 	g_Game()->GetPlayer(plr)->AddActor(act);
 	return 0;
 	}
 
-int PLAYER_GetActiveActor(lua_State *state)
-	{
+int PLAYER_GetActiveActor(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->GetActiveActor();
 	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
-int PLAYER_NumActors(lua_State *state)
-	{
+int PLAYER_NumActors(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->NumActors();
 	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
-int PLAYER_GetActor(lua_State *state)
-	{
+int PLAYER_GetActor(lua_State *state) {
 	int act=LUA_GET_INT(state);
 	int plr=LUA_GET_INT(state);
 	act=g_Game()->GetPlayer(plr)->GetActor(act);
@@ -2297,32 +2067,28 @@ int PLAYER_GetActor(lua_State *state)
 	return 1;
 	}
 
-int PLAYER_NextActor(lua_State *state)
-	{
+int PLAYER_NextActor(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->NextActor();
 	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
-int PLAYER_InCameraPan(lua_State *state)
-	{
+int PLAYER_InCameraPan(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	int act=g_Game()->GetPlayer(plr)->InCameraPan();
 	LUA_SET_NUMBER(state, act);
 	return 1;
 	}
 
-int PLAYER_SetCameraSpeed(lua_State *state)
-	{
+int PLAYER_SetCameraSpeed(lua_State *state) {
 	float speed=LUA_GET_DOUBLE(state);
 	int plr=LUA_GET_INT(state);
 	g_Game()->GetPlayer(plr)->SetCamSpeed(speed);
 	return 0;
 	}
 
-int PLAYER_SelectActor(lua_State *state)
-	{
+int PLAYER_SelectActor(lua_State *state) {
 	int aid=LUA_GET_INT(state);
 	int plr=LUA_GET_INT(state);
 	aid=g_Game()->GetPlayer(plr)->SelectActor(aid);
@@ -2330,16 +2096,14 @@ int PLAYER_SelectActor(lua_State *state)
 	return 1;
 	}
 
-int PLAYER_GetLastActiveActor(lua_State *state)
-	{
+int PLAYER_GetLastActiveActor(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	plr=g_Game()->GetPlayer(plr)->GetLastActiveActor();
 	LUA_SET_NUMBER(state, plr);
 	return 1;
 	}
 
-int PLAYER_GetCamInterpolation(lua_State *state)
-	{
+int PLAYER_GetCamInterpolation(lua_State *state) {
 	int plr=LUA_GET_INT(state);
 	double ci=g_Game()->GetPlayer(plr)->GetCamInterpolation();
 	LUA_SET_NUMBER(state, ci);
@@ -2347,8 +2111,7 @@ int PLAYER_GetCamInterpolation(lua_State *state)
 	}
 
 
-void LUA_PLAYER_RegisterLib()
-	{
+void LUA_PLAYER_RegisterLib() {
 	g_CuboLib()->AddFunc("PLAYER_GetVar",PLAYER_GetVar);
 	g_CuboLib()->AddFunc("PLAYER_SetVar",PLAYER_SetVar);
 	g_CuboLib()->AddFunc("PLAYER_AddActor",PLAYER_AddActor);

@@ -24,8 +24,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "vectors.hpp"
 #include "filesystem.hpp"
 
-inline std::string LUA_GET_STRING(lua_State* state) // Complicated due to zero-terminators and garbage collection
-	{
+inline std::string LUA_GET_STRING(lua_State* state) { // Complicated due to zero-terminators and garbage collection
 	size_t len;
 	auto pointer = lua_tolstring(state, -1, &len);
 	auto str = std::string(pointer, len);
@@ -33,47 +32,40 @@ inline std::string LUA_GET_STRING(lua_State* state) // Complicated due to zero-t
 	return str;
 	}
 
-inline bool LUA_GET_BOOL(lua_State* state)
-	{
+inline bool LUA_GET_BOOL(lua_State* state) {
 	bool res = lua_toboolean(state,-1);
 	lua_pop(state,1);
 	return res;
 	}
 
-inline int LUA_GET_INT(lua_State* state)
-	{
+inline int LUA_GET_INT(lua_State* state) {
 	int res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
 	}
 
-inline unsigned long int LUA_GET_ULINT(lua_State* state)
-	{
+inline unsigned long int LUA_GET_ULINT(lua_State* state) {
 	unsigned long int res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
 	}
 
 
-inline double LUA_GET_DOUBLE(lua_State* state)
-	{
+inline double LUA_GET_DOUBLE(lua_State* state) {
 	double res = lua_tonumber(state,-1);
 	lua_pop(state,1);
 	return res;
 	}
 
-inline void LUA_SET_NUMBER(lua_State* state, const lua_Number& num)
-	{
+inline void LUA_SET_NUMBER(lua_State* state, const lua_Number& num) {
 	lua_pushnumber(state,num);
 	}
 
-inline void LUA_SET_STRING(lua_State* state, const std::string& str)
-	{
+inline void LUA_SET_STRING(lua_State* state, const std::string& str) {
 	lua_pushlstring(state,str.c_str(),str.length());
 	}
 
-inline void LUA_SET_VECTOR3(lua_State* state, const Vector3d& v)
-	{
+inline void LUA_SET_VECTOR3(lua_State* state, const Vector3d& v) {
 	lua_newtable(state);
 	lua_pushstring(state, "x");
 	lua_pushnumber(state, v.x);
@@ -86,8 +78,7 @@ inline void LUA_SET_VECTOR3(lua_State* state, const Vector3d& v)
 	lua_settable(state, -3);
 	}
 
-inline void LUA_SET_COLOR(lua_State* state, const Vector4d& v)
-	{
+inline void LUA_SET_COLOR(lua_State* state, const Vector4d& v) {
 	lua_newtable(state);
 	lua_pushstring(state, "r");
 	lua_pushnumber(state, v.x);
@@ -109,8 +100,7 @@ extern float getfloatfield (lua_State *L, const char *key);
 
 class LuaCFunctions;
 
-class LuaBaseVar
-	{
+class LuaBaseVar {
 	protected:
 		std::string myname;
 	public:
@@ -122,8 +112,7 @@ class LuaBaseVar
 		virtual std::string GetVarString(int forscript=1) {return "";}
 	};
 
-class LuaNumberVar : public LuaBaseVar
-	{
+class LuaNumberVar : public LuaBaseVar {
 	protected:
 		double var;
 	public:
@@ -138,8 +127,7 @@ class LuaNumberVar : public LuaBaseVar
 			}
 	};
 
-class LuaStringVar : public LuaBaseVar
-	{
+class LuaStringVar : public LuaBaseVar {
 	protected:
 		std::string var;
 
@@ -151,8 +139,7 @@ class LuaStringVar : public LuaBaseVar
 		virtual std::string GetVarString(int forscript=1) {if (forscript) return "\""+var+"\""; else return var;}
 	};
 
-class LuaVarHolder //Used to encapsulate member values for items etc.
-	{
+class LuaVarHolder { //Used to encapsulate member values for items etc.
 	protected:
 		std::vector<LuaBaseVar*> vars;
 		virtual LuaBaseVar **RefForStore(std::string name);
@@ -174,8 +161,7 @@ class LuaVarHolder //Used to encapsulate member values for items etc.
 
 extern LuaVarHolder* g_Vars();
 
-class LuaAccess
-	{
+class LuaAccess {
 	protected:
 		lua_State *state;
 		std::string errorstring;
@@ -209,8 +195,7 @@ class LuaAccess
 
 
 
-using LuaCFunc = struct
-	{
+using LuaCFunc = struct {
 	std::string name;
 	lua_CFunction func;
 	};
@@ -220,8 +205,7 @@ using LuaCFunc = struct
 //Simply Add it in the Constructor
 
 
-class LuaCFunctions
-	{
+class LuaCFunctions {
 	protected:
 		std::vector<LuaCFunc> funcs;
 		// TLuaAccess *access;
@@ -234,8 +218,7 @@ class LuaCFunctions
 
 
 
-class LuaCuboLib : public LuaCFunctions
-	{
+class LuaCuboLib : public LuaCFunctions {
 	protected:
 
 		static int LOG_Mode(lua_State *state);

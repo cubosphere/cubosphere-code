@@ -35,8 +35,7 @@ class SpriteEnvironments;
 
 
 
-class SpriteEnvironment
-	{
+class SpriteEnvironment {
 	protected:
 		friend class SpriteEnvironments;
 		friend class SpriteEmitter;
@@ -69,8 +68,7 @@ class SpriteEnvironment
 	};
 
 
-using Sprite = struct
-	{
+using Sprite = struct {
 	int typ;
 	Vector3d pos,vel;
 	Vector4d col;
@@ -86,8 +84,7 @@ using Sprite = struct
 
 //: public TSprite :: EMITTER KEIN SPRITE... Notfalls einen ortsfesten SPRITE erstellen und adden
 
-class SpriteEmitter
-	{
+class SpriteEmitter {
 	protected:
 		int id;
 		SpriteEnvironment *env;
@@ -137,8 +134,7 @@ class SpriteEmitter
 
 ////////////////////////////////////
 
-class InterpolationFunction
-	{
+class InterpolationFunction {
 	protected:
 		double p1,p2,p3,p4; //Parameters
 		int clampmode; //0: Clamped, 1:Periodic
@@ -151,21 +147,18 @@ class InterpolationFunction
 		virtual double GetValue(double arg) {return Clamp(arg);}
 	};
 
-class InterpolationFunctionConst: public InterpolationFunction
-	{
+class InterpolationFunctionConst: public InterpolationFunction {
 	public:
 		InterpolationFunctionConst(double c) : InterpolationFunction(c) {}
 		virtual double GetValue(double arg) {return p1;}
 	};
 
-class InterpolationFunctionLinear: public InterpolationFunction
-	{
+class InterpolationFunctionLinear: public InterpolationFunction {
 	public:
 		virtual double GetValue(double arg) {arg=Clamp(arg); if (arg<=p1) return p3; if (arg>=p2) return p4; return (p4-p3)/(p2-p1)*(arg-p1)+p3;  }
 	};
 
-class InterpolationFunctionSin: public InterpolationFunction
-	{
+class InterpolationFunctionSin: public InterpolationFunction {
 	public:
 		virtual double GetValue(double arg) {arg=Clamp(arg); return p1*sin(6.28318531*(p2*arg+p3))+p4;  }
 	};
@@ -173,8 +166,7 @@ class InterpolationFunctionSin: public InterpolationFunction
 
 class ParticleDef;
 
-class SpriteDef
-	{
+class SpriteDef {
 	protected:
 		friend class ParticleDef;
 		friend class SpriteEmitter;
@@ -206,8 +198,7 @@ class SpriteDef
 		void Render(Sprite &s);
 	};
 
-class ParticleDef : public BaseLuaDef
-	{
+class ParticleDef : public BaseLuaDef {
 	protected:
 		std::vector<SpriteDef*> spritedefs;
 		virtual int SendIDWhenPrecache() {return 1;}
@@ -227,8 +218,7 @@ extern ParticleDefServer * g_ParticleDefs();
 //////////////////
 
 
-class SpriteEnvironments
-	{
+class SpriteEnvironments {
 	protected:
 		std::vector<SpriteEnvironment*> envs;
 		std::vector<SpriteEmitter*> renderemitters; //Storing all emitters, that are in the current frustum
@@ -249,8 +239,7 @@ extern SpriteEnvironments * g_SpriteEnvs();
 //////////////////
 
 
-class LuaParticleLib : public LuaCFunctions
-	{
+class LuaParticleLib : public LuaCFunctions {
 	protected:
 
 	public:

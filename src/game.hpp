@@ -27,8 +27,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "models.hpp"
 #include "fonts.hpp"
 
-class Game
-	{
+class Game {
 	protected:
 		//It owns a cam, a texture server and input devices
 		int AntiAliasing;
@@ -86,14 +85,12 @@ class Game
 		virtual void SetMaxPhysElapsed(double t) {if (t>0) maxphyselapsed=t; else maxphyselapsed=100000;}
 	};
 
-class CuboBasis : public WorldObject
-	{
+class CuboBasis : public WorldObject {
 	public:
 		virtual void InvertMatrix();
 	};
 
-class CuboGame : public Game
-	{
+class CuboGame : public Game {
 	protected:
 		int freecam;
 		std::vector<TCuboMovement*> move;

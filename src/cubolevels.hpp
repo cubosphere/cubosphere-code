@@ -30,16 +30,14 @@ if not, see <http://www.gnu.org/licenses/>.
 #define DIST_RENDER_CUSTOM 4
 
 
-using TraceResult = struct
-	{
+using TraceResult = struct {
 	int hit;
 	float dist;
 	int block;
 	int side;
 	};
 
-class DistRenderObj
-	{
+class DistRenderObj {
 	protected:
 		float dist;
 		int id; //The id to the object
@@ -63,8 +61,7 @@ class DistRenderObj
 		void SpecialRender(Camera *cam,std::string nam,int defrender);
 	};
 
-class CuboLevel
-	{
+class CuboLevel {
 	protected:
 		std::vector<CuboBlock*> blocks;
 		std::vector<CuboItem*> items;

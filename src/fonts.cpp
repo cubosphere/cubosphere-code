@@ -49,8 +49,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define FONT_SIZE 40
 #define V_DIST_FACTOR 1.2
 
-void SizedFont::DestructFont()
-	{
+void SizedFont::DestructFont() {
 	if (font) {
 			size=0;
 			TTF_CloseFont(font);
@@ -59,8 +58,7 @@ void SizedFont::DestructFont()
 
 
 //Currently not in use!!
-int SizedFont::Load(SDL_RWops *rwops,int fontsize)
-	{
+int SizedFont::Load(SDL_RWops *rwops,int fontsize) {
 	DestructFont();
 	SDL_RWseek(rwops,0,SEEK_SET);
 	if(!(font = TTF_OpenFontRW(rwops,1, fontsize))) {
@@ -72,8 +70,7 @@ int SizedFont::Load(SDL_RWops *rwops,int fontsize)
 	return 1;
 	}
 
-int SizedFont::Load(std::string fontname,int fontsize)
-	{
+int SizedFont::Load(std::string fontname,int fontsize) {
 	DestructFont();
 	CuboFile * finfo=GetFileName(fontname,FILE_FONT,".ttf");
 	if (!finfo) {
@@ -95,13 +92,10 @@ int SizedFont::Load(std::string fontname,int fontsize)
 	return 1;
 	}
 
-SizedFont* LoadedFont::GetSized(int dessize)
-	{
+SizedFont* LoadedFont::GetSized(int dessize) {
 	//First attempt: The font should be the exactly right size   ///Later: add a delta value
-	for (unsigned int i=0; i<sized.size(); i++)
-			{
-			if (sized[i])
-					{
+	for (unsigned int i=0; i<sized.size(); i++) {
+			if (sized[i]) {
 					if (sized[i]->GetSize()==dessize) { return sized[i]; }
 					}
 			}
@@ -114,8 +108,7 @@ SizedFont* LoadedFont::GetSized(int dessize)
 	return n;
 	}
 
-int LoadedFont::Load(std::string fontname)
-	{
+int LoadedFont::Load(std::string fontname) {
 	if (fontname==fname) { return 1; }
 	Clear();
 	fname=fontname;
@@ -125,8 +118,7 @@ int LoadedFont::Load(std::string fontname)
 	}
 
 
-int LoadedFont::Prepare()
-	{
+int LoadedFont::Prepare() {
 	for (auto& font: g_FontSizes)
 		if (!GetSized(font)) { return 0; }
 
@@ -134,10 +126,8 @@ int LoadedFont::Prepare()
 	}
 
 
-void LoadedFont::Clear()
-	{
-	for (unsigned int i=0; i<sized.size(); i++)
-			{
+void LoadedFont::Clear() {
+	for (unsigned int i=0; i<sized.size(); i++) {
 			if (sized[i]) { delete sized[i]; }
 			sized[i]=NULL;
 			}
@@ -146,12 +136,10 @@ void LoadedFont::Clear()
 	}
 
 
-SizedFont *LoadedFont::GetBestFont(int pixelsize)
-	{
+SizedFont *LoadedFont::GetBestFont(int pixelsize) {
 	int best=-1;
 	int mindev=100000;
-	for (unsigned i=0; i<sized.size(); i++)
-			{
+	for (unsigned i=0; i<sized.size(); i++) {
 
 			int dev=sized[i]->GetSize()-pixelsize;
 			if (dev<0) { dev=-dev; }
@@ -165,8 +153,7 @@ SizedFont *LoadedFont::GetBestFont(int pixelsize)
 	}
 
 
-void FontCache::Clear()
-	{
+void FontCache::Clear() {
 	if (!initialized) { return; }
 //cout << "Clearing Font Cache " << endl;
 	glFinish();
@@ -179,14 +166,12 @@ void FontCache::Clear()
 double round(double x) {return (double)((int)(x+0.5));}
 #endif
 
-int nextpoweroftwo(int x)
-	{
+int nextpoweroftwo(int x) {
 	double logbase2 = log((double)x) / log((double)2);
 	return (int)round(pow(2,ceil(logbase2)));
 	}
 
-void FontCache::Setup(LoadedFont *font,std::string text,int size)
-	{
+void FontCache::Setup(LoadedFont *font,std::string text,int size) {
 	Clear();
 	mysize=size;
 	myfontname=font->GetName();
@@ -244,10 +229,8 @@ void FontCache::Setup(LoadedFont *font,std::string text,int size)
 	}
 
 
-void FontCaches::Clear()
-	{
-	for (unsigned int i=0; i<caches.size(); i++)
-			{
+void FontCaches::Clear() {
+	for (unsigned int i=0; i<caches.size(); i++) {
 			if (caches[i]) {
 					delete caches[i];
 					caches[i]=NULL;
@@ -256,11 +239,9 @@ void FontCaches::Clear()
 	caches.resize(0);
 	}
 
-FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size)
-	{
+FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size) {
 
-	for (unsigned int i=0; i<caches.size(); i++)
-			{
+	for (unsigned int i=0; i<caches.size(); i++) {
 			if (caches[i]->IsTheSame(font->GetName(),text,size)) {  caches[i]->SetTime(g_Game()->GetTime()); return caches[i]; }
 			}
 	//Test if we can add a surf
@@ -269,15 +250,12 @@ FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size)
 			FontCache *n=new FontCache();
 			caches.push_back(n);
 			}
-	else
-			{
+	else {
 			//Oh, no slot left... search the one which is the oldest one
 			double MinTime=g_Game()->GetTime();
 			index=0;
-			for (unsigned int i=0; i<caches.size(); i++)
-					{
-					if (caches[i]->GetTime()<MinTime)
-							{
+			for (unsigned int i=0; i<caches.size(); i++) {
+					if (caches[i]->GetTime()<MinTime) {
 							index=i;
 							MinTime=caches[i]->GetTime();
 							}
@@ -291,8 +269,7 @@ FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size)
 
 	}
 
-void Font::RenderText(std::string text)
-	{
+void Font::RenderText(std::string text) {
 	FontCache* c=cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
 
 	//glEnable(GL_TEXTURE_2D);
@@ -340,10 +317,8 @@ void Font::RenderText(std::string text)
 	}
 
 
-void Font::Init()
-	{
-	if(TTF_Init())
-			{
+void Font::Init() {
+	if(TTF_Init()) {
 			std::ostringstream os;
 			os <<"FONT ERROR: " << TTF_GetError();
 			coutlog(os.str(),1);
@@ -353,18 +328,15 @@ void Font::Init()
 
 	}
 
-void Font::Load(std::string textname)
-	{
-	if (textname!=cname)
-			{
+void Font::Load(std::string textname) {
+	if (textname!=cname) {
 			font.Load(textname);
 			cname=textname;
 			}
 	}
 
 
-void Font::Begin()
-	{
+void Font::Begin() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-0.5,0.5,-0.5,0.5,0,128);
@@ -375,16 +347,14 @@ void Font::Begin()
 //glFinish();
 	}
 
-void Font::End()
-	{
+void Font::End() {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	}
 
-void Font::TextOut(std::string s)
-	{
+void Font::TextOut(std::string s) {
 
 	s=RemapString(s);
 	std::vector<std::string> lines;
@@ -395,8 +365,7 @@ void Font::TextOut(std::string s)
 	else if (valign=="center") { ypos-=scaley/2.0-hoffs/2.0; }
 	else if (valign=="bottom") { ypos+=hoffs; }
 
-	for (unsigned int l=0; l<lines.size(); l++)
-			{
+	for (unsigned int l=0; l<lines.size(); l++) {
 			s=lines[l];
 
 			/*        	SDL_Rect position;
@@ -410,8 +379,7 @@ void Font::TextOut(std::string s)
 			}
 	}
 
-std::string Font::RemapString(std::string s)
-	{
+std::string Font::RemapString(std::string s) {
 
 	///SENSELESS
 	return s;
@@ -419,21 +387,17 @@ std::string Font::RemapString(std::string s)
 
 	size_t pos=0;
 
-	while (1)
-			{
+	while (1) {
 			size_t minpos=std::string::npos;
 			unsigned int minind=0;
-			for (unsigned int r=0; r<remaps.size(); r++)
-					{
+			for (unsigned int r=0; r<remaps.size(); r++) {
 					size_t p=s.find(remaps[r].oldc,pos);
-					if (p!=std::string::npos)
-							{
+					if (p!=std::string::npos) {
 							minpos=p;
 							minind=r;
 							}
 					}
-			if (minpos==std::string::npos)
-					{
+			if (minpos==std::string::npos) {
 					//Finished
 					return s;
 					}
@@ -443,8 +407,7 @@ std::string Font::RemapString(std::string s)
 			}
 	}
 
-void Font::SetSize(float s)
-	{
+void Font::SetSize(float s) {
 	float ratio=g_Game()->GetScreenSize().u/g_Game()->GetScreenSize().v;
 	if (ratio<=640.0 / 480.0) {
 			scalex=s;
@@ -457,26 +420,22 @@ void Font::SetSize(float s)
 	}
 
 
-void Font::ClearCache()
-	{
+void Font::ClearCache() {
 	cache.Clear();
 	}
 
 
-void Font::StopFontEngine()
-	{
+void Font::StopFontEngine() {
 	ClearCache();
 	ClearRemaps();
 	font.Clear();
 	}
 
-void Font::ClearRemaps()
-	{
+void Font::ClearRemaps() {
 	remaps.resize(0);
 	}
 
-void Font::AddRemap(std::string oldc,std::string newc)
-	{
+void Font::AddRemap(std::string oldc,std::string newc) {
 	FontRemap nr;
 	nr.oldc=oldc;
 	nr.newc=newc;
@@ -488,65 +447,56 @@ void Font::AddRemap(std::string oldc,std::string newc)
 ////////////////////LUA-ACCESS//////////////////7
 
 
-int FONT_Begin(lua_State *state)
-	{
+int FONT_Begin(lua_State *state) {
 	g_Game()->GetFont()->Begin();
 	return 0;
 	}
 
-int FONT_ClearRemaps(lua_State *state)
-	{
+int FONT_ClearRemaps(lua_State *state) {
 	g_Game()->GetFont()->ClearRemaps();
 	return 0;
 	}
 
-int FONT_AddRemap(lua_State *state)
-	{
+int FONT_AddRemap(lua_State *state) {
 	std::string to=LUA_GET_STRING(state);
 	std::string from=LUA_GET_STRING(state);
 	g_Game()->GetFont()->AddRemap(from,to);
 	return 0;
 	}
 
-int FONT_End(lua_State *state)
-	{
+int FONT_End(lua_State *state) {
 	g_Game()->GetFont()->End();
 	return 0;
 	}
 
-int FONT_SetSize(lua_State *state)
-	{
+int FONT_SetSize(lua_State *state) {
 	float size=LUA_GET_DOUBLE(state);
 	g_Game()->GetFont()->SetSize(size);
 	return 0;
 	}
 
-int FONT_Goto(lua_State *state)
-	{
+int FONT_Goto(lua_State *state) {
 	float y=LUA_GET_DOUBLE(state);
 	float x=LUA_GET_DOUBLE(state);
 	g_Game()->GetFont()->Goto(x,y);
 	return 0;
 	}
 
-int FONT_Load(lua_State *state)
-	{
+int FONT_Load(lua_State *state) {
 	std::string n=LUA_GET_STRING(state);
 
 	g_Game()->GetFont()->Load(n);
 	return 0;
 	}
 
-int FONT_SetAlign(lua_State *state)
-	{
+int FONT_SetAlign(lua_State *state) {
 	std::string v=LUA_GET_STRING(state);
 	std::string h=LUA_GET_STRING(state);
 	g_Game()->GetFont()->SetAlign(h,v);
 	return 0;
 	}
 
-int FONT_TextOut(lua_State *state)
-	{
+int FONT_TextOut(lua_State *state) {
 	std::string n=LUA_GET_STRING(state);
 	g_Game()->GetFont()->TextOut(n);
 	return 0;
@@ -556,8 +506,7 @@ int FONT_TextOut(lua_State *state)
 
 
 
-void LUA_FONT_RegisterLib()
-	{
+void LUA_FONT_RegisterLib() {
 	g_CuboLib()->AddFunc("FONT_Begin",FONT_Begin);
 	g_CuboLib()->AddFunc("FONT_End",FONT_End);
 	g_CuboLib()->AddFunc("FONT_Load",FONT_Load);

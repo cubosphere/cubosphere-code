@@ -59,8 +59,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 CuboGame game;
 
-void MakeConsole()
-	{
+void MakeConsole() {
 #ifdef WIN32
 
 	freopen("CON", "wb", stdout);
@@ -69,8 +68,7 @@ void MakeConsole()
 #endif
 	}
 
-void KillConsole()
-	{
+void KillConsole() {
 #ifdef WIN32
 
 	fflush(stdout);
@@ -81,8 +79,7 @@ void KillConsole()
 #endif
 	}
 
-int main(int argc, char *argv[])
-	{
+int main(int argc, char *argv[]) {
 	SetCmdLine(argc,argv);
 	std::string dir = dirname(argv[0]);
 

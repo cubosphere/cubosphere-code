@@ -47,8 +47,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include"luautils.hpp"
 #include"game.hpp"
 
-SDLKey Keyboard::GetKeyConstFor(std::string keyname)
-	{
+SDLKey Keyboard::GetKeyConstFor(std::string keyname) {
 	if (keyname=="return") { return SDLK_RETURN; }
 	else if (keyname=="space") { return SDLK_SPACE; }
 	if (keyname=="uparrow") { return SDLK_UP; }
@@ -194,8 +193,7 @@ SDLKey Keyboard::GetKeyConstFor(std::string keyname)
 	}
 
 
-void Keyboard::Init()
-	{
+void Keyboard::Init() {
 //Create the keys
 	rep_start_time=0;
 	rep_rep_time=0;
@@ -204,18 +202,14 @@ void Keyboard::Init()
 	pressedtime.resize(keynum,0);
 	}
 
-void Keyboard::HandleKeys()
-	{
+void Keyboard::HandleKeys() {
 	double el=g_Game()->GetElapsed();
-	for (int i=0; i<keynum; i++)
-			{
-			if ((keydown[i]) || (downbefore[i]))
-					{
+	for (int i=0; i<keynum; i++) {
+			if ((keydown[i]) || (downbefore[i])) {
 					bool toggle=((keydown[i]) && !(downbefore[i]));
 
 					if (rep_start_time>0) {
-							if (pressedtime[i]>rep_start_time)
-									{
+							if (pressedtime[i]>rep_start_time) {
 									if (i!=SDLK_RSHIFT && i!=SDLK_LSHIFT && i!=SDLK_LCTRL && i!=SDLK_RSHIFT && i!=SDLK_RCTRL && i!=SDLK_LALT && i!=SDLK_RALT && i!=SDLK_CAPSLOCK && i!=SDLK_NUMLOCK)
 										while (pressedtime[i]>rep_start_time+rep_rep_time) { toggle=1; pressedtime[i]-=rep_rep_time;}
 
@@ -234,32 +228,26 @@ void Keyboard::HandleKeys()
 			}
 	}
 
-void Keyboard::StartTextInput()
-	{
+void Keyboard::StartTextInput() {
 	SDL_EnableUNICODE(SDL_ENABLE);
 	textinputmode=1;
 	}
 
-void Keyboard::StopTextInput()
-	{
+void Keyboard::StopTextInput() {
 	SDL_EnableUNICODE(SDL_DISABLE);
 	textinputmode=0;
 	}
 
-void Keyboard::DispatchEvent(SDL_Event *ev)
-	{
+void Keyboard::DispatchEvent(SDL_Event *ev) {
 	if (!textinputmode) { return; }
-	if (ev->type==SDL_KEYDOWN)
-			{
+	if (ev->type==SDL_KEYDOWN) {
 			lastkeysim=ev->key.keysym;
 			}
 	}
 
-std::string Keyboard::GetKeyName(int key)
-	{
+std::string Keyboard::GetKeyName(int key) {
 	std::string result="";
-	switch (key)
-			{
+	switch (key) {
 			case SDLK_BACKSPACE : result="backspace"; break;
 			case SDLK_TAB : result="tab"; break;
 			case SDLK_CLEAR : result="clear"; break;
@@ -406,16 +394,14 @@ std::string Keyboard::GetKeyName(int key)
 ////////////LUA-IMPLEMENT////////////7
 
 
-int KEYB_GetKeyConst(lua_State *state)
-	{
+int KEYB_GetKeyConst(lua_State *state) {
 	std::string k=LUA_GET_STRING(state);
 	SDLKey res=  g_Game()->GetKeyboard()->GetKeyConstFor(k);
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int KEYB_GetKeyName(lua_State *state)
-	{
+int KEYB_GetKeyName(lua_State *state) {
 	int k=LUA_GET_INT(state);
 	std::string s=  g_Game()->GetKeyboard()->GetKeyName(k);
 	LUA_SET_STRING(state, s);
@@ -423,8 +409,7 @@ int KEYB_GetKeyName(lua_State *state)
 	}
 
 
-void LUA_KEYB_RegisterLib()
-	{
+void LUA_KEYB_RegisterLib() {
 	g_CuboLib()->AddFunc("KEYB_GetKeyConst",KEYB_GetKeyConst);
 	g_CuboLib()->AddFunc("KEYB_GetKeyName",KEYB_GetKeyName);
 	}

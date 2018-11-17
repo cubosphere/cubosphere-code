@@ -40,45 +40,38 @@ if not, see <http://www.gnu.org/licenses/>.
 
 Mouse *g_Mouse;
 
-void Mouse::BeginDispatch()
-	{
+void Mouse::BeginDispatch() {
 	dx=0;
 	dy=0;
 	}
 
-void Mouse::SetButtonHandler(MouseButtonFunc f)
-	{
+void Mouse::SetButtonHandler(MouseButtonFunc f) {
 	buttonfunc=f;
 	}
 
-void Mouse::HandleClick(int butt,int press,int x,int y)
-	{
+void Mouse::HandleClick(int butt,int press,int x,int y) {
 	buttons[butt].pressed=!press;
 	if (buttons[butt].pressed) { buttons[butt].lastx=x; buttons[butt].lasty=y; }
 	else  { buttons[butt].relx=x; buttons[butt].rely=y; }
 	if (buttonfunc) { buttonfunc(butt,press,x,y); }
 	}
 
-MouseButton Mouse::GetButton(int i)
-	{
+MouseButton Mouse::GetButton(int i) {
 
 	if ((i==3) || (i==4)) { buttons[i].pressed=0; }
 
 	return buttons[i];
 	}
 
-void Mouse::DispatchEvent(SDL_Event *ev)
-	{
+void Mouse::DispatchEvent(SDL_Event *ev) {
 	if (CuboConsole::GetInstance()->IsActive()) { return ; }
 
-	if (ev->type==SDL_MOUSEMOTION)
-			{
+	if (ev->type==SDL_MOUSEMOTION) {
 			dx+=ev->motion.xrel;
 			dy+=ev->motion.yrel;
 ///TODO: allow buttons etc.
 			}
-	else if (ev->type==SDL_MOUSEBUTTONDOWN)
-			{
+	else if (ev->type==SDL_MOUSEBUTTONDOWN) {
 
 			//int bt;
 			//if (ev->button.button== SDL_BUTTON_LEFT) bt=0;
@@ -86,8 +79,7 @@ void Mouse::DispatchEvent(SDL_Event *ev)
 
 			buttons[ev->button.button-1].pressed=1;
 			}
-	else if (ev->type==SDL_MOUSEBUTTONUP)
-			{
+	else if (ev->type==SDL_MOUSEBUTTONUP) {
 			int bt=ev->button.button-1;
 			//if (ev->button.button == SDL_BUTTON_LEFT) bt=0;
 			//else bt=1;
@@ -97,13 +89,11 @@ void Mouse::DispatchEvent(SDL_Event *ev)
 			}
 	}
 
-void Mouse::CenterPointer()
-	{
+void Mouse::CenterPointer() {
 
 	}
 
-void Mouse::Initialize()
-	{
+void Mouse::Initialize() {
 	snapping=0;
 	g_Mouse=this;
 	WarpMode=1;
@@ -116,8 +106,7 @@ void Mouse::Initialize()
 	SDL_ShowCursor(SDL_DISABLE);
 	}
 
-void Mouse::HandleMotion(int cx,int cy,int cpassive)
-	{
+void Mouse::HandleMotion(int cx,int cy,int cpassive) {
 	if (CuboConsole::GetInstance()->IsActive()) { return ; }
 
 	dx+=cx-x;
@@ -127,27 +116,22 @@ void Mouse::HandleMotion(int cx,int cy,int cpassive)
 
 	}
 
-void Mouse::SetCursor(int curs)
-	{
+void Mouse::SetCursor(int curs) {
 
 	}
 
-Vector2d Mouse::getRelativeMotion()
-	{
+Vector2d Mouse::getRelativeMotion() {
 	Vector2d res(dx,dy);
 	return res;
 	}
 
-void Mouse::Snap(int active)
-	{
-	if (active)
-			{
+void Mouse::Snap(int active) {
+	if (active) {
 			SDL_WM_GrabInput(SDL_GRAB_ON);
 			snapping=1;
 			getRelativeMotion();
 			}
-	else
-			{
+	else {
 			snapping=0;
 			SDL_WM_GrabInput(SDL_GRAB_OFF);
 			}
@@ -158,8 +142,7 @@ void Mouse::Snap(int active)
 ////////////////LUA-IMPLEMENT///////////////
 
 
-int MOUSE_GetState(lua_State *state)
-	{
+int MOUSE_GetState(lua_State *state) {
 	Vector2d dxy=g_Game()->GetMouse()->getRelativeMotion();
 	lua_newtable(state);
 	lua_pushstring(state, "dx");
@@ -192,15 +175,13 @@ int MOUSE_GetState(lua_State *state)
 	return 1;
 	}
 
-int MOUSE_Snap(lua_State *state)
-	{
+int MOUSE_Snap(lua_State *state) {
 	int s=LUA_GET_INT(state);
 	g_Game()->GetMouse()->Snap(s);
 	return 0;
 	}
 
-void LUA_MOUSE_RegisterLib()
-	{
+void LUA_MOUSE_RegisterLib() {
 	g_CuboLib()->AddFunc("MOUSE_GetState",MOUSE_GetState);
 	g_CuboLib()->AddFunc("MOUSE_Snap",MOUSE_Snap);
 	}

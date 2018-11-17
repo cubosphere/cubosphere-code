@@ -21,8 +21,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define CUBO_CONSOLE_MAX_LINES 512
 
-class CuboConsole
-	{
+class CuboConsole {
 	protected:
 		bool isactive;
 		std::vector<std::string> lines;

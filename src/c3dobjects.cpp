@@ -39,8 +39,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-void MatrixObject::CopyBasis(MatrixObject *other)
-	{
+void MatrixObject::CopyBasis(MatrixObject *other) {
 	OnBaseWillChange();
 	base.Copy(other->base);
 	setPos(other->getPos());
@@ -48,8 +47,7 @@ void MatrixObject::CopyBasis(MatrixObject *other)
 	OnBaseChange();
 	}
 
-void MatrixObject::setBasis(const Vector3d side,const Vector3d up,const Vector3d dir)
-	{
+void MatrixObject::setBasis(const Vector3d side,const Vector3d up,const Vector3d dir) {
 	OnBaseWillChange();
 	base.setCol(0,side);
 	base.setCol(1,up);
@@ -60,8 +58,7 @@ void MatrixObject::setBasis(const Vector3d side,const Vector3d up,const Vector3d
 	OnBaseChange();
 	}
 
-void MatrixObject::setSide(const Vector3d& side)
-	{
+void MatrixObject::setSide(const Vector3d& side) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	base.setCol(0,side);
@@ -71,8 +68,7 @@ void MatrixObject::setSide(const Vector3d& side)
 	OnBaseChange();
 	}
 
-void MatrixObject::setUp(const Vector3d& up)
-	{
+void MatrixObject::setUp(const Vector3d& up) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	base.setCol(1,up);
@@ -82,8 +78,7 @@ void MatrixObject::setUp(const Vector3d& up)
 	OnBaseChange();
 	}
 
-void MatrixObject::setDir(const Vector3d& dir)
-	{
+void MatrixObject::setDir(const Vector3d& dir) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	base.setCol(2,dir);
@@ -93,15 +88,13 @@ void MatrixObject::setDir(const Vector3d& dir)
 	OnBaseChange();
 	}
 
-void MatrixObject::setPos(const Vector3d& pos)
-	{
+void MatrixObject::setPos(const Vector3d& pos) {
 	vPos=pos;
 	changed=1;
 	numOps++;
 	}
 
-void MatrixObject::orthonomalize()
-	{
+void MatrixObject::orthonomalize() {
 	numOps=0;
 	return;
 	//Skipped, since it is not needed
@@ -116,8 +109,7 @@ void MatrixObject::orthonomalize()
 	*/
 	}
 
-void MatrixObject::setScale(const Vector3d& scal)
-	{
+void MatrixObject::setScale(const Vector3d& scal) {
 	vScale=scal;
 	Vector3d diff(1,1,1);
 	diff=(vScale-diff);
@@ -126,8 +118,7 @@ void MatrixObject::setScale(const Vector3d& scal)
 	changed=1;
 	}
 
-void MatrixObject::rotateX(const float angle)
-	{
+void MatrixObject::rotateX(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d rx(1.0);
@@ -139,8 +130,7 @@ void MatrixObject::rotateX(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateY(const float angle)
-	{
+void MatrixObject::rotateY(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d ry(1.0);
@@ -152,8 +142,7 @@ void MatrixObject::rotateY(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateZ(const float angle)
-	{
+void MatrixObject::rotateZ(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d rz(1.0);
@@ -165,8 +154,7 @@ void MatrixObject::rotateZ(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateSide(const float angle)
-	{
+void MatrixObject::rotateSide(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d rx(1.0);
@@ -178,8 +166,7 @@ void MatrixObject::rotateSide(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateUp(const float angle)
-	{
+void MatrixObject::rotateUp(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d ry(1.0);
@@ -191,8 +178,7 @@ void MatrixObject::rotateUp(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateDir(const float angle)
-	{
+void MatrixObject::rotateDir(const float angle) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d rz(1.0);
@@ -204,8 +190,7 @@ void MatrixObject::rotateDir(const float angle)
 	OnBaseChange();
 	}
 
-void MatrixObject::rotateV(const float angle, const Vector3d axis)
-	{
+void MatrixObject::rotateV(const float angle, const Vector3d axis) {
 	OnBaseWillChange();
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Matrix3d rv(1.0);
@@ -219,34 +204,29 @@ void MatrixObject::rotateV(const float angle, const Vector3d axis)
 	OnBaseChange();
 	}
 
-void MatrixObject::setMatrix(const GlutMatrix4d& m)
-	{
+void MatrixObject::setMatrix(const GlutMatrix4d& m) {
 	matrix=m; //Think of setting the BASE! Base Change ETC
 	changed=0;
 	}
 
-void MatrixObject::setBaseVector(int toSet,Vector3d val,int toKeep) //RIGHT SO?
-	{
+void MatrixObject::setBaseVector(int toSet,Vector3d val,int toKeep) { //RIGHT SO?
 	if (toSet==toKeep) { return; } //So gehts nicht
 	val.normalize();
 	Vector3d keep,remaining;
-	if (toSet==BASE_DIR_SIDE)
-			{
+	if (toSet==BASE_DIR_SIDE) {
 			setSide(val);
 			if (toKeep==BASE_DIR_UP) { keep=getUp(); remaining=val.cross(keep); remaining.normalize(); setDir(remaining);}
 			else { keep=getDir(); remaining=keep.cross(val); remaining.normalize(); setUp(remaining);}
 			}
 
-	else if (toSet==BASE_DIR_UP)
-			{
+	else if (toSet==BASE_DIR_UP) {
 			setUp(val);
 
 			if (toKeep==BASE_DIR_SIDE) { keep=getSide(); remaining=keep.cross(val); remaining.normalize(); setDir(remaining);}
 			else { keep=getDir(); remaining=val.cross(keep); remaining.normalize(); setSide(remaining);}
 			}
 
-	else if (toSet==BASE_DIR_DIR)
-			{
+	else if (toSet==BASE_DIR_DIR) {
 			setDir(val);
 			if (toKeep==BASE_DIR_SIDE) { keep=getSide(); remaining=val.cross(keep); remaining.normalize(); setUp(remaining); }
 			else { keep=getUp(); remaining=keep.cross(val); remaining.normalize(); setSide(remaining);}
@@ -254,8 +234,7 @@ void MatrixObject::setBaseVector(int toSet,Vector3d val,int toKeep) //RIGHT SO?
 			}
 	}
 
-void MatrixObject::lookAt(int withBaseVector,Vector3d pos,int toKeepFirst)
-	{
+void MatrixObject::lookAt(int withBaseVector,Vector3d pos,int toKeepFirst) {
 	if (withBaseVector==toKeepFirst) { return; }
 	Vector3d diff=pos-vPos;
 	setBaseVector(withBaseVector,diff,toKeepFirst);
@@ -276,8 +255,7 @@ void MatrixObject::lookAt(int withBaseVector,Vector3d pos,int toKeepFirst)
 	}
 
 
-void MatrixObject::lookAtZWithWorldUp(Vector3d pos,Vector3d upVect)
-	{
+void MatrixObject::lookAtZWithWorldUp(Vector3d pos,Vector3d upVect) {
 	upVect.normalize();
 	Vector3d diff=vPos-pos;
 	if (not diff.normalizeCheck()) { return; }
@@ -288,10 +266,8 @@ void MatrixObject::lookAtZWithWorldUp(Vector3d pos,Vector3d upVect)
 	setBaseVector(BASE_DIR_DIR,diff,BASE_DIR_SIDE);
 	}
 
-Vector3d MatrixObject::getPitchYawRoll()
-	{
-	if (!usePYR || pyrOverFlip)
-			{
+Vector3d MatrixObject::getPitchYawRoll() {
+	if (!usePYR || pyrOverFlip) {
 			vPitchYawRoll=base.getPitchYawRoll();
 			}
 	pyrOverFlip=0;
@@ -299,13 +275,10 @@ Vector3d MatrixObject::getPitchYawRoll()
 	return vPitchYawRoll;
 	}
 
-Vector3d MatrixObject::getPitchYawRollOverflip()
-	{
-	if (!usePYR || !pyrOverFlip)
-			{
+Vector3d MatrixObject::getPitchYawRollOverflip() {
+	if (!usePYR || !pyrOverFlip) {
 			vPitchYawRoll=base.getPitchYawRoll();
-			if (abs(vPitchYawRoll.z)>M_PI/2)
-					{
+			if (abs(vPitchYawRoll.z)>M_PI/2) {
 					// We have to flip the y-Value by PI
 					vPitchYawRoll.y+=M_PI;
 					if (vPitchYawRoll.y>M_PI) { vPitchYawRoll.y-=2*M_PI; }
@@ -322,8 +295,7 @@ Vector3d MatrixObject::getPitchYawRollOverflip()
 	return vPitchYawRoll;
 	}
 
-void MatrixObject::setPitchYawRoll(Vector3d pyr)
-	{
+void MatrixObject::setPitchYawRoll(Vector3d pyr) {
 	usePYR=2;
 	vPitchYawRoll=pyr;
 	changed=1;
@@ -331,30 +303,25 @@ void MatrixObject::setPitchYawRoll(Vector3d pyr)
 	OnPYRChange();
 	}
 
-void MatrixObject::PitchYawRollToBase()
-	{
+void MatrixObject::PitchYawRollToBase() {
 	base.setPitchYawRoll(vPitchYawRoll);
 	usePYR=1;
 	changed=1;
 	}
 
-void MatrixObject::applySpeed(const float elapsed)
-	{
+void MatrixObject::applySpeed(const float elapsed) {
 	if (!useSpeed && !useRotSpeed) { return; }
 	Vector3d s,as,p,a;
 	s=vSpeed*(elapsed);
 	as=vAngleSpeed*(elapsed);
 
-	if (speedMode!=SPEED_MODE_LOCAL_AFTER_ROT && useSpeed)
-			{
-			if (speedMode!=SPEED_MODE_GLOBAL)
-					{
+	if (speedMode!=SPEED_MODE_LOCAL_AFTER_ROT && useSpeed) {
+			if (speedMode!=SPEED_MODE_GLOBAL) {
 					p=getPos();
 					p=p+s;
 					setPos(p);
 					}
-			else
-					{
+			else {
 					p=getPos();
 					s=(base*s);
 					p=p+s;
@@ -364,13 +331,11 @@ void MatrixObject::applySpeed(const float elapsed)
 
 //ROTATION
 	if (useRotSpeed)
-		switch (rotSpeedMode)
-				{
+		switch (rotSpeedMode) {
 				case ANGLE_SPEED_MODE_XYZ: rotateX(as.x);  rotateY(as.y); rotateZ(as.z); break;
 				}
 
-	if (speedMode==SPEED_MODE_LOCAL_AFTER_ROT && useSpeed)
-			{
+	if (speedMode==SPEED_MODE_LOCAL_AFTER_ROT && useSpeed) {
 			p=getPos();
 			s=(base*s);
 			p=p+s;
@@ -378,24 +343,20 @@ void MatrixObject::applySpeed(const float elapsed)
 			}
 	}
 
-void MatrixObject::TraverseTree(const float timeelapsed)
-	{
+void MatrixObject::TraverseTree(const float timeelapsed) {
 	applySpeed(timeelapsed);
 	think();
 	draw();
-	for (unsigned int i=0; i<children.size(); i++)
-			{
+	for (unsigned int i=0; i<children.size(); i++) {
 			if (children[i]) { children[i]->TraverseTree(timeelapsed); }
 			}
 	postthink();
 	}
 
 
-Vector3d MatrixObject::transformToWorld(const Vector3d v)
-	{
+Vector3d MatrixObject::transformToWorld(const Vector3d v) {
 	if (!parent) { return v; }
-	else
-			{
+	else {
 			Vector3d p=v;
 			p=parent->base*p;
 			p=p+parent->getWorldPos();
@@ -403,27 +364,23 @@ Vector3d MatrixObject::transformToWorld(const Vector3d v)
 			}
 	}
 
-void MatrixObject::SetMirror(int m)
-	{
+void MatrixObject::SetMirror(int m) {
 	mirr=(m==0 ? 0 : 1);
 	if (mirr) { glFrontFace(GL_CW); }
 	else { glFrontFace(GL_CCW); }
 	}
 
-int MatrixObject::GetMirror()
-	{
+int MatrixObject::GetMirror() {
 	return mirr;
 	}
 
-void MatrixObject::SetBasisAxisRotate(const Vector3d & axis,const float angle)
-	{
+void MatrixObject::SetBasisAxisRotate(const Vector3d & axis,const float angle) {
 //TODO: Implement
 	}
 
 //////////CAM///////////////////////
 
-void Camera::postthink()
-	{
+void Camera::postthink() {
 	MatrixObject::postthink();
 //Deactivate Mirror, so it has to be set each frame
 	SetMirror(0);
@@ -432,10 +389,8 @@ void Camera::postthink()
 
 
 
-void Camera::CalcMatrix()
-	{
-	if (fovchanged || mirr)
-			{
+void Camera::CalcMatrix() {
+	if (fovchanged || mirr) {
 			//Set the new fov
 			const float ar = (float) screenwh.u / (float) screenwh.v;
 
@@ -489,8 +444,7 @@ void Camera::CalcMatrix()
 	matrix.setSubMatrix(invbase);
 
 
-	if (distort)
-			{
+	if (distort) {
 
 			GlutMatrix4d disto(1);
 			disto.mode=GL_MODELVIEW;
@@ -500,8 +454,7 @@ void Camera::CalcMatrix()
 			}
 
 
-	if (usescale)
-			{
+	if (usescale) {
 			matrix.scaleBy(vScale);
 			}
 //The rest should be unchanged
@@ -512,12 +465,10 @@ void Camera::CalcMatrix()
 
 #define FRUSTUM_EPSILON 0.0001
 
-int Camera::PointInFrustum( Vector3d pos )
-	{
+int Camera::PointInFrustum( Vector3d pos ) {
 	int p;
 
-	for( p = 0; p < 6; p++ )
-			{
+	for( p = 0; p < 6; p++ ) {
 			float dist=frustum[p][0] * pos.x + frustum[p][1] * pos.y + frustum[p][2] * pos.z + frustum[p][3];
 
 			if( dist <= -FRUSTUM_EPSILON ) {
@@ -528,12 +479,10 @@ int Camera::PointInFrustum( Vector3d pos )
 	return 1;
 	}
 
-int Camera::SphereInFrustum( Vector3d pos,float rad)
-	{
+int Camera::SphereInFrustum( Vector3d pos,float rad) {
 	int p;
 
-	for( p = 0; p < 6; p++ )
-			{
+	for( p = 0; p < 6; p++ ) {
 			float dist=frustum[p][0] * pos.x + frustum[p][1] * pos.y + frustum[p][2] * pos.z + frustum[p][3];
 
 			if( dist <= -FRUSTUM_EPSILON-rad ) {
@@ -544,24 +493,19 @@ int Camera::SphereInFrustum( Vector3d pos,float rad)
 	return 1;
 	}
 
-int Camera::VertsVisible(  Vector3d *pt,int numpoints)
-	{
+int Camera::VertsVisible(  Vector3d *pt,int numpoints) {
 
 
 	int p;
 
-	for( p = 0; p < 5; p++ ) //DO NOT USE THE NEAR CLIP PLANE HERE... IT WONT WORK FOR PORTALS -> ITERATE TO 5, NOT TO 6
-			{
+	for( p = 0; p < 5; p++ ) { //DO NOT USE THE NEAR CLIP PLANE HERE... IT WONT WORK FOR PORTALS -> ITERATE TO 5, NOT TO 6
 			int allout=1;
-			for (int i=0; i<numpoints; i++)
-					{
+			for (int i=0; i<numpoints; i++) {
 
-					if( frustum[p][0] * pt[i].x + frustum[p][1] * pt[i].y + frustum[p][2] * pt[i].z + frustum[p][3] <= -FRUSTUM_EPSILON )
-							{
+					if( frustum[p][0] * pt[i].x + frustum[p][1] * pt[i].y + frustum[p][2] * pt[i].z + frustum[p][3] <= -FRUSTUM_EPSILON ) {
 							//Point outside this plane
 							}
-					else
-							{
+					else {
 							allout=0;
 
 							break; //This plane is intersected at least once
@@ -575,8 +519,7 @@ int Camera::VertsVisible(  Vector3d *pt,int numpoints)
 
 
 
-Vector3d Camera::PixelPosToDir(Vector2d ppos,int local)
-	{
+Vector3d Camera::PixelPosToDir(Vector2d ppos,int local) {
 	if (usePYR==2) { PitchYawRollToBase(); }
 	Vector3d res=getDir();
 	Vector2d rel;
@@ -592,8 +535,7 @@ Vector3d Camera::PixelPosToDir(Vector2d ppos,int local)
 	}
 
 
-void Camera::ExtractFrustum()
-	{
+void Camera::ExtractFrustum() {
 	float   proj[16];
 	float   modl[16];
 	float   clip[16];
@@ -709,8 +651,7 @@ void Camera::ExtractFrustum()
 
 /////////// WORLD OBJECT /////////////////
 
-void WorldObject::CalcMatrix()
-	{
+void WorldObject::CalcMatrix() {
 	if (!changed) { return; }
 	if (usePYR==2) { PitchYawRollToBase(); }
 	if (numOps>=RENORMALIZE_STEPS) { orthonomalize(); }
@@ -718,8 +659,7 @@ void WorldObject::CalcMatrix()
 	matrix.setSubMatrix(base);
 	matrix.setPos(vPos);
 
-	if (usescale)
-			{
+	if (usescale) {
 			matrix.scaleBy2(vScale);
 			}
 
@@ -731,49 +671,42 @@ void WorldObject::CalcMatrix()
 
 
 
-int CAM_GetPos(lua_State *state)
-	{
+int CAM_GetPos(lua_State *state) {
 	Vector3d v=g_Game()->GetCam()->getPos();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int CAM_GetDir(lua_State *state)
-	{
+int CAM_GetDir(lua_State *state) {
 	Vector3d v=g_Game()->GetCam()->getDir();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int CAM_GetSide(lua_State *state)
-	{
+int CAM_GetSide(lua_State *state) {
 	Vector3d v=g_Game()->GetCam()->getSide();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int CAM_GetUp(lua_State *state)
-	{
+int CAM_GetUp(lua_State *state) {
 	Vector3d v=g_Game()->GetCam()->getUp();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int CAM_Think(lua_State *state)
-	{
+int CAM_Think(lua_State *state) {
 	g_Game()->GetCam()->think();
 	return 0;
 	}
 
-int CAM_SetPos(lua_State *state)
-	{
+int CAM_SetPos(lua_State *state) {
 	Vector3d v=Vector3FromStack(state);
 	g_Game()->GetCam()->setPos(v);
 	return 0;
 	}
 
-int CAM_FromBasis(lua_State *state)
-	{
+int CAM_FromBasis(lua_State *state) {
 	int bi=LUA_GET_INT(state);
 
 	CuboBasis *b=g_Game()->GetBasis(bi);
@@ -781,21 +714,18 @@ int CAM_FromBasis(lua_State *state)
 	return 0;
 	}
 
-int CAM_Attach(lua_State *state)
-	{
+int CAM_Attach(lua_State *state) {
 	int ind=LUA_GET_INT(state);
 	g_Game()->GetCam()->AttachToPlayer(ind);
 	return 0;
 	}
 
-int CAM_Identity(lua_State *state)
-	{
+int CAM_Identity(lua_State *state) {
 	g_Game()->GetCam()->Reset();
 	return 0;
 	}
 
-int CAM_SetDistortionBase(lua_State *state)
-	{
+int CAM_SetDistortionBase(lua_State *state) {
 	int b=LUA_GET_INT(state);
 	if (b<0) {
 			g_Game()->GetCam()->distort=NULL;
@@ -804,8 +734,7 @@ int CAM_SetDistortionBase(lua_State *state)
 	return 0;
 	}
 
-int CAM_AxisRotate(lua_State *state)
-	{
+int CAM_AxisRotate(lua_State *state) {
 	float angle=LUA_GET_DOUBLE(state);
 	Vector3d s=Vector3FromStack(state);
 
@@ -816,8 +745,7 @@ int CAM_AxisRotate(lua_State *state)
 	}
 
 
-int CAM_Distance(lua_State *state)
-	{
+int CAM_Distance(lua_State *state) {
 	Vector3d d=Vector3FromStack(state);
 	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
@@ -826,8 +754,7 @@ int CAM_Distance(lua_State *state)
 	return 1;
 	}
 
-int CAM_ZDistance(lua_State *state)
-	{
+int CAM_ZDistance(lua_State *state) {
 	Vector3d d=Vector3FromStack(state);
 	Vector3d c=g_Game()->GetCam()->getPos();
 	d=d-c;
@@ -838,8 +765,7 @@ int CAM_ZDistance(lua_State *state)
 	}
 
 
-void LUA_CAM_RegisterLib()
-	{
+void LUA_CAM_RegisterLib() {
 	g_CuboLib()->AddFunc("CAM_GetPos",CAM_GetPos);
 	g_CuboLib()->AddFunc("CAM_GetDir",CAM_GetDir);
 	g_CuboLib()->AddFunc("CAM_GetUp",CAM_GetUp);

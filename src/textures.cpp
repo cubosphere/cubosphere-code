@@ -63,16 +63,13 @@ using boolean = bool;
 ///////////////////////////////////////////////
 
 
-void TextureDef::Call_Render(int sideid)
-	{
-	if (lua.FuncExists("Render"))
-			{
+void TextureDef::Call_Render(int sideid) {
+	if (lua.FuncExists("Render")) {
 			lua.CallVA("Render","i",sideid);
 			}
 	}
 
-void TextureDef::RenderPlane()
-	{
+void TextureDef::RenderPlane() {
 //OPEN GL STUFF
 // glBegin(GL_QUADS);
 	glBegin(GL_TRIANGLE_STRIP);
@@ -85,8 +82,7 @@ void TextureDef::RenderPlane()
 	glEnd();
 	}
 
-void TextureDef::Render2d()
-	{
+void TextureDef::Render2d() {
 //OPEN GL STUFF
 //glBegin(GL_QUADS);
 	glBegin(GL_TRIANGLE_STRIP);
@@ -106,13 +102,11 @@ void TextureDef::Render2d()
 
 /* Read JPEG image from a memory segment */
 static void init_source (j_decompress_ptr cinfo) {}
-static boolean fill_input_buffer (j_decompress_ptr cinfo)
-	{
+static boolean fill_input_buffer (j_decompress_ptr cinfo) {
 //    ERREXIT(cinfo, JERR_INPUT_EMPTY);
 	return TRUE;
 	}
-static void skip_input_data (j_decompress_ptr cinfo, long num_bytes)
-	{
+static void skip_input_data (j_decompress_ptr cinfo, long num_bytes) {
 	struct jpeg_source_mgr* src = (struct jpeg_source_mgr*) cinfo->src;
 
 	if (num_bytes > 0) {
@@ -121,8 +115,7 @@ static void skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 			}
 	}
 static void term_source (j_decompress_ptr cinfo) {}
-static void jpeg_mem_src (j_decompress_ptr cinfo, void* buffer, long nbytes)
-	{
+static void jpeg_mem_src (j_decompress_ptr cinfo, void* buffer, long nbytes) {
 	struct jpeg_source_mgr* src;
 
 	if (cinfo->src == NULL) {   /* first time for this JPEG object? */
@@ -147,8 +140,7 @@ struct my_error_mgr {
 	jmp_buf setjmp_buffer;	/* for return to caller */
 	};
 
-static void JPGFatalError(j_common_ptr cinfo)
-	{
+static void JPGFatalError(j_common_ptr cinfo) {
 
 	my_error_mgr *myerr = (my_error_mgr*) cinfo->err;
 	(*cinfo->err->output_message) (cinfo);
@@ -157,8 +149,7 @@ static void JPGFatalError(j_common_ptr cinfo)
 	}
 
 
-bool JPEGTexture::loadFromFile(CuboFile *finfo)
-	{
+bool JPEGTexture::loadFromFile(CuboFile *finfo) {
 	//  coutlog("Jpegloading not implemented yet");
 
 	std::string fname=finfo->GetName();
@@ -189,19 +180,16 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo)
 
 
 
-	if (finfo->IsHDDFile())
-			{
+	if (finfo->IsHDDFile()) {
 			infile = fopen( finfo->GetHDDName().c_str(), "rb" );
-			if ( !infile )
-					{
+			if ( !infile ) {
 					std::ostringstream os; os << "Error opening jpeg file " << fname ; coutlog(os.str(),2);
 					return false;
 					}
 			jpeg_stdio_src( &cinfo, infile );
 
 			}
-	else
-			{
+	else {
 
 			jpeg_mem_src(&cinfo, finfo->GetData(), finfo->GetSize());
 
@@ -230,8 +218,7 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo)
 //cout << "Loading Texture " << fname << endl;
 
 
-	while( cinfo.output_scanline < cinfo.image_height )
-			{
+	while( cinfo.output_scanline < cinfo.image_height ) {
 			jpeg_read_scanlines( &cinfo, row_pointer, 1 );
 			for(unsigned int i=0; i<cinfo.image_width*cinfo.num_components; i++) {
 					((JSAMPROW) raw)[location++] = row_pointer[0][i];
@@ -245,22 +232,19 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo)
 	jpeg_destroy_decompress( &cinfo );
 	free( row_pointer[0] );
 
-	if (finfo->IsHDDFile())
-			{
+	if (finfo->IsHDDFile()) {
 			fclose( infile );
 			}
 	else {}
 	return true;
 	}
 
-static int iabs(int x)
-	{
+static int iabs(int x) {
 	if (x<0) { return -x; }
 	return x;
 	}
 
-int JPEGTexture::LoadAlphaTexture(CuboFile *finfo)
-	{
+int JPEGTexture::LoadAlphaTexture(CuboFile *finfo) {
 	std::string aname=finfo->GetName();
 
 
@@ -269,16 +253,15 @@ int JPEGTexture::LoadAlphaTexture(CuboFile *finfo)
 	if (!(alp->getRGBPointer())) {delete alp; return 0;}
 
 	if (alp->GetChannels()!=1) { coutlog("Alpha-Texture "+aname+" is not a grayscale jpeg",2); delete alp; return 0;}
-	if (alp->getWidth()!=this->getWidth() ||  alp->getHeight()!=this->getHeight())
-			{	std::ostringstream oss; oss <<"Alpha-Texture "+aname+" has wrong extents ("<< alp->getWidth()<< " x " <<alp->getHeight() <<")" << "! Must have " << getWidth() << " x " << getHeight();
+	if (alp->getWidth()!=this->getWidth() ||  alp->getHeight()!=this->getHeight()) {
+			std::ostringstream oss; oss <<"Alpha-Texture "+aname+" has wrong extents ("<< alp->getWidth()<< " x " <<alp->getHeight() <<")" << "! Must have " << getWidth() << " x " << getHeight();
 			coutlog(oss.str(),2);
 			delete alp; return 0;
 			}
 
 	unsigned char *araw=(unsigned char*)(alp->getRGBPointer());
 	unsigned char *newraw = (unsigned char*)malloc( getWidth()*getHeight()*4 );
-	for (int p=0; p<getWidth()*getHeight(); p++)
-			{
+	for (int p=0; p<getWidth()*getHeight(); p++) {
 			int r=((unsigned char*)raw)[3*p];
 			int g=((unsigned char*)raw)[3*p+1];
 			int b=((unsigned char*)raw)[3*p+2];
@@ -300,8 +283,7 @@ int JPEGTexture::LoadAlphaTexture(CuboFile *finfo)
 	}
 
 
-void JPEGTexture::ColorKeyTransparency(unsigned int ckey)
-	{
+void JPEGTexture::ColorKeyTransparency(unsigned int ckey) {
 	unsigned char *newraw = (unsigned char*)malloc( getWidth()*getHeight()*4 );
 	ckey&=0xFFFFFF;
 
@@ -312,8 +294,7 @@ void JPEGTexture::ColorKeyTransparency(unsigned int ckey)
 	int cg=((ckey>>8) & 0xFF);
 	int cb=((ckey>>16) & 0xFF);
 
-	for (int p=0; p<getWidth()*getHeight(); p++)
-			{
+	for (int p=0; p<getWidth()*getHeight(); p++) {
 			int r=((unsigned char*)raw)[3*p];
 			int g=((unsigned char*)raw)[3*p+1];
 			int b=((unsigned char*)raw)[3*p+2];
@@ -336,13 +317,11 @@ void JPEGTexture::ColorKeyTransparency(unsigned int ckey)
 	}
 
 
-static int isPowerOf2(int n)
-	{
+static int isPowerOf2(int n) {
 	return (n & (n - 1)) == 0 && n != 0;
 	}
 
-static short myLog2(int n)
-	{
+static short myLog2(int n) {
 	int i = (n & 0xffff0000) ? 16 : 0;
 	if ((n >>= i) & 0xff00) { i |= 8, n >>= 8; }
 	if (n & 0xf0) { i |= 4, n >>= 4; }
@@ -352,8 +331,7 @@ static short myLog2(int n)
 
 
 
-void JPEGTexture::shrink_half_blur()
-	{
+void JPEGTexture::shrink_half_blur() {
 	unsigned char *nraw_image = NULL;
 	unsigned char *raw_image = (unsigned char *)raw;
 	int neww=width>>1;
@@ -363,10 +341,8 @@ void JPEGTexture::shrink_half_blur()
 	int di=0;
 	int sp=0;
 	int offsy=3*width;
-	for (int j=0; j<newh; j++)
-			{
-			for (int i=0; i<neww; i++)
-					{
+	for (int j=0; j<newh; j++) {
+			for (int i=0; i<neww; i++) {
 					int nc=(raw_image[sp]+raw_image[sp+3]+raw_image[sp+offsy]+raw_image[sp+offsy+3])>>2;
 					nraw_image[di]=nc;
 					nc=(raw_image[sp+1]+raw_image[sp+3+1]+raw_image[sp+offsy+1]+raw_image[sp+offsy+3+1])>>2;
@@ -384,20 +360,18 @@ void JPEGTexture::shrink_half_blur()
 	height=newh;
 	}
 
-void JPEGTexture::shrink_blur(int ammount)
-	{
+void JPEGTexture::shrink_blur(int ammount) {
 	for (int i=0; i<ammount; i++) { shrink_half_blur(); }
 	}
 
-int JPEGTexture::CanFastResize(int maxdim)
-	{	//return 0;
+int JPEGTexture::CanFastResize(int maxdim) {
+	//return 0;
 
 	if (isPowerOf2(width) & isPowerOf2(height) & (width==height) & (width>maxdim)) { return 1; }
 	return 0;
 	}
 
-void JPEGTexture::FastResize(int maxdim)
-	{
+void JPEGTexture::FastResize(int maxdim) {
 	if (!CanFastResize(maxdim)) { return; }
 //Ok, calc the ammount
 	short maxammount=myLog2(maxdim);
@@ -412,8 +386,7 @@ void JPEGTexture::FastResize(int maxdim)
 
 
 
-void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize)
-	{
+void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize) {
 
 
 	int max=width/fsize;
@@ -427,16 +400,13 @@ void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize)
 
 	float frac=0.99;
 
-	for (int cx=fsize-2; cx>0; cx--)
-			{
+	for (int cx=fsize-2; cx>0; cx--) {
 			int found=0;
-			for (int cy=0; cy<fsize; cy++)
-					{
+			for (int cy=0; cy<fsize; cy++) {
 					int p=(y+cy)*width+(x+cx);
 
 					unsigned char a=((unsigned char *)data)[4*p+3];
-					if (a)
-							{
+					if (a) {
 							frac=(float)(cx+1)/(float)fsize;
 							found=1;
 							break;
@@ -452,12 +422,10 @@ void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize)
 	chars.push_back(fe);
 	}
 
-void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
-	{
+void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize) {
 	int clo=clock();
 	int canfastresize=texture->CanFastResize(maxsize) && (!asfont) && (!(texture->HasAlpha()));
-	if (canfastresize)
-			{
+	if (canfastresize) {
 			texture->FastResize(maxsize);
 
 			}
@@ -466,8 +434,7 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 	int width=texture->getWidth();
 	int height=texture->getHeight();
 	int scaled=0;
-	if (  ((width>maxsize) || (height>maxsize)) && (!asfont) && (!canfastresize))
-			{
+	if (  ((width>maxsize) || (height>maxsize)) && (!asfont) && (!canfastresize)) {
 			//Rescale it
 			int owidth=width;
 			int oheight=height;
@@ -484,16 +451,13 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 	duration1=clock()-clo;
 
 
-	if (asfont)
-			{
+	if (asfont) {
 			//Building the font with (asfont x asfont) sized letters
 			//First the simplest approach:
 			int maxy=texture->getHeight()/asfont;
 			int maxx=texture->getWidth()/asfont;
-			for (int y=0; y<maxy; y++)
-					{
-					for (int x=0; x<maxx; x++)
-							{
+			for (int y=0; y<maxy; y++) {
+					for (int x=0; x<maxx; x++) {
 							AddChar(x*asfont,y*asfont,data,texture->getWidth(),asfont);
 							}
 					}
@@ -511,8 +475,7 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT);
 //ANIS
 	if (strstr((char*)glGetString(GL_EXTENSIONS),
-			"GL_EXT_texture_filter_anisotropic"))
-			{
+			"GL_EXT_texture_filter_anisotropic")) {
 			float maxAnisotropy;
 			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
@@ -520,8 +483,7 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 
 	clo=clock();
 
-	if (!asfont) // No Mipmaps for fonts
-			{
+	if (!asfont) { // No Mipmaps for fonts
 			if (!texture->HasAlpha())
 				gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width,height,
 						GL_RGB, GL_UNSIGNED_BYTE, data );
@@ -529,8 +491,7 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 				gluBuild2DMipmaps( GL_TEXTURE_2D, 4, width,height,
 						GL_RGBA, GL_UNSIGNED_BYTE, data );
 			}
-	else
-			{
+	else {
 			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 			glTexImage2D(GL_TEXTURE_2D, 0, 3, width,height, 0, GL_RGB,GL_UNSIGNED_BYTE, data);
 			}
@@ -539,36 +500,30 @@ void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize)
 	}
 
 
-void TextureContainer::activate()
-	{
+void TextureContainer::activate() {
 
 
 	glBindTexture( GL_TEXTURE_2D, tind );
 	}
 
-void TextureContainer::activate(int stage)
-	{
-	if (g_Game()->HasGLSL() && (stage>0))
-			{
+void TextureContainer::activate(int stage) {
+	if (g_Game()->HasGLSL() && (stage>0)) {
 			glActiveTexture(GL_TEXTURE0+stage);
 			}
 
 	glBindTexture( GL_TEXTURE_2D, tind );
 
-	if (g_Game()->HasGLSL() && (stage>0))
-			{
+	if (g_Game()->HasGLSL() && (stage>0)) {
 			glActiveTexture(GL_TEXTURE0);
 			}
 	}
 
 
-void TextureServer::Invalidate()
-	{
+void TextureServer::Invalidate() {
 	for (unsigned int i=0; i<activetextures.size(); i++) { activetextures[i]=-2333; }
 	}
 
-void TextureServer::activate(int i)
-	{
+void TextureServer::activate(int i) {
 	if (activetextures.size()==0) { activetextures.push_back(i); }
 	else if  (activetextures[0]==i) { return; }
 	if (i<0) { DeactivateStage(0); }
@@ -582,32 +537,27 @@ void TextureServer::activate(int i,int stage) {
 	else { Textures[i].activate(stage); }
 	}
 
-FontExtend TextureServer::GetFontExtend(int index,int num)
-	{
+FontExtend TextureServer::GetFontExtend(int index,int num) {
 	return Textures[index].GetFontExtend(num);
 	}
 
-int TextureServer::TempTextureIndexFromName(std::string tname)
-	{
+int TextureServer::TempTextureIndexFromName(std::string tname) {
 	for (unsigned int i=0; i<filenames.size(); i++) if ((tname==filenames[i]) && (istemp[i]) ) { return i; }
 	return -1;
 
 	}
 
-int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont,unsigned int colorkey)
-	{
+int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont,unsigned int colorkey) {
 	int index=TempTextureIndexFromName(tname);
 	TextureContainer *cont;
-	if (index==-1)
-			{
+	if (index==-1) {
 			Textures.resize(Textures.size()+1);
 			index=Textures.size()-1;
 			filenames.push_back(tname);
 			alphanames.push_back(finfo->GetName());
 			istemp.push_back(1);
 			}
-	else //Load texture into existing sloz
-			{
+	else { //Load texture into existing sloz
 			//Free the texture in this slot
 			Textures[index].clear();
 			}
@@ -618,8 +568,7 @@ int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont
 	std::string ext;
 	std::string fname=finfo->GetName();
 	auto extind = fname.rfind('.');
-	if (extind != std::string::npos)
-			{
+	if (extind != std::string::npos) {
 			ext=fname.substr(extind+1);
 			}
 	else { ext=""; }
@@ -638,8 +587,7 @@ int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont
 	return index;
 	}
 
-int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa)
-	{
+int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa) {
 	std::string fname=finfo->GetName();
 	std::string aname=finfoa->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (fname==filenames[i] && aname==alphanames[i]) { return i; }
@@ -648,8 +596,7 @@ int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa)
 	Texture *tex=NULL;
 	std::string ext;
 	auto extind = fname.rfind('.');
-	if (extind != std::string::npos)
-			{
+	if (extind != std::string::npos) {
 			ext=fname.substr(extind+1);
 			}
 	else { ext=""; }
@@ -669,8 +616,7 @@ int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa)
 
 	}
 
-int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey)
-	{
+int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey) {
 //Is it loaded already?
 	std::string s=finfo->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (s==filenames[i] && alphanames[i]=="") { return i; }
@@ -679,8 +625,7 @@ int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey)
 	Texture *tex=NULL;
 	std::string ext;
 	auto extind = s.rfind('.');
-	if (extind != std::string::npos)
-			{
+	if (extind != std::string::npos) {
 			ext=s.substr(extind+1);
 			}
 	else { ext=""; }
@@ -707,12 +652,10 @@ int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey)
 
 	}
 
-void TextureServer::Reload()
-	{
+void TextureServer::Reload() {
 	for (unsigned int i=0; i<activetextures.size(); i++) { activate(-1,i); }
 
-	for (unsigned int i=0; i<Textures.size(); i++)
-			{
+	for (unsigned int i=0; i<Textures.size(); i++) {
 			Textures[i].clear();
 			}
 
@@ -722,8 +665,7 @@ void TextureServer::Reload()
 	for (unsigned int i=0; i<filenames.size(); i++) { ofilenames.push_back(filenames[i]); }
 	filenames.clear();
 
-	for (unsigned int i=0; i<ofilenames.size(); i++)
-			{
+	for (unsigned int i=0; i<ofilenames.size(); i++) {
 
 			CuboFile* finfo;
 
@@ -731,8 +673,7 @@ void TextureServer::Reload()
 			if (istemp[i]) {
 					nam=alphanames[i];
 					}
-			else
-					{
+			else {
 					nam=ofilenames[i];
 					}
 			finfo=g_BaseFileSystem()->GetFileForReading(nam);
@@ -746,15 +687,13 @@ void TextureServer::Reload()
 			if (alphanames[i]=="" && (!istemp[i])) {
 					LoadTexture(finfo,false);
 					}
-			else if (!istemp[i])
-					{
+			else if (!istemp[i]) {
 					CuboFile* finfoa=g_BaseFileSystem()->GetFileForReading(alphanames[i]);
 					if (!finfoa) {coutlog("Alpha Texture "+alphanames[i]+" not found!",2);  delete finfoa;  Textures.push_back(TextureContainer()); filenames.push_back(ofilenames[i]);  continue; }
 					LoadTextureAndAlpha(finfo,finfoa);
 					delete finfoa;
 					}
-			else
-					{
+			else {
 					LoadTempTexture(ofilenames[i],finfo);
 					}
 			alphanames.pop_back();
@@ -767,8 +706,7 @@ void TextureServer::Reload()
 			}
 	}
 
-void TextureServer::clear()
-	{
+void TextureServer::clear() {
 
 	for (unsigned int i=0; i<Textures.size(); i++) { Textures[i].clear(); }
 	activetextures.clear();
@@ -780,27 +718,22 @@ void TextureServer::clear()
 	}
 
 
-void TextureServer::DeactivateStage(int stage)
-	{
-	if (g_Game()->HasGLSL() && (stage>0))
-			{
+void TextureServer::DeactivateStage(int stage) {
+	if (g_Game()->HasGLSL() && (stage>0)) {
 			glActiveTexture(GL_TEXTURE0+stage);
 			}
 	glBindTexture( GL_TEXTURE_2D, 0 );
-	if (g_Game()->HasGLSL() && (stage>0))
-			{
+	if (g_Game()->HasGLSL() && (stage>0)) {
 			glActiveTexture(GL_TEXTURE0);
 			}
 	}
 
 
-void TextureServer::ResetTimerCounters()
-	{
+void TextureServer::ResetTimerCounters() {
 	numloads=timer1=timer2=timer3=0;
 	}
 
-void TextureServer::CoutTimerString()
-	{
+void TextureServer::CoutTimerString() {
 	float t1=timer1/(float)CLOCKS_PER_SEC;
 	float t2=timer2/(float)CLOCKS_PER_SEC;
 	float t3=timer3/(float)CLOCKS_PER_SEC;
@@ -818,8 +751,7 @@ void TextureServer::CoutTimerString()
 ////////////LUA-IMPLEMENTATION///////////////////////////
 
 
-int TEXDEF_Load(lua_State *state)
-	{
+int TEXDEF_Load(lua_State *state) {
 
 	std::string name = LUA_GET_STRING(state);
 
@@ -834,8 +766,7 @@ int TEXDEF_Load(lua_State *state)
 
 int _TEXTDEF_ResetMeanwhile=0;
 
-int TEXDEF_Render(lua_State *state)
-	{
+int TEXDEF_Render(lua_State *state) {
 	int side= LUA_GET_INT(state);
 	int tind= LUA_GET_INT(state);
 	_TEXTDEF_ResetMeanwhile=1;
@@ -847,38 +778,33 @@ int TEXDEF_Render(lua_State *state)
 	return 0;
 	}
 
-int TEXDEF_RenderDirect(lua_State *state)
-	{
+int TEXDEF_RenderDirect(lua_State *state) {
 	int tind= LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetTexDef(tind)->RenderPlane();
 	return 0;
 	}
 
-int TEXDEF_Render2d(lua_State *state)
-	{
+int TEXDEF_Render2d(lua_State *state) {
 	int tind= LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetTexDef(tind)->Render2d();
 	return 0;
 	}
 
 
-int TEXDEF_GetLastRenderedType(lua_State *state)
-	{
+int TEXDEF_GetLastRenderedType(lua_State *state) {
 	std::string tn=g_Game()->GetLevel()->GetLastRendered();
 	LUA_SET_STRING(state, tn);
 	return 1;
 	}
 
-int TEXDEF_ResetLastRenderedType(lua_State *state)
-	{
+int TEXDEF_ResetLastRenderedType(lua_State *state) {
 	g_Game()->GetLevel()->SetLastRendered("");
 	if (_TEXTDEF_ResetMeanwhile) { _TEXTDEF_ResetMeanwhile=2; }
 	return 0;
 	}
 
 
-void LUA_TEXDEF_RegisterLib()
-	{
+void LUA_TEXDEF_RegisterLib() {
 	g_CuboLib()->AddFunc("TEXDEF_Load",TEXDEF_Load);
 	g_CuboLib()->AddFunc("TEXDEF_Render",TEXDEF_Render);
 	g_CuboLib()->AddFunc("TEXDEF_RenderDirect",TEXDEF_RenderDirect);
@@ -891,8 +817,7 @@ void LUA_TEXDEF_RegisterLib()
 
 ////////////////////////////////////////////////////////
 
-int TEXTURE_LoadSkyTexture(lua_State *state)
-	{
+int TEXTURE_LoadSkyTexture(lua_State *state) {
 	std::string name = LUA_GET_STRING(state);
 	CuboFile* finfo=GetFileName(name,FILE_SKYBOX,".jpg");
 	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
@@ -902,8 +827,7 @@ int TEXTURE_LoadSkyTexture(lua_State *state)
 	return 1;
 	}
 
-int TEXTURE_SetClamp(lua_State *state)
-	{
+int TEXTURE_SetClamp(lua_State *state) {
 	int mode=LUA_GET_INT(state);
 	int m;
 	if (mode==2) { m=GL_CLAMP_TO_EDGE; }
@@ -915,8 +839,7 @@ int TEXTURE_SetClamp(lua_State *state)
 	}
 
 
-int TEXTURE_Load(lua_State *state)
-	{
+int TEXTURE_Load(lua_State *state) {
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
 	std::string name = LUA_GET_STRING(state);
@@ -932,8 +855,7 @@ int TEXTURE_Load(lua_State *state)
 	}
 
 
-int TEXTURE_LoadWithAlpha(lua_State *state)
-	{
+int TEXTURE_LoadWithAlpha(lua_State *state) {
 	std::string aname = LUA_GET_STRING(state);
 	std::string name = LUA_GET_STRING(state);
 
@@ -949,16 +871,14 @@ int TEXTURE_LoadWithAlpha(lua_State *state)
 	return 1;
 	}
 
-int TEXTURE_GetTempTexture(lua_State *state)
-	{
+int TEXTURE_GetTempTexture(lua_State *state) {
 	std::string tname=LUA_GET_STRING(state);
 	int r=g_Game()->GetTextures()->TempTextureIndexFromName(tname);
 	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
-int TEXTURE_LoadTempTexture(lua_State *state)
-	{
+int TEXTURE_LoadTempTexture(lua_State *state) {
 	//string name = lua_tostring(state, -1);
 	//lua_pop(state,1);
 
@@ -966,8 +886,7 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 	std::string tname= LUA_GET_STRING(state);
 	CuboFile *cf=GetCuboFileFromRelativeName(fname);
 	int r=0;
-	if (cf)
-			{
+	if (cf) {
 			r=g_Game()->GetTextures()->LoadTempTexture(tname,cf,false);
 			delete cf;
 			}
@@ -977,22 +896,19 @@ int TEXTURE_LoadTempTexture(lua_State *state)
 	}
 
 
-int TEXTURE_SetMaxSize(lua_State *state)
-	{
+int TEXTURE_SetMaxSize(lua_State *state) {
 	int s=LUA_GET_INT(state);
 	g_Game()->GetTextures()->SetMaxTextureSize(s);
 	return 0;
 	}
 
 
-int TEXTURE_GetMaxSize(lua_State *state)
-	{
+int TEXTURE_GetMaxSize(lua_State *state) {
 	LUA_SET_NUMBER(state, g_Game()->GetTextures()->GetMaxTextureSize());
 	return 1;
 	}
 
-int TEXTURE_Activate(lua_State *state)
-	{
+int TEXTURE_Activate(lua_State *state) {
 	int stage=LUA_GET_INT(state);
 	int txt=LUA_GET_INT(state);
 	g_Game()->GetTextures()->EnableTexturing();
@@ -1000,8 +916,7 @@ int TEXTURE_Activate(lua_State *state)
 	return 0;
 	}
 
-int TEXTURE_MatrixMode(lua_State *state)
-	{
+int TEXTURE_MatrixMode(lua_State *state) {
 	int onoff=LUA_GET_INT(state);
 
 	if (onoff) { glMatrixMode(GL_TEXTURE); }
@@ -1009,16 +924,14 @@ int TEXTURE_MatrixMode(lua_State *state)
 	return 0;
 	}
 
-int TEXTURE_Deactivate(lua_State *state)
-	{
+int TEXTURE_Deactivate(lua_State *state) {
 	int stage=LUA_GET_INT(state);
 //g_Game()->GetTextures()->EnableTexturing();
 	g_Game()->GetTextures()->activate(-1,stage);
 	return 0;
 	}
 
-void LUA_TEXTURE_RegisterLib()
-	{
+void LUA_TEXTURE_RegisterLib() {
 	g_CuboLib()->AddFunc("TEXTURE_Load",TEXTURE_Load);
 	g_CuboLib()->AddFunc("TEXTURE_LoadWithAlpha",TEXTURE_LoadWithAlpha);
 	g_CuboLib()->AddFunc("TEXTURE_Activate",TEXTURE_Activate);

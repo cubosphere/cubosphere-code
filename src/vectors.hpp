@@ -23,8 +23,7 @@ constexpr float VECTOR_EPSILON = 0.00000000001f;
 #define M_PI    3.14159265358979323846f
 #endif
 
-class Vector2d
-	{
+class Vector2d {
 
 	public:
 		float u,v;  //Not good OOP but who cares... no need for getters / setters
@@ -45,8 +44,7 @@ class Vector2d
 		std::string toString(); //Gives out "(u, v)"
 	};
 
-class Vector3d
-	{
+class Vector3d {
 
 	public:
 		float x,y,z;  //Not good OOP but who cares... no need for getters / setters
@@ -79,8 +77,7 @@ class Vector3d
 	};
 
 
-class Vector4d
-	{
+class Vector4d {
 
 	public:
 		float x,y,z,w; //Not good OOP but who cares... no need for getters / setters
@@ -103,8 +100,7 @@ class Vector4d
 ////////////// MATRICES ///////////////////
 
 
-class Matrix3d
-	{
+class Matrix3d {
 	protected:
 		float m[4*4];
 	public:
@@ -137,8 +133,7 @@ class Matrix3d
 		const std::string toString(); //Gives out The Matrix
 	};
 
-class Matrix4d
-	{
+class Matrix4d {
 	protected:
 		float m[4*4];
 	public:

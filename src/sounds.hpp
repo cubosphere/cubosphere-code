@@ -39,8 +39,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "filesystem.hpp"
 
-class SoundContainer
-	{
+class SoundContainer {
 	protected:
 		Mix_Chunk *sound;
 		std::string fname;
@@ -53,8 +52,7 @@ class SoundContainer
 		std::string Filename() {return fname;}
 	};
 
-class MusicContainer
-	{
+class MusicContainer {
 	protected:
 		Mix_Music *music;
 		std::string fname;
@@ -75,8 +73,7 @@ class MusicContainer
 		std::string Filename() {return fname;}
 	};
 
-class SoundServer
-	{
+class SoundServer {
 	protected:
 		static std::string currenteffect;
 		static std::vector<int> effectbuffer;

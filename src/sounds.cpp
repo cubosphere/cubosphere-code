@@ -52,8 +52,7 @@ static SoundServer soundserv;
 
 SoundServer *g_Sounds() {return &soundserv;}
 
-static void s_ChannelFinished(int num)
-	{
+static void s_ChannelFinished(int num) {
 	g_Sounds()->ChannelFinished(num);
 	//cout << "Channel " << num << " done " << endl;
 
@@ -61,8 +60,7 @@ static void s_ChannelFinished(int num)
 
 
 
-void SoundServer::ChannelFinished(int num)
-	{
+void SoundServer::ChannelFinished(int num) {
 	Mix_UnregisterAllEffects(num);
 
 	if (num<(int)(playchannels.size()) && num>=0) {
@@ -78,8 +76,7 @@ int SoundServer::effectpos;
 double SoundServer::postmixparam[3];
 int SoundServer::bitsps;
 
-void SoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
-	{
+void SoundServer::EchoEffect(void *udata, Uint8 *stream, int len) {
 	Sint16 *Ustr=(Sint16 *)stream;
 	len/=4;
 	//cout << "Stream of length "<< len << endl;
@@ -114,15 +111,13 @@ void SoundServer::EchoEffect(void *udata, Uint8 *stream, int len)
 			}
 	}
 
-void SoundServer::SetPostMix(std::string what,double p1,double p2,double p3)
-	{
+void SoundServer::SetPostMix(std::string what,double p1,double p2,double p3) {
 	if (!initialized) { return; }
 	postmixparam[0]=p1; postmixparam[1]=p2; postmixparam[2]=p3;
 
 	if (what==currenteffect) { return; }
 	if (what=="") { Mix_SetPostMix(NULL,NULL); }
-	else if (what=="echo")
-			{
+	else if (what=="echo") {
 			int channels;
 			Uint16 format;
 			Mix_QuerySpec(NULL, &format, &channels);
@@ -135,14 +130,12 @@ void SoundServer::SetPostMix(std::string what,double p1,double p2,double p3)
 	}
 
 
-SoundContainer::~SoundContainer()
-	{
+SoundContainer::~SoundContainer() {
 	if (sound) { Mix_FreeChunk(sound); }
 	sound=NULL;
 	}
 
-int SoundContainer::Load(CuboFile *finfo)
-	{
+int SoundContainer::Load(CuboFile *finfo) {
 	sound = Mix_LoadWAV_RW(finfo->GetAsRWops(1),1);
 	if(sound == NULL) {
 			printf("Unable to load WAV file %s : %s\n", finfo->GetNameForLog().c_str(), Mix_GetError());
@@ -152,8 +145,7 @@ int SoundContainer::Load(CuboFile *finfo)
 	return 1;
 	}
 
-void SoundContainer::Reload()
-	{
+void SoundContainer::Reload() {
 
 	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload sound " +fname,2); return;}
@@ -165,16 +157,13 @@ void SoundContainer::Reload()
 	}
 
 
-MusicContainer::~MusicContainer()
-	{
+MusicContainer::~MusicContainer() {
 	if (music) { Mix_FreeMusic(music); }
 	music=NULL;
 	}
 
-int MusicContainer::Load(CuboFile *finfo)
-	{
-	if (!finfo->IsHDDFile())
-			{
+int MusicContainer::Load(CuboFile *finfo) {
+	if (!finfo->IsHDDFile()) {
 			coutlog("Music from ZIP can be problematic...",2);
 			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1));
 			}
@@ -193,23 +182,20 @@ int MusicContainer::Load(CuboFile *finfo)
 	return 1;
 	}
 
-void MusicContainer::SetLoop(double from,double to)
-	{
+void MusicContainer::SetLoop(double from,double to) {
 	if (((from==0) &&(to==0)) || (from>to)) {hasloop=false; return;}
 	hasloop=true;
 	loopfrom=from;
 	loopto=to;
 	}
 
-void MusicContainer::JumpTo(double pos)
-	{
+void MusicContainer::JumpTo(double pos) {
 	currentpos=pos;
 	Mix_RewindMusic();
 	Mix_SetMusicPosition(pos);
 	}
 
-void MusicContainer::Think(double elapsed)
-	{
+void MusicContainer::Think(double elapsed) {
 	currentpos+=elapsed;
 	if (!hasloop) { return; }
 	if (currentpos<loopto) { return; }
@@ -223,8 +209,7 @@ void MusicContainer::Think(double elapsed)
 	currentpos=dest;
 	}
 
-void MusicContainer::Reload()
-	{
+void MusicContainer::Reload() {
 
 	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload music " +fname,2); return;}
@@ -238,19 +223,16 @@ void MusicContainer::Reload()
 
 
 
-void SoundServer::KillSound()
-	{
+void SoundServer::KillSound() {
 	if (!initialized) { return; }
 	Mix_HaltChannel(-1);
 	Mix_HaltMusic();
 
-	for (unsigned int i=0; i<sounds.size(); i++)
-			{
+	for (unsigned int i=0; i<sounds.size(); i++) {
 			if (sounds[i]) { delete sounds[i]; }
 			sounds[i]=NULL;
 			}
-	for (unsigned int i=0; i<musics.size(); i++)
-			{
+	for (unsigned int i=0; i<musics.size(); i++) {
 			if (musics[i]) { delete musics[i]; }
 			musics[i]=NULL;
 			}
@@ -263,8 +245,7 @@ void SoundServer::KillSound()
 	initialized=0;
 	}
 
-int SoundServer::InitSound(int freq,int bits,int stereo,int buffsize)
-	{
+int SoundServer::InitSound(int freq,int bits,int stereo,int buffsize) {
 
 	printf("Sound init with Freq(%d), Bits(%d), Stereo(%d), Buffer(%d) \n",freq,bits,stereo,buffsize);
 	KillSound();
@@ -289,8 +270,7 @@ int SoundServer::InitSound(int freq,int bits,int stereo,int buffsize)
 
 	}
 
-int SoundServer::SetNumChannels(int nchan)
-	{
+int SoundServer::SetNumChannels(int nchan) {
 	if (nchan>=0) {
 			int oldsize=playchannels.size();
 			if (nchan<oldsize) { playchannels.resize(nchan); }
@@ -300,11 +280,9 @@ int SoundServer::SetNumChannels(int nchan)
 	return Mix_AllocateChannels(nchan);
 	}
 
-int SoundServer::LoadSound(CuboFile *finfo)
-	{
+int SoundServer::LoadSound(CuboFile *finfo) {
 	if (!initialized) { return -1; }
-	for (unsigned int i=0; i<sounds.size(); i++)
-			{
+	for (unsigned int i=0; i<sounds.size(); i++) {
 			if (finfo->GetNameForLog()==sounds[i]->Filename()) { return i; }
 			}
 //Otherwise add it
@@ -320,11 +298,9 @@ int SoundServer::LoadSound(CuboFile *finfo)
 	return -1;
 	}
 
-int SoundServer::LoadMusic(CuboFile *finfo)
-	{
+int SoundServer::LoadMusic(CuboFile *finfo) {
 	if (!initialized) { return -1; }
-	for (unsigned int i=0; i<musics.size(); i++)
-			{
+	for (unsigned int i=0; i<musics.size(); i++) {
 			if (finfo->GetNameForLog()==musics[i]->Filename()) { return i; }
 			}
 	if (g_VerboseMode()) { coutlog("Loading Music: "+finfo->GetNameForLog()); }
@@ -342,29 +318,25 @@ int SoundServer::LoadMusic(CuboFile *finfo)
 	return -1;
 	}
 
-int SoundServer::SoundPlayedByChannel(int i)
-	{
+int SoundServer::SoundPlayedByChannel(int i) {
 	if (i<0 || i>=(int)(playchannels.size())) { return -1; }
 	return playchannels[i];
 	return -1;
 	};
 
 
-SoundContainer *SoundServer::GetSound(int i)
-	{
+SoundContainer *SoundServer::GetSound(int i) {
 	if (i<0) { return NULL; }
 	if ((unsigned int)i>=sounds.size()) { return NULL; }
 	return sounds[i];
 	}
-MusicContainer *SoundServer::GetMusic(int i)
-	{
+MusicContainer *SoundServer::GetMusic(int i) {
 	if (i<0) { return NULL; }
 	if ((unsigned int)i>=musics.size()) { return NULL; }
 	return musics[i];
 	}
 
-int SoundServer::PlaySound(int index, int channel)
-	{
+int SoundServer::PlaySound(int index, int channel) {
 	if (!initialized) { return -1; }
 	SoundContainer *s=GetSound(index);
 	if (!s) { return -1; }
@@ -376,8 +348,7 @@ int SoundServer::PlaySound(int index, int channel)
 
 	}
 
-int SoundServer::PlaySoundLooped(int index, int channel, int numloops)
-	{
+int SoundServer::PlaySoundLooped(int index, int channel, int numloops) {
 	if (!initialized) { return -1; }
 	SoundContainer *s=GetSound(index);
 	if (!s) { return -1; }
@@ -388,23 +359,20 @@ int SoundServer::PlaySoundLooped(int index, int channel, int numloops)
 	return c;
 	}
 
-void SoundServer::StopChannel(int chind)
-	{
+void SoundServer::StopChannel(int chind) {
 	if (!initialized) { return; }
 	Mix_HaltChannel(chind);
 	if (chind>=0 && chind<(int)(playchannels.size())) { playchannels[chind]=-1; }
 	}
 
-int SoundServer::PlayMusic(int index)
-	{
+int SoundServer::PlayMusic(int index) {
 	if (!initialized) { return -1; }
 	MusicContainer *m=GetMusic(index);
 	if (!m) { return -1; }
 	return Mix_PlayMusic(m->GetMusic(),-1);
 	}
 
-void SoundServer::MusicJumpTo(double p)
-	{
+void SoundServer::MusicJumpTo(double p) {
 	if (!initialized) { return ; }
 	MusicContainer *m=GetMusic(0);
 	if (!m) { return ; }
@@ -412,50 +380,43 @@ void SoundServer::MusicJumpTo(double p)
 	}
 
 
-int SoundServer::PlayingMusic()
-	{
+int SoundServer::PlayingMusic() {
 	if (!initialized) { return 0; }
 	return Mix_PlayingMusic();
 	}
 
-void SoundServer::RewindMusic()
-	{
+void SoundServer::RewindMusic() {
 	if (!initialized) { return; }
 	MusicContainer *m=GetMusic(0);
 	if (m) { m->Rewind(); }
 	Mix_RewindMusic();
 	}
 
-void SoundServer::Think(double elapsed)
-	{
+void SoundServer::Think(double elapsed) {
 	if (!initialized) { return; }
 	MusicContainer *m=GetMusic(0);
 	if (m) { m->Think(elapsed*PlayingMusic()); }
 	}
 
-void SoundServer::SetMusicVolume(int perc)
-	{
+void SoundServer::SetMusicVolume(int perc) {
 	if (!initialized) { return; }
 	float r=(float)perc/100.0*MIX_MAX_VOLUME;
 	Mix_VolumeMusic((int)r);
 	}
 
-void SoundServer::SetVolume(int perc)
-	{
+void SoundServer::SetVolume(int perc) {
 	if (!initialized) { return; }
 	float r=(float)perc/100.0*MIX_MAX_VOLUME;
 	Mix_Volume(-1,(int)r);
 	}
 
-void SoundServer::SetPosition(int channel,float norm_dist,float angl)
-	{
+void SoundServer::SetPosition(int channel,float norm_dist,float angl) {
 	Mix_SetPosition(channel,(Sint16)(angl/M_PI*180),(Uint8)(norm_dist*255));
 	}
 
 
 
-void SoundServer::Reload()
-	{
+void SoundServer::Reload() {
 	int playmusic=PlayingMusic();
 	Mix_HaltChannel(-1);
 	Mix_HaltMusic();
@@ -470,8 +431,7 @@ void SoundServer::Reload()
 	if (playmusic) { PlayMusic(0); }
 	}
 
-void SoundServer::SetMusicLoop(double from,double to)
-	{
+void SoundServer::SetMusicLoop(double from,double to) {
 	if (!initialized) { return ; }
 	MusicContainer *m=GetMusic(0);
 	if (!m) { return ; }
@@ -483,8 +443,7 @@ void SoundServer::SetMusicLoop(double from,double to)
 
 
 
-int SOUND_SetPostEffect(lua_State *state)
-	{
+int SOUND_SetPostEffect(lua_State *state) {
 	double p3=LUA_GET_DOUBLE(state);
 	double p2=LUA_GET_DOUBLE(state);
 	double p1=LUA_GET_DOUBLE(state);
@@ -493,8 +452,7 @@ int SOUND_SetPostEffect(lua_State *state)
 	return 0;
 	}
 
-int SOUND_Init(lua_State *state)
-	{
+int SOUND_Init(lua_State *state) {
 	int buffsize=LUA_GET_INT(state);
 	int stereo=LUA_GET_INT(state);
 	int bitsize=LUA_GET_INT(state);
@@ -504,16 +462,14 @@ int SOUND_Init(lua_State *state)
 	return 1;
 	}
 
-int SOUND_AllocateChannels(lua_State *state)
-	{
+int SOUND_AllocateChannels(lua_State *state) {
 	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SetNumChannels(nchan); //Negative value => Get current numchans
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int SOUND_PlayedByChannel(lua_State *state)
-	{
+int SOUND_PlayedByChannel(lua_State *state) {
 	int nchan=LUA_GET_INT(state);
 	int res=g_Sounds()->SoundPlayedByChannel(nchan); //Negative value => Get current numchans
 	LUA_SET_NUMBER(state, res);
@@ -521,8 +477,7 @@ int SOUND_PlayedByChannel(lua_State *state)
 	}
 
 
-int SOUND_Load(lua_State *state)
-	{
+int SOUND_Load(lua_State *state) {
 	std::string fname=LUA_GET_STRING(state);
 	CuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
 	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
@@ -532,8 +487,7 @@ int SOUND_Load(lua_State *state)
 	return 1;
 	}
 
-int SOUND_LoadMusic(lua_State *state)
-	{
+int SOUND_LoadMusic(lua_State *state) {
 	std::string fname=LUA_GET_STRING(state);
 	CuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
 	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
@@ -553,8 +507,7 @@ int SOUND_LoadMusic(lua_State *state)
 	return 1;
 	}
 
-int SOUND_Play(lua_State *state)
-	{
+int SOUND_Play(lua_State *state) {
 	int channel=LUA_GET_INT(state);
 	int snd=LUA_GET_INT(state);
 	int res=g_Sounds()->PlaySound(snd,channel);
@@ -562,8 +515,7 @@ int SOUND_Play(lua_State *state)
 	return 1;
 	}
 
-int SOUND_PlayLooped(lua_State *state)
-	{
+int SOUND_PlayLooped(lua_State *state) {
 	int loops=LUA_GET_INT(state);
 	int channel=LUA_GET_INT(state);
 	int snd=LUA_GET_INT(state);
@@ -572,15 +524,13 @@ int SOUND_PlayLooped(lua_State *state)
 	return 1;
 	}
 
-int SOUND_StopChannel(lua_State *state)
-	{
+int SOUND_StopChannel(lua_State *state) {
 	int channel=LUA_GET_INT(state);
 	g_Sounds()->StopChannel(channel);
 	return 0;
 	}
 
-int SOUND_SetMusicLoop(lua_State *state)
-	{
+int SOUND_SetMusicLoop(lua_State *state) {
 	double to=LUA_GET_DOUBLE(state);
 	double from=LUA_GET_DOUBLE(state);
 	g_Sounds()->SetMusicLoop(from,to);
@@ -588,51 +538,44 @@ int SOUND_SetMusicLoop(lua_State *state)
 	}
 
 
-int SOUND_MusicJumpTo(lua_State *state)
-	{
+int SOUND_MusicJumpTo(lua_State *state) {
 	double to=LUA_GET_DOUBLE(state);
 	g_Sounds()->MusicJumpTo(to);
 	return 0;
 	}
 
 
-int SOUND_PlayMusic(lua_State *state)
-	{
+int SOUND_PlayMusic(lua_State *state) {
 	int mus=LUA_GET_INT(state);
 	int res=g_Sounds()->PlayMusic(mus);
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
-int SOUND_PlayingMusic(lua_State *state)
-	{
+int SOUND_PlayingMusic(lua_State *state) {
 	int r= g_Sounds()->PlayingMusic();
 	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
 
-int SOUND_RewindMusic(lua_State *state)
-	{
+int SOUND_RewindMusic(lua_State *state) {
 	g_Sounds()->RewindMusic();
 	return 0;
 	}
 
-int SOUND_SetMusicVolume(lua_State *state)
-	{
+int SOUND_SetMusicVolume(lua_State *state) {
 	int perc=LUA_GET_INT(state);
 	g_Sounds()->SetMusicVolume(perc);
 	return 0;
 	}
 
-int SOUND_SetVolume(lua_State *state)
-	{
+int SOUND_SetVolume(lua_State *state) {
 	int perc=LUA_GET_INT(state);
 	g_Sounds()->SetVolume(perc);
 	return 0;
 	}
 
-int SOUND_Set3dFromCam(lua_State *state)
-	{
+int SOUND_Set3dFromCam(lua_State *state) {
 	float maxdist=LUA_GET_DOUBLE(state);
 	Vector3d p=Vector3FromStack(state);
 	int channel=LUA_GET_INT(state);
@@ -664,8 +607,7 @@ int SOUND_Set3dFromCam(lua_State *state)
 	return 0;
 	}
 
-void LUA_SOUND_RegisterLib()
-	{
+void LUA_SOUND_RegisterLib() {
 	g_CuboLib()->AddFunc("SOUND_Init",SOUND_Init);
 	g_CuboLib()->AddFunc("SOUND_SetPostEffect",SOUND_SetPostEffect);
 	g_CuboLib()->AddFunc("SOUND_AllocateChannels",SOUND_AllocateChannels);

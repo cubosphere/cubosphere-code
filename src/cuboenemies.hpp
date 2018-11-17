@@ -17,8 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboactors.hpp"
 //#include <iostream>
 
-class EnemyDef : public ActorDef
-	{
+class EnemyDef : public ActorDef {
 	public:
 		virtual int GetType() {return FILE_ENEMYDEF;}
 		virtual int IsPlayer() {return 0;}
@@ -26,8 +25,7 @@ class EnemyDef : public ActorDef
 
 
 
-class CuboEnemy : public TCuboMovement
-	{
+class CuboEnemy : public TCuboMovement {
 	public:
 		virtual int IsPlayer() {return 0;}
 		virtual void SetType(int mid,std::string name);

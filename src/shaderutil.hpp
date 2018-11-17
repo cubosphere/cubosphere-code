@@ -51,8 +51,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-class ShaderUniformLocation
-	{
+class ShaderUniformLocation {
 	public:
 		std::string name;
 		GLint loc;
@@ -61,8 +60,7 @@ class ShaderUniformLocation
 
 class ShaderServer;
 
-class BaseShader
-	{
+class BaseShader {
 	protected:
 		std::string filename; //Holds the base name
 		GLuint vertexref,fragmentref,programref;
@@ -80,8 +78,7 @@ class BaseShader
 	};
 
 
-class ShaderServer
-	{
+class ShaderServer {
 	protected:
 		std::vector<BaseShader*> shaderlist;
 		int momshader;

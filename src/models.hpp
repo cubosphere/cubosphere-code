@@ -42,8 +42,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include "vectors.hpp"
 
-class MdlDef : public BaseLuaDef
-	{
+class MdlDef : public BaseLuaDef {
 	protected:
 		GLuint totalrenderlist;
 		std::vector<GLuint> grenderlists;
@@ -58,13 +57,11 @@ class MdlDef : public BaseLuaDef
 
 using MdlDefServer = BaseDefServer<MdlDef>;
 
-using IntVect = struct
-	{
+using IntVect = struct {
 	int x,y,z;
 	};
 
-class TextFileReader
-	{
+class TextFileReader {
 	protected:
 		std::vector<std::string> lines;
 		std::vector<int> linenums;
@@ -88,8 +85,7 @@ class TextFileReader
 
 
 
-class BaseModel
-	{
+class BaseModel {
 	protected:
 		std::string name;
 		virtual void Clear() {}
@@ -103,22 +99,19 @@ class BaseModel
 		virtual void Reload();
 	};
 
-using OBJFace = struct
-	{
+using OBJFace = struct {
 	int vert[3],norm[3],texcoord[3];
 	int tangent;
 	};
 
-using OBJGroup = struct
-	{
+using OBJGroup = struct {
 	std::string name,materialname;
 	std::vector<OBJFace> faces;
 	GLuint renderlist;
 	int userenderlist;
 	};
 
-class OBJModel : public BaseModel
-	{
+class OBJModel : public BaseModel {
 	protected:
 		std::vector<Vector3d> verts,normals,tangents;
 		std::vector<Vector2d> texcoords;
@@ -136,8 +129,7 @@ class OBJModel : public BaseModel
 	};
 
 
-class ModelServer
-	{
+class ModelServer {
 	protected:
 		std::vector<BaseModel*> mdls;
 		virtual int GetModel(std::string fname);

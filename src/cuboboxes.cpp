@@ -53,27 +53,23 @@ static float s_LastDiffuse[4];
 
 void g_LastDiffuse(float * ld) {for (int c=0; c<4; c++) s_LastDiffuse[c]=ld[c];}
 
-void g_SetAlphaFunc(LuaAccess *acc,std::string func)
-	{
+void g_SetAlphaFunc(LuaAccess *acc,std::string func) {
 	s_AlphaAccess=acc;
 	s_AlphaFunc=func;
 	}
 
-float ExecSideAlpha(float x,float y,float z)
-	{
+float ExecSideAlpha(float x,float y,float z) {
 	double res;
 	s_AlphaAccess->CallVA(s_AlphaFunc.c_str(),"ddd>d",x,y,z,&res);
 	return (float)res;
 	}
 
-void SideAlpha(float &x,float &y,float &z)
-	{
+void SideAlpha(float &x,float &y,float &z) {
 	s_LastDiffuse[3]=ExecSideAlpha(x,y,z);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,   s_LastDiffuse);
 	}
 
-void CuboBlockSide::SetSideItem(std::string n)
-	{
+void CuboBlockSide::SetSideItem(std::string n) {
 	//First remove all Items of this side
 	g_Game()->GetLevel()->RemoveItemFromSide(this);
 	if (n=="") { return; }
@@ -81,8 +77,7 @@ void CuboBlockSide::SetSideItem(std::string n)
 	g_Game()->GetLevel()->AddItem(parent->GetID(),s_CuboSideNames[side],n);
 	}
 
-CuboItem *CuboBlockSide::GetItem()
-	{
+CuboItem *CuboBlockSide::GetItem() {
 	//First remove all Items of this side
 	CuboItem *res=g_Game()->GetLevel()->GetItemOnSide(this);
 	return res;
@@ -91,61 +86,51 @@ CuboItem *CuboBlockSide::GetItem()
 
 
 
-void CuboBlockSide::Init(int cside,CuboBlock *cparent)
-	{
+void CuboBlockSide::Init(int cside,CuboBlock *cparent) {
 	side=cside;
 	parent=cparent;
 	}
 
 
-int CuboBlockSide::GetID()
-	{
+int CuboBlockSide::GetID() {
 	int pid=parent->GetID();
 	return pid*6+side;
 	}
 
 
-void CuboBlockSide::Render()
-	{
+void CuboBlockSide::Render() {
 	//Call the RenderSide of the blockdef
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_RenderSide(GetID());
 	}
 
-void CuboBlockSide::SpecialRender(std::string nam,int defrender)
-	{
+void CuboBlockSide::SpecialRender(std::string nam,int defrender) {
 	if ( g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SpecialRender(nam,GetID())) {}
-	else
-			{
+	else {
 			if (defrender==1) { Render(); }
 			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"side",GetID()); }
 			}
 
 	}
 
-void CuboBlockSide::DistRender()
-	{
+void CuboBlockSide::DistRender() {
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_DistRenderSide(GetID());
 	}
 
-void CuboBlockSide::Call_CollisionCheck(int plr)
-	{
+void CuboBlockSide::Call_CollisionCheck(int plr) {
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_CollisionCheck(plr,GetID());
 	}
 
-void CuboBlockSide::Call_VarChanged(std::string var) //To observe changes done by editor
-	{
+void CuboBlockSide::Call_VarChanged(std::string var) { //To observe changes done by editor
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SideVarChanged(var,GetID());
 	}
 
 
 
-Vector2d CuboBlockSide::GetUV(int i)
-	{
+Vector2d CuboBlockSide::GetUV(int i) {
 	return s_CuboUV[i]; ///TODO: add rotation and mirroring
 	}
 
-Vector3d CuboBlockSide::GetTangent()
-	{
+Vector3d CuboBlockSide::GetTangent() {
 	Vector3d p1=s_CuboVerts[side][0];
 	Vector3d p2=s_CuboVerts[side][1];
 	Vector3d p3=s_CuboVerts[side][2];
@@ -163,8 +148,7 @@ Vector3d CuboBlockSide::GetTangent()
 	return tangent;
 	}
 
-Vector3d CuboBlockSide::GetMidpoint()
-	{
+Vector3d CuboBlockSide::GetMidpoint() {
 	Vector3d res;
 	res=s_CuboNormals[side];
 	res=res*CUBO_SCALE;
@@ -172,20 +156,17 @@ Vector3d CuboBlockSide::GetMidpoint()
 	return res;
 	}
 
-std::string CuboBlockSide::GetTypeName()
-	{
+std::string CuboBlockSide::GetTypeName() {
 	return g_Game()->GetLevel()->GetBlockDef(sidetype)->GetName();
 	}
 
-void CuboBlockSide::RenderQuad()
-	{
+void CuboBlockSide::RenderQuad() {
 // glColor3f(1,1,1);
 	Vector3d ps=parent->GetPos();
 //  glBegin(GL_QUADS);
 	glBegin(GL_TRIANGLE_STRIP);
 	glNormal3f(s_CuboNormals[side].x,s_CuboNormals[side].y,s_CuboNormals[side].z);
-	for (int i=0; i<4; i++)
-			{
+	for (int i=0; i<4; i++) {
 			int texind=i;
 			glTexCoord2f(s_CuboUV[texind].u,s_CuboUV[texind].v);
 			Vector3d offs=s_CuboVerts[side][i];
@@ -202,23 +183,19 @@ void CuboBlockSide::RenderQuad()
 
 
 
-std::string CuboBlockSide::GetEditorInfo(std::string what,std::string def)
-	{
+std::string CuboBlockSide::GetEditorInfo(std::string what,std::string def) {
 	return ((g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_GetEditorInfo(what,def)));
 	}
 
-std::string CuboBlock::GetEditorInfo(std::string what,std::string def)
-	{
+std::string CuboBlock::GetEditorInfo(std::string what,std::string def) {
 	return ((g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_GetEditorInfo(what,def)));
 	}
 
 
-void CuboBlock::InitSides()
-	{
+void CuboBlock::InitSides() {
 	sides.resize(6);
 	next.resize(6);
-	for (unsigned int i=0; i<6; i++)
-			{
+	for (unsigned int i=0; i<6; i++) {
 			CuboBlockSide bs;
 			bs.Init(i,this);
 			sides[i]=bs;
@@ -227,60 +204,49 @@ void CuboBlock::InitSides()
 	}
 
 
-bool CuboBlock::HasNoTransparency()
-	{
+bool CuboBlock::HasNoTransparency() {
 	return (!(g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_HasTransparency(GetID())));
 	}
 
-int CuboBlock::Blocking()
-	{
+int CuboBlock::Blocking() {
 	return (!(g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_IsPassable(GetID())));
 	}
 
-int CuboBlock::Moving()
-	{
+int CuboBlock::Moving() {
 	return ((g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_IsMoving(GetID())));
 	}
 
-int CuboBlock::IsEditorSelector()
-	{
+int CuboBlock::IsEditorSelector() {
 	if (g_Game()->GetLevel()->GetBlockDef(this->blocktype)->GetName()=="_selection") { return 1; }
 	return 0;
 	}
 
-void CuboBlockSide::Think()
-	{
+void CuboBlockSide::Think() {
 	g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_SideThink(GetID());
 
 	}
 
-void CuboBlock::Think()
-	{
+void CuboBlock::Think() {
 	oldpos=pos;
 	g_Game()->GetLevel()->GetBlockDef(this->blocktype)->Call_BlockThink(GetID());
-	for (unsigned int i=0; i<6; i++)
-			{
-			if (next[i])
-					{
+	for (unsigned int i=0; i<6; i++) {
+			if (next[i]) {
 					if (next[i]->HasNoTransparency()) {  continue; }
 					}
 			sides[i].Think();
 			}
 	}
 
-void CuboItem::Think()
-	{
+void CuboItem::Think() {
 	g_Game()->GetLevel()->GetItemDef(this->itemtype)->Call_Think(GetID());
 
 	}
 
-std::string CuboItem::GetEditorInfo(std::string what,std::string def)
-	{
+std::string CuboItem::GetEditorInfo(std::string what,std::string def) {
 	return ((g_Game()->GetLevel()->GetItemDef(this->itemtype)->Call_GetEditorInfo(what,def)));
 	}
 
-CuboBlock::CuboBlock()
-	{
+CuboBlock::CuboBlock() {
 	InitSides();
 	pos.xyz(0,0,0);
 	oldpos=pos;
@@ -288,29 +254,24 @@ CuboBlock::CuboBlock()
 	cullradius=sqrt(3.0)*CUBO_SCALE;
 	}
 
-CuboBlock::~CuboBlock()
-	{
+CuboBlock::~CuboBlock() {
 	ReleaseMeFromNext();
 	}
 
 
-void CuboBlock::SetIPos(int x,int y,int z)
-	{
+void CuboBlock::SetIPos(int x,int y,int z) {
 	pos.xyz(x*CUBO_SCALE*2,y*CUBO_SCALE*2,z*CUBO_SCALE*2);
 	oldpos=pos;
 	}
 
-void CuboBlock::Render(Camera *cam)
-	{
+void CuboBlock::Render(Camera *cam) {
 	//Perform a precull
 	//Get the campos
 	Vector3d cp=cam->getPos();
 	cp=pos-cp;
 
-	for (unsigned int i=0; i<6; i++)
-			{
-			if (next[i])
-					{
+	for (unsigned int i=0; i<6; i++) {
+			if (next[i]) {
 					if (next[i]->HasNoTransparency()) { continue; }
 					}
 			float dist=cp*s_CuboNormals[i];
@@ -320,17 +281,14 @@ void CuboBlock::Render(Camera *cam)
 			}
 	}
 
-void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[])
-	{
+void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[]) {
 	//Perform a precull
 	//Get the campos
 	Vector3d cp=cam->getPos();
 	cp=pos-cp;
 
-	for (unsigned int i=0; i<6; i++)
-			{
-			if (next[i])
-					{
+	for (unsigned int i=0; i<6; i++) {
+			if (next[i]) {
 					if (next[i]->HasNoTransparency()) { mustrender[i]=0; continue; }
 					}
 			//else
@@ -343,30 +301,26 @@ void CuboBlock::MustRenderSides(Camera *cam,int  mustrender[])
 				}
 			}
 	}
-Vector3d CuboBlock::GetPos()
-	{
+Vector3d CuboBlock::GetPos() {
 	return pos;
 	}
 
 
-void CuboBlock::SetNext(int side,CuboBlock *n)
-	{
+void CuboBlock::SetNext(int side,CuboBlock *n) {
 
 	next[side]=n;
 	}
 
-CuboBlock *CuboBlock::GetNext(int side)
-	{
+CuboBlock *CuboBlock::GetNext(int side) {
 	return next[side];
 	}
 
-int CuboBlock::GetNeighbor(Vector3d norm)
-	{
+int CuboBlock::GetNeighbor(Vector3d norm) {
 	Vector3d n=norm;
 	n.normalize();
 	int d=-1;
-	for (int i=0; i<6; i++)
-			{	Vector3d kn;
+	for (int i=0; i<6; i++) {
+			Vector3d kn;
 			kn=s_CuboNormals[i];
 			if ((kn*n)>0.5) {d=i; break;}
 			}
@@ -376,22 +330,18 @@ int CuboBlock::GetNeighbor(Vector3d norm)
 	return ne->GetID();
 	}
 
-void CuboBlock::WriteLevelData(FILE *f)
-	{
+void CuboBlock::WriteLevelData(FILE *f) {
 	//First add the Block by adding:
 	std::string typen=g_Game()->GetLevel()->GetBlockDef(blocktype)->GetName();
 	fprintf(f,"\n  LEVEL_AddBlock(%d,%d,%d,\"%s\");\n",(int)(pos.x/(2*CUBO_SCALE)),(int)(pos.y/(2*CUBO_SCALE)),(int)(pos.z/(2*CUBO_SCALE)),typen.c_str());
 
 	//Block only block vars
-	if (GetBlockSide(0)->GetEditorInfo("BlockOnly","") == "yes")
-			{
+	if (GetBlockSide(0)->GetEditorInfo("BlockOnly","") == "yes") {
 
-			if (GetBlockSide(0)->GetEditorInfo("NumVars","") != "")  //Get the exported variables
-					{
+			if (GetBlockSide(0)->GetEditorInfo("NumVars","") != "") { //Get the exported variables
 					std::string nvs=GetBlockSide(0)->GetEditorInfo("NumVars","0");
 					int sidevars=atoi(nvs.c_str());
-					for (int sv=1; sv<=sidevars; sv++)
-							{
+					for (int sv=1; sv<=sidevars; sv++) {
 							std::string svarname=GetBlockSide(0)->GetEditorInfo("Var"+std::to_string(sv),"");
 							std::string svarval=GetVarHolder()->GetVarString(svarname,1);
 							fprintf(f,"    BLOCK_SetVar(LEVEL_LastBlock(), \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
@@ -401,23 +351,19 @@ void CuboBlock::WriteLevelData(FILE *f)
 			}
 
 	//Now we apply the side changes
-	for (int s=0; s<6; s++)
-			{
+	for (int s=0; s<6; s++) {
 			std::string stypen=GetBlockSide(s)->GetTypeName();
 			if (stypen!=typen) {
 					fprintf(f,"    LEVEL_ChangeSide(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),stypen.c_str());
 					}
 
 
-			if (GetBlockSide(s)->GetEditorInfo("BlockOnly","") != "yes")
-					{
+			if (GetBlockSide(s)->GetEditorInfo("BlockOnly","") != "yes") {
 
-					if (GetBlockSide(s)->GetEditorInfo("NumVars","") != "")  //Get the exported variables
-							{
+					if (GetBlockSide(s)->GetEditorInfo("NumVars","") != "") { //Get the exported variables
 							std::string nvs=GetBlockSide(s)->GetEditorInfo("NumVars","0");
 							int sidevars=atoi(nvs.c_str());
-							for (int sv=1; sv<=sidevars; sv++)
-									{
+							for (int sv=1; sv<=sidevars; sv++) {
 									std::string svarname=GetBlockSide(s)->GetEditorInfo("Var"+std::to_string(sv),"");
 									std::string svarval=GetBlockSide(s)->GetVarHolder()->GetVarString(svarname,1);
 									fprintf(f,"      SIDE_SetVar(LEVEL_LastBlock()*6+%d, \"%s\", %s);\n",s,svarname.c_str(),svarval.c_str());
@@ -429,26 +375,22 @@ void CuboBlock::WriteLevelData(FILE *f)
 
 			//Check the existance of an item
 			CuboItem *item=GetBlockSide(s)->GetItem();
-			if (item!=NULL)
-					{
+			if (item!=NULL) {
 					///TODO: Check if it is in a block
 					Vector3d checkpos=GetBlockSide(s)->GetMidpoint();
 					Vector3d normal=GetBlockSide(s)->GetNormal();
 					normal=normal*CUBO_SCALE;
 					checkpos=checkpos+normal;
-					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos))
-							{
+					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos)) {
 							fprintf(f,"    --LEVEL_AddItem(LEVEL_LastBlock(),\"%s\",\"%s\");  -- (Is in another block!)\n",s_CuboSideNames[s].c_str(),item->GetName().c_str());
 
 							}
 					else { fprintf(f,"    local item=LEVEL_AddItem(LEVEL_LastBlock(),\"%s\",\"%s\");\n",s_CuboSideNames[s].c_str(),item->GetName().c_str()); }
 
-					if (item->GetEditorInfo("NumVars","") != "")  //Get the exported variables
-							{
+					if (item->GetEditorInfo("NumVars","") != "") { //Get the exported variables
 							std::string nvs=item->GetEditorInfo("NumVars","0");
 							int itemvars=atoi(nvs.c_str());
-							for (int iv=1; iv<=itemvars; iv++)
-									{
+							for (int iv=1; iv<=itemvars; iv++) {
 									std::string ivarname=item->GetEditorInfo("Var"+std::to_string(iv),"");
 									std::string ivarval=item->GetVarHolder()->GetVarString(ivarname,1);
 									fprintf(f,"      ITEM_SetVar(item, \"%s\", %s);\n",ivarname.c_str(),ivarval.c_str());
@@ -460,38 +402,31 @@ void CuboBlock::WriteLevelData(FILE *f)
 
 			//And the one of an enemy
 			CuboEnemy* e=NULL;
-			for (int ind=0; ind<g_Game()->GetNumActors(); ind++)
-					{
+			for (int ind=0; ind<g_Game()->GetNumActors(); ind++) {
 					TCuboMovement *en=g_Game()->GetActorMovement(ind);
 					if (en->IsPlayer()) { continue; }
-					if (en->GetOnSideID()==GetBlockSide(s)->GetID())
-							{
+					if (en->GetOnSideID()==GetBlockSide(s)->GetID()) {
 							e=(CuboEnemy*)en; //Found an enemy
 							break;
 							}
 					}
 
-			if (e!=NULL)
-					{
+			if (e!=NULL) {
 					Vector3d checkpos=GetBlockSide(s)->GetMidpoint();
 					Vector3d normal=GetBlockSide(s)->GetNormal();
 					normal=normal*CUBO_SCALE;
 					checkpos=checkpos+normal;
-					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos))
-							{
+					if (g_Game()->GetLevel()->GetBlockAtPos(checkpos)) {
 							fprintf(f,"    --ENEMY_New(...); not used -- (Is in another block!)\n");
 
 							}
-					else
-							{
+					else {
 							fprintf(f,"    local enemy=ENEMY_New(\"%s\");\n",e->GetType().c_str());
 							fprintf(f,"      ACTOR_SetStart(enemy,6*LEVEL_LastBlock()+%d,%d);\n",s,e->GetStartRotation());
-							if (e->GetEditorInfo("NumVars","") != "")  //Get the exported variables
-									{
+							if (e->GetEditorInfo("NumVars","") != "") { //Get the exported variables
 									std::string nvs=e->GetEditorInfo("NumVars","0");
 									int sidevars=atoi(nvs.c_str());
-									for (int sv=1; sv<=sidevars; sv++)
-											{
+									for (int sv=1; sv<=sidevars; sv++) {
 											std::string svarname=e->GetEditorInfo("Var"+std::to_string(sv),"");
 											std::string svarval=e->GetVarHolder()->GetVarString(svarname,1);
 											fprintf(f,"      ACTOR_SetVar(enemy, \"%s\", %s);\n",svarname.c_str(),svarval.c_str());
@@ -503,59 +438,50 @@ void CuboBlock::WriteLevelData(FILE *f)
 			}
 	}
 
-void CuboBlock::ReleaseMeFromNext()
-	{
+void CuboBlock::ReleaseMeFromNext() {
 	for (int i=0; i<6; i++)
 		if (next[i]) { next[i]->SetNext(s_CuboOpposingDir[i],NULL); }
 	}
 
 
-void CuboBlock::ReAttachMeToNext()
-	{
+void CuboBlock::ReAttachMeToNext() {
 	for (int i=0; i<6; i++)
 		if (next[i]) { next[i]->SetNext(s_CuboOpposingDir[i],this); }
 	}
 
-void CuboBlock::SetBlockType(int i)
-	{
+void CuboBlock::SetBlockType(int i) {
 	blocktype=i;
 	for (int j=0; j<6; j++) { sides[j].SetSideType(blocktype); }
 	}
 
-void CuboBlock::Call_OnBlockEvent(int actorid)
-	{
+void CuboBlock::Call_OnBlockEvent(int actorid) {
 	//Get the LUA script
 	g_Game()->GetLevel()->GetBlockDef(blocktype)->Call_OnBlockEvent(id,actorid);
 	}
 
 
-void CuboBlockSide::Call_OnSideEvent(int actorid)
-	{
+void CuboBlockSide::Call_OnSideEvent(int actorid) {
 	//Get the LUA script
 	g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_OnSideEvent(GetID(),actorid);
 	}
 
 
-int CuboBlockSide::Call_MayMove(int actorid,std::string movestr)
-	{
+int CuboBlockSide::Call_MayMove(int actorid,std::string movestr) {
 	//Get the LUA script
 	return g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_MayMove(GetID(),actorid,movestr);
 	}
 
-int CuboBlockSide::Call_MayCull()
-	{
+int CuboBlockSide::Call_MayCull() {
 	//Get the LUA script
 	return g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_MayCull(GetID());
 	}
 
-int CuboBlockSide::Call_MaySlideDown(int actorid)
-	{
+int CuboBlockSide::Call_MaySlideDown(int actorid) {
 	return g_Game()->GetLevel()->GetBlockDef(this->sidetype)->Call_MaySlideDown(GetID(),actorid);
 	}
 
 
-int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitpt) //-1 if not hit otherwise the side
-	{
+int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitpt) { //-1 if not hit otherwise the side
 //First a distance check:
 	Vector3d diff=pos;
 	diff=diff-start;
@@ -563,8 +489,7 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 	if (sqrdist-3*CUBO_SCALE*CUBO_SCALE>(*dist)*(*dist)) { return -1; }
 //Now go through the sides
 	int theside=-1;
-	for (int i=0; i<6; i++)
-			{
+	for (int i=0; i<6; i++) {
 			///Plane Equation: n*x=d
 			/// d can be obtained by pos*n+CUBO_SCALE
 			/// Now the ray x(t) has the form: x(t)=s+dir*t
@@ -579,8 +504,7 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 			if (ndotd>0.00000001) { continue; } //parallel
 			planedist/=ndotd;
 			if (planedist<0) { continue; }
-			if (planedist<*dist)
-					{
+			if (planedist<*dist) {
 					///Only check if we are inside
 					Vector3d onpos=dir*planedist;
 					onpos=onpos+start;
@@ -589,8 +513,7 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 					vgl=vgl*CUBO_SCALE;
 					vgl=onpos-vgl;
 					//Remains to check the maximum of vgl smaller than the CUBO_DIST
-					if (vgl.MaxAbsValue()<=CUBO_SCALE)
-							{
+					if (vgl.MaxAbsValue()<=CUBO_SCALE) {
 							*dist=planedist;
 							theside=i;
 							*hitpt=onpos;
@@ -601,15 +524,13 @@ int CuboBlock::BlockInRay(Vector3d start,Vector3d dir,float *dist,Vector3d *hitp
 	}
 
 
-CuboItem::CuboItem(int id,int type,CuboBlockSide *side)
-	{
+CuboItem::CuboItem(int id,int type,CuboBlockSide *side) {
 	myid=id;
 	itemtype=type;
 	sideptr=side;
 	}
 
-Vector3d CuboItem::GetPos()
-	{
+Vector3d CuboItem::GetPos() {
 //ok, get the sides midpoint and add a bit
 	Vector3d pos=sideptr->GetMidpoint();
 	Vector3d norm=sideptr->GetNormal();
@@ -618,45 +539,37 @@ Vector3d CuboItem::GetPos()
 	return pos;
 	}
 
-void CuboItem::SpecialRender(std::string nam,int defrender)
-	{
+void CuboItem::SpecialRender(std::string nam,int defrender) {
 	if ( g_Game()->GetLevel()->GetItemDef(itemtype)->Call_SpecialRender(nam,myid)) {}
-	else
-			{
+	else {
 			if (defrender==1) { Render(); }
 			else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"item",myid); }
 			}
 
 	}
 
-void CuboItem::Render()
-	{
+void CuboItem::Render() {
 	g_Game()->GetLevel()->GetItemDef(itemtype)->Call_Render(myid);
 	}
 
-void CuboItem::DistRender()
-	{
+void CuboItem::DistRender() {
 	g_Game()->GetLevel()->GetItemDef(itemtype)->Call_DistRender(myid);
 	}
 
-std::string CuboItem::GetName()
-	{
+std::string CuboItem::GetName() {
 	return g_Game()->GetLevel()->GetItemDef(itemtype)->GetName();
 	}
 
-void CuboItem::Call_Constructor()
-	{
+void CuboItem::Call_Constructor() {
 	varholder.clear();
 	g_Game()->GetLevel()->GetItemDef(itemtype)->Call_Constructor(myid);
 	}
 
-void CuboItem::CollisionCheckWithActor(int actorid)
-	{
+void CuboItem::CollisionCheckWithActor(int actorid) {
 	g_Game()->GetLevel()->GetItemDef(itemtype)->Call_CollisionCheck(actorid,myid);
 	}
 
-void CuboBlock::Call_Constructor()
-	{
+void CuboBlock::Call_Constructor() {
 	varholder.clear();
 	g_Game()->GetLevel()->GetBlockDef(blocktype)->Call_BlockConstructor(GetID());
 	//And the same thing for all sides
@@ -664,28 +577,24 @@ void CuboBlock::Call_Constructor()
 	}
 
 
-void CuboBlock::Call_CollisionCheck(int plr)
-	{
+void CuboBlock::Call_CollisionCheck(int plr) {
 	for (unsigned int i=0; i<6; i++) { sides[i].Call_CollisionCheck(plr); }
 	}
 
 
-void CuboBlockSide::Call_Constructor()
-	{
+void CuboBlockSide::Call_Constructor() {
 	varholder.clear();
 	g_Game()->GetLevel()->GetBlockDef(sidetype)->Call_SideConstructor(GetID());
 	}
 
-Vector3d CuboBlock::GetBBMax()
-	{
+Vector3d CuboBlock::GetBBMax() {
 	Vector3d res;
 	res.xyz(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE);
 	res=pos+res;
 	return res;
 	}
 
-Vector3d CuboBlock::GetBBMin()
-	{
+Vector3d CuboBlock::GetBBMin() {
 	Vector3d res;
 	res.xyz(CUBO_SCALE,CUBO_SCALE,CUBO_SCALE);
 	res=pos-res;
@@ -693,8 +602,7 @@ Vector3d CuboBlock::GetBBMin()
 	}
 
 
-std::string CuboBlock::GetName()
-	{
+std::string CuboBlock::GetName() {
 	return g_Game()->GetLevel()->GetBlockDef(blocktype)->GetName();
 	}
 
@@ -736,8 +644,7 @@ void ItemDef::Call_Constructor(int id) {   COND_LUA_CALL("Constructor",,"i",id);
 ///////////////////LUA IMPLEMENT////////////////
 
 
-int ITEM_SetVar(lua_State *state)
-	{
+int ITEM_SetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	if (item<0) { return 0; }
@@ -747,8 +654,7 @@ int ITEM_SetVar(lua_State *state)
 	}
 
 
-int ITEM_GetVar(lua_State *state)
-	{
+int ITEM_GetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetLevel()->GetItem(item)->GetVarHolder()->GetVar(state);
@@ -757,16 +663,14 @@ int ITEM_GetVar(lua_State *state)
 	}
 
 
-int ITEM_GetType(lua_State *state)
-	{
+int ITEM_GetType(lua_State *state) {
 	int ind=LUA_GET_INT(state);
 	std::string res=g_Game()->GetLevel()->GetItem(ind)->GetName();
 	LUA_SET_STRING(state, res);
 	return 1;
 	}
 
-int ITEM_GetEditorInfo(lua_State *state)
-	{
+int ITEM_GetEditorInfo(lua_State *state) {
 	std::string def=LUA_GET_STRING(state);
 	std::string what=LUA_GET_STRING(state);
 
@@ -776,16 +680,14 @@ int ITEM_GetEditorInfo(lua_State *state)
 	return 1;
 	}
 
-int ITEM_GetSide(lua_State *state)
-	{
+int ITEM_GetSide(lua_State *state) {
 	int item=LUA_GET_INT(state);
 	int side=g_Game()->GetLevel()->GetItem(item)->GetSide()->GetID();
 	LUA_SET_NUMBER(state, side);
 	return 1;
 	}
 
-int ITEM_DistanceRender(lua_State *state)
-	{
+int ITEM_DistanceRender(lua_State *state) {
 	float dist=LUA_GET_DOUBLE(state);
 	int item=LUA_GET_INT(state);
 	g_Game()->GetLevel()->AddDistRenderItem(item,DIST_RENDER_ITEM,dist,state);
@@ -793,8 +695,7 @@ int ITEM_DistanceRender(lua_State *state)
 	}
 
 
-void LUA_ITEM_RegisterLib()
-	{
+void LUA_ITEM_RegisterLib() {
 	g_CuboLib()->AddFunc("ITEM_GetSide",ITEM_GetSide);
 	g_CuboLib()->AddFunc("ITEM_DistanceRender",ITEM_DistanceRender);
 	g_CuboLib()->AddFunc("ITEM_SetVar",ITEM_SetVar);
@@ -809,39 +710,34 @@ void LUA_ITEM_RegisterLib()
 
 
 
-int SIDE_RenderQuad(lua_State *state)
-	{
+int SIDE_RenderQuad(lua_State *state) {
 	int side=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlockSide(side)->RenderQuad();
 	return 0;
 	}
 
-int SIDE_GetTangent(lua_State *state)
-	{
+int SIDE_GetTangent(lua_State *state) {
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetTangent();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int SIDE_GetNormal(lua_State *state)
-	{
+int SIDE_GetNormal(lua_State *state) {
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetNormal();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int SIDE_GetMidpoint(lua_State *state)
-	{
+int SIDE_GetMidpoint(lua_State *state) {
 	int side=LUA_GET_INT(state);
 	Vector3d v= g_Game()->GetLevel()->GetBlockSide(side)->GetMidpoint();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int SIDE_DistanceRender(lua_State *state)
-	{
+int SIDE_DistanceRender(lua_State *state) {
 	float dist=LUA_GET_DOUBLE(state);
 	int side=LUA_GET_INT(state);
 	g_Game()->GetLevel()->AddDistRenderItem(side,DIST_RENDER_SIDE,dist,state);
@@ -849,8 +745,7 @@ int SIDE_DistanceRender(lua_State *state)
 	}
 
 
-int SIDE_SetVar(lua_State *state)
-	{
+int SIDE_SetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetLevel()->GetBlockSide(item)->GetVarHolder()->StoreVar(state);
@@ -859,8 +754,7 @@ int SIDE_SetVar(lua_State *state)
 	}
 
 
-int SIDE_FindOfType(lua_State *state)
-	{
+int SIDE_FindOfType(lua_State *state) {
 	int offs=LUA_GET_INT(state);
 	int start=LUA_GET_INT(state);
 	std::string tn=LUA_GET_STRING(state);
@@ -871,8 +765,7 @@ int SIDE_FindOfType(lua_State *state)
 
 
 
-int SIDE_SetAlphaFunc(lua_State *state)
-	{
+int SIDE_SetAlphaFunc(lua_State *state) {
 	std::string f=LUA_GET_STRING(state);
 
 	if (f=="") { g_SetAlphaFunc(NULL,""); }
@@ -880,8 +773,7 @@ int SIDE_SetAlphaFunc(lua_State *state)
 	return 0;
 	}
 
-int SIDE_GetVar(lua_State *state)
-	{
+int SIDE_GetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetLevel()->GetBlockSide(item)->GetVarHolder()->GetVar(state);
@@ -891,8 +783,7 @@ int SIDE_GetVar(lua_State *state)
 
 
 
-int SIDE_GetBlock(lua_State *state)
-	{
+int SIDE_GetBlock(lua_State *state) {
 	int s=LUA_GET_INT(state);
 	s=g_Game()->GetLevel()->GetBlockSide(s)->GetID();
 	s/=6;
@@ -900,16 +791,14 @@ int SIDE_GetBlock(lua_State *state)
 	return 1;
 	}
 
-int SIDE_GetType(lua_State *state)
-	{
+int SIDE_GetType(lua_State *state) {
 	int s=LUA_GET_INT(state);
 	std::string str=g_Game()->GetLevel()->GetBlockSide(s)->GetTypeName();
 	LUA_SET_STRING(state, str);
 	return 1;
 	}
 
-int SIDE_CallVarChanged(lua_State *state)
-	{
+int SIDE_CallVarChanged(lua_State *state) {
 	std::string vn=LUA_GET_STRING(state);
 	int s=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlockSide(s)->Call_VarChanged(vn);
@@ -917,8 +806,7 @@ int SIDE_CallVarChanged(lua_State *state)
 	}
 
 
-int SIDE_GetEditorInfo(lua_State *state)
-	{
+int SIDE_GetEditorInfo(lua_State *state) {
 	std::string def=LUA_GET_STRING(state);
 	std::string what=LUA_GET_STRING(state);
 
@@ -930,8 +818,7 @@ int SIDE_GetEditorInfo(lua_State *state)
 
 
 
-void LUA_SIDE_RegisterLib()
-	{
+void LUA_SIDE_RegisterLib() {
 	g_CuboLib()->AddFunc("SIDE_RenderQuad",SIDE_RenderQuad);
 	g_CuboLib()->AddFunc("SIDE_GetTangent",SIDE_GetTangent);
 	g_CuboLib()->AddFunc("SIDE_GetNormal",SIDE_GetNormal);
@@ -953,8 +840,7 @@ void LUA_SIDE_RegisterLib()
 ////////////////////////////////////////////////
 
 
-int BLOCK_GetNeighbor(lua_State *state)
-	{
+int BLOCK_GetNeighbor(lua_State *state) {
 	Vector3d norm=Vector3FromStack(state);
 	int blockid=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(blockid)->GetNeighbor(norm);
@@ -962,8 +848,7 @@ int BLOCK_GetNeighbor(lua_State *state)
 	return 1;
 	}
 
-int BLOCK_SetVar(lua_State *state)
-	{
+int BLOCK_SetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetLevel()->GetBlock(item)->GetVarHolder()->StoreVar(state);
@@ -971,8 +856,7 @@ int BLOCK_SetVar(lua_State *state)
 	return 0;
 	}
 
-int BLOCK_SetCullRadius(lua_State *state)
-	{
+int BLOCK_SetCullRadius(lua_State *state) {
 	double rad=LUA_GET_DOUBLE(state);
 	int block=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(block)->SetCullRadiusIfHigher(rad);
@@ -980,30 +864,26 @@ int BLOCK_SetCullRadius(lua_State *state)
 	}
 
 
-int BLOCK_RemoveFromNeighbors(lua_State *state)
-	{
+int BLOCK_RemoveFromNeighbors(lua_State *state) {
 	int block=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(block)->ReleaseMeFromNext();
 	return 0;
 	}
 
-int BLOCK_AttachToNeighbors(lua_State *state)
-	{
+int BLOCK_AttachToNeighbors(lua_State *state) {
 	int block=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(block)->ReAttachMeToNext();
 	return 0;
 	}
 
-int BLOCK_HasTransparency(lua_State *state)
-	{
+int BLOCK_HasTransparency(lua_State *state) {
 	int block=LUA_GET_INT(state);
 	int res=g_Game()->GetLevel()->GetBlock(block)->HasNoTransparency();
 	LUA_SET_NUMBER(state, !res);
 	return 1;
 	}
 
-int BLOCK_GetVar(lua_State *state)
-	{
+int BLOCK_GetVar(lua_State *state) {
 	int item=(int)lua_tonumber(state,1);
 	lua_remove(state,1);
 	g_Game()->GetLevel()->GetBlock(item)->GetVarHolder()->GetVar(state);
@@ -1013,16 +893,14 @@ int BLOCK_GetVar(lua_State *state)
 
 
 
-int BLOCK_GetPos(lua_State *state)
-	{
+int BLOCK_GetPos(lua_State *state) {
 	int b=LUA_GET_INT(state);
 	Vector3d v=g_Game()->GetLevel()->GetBlock(b)->GetPos();
 	LUA_SET_VECTOR3(state, v);
 	return 1;
 	}
 
-int BLOCK_GetEditorInfo(lua_State *state)
-	{
+int BLOCK_GetEditorInfo(lua_State *state) {
 	std::string def=LUA_GET_STRING(state);
 	std::string what=LUA_GET_STRING(state);
 
@@ -1033,8 +911,7 @@ int BLOCK_GetEditorInfo(lua_State *state)
 	}
 
 
-int BLOCK_AtPos(lua_State *state)
-	{
+int BLOCK_AtPos(lua_State *state) {
 	Vector3d v=Vector3FromStack(state);
 	CuboBlock* b=g_Game()->GetLevel()->GetBlockAtPos(v);
 	int i;
@@ -1045,8 +922,7 @@ int BLOCK_AtPos(lua_State *state)
 	}
 
 
-int BLOCK_SetPos(lua_State *state)
-	{
+int BLOCK_SetPos(lua_State *state) {
 	Vector3d np=Vector3FromStack(state);
 	int b=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(b)->SetIPos((int)(np.x/(2*CUBO_SCALE)),(int)(np.y/(2*CUBO_SCALE)),(int)(np.z/(2*CUBO_SCALE)));
@@ -1054,8 +930,7 @@ int BLOCK_SetPos(lua_State *state)
 	return 0;
 	}
 
-int BLOCK_GetBlocking(lua_State *state)
-	{
+int BLOCK_GetBlocking(lua_State *state) {
 	int b=LUA_GET_INT(state);
 	int res=0;
 	if (b>=0) {
@@ -1065,8 +940,7 @@ int BLOCK_GetBlocking(lua_State *state)
 	return 1;
 	}
 
-int BLOCK_SetPosf(lua_State *state)
-	{
+int BLOCK_SetPosf(lua_State *state) {
 	Vector3d np=Vector3FromStack(state);
 	int b=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(b)->SetPos(np);
@@ -1074,16 +948,14 @@ int BLOCK_SetPosf(lua_State *state)
 	return 0;
 	}
 
-int BLOCK_GetScale(lua_State *state)
-	{
+int BLOCK_GetScale(lua_State *state) {
 	int b=LUA_GET_INT(state);
 	float v=g_Game()->GetLevel()->GetBlock(b)->GetScale();
 	LUA_SET_NUMBER(state, v);
 	return 1;
 	}
 
-int BLOCK_SetScale(lua_State *state)
-	{
+int BLOCK_SetScale(lua_State *state) {
 	double s=LUA_GET_DOUBLE(state);
 	int b=LUA_GET_INT(state);
 	g_Game()->GetLevel()->GetBlock(b)->SetScale(s);
@@ -1095,8 +967,7 @@ int BLOCK_SetScale(lua_State *state)
 
 
 
-void LUA_BLOCK_RegisterLib()
-	{
+void LUA_BLOCK_RegisterLib() {
 	g_CuboLib()->AddFunc("BLOCK_GetBlocking",BLOCK_GetBlocking);
 	g_CuboLib()->AddFunc("BLOCK_GetNeighbor",BLOCK_GetNeighbor);
 	g_CuboLib()->AddFunc("BLOCK_AtPos",BLOCK_AtPos);

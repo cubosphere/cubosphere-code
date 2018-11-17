@@ -40,8 +40,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-void BaseLuaDef::LoadDef()
-	{
+void BaseLuaDef::LoadDef() {
 	isloaded=true;
 	int typ=GetType();
 	std::string ext;
@@ -60,8 +59,7 @@ void BaseLuaDef::LoadDef()
 	lua.LoadFile(fileinfo,typ,myid);
 	delete fileinfo;
 // if (lua.FuncExists("Precache")) lua.CallVA("Precache","");
-	if (SendIDWhenPrecache()==0)
-			{
+	if (SendIDWhenPrecache()==0) {
 			COND_LUA_CALL("Precache",,"");
 			}
 	else if (SendIDWhenPrecache()==1) {
@@ -70,13 +68,11 @@ void BaseLuaDef::LoadDef()
 	//Otherwise no Precache-Call
 	}
 
-BaseLuaDef::~BaseLuaDef()
-	{
+BaseLuaDef::~BaseLuaDef() {
 	COND_LUA_CALL("CleanUp",,"");
 	}
 
-void BaseLuaDef::Reload()
-	{
+void BaseLuaDef::Reload() {
 	lua.Reset();
 	BaseLuaDef::LoadDef();
 	}
@@ -89,10 +85,8 @@ void BaseLuaDef::Reload()
     TBaseLuaDef::LoadDef();
 }*/
 
-void  Menu::LoadDef(std::string cname)
-	{
-	if (isloaded)
-			{
+void  Menu::LoadDef(std::string cname) {
+	if (isloaded) {
 			nextname=cname;
 			change=1;
 			}
@@ -102,8 +96,7 @@ void  Menu::LoadDef(std::string cname)
 			}
 	}
 
-void Menu::PostThink()
-	{
+void Menu::PostThink() {
 
 	if (!change) { return; }
 
@@ -115,8 +108,7 @@ void Menu::PostThink()
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_MENUDEF,-1);
 	delete finfo;
-	if (lua.FuncExists("Precache"))
-			{
+	if (lua.FuncExists("Precache")) {
 
 			lua.CallVA("Precache","");
 			}
@@ -126,32 +118,26 @@ void Menu::PostThink()
 	}
 
 
-void Menu::Render()
-	{
+void Menu::Render() {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("Render"))
-			{
+	if (lua.FuncExists("Render")) {
 
 			lua.CallVA("Render","");
 			}
 	}
 
 
-void Menu::Think()
-	{
+void Menu::Think() {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("Think"))
-			{
+	if (lua.FuncExists("Think")) {
 
 			lua.CallVA("Think","");
 			}
 	}
 
-void Menu::JoyAxisChange(int joys,int axis,double val,double pval)
-	{
+void Menu::JoyAxisChange(int joys,int axis,double val,double pval) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnJoyAxisChange"))
-			{
+	if (lua.FuncExists("OnJoyAxisChange")) {
 
 			lua.CallVA("OnJoyAxisChange","iidd",joys,axis,val,pval);
 			}
@@ -159,22 +145,18 @@ void Menu::JoyAxisChange(int joys,int axis,double val,double pval)
 	}
 
 
-void Menu::SendKey(int key,int down, int toggle)
-	{
+void Menu::SendKey(int key,int down, int toggle) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnKeyPressed"))
-			{
+	if (lua.FuncExists("OnKeyPressed")) {
 
 			lua.CallVA("OnKeyPressed","iii",key,down,toggle);
 			}
 	}
 
 
-void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
-	{
+void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnJoyButton"))
-			{
+	if (lua.FuncExists("OnJoyButton")) {
 
 			lua.CallVA("OnJoyButton","iiiii",joy,button,dir,down,toggle);
 			}
@@ -185,26 +167,22 @@ void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle)
 //////////////LUA-IMPLEMENT///////////////////////7
 
 
-int MENU_Load(lua_State *state)
-	{
+int MENU_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 	g_Game()->GetMenu()->LoadDef(s);
 	return 0;
 	}
-int MENU_Activate(lua_State *state)
-	{
+int MENU_Activate(lua_State *state) {
 	g_Game()->SetMenuActive(1);
 	return 0;
 	}
-int MENU_Deactivate(lua_State *state)
-	{
+int MENU_Deactivate(lua_State *state) {
 	g_Game()->SetMenuActive(0);
 	return 0;
 	}
 
 
-void LUA_MENU_RegisterLib()
-	{
+void LUA_MENU_RegisterLib() {
 	g_CuboLib()->AddFunc("MENU_Load",MENU_Load);
 	g_CuboLib()->AddFunc("MENU_Activate",MENU_Activate);
 	g_CuboLib()->AddFunc("MENU_Deactivate",MENU_Deactivate);
