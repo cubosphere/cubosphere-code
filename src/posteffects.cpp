@@ -246,7 +246,7 @@ int EFFECT_SetRenderTarget(lua_State *state)
 int EFFECT_TempTextureToStage(lua_State *state)
 	{
 	int stage=LUA_GET_INT(state);
-	int tex=LUA_GET_INT(state)
+	int tex=LUA_GET_INT(state);
 	if (g_PostEffect()) { g_PostEffect()->TempTextureToStage(tex,stage); }
 	return 0;
 	}
@@ -254,7 +254,7 @@ int EFFECT_TempTextureToStage(lua_State *state)
 int EFFECT_DepthToStage(lua_State *state)
 	{
 	int stage=LUA_GET_INT(state);
-	int tex=LUA_GET_INT(state)
+	int tex=LUA_GET_INT(state);
 	if (g_PostEffect()) { g_PostEffect()->DepthToStage(tex,stage); }
 	return 0;
 	}

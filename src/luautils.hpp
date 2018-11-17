@@ -24,16 +24,43 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "vectors.hpp"
 #include "filesystem.hpp"
 
-// TODO: use functions instead of defines
+inline std::string LUA_GET_STRING(lua_State* state) // Complicated due to zero-terminators and garbage collection
+{
+	size_t len;
+	auto pointer = lua_tolstring(state, -1, &len);
+	auto str = std::string(pointer, len);
+	lua_pop(state,1);
+	return str;
+}
 
-#define LUA_GET_STRING(state) lua_tostring(state,-1); lua_pop(state,1);
+inline bool LUA_GET_BOOL(lua_State* state)
+{
+	bool res = lua_toboolean(state,-1);
+	lua_pop(state,1);
+	return res;
+}
 
-#define LUA_GET_BOOL(state) (bool)lua_toboolean(state,-1); lua_pop(state,1);
-#define LUA_GET_INT(state) (int)lua_tonumber(state,-1); lua_pop(state,1);
-#define LUA_GET_ULINT(state) (unsigned long int)lua_tonumber(state,-1); lua_pop(state,1);
-#define LUA_GET_DOUBLE(state) lua_tonumber(state,-1); lua_pop(state,1);
+inline int LUA_GET_INT(lua_State* state)
+{
+	int res = lua_tonumber(state,-1);
+	lua_pop(state,1);
+	return res;
+}
+
+inline unsigned long int LUA_GET_ULINT(lua_State* state)
+{
+	unsigned long int res = lua_tonumber(state,-1);
+	lua_pop(state,1);
+	return res;
+}
 
 
+inline double LUA_GET_DOUBLE(lua_State* state)
+{
+	double res = lua_tonumber(state,-1);
+	lua_pop(state,1);
+	return res;
+}
 
 #define LUA_SET_INT(r) lua_pushnumber(state,r);
 #define LUA_SET_DOUBLE(r) lua_pushnumber(state,r);
