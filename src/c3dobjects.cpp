@@ -15,24 +15,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "c3dobjects.hpp"
 #include <iostream>
 
-
-#ifdef WIN32
-
-#include <windows.h>
-
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#include <GL/glu.h>
-#else
-#include <GL\glew.h>
-#include <gl\glu.h>
-#endif
-
 #include <SDL.h>
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#endif
 
 #include "luautils.hpp"
 #include "game.hpp"

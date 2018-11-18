@@ -21,24 +21,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboutils.hpp"
 #include "game.hpp"
 
-
-#ifdef WIN32
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-// #include <GL\gl.h>
-#include <windows.h>
 #include <SDL.h>
-
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 void BaseLuaDef::LoadDef() {
 	isloaded=true;

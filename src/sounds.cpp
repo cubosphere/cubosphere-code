@@ -17,30 +17,9 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-#ifdef WIN32
-
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-// #include <GL\gl.h>
-#include <windows.h>
 #include <SDL.h>
 #include <SDL_mixer.h>
-
-
-#ifdef VCPP
-#define M_PI 3.14159265358979323846
-#endif
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-
-#endif
 
 #include <vector>
 #include <string>

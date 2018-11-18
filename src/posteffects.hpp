@@ -17,21 +17,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include <vector>
 
-#ifdef WIN32
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-#include <windows.h>
 #include <SDL.h>
-
-
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 using TempTexture = struct {
 	GLuint tindex;

@@ -19,20 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <array>
 
-#ifdef WIN32
-
-//#include <windows.h>
-//#include <GL\glew.h>
-//#include <GL\gl.h>
-//#include <SDL.h>
 #include <SDL_ttf.h>
-
-#else
-
-//#include <GL/glew.h>
-//#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#endif
 
 class SizedFont {
 	protected:

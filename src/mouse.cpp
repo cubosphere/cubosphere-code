@@ -12,26 +12,8 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-#ifdef WIN32
-
-#include <windows.h>
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-// #include <GL\gl.h>
 #include <SDL.h>
-
-
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
-
 
 #include "mouse.hpp"
 #include "game.hpp"

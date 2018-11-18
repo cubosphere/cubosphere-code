@@ -14,15 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifdef WIN32
-
 #include <SDL.h>
-
-#else
-
-#include <SDL/SDL.h>
-
-#endif
 
 #include <vector>
 #include "cuboutils.hpp"

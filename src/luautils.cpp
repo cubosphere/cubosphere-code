@@ -62,23 +62,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cubopathfind.hpp"
 #include "console.hpp"
 
-#ifdef WIN32
-
-#include <windows.h>
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-// #include <GL\gl.h>
 #include <SDL.h>
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 std::vector<LuaAccess*> LuaAccess::gAllLuaStates;
 

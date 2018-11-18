@@ -33,29 +33,8 @@ using boolean = bool;
 
 #include <string.h>
 
-
-#ifdef WIN32
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#include <ctime>
-#else
-#include <GL\glew.h>
-#endif
-#include <windows.h>
 #include <SDL.h>
-
-#ifdef VCPP
-#include <time.h>
-#endif
-
-
-
-
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 #include "game.hpp"
 #include "luautils.hpp"

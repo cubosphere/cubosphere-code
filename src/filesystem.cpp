@@ -21,7 +21,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "unzip.hpp"
 #include "globals.hpp"
 
-
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -29,30 +28,30 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 #ifdef __unix__
-#define CLS_PATH_SEPARATOR_SYS "/"
+constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
 #elif defined _WIN32
-#define CLS_PATH_SEPARATOR_SYS "\\"
+constexpr auto CLS_PATH_SEPARATOR_SYS = "\\";
 #else
-#define CLS_PATH_SEPARATOR_SYS "/"
+constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
 #warning "Can't get the system architecture... Don't know, which path separator should be taken"
 #endif
 
 //The Separator used in the clsEngine
-#define CLS_PATH_SEPARATOR "/"
+constexpr auto CLS_PATH_SEPARATOR = "/";
 
-#define CLS_PATH_SEPARATOR_ZIP "/\\"
+constexpr auto CLS_PATH_SEPARATOR_ZIP = "/\\";
 
+constexpr auto CLS_FILE_PATTERN_MATCH_FLAGS = 0;
 
-#define CLS_FILE_PATTERN_MATCH_FLAGS 0
-
-#define CLS_FILE_MASK_SET 1
+constexpr auto CLS_FILE_MASK_SET = 1;
 
 
 
 //CONFIG THIS FOR YOUR PROGRAM
-#define CLS_FILE_ERROR_TYPE_ERROR 0
-#define CLS_FILE_ERROR_TYPE_WARNING 1
-#define CLS_FILE_ERROR_TYPE_CRITICAL 2
+constexpr auto CLS_FILE_ERROR_TYPE_ERROR = 0;
+constexpr auto CLS_FILE_ERROR_TYPE_WARNING = 1;
+constexpr auto CLS_FILE_ERROR_TYPE_CRITICAL = 2;
+
 #define CLS_FILE_ERROR(s,t) clsFileErrorLog(s,t)
 
 

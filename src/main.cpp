@@ -16,26 +16,12 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 #ifdef WIN32
-#ifdef MINGW_CROSS_COMPILE
-#include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
 #include <windows.h>
-#include <SDL.h>
-
-#ifdef VCPP
-
-#else
-#include <libgen.h>
 #endif
 
-#else
 #include <GL/glew.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <libgen.h>
-#endif
-
 
 #include <stdlib.h>
 

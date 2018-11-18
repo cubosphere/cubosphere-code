@@ -23,26 +23,9 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include <sstream>
 
-
-#ifdef WIN32
-
-#include <windows.h>
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-// #include <GL\gl.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
-#endif
-
 
 #define CHAR_SPACE_DIST 0.7
 

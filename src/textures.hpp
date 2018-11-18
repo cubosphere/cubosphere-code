@@ -21,22 +21,8 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define GL_GLEXT_PROTOTYPES 1
 
-#ifdef WIN32
-
-#ifdef MINGW_CROSS_COMPILE
 #include <GL/glew.h>
-#else
-#include <GL\glew.h>
-#endif
-#include <windows.h>
 #include <SDL.h>
-
-#else
-
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-
-#endif
 
 #include "definitions.hpp"
 #include "filesystem.hpp"
