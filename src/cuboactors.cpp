@@ -1346,7 +1346,7 @@ void TCuboMovement::CheckPlayerCollision(TCuboMovement* other) {
 ///////////////////////////////////////////////////////////////////
 
 
-
+/*
 int ActorDefServer::AddEDef(std::string name) {
 	int def=GetDef(name,0);
 	if (def>-1) { return def; } //Have it already
@@ -1362,7 +1362,19 @@ int ActorDefServer::GetDef(std::string name,int forplayer) {
 	for (unsigned int i=0; i<defs.size(); i++) if ((defs[i]->GetName()==name) && (forplayer==defs[i]->IsPlayer())) { return (i); }
 	return -1;
 	}
+*/
 
+int ActorDefServer::AddEDef(std::string name) { // NOTE: there was check for IsPlayer()
+	if (name_to_id.count(name)) return name_to_id.at(name);
+	int id = max_id++;
+	name_to_id.emplace(name, id);
+	defs.emplace(id, std::make_unique<EnemyDef>());
+	auto& obj = defs.at(id);
+	obj->SetName(name);
+	obj->SetID(id);
+	obj->LoadDef();
+	return id;
+	}
 
 
 void ActorDef::Call_Constructor(int id) {

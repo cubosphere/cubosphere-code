@@ -17,6 +17,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+#include <memory>
 
 #include "luautils.hpp"
 
@@ -46,35 +48,34 @@ class BaseLuaDef {
 		virtual void Reload();
 	};
 
-template<typename T> class BaseDefServer {
+template<typename T> class BaseDefServer { // TODO: Get rid of `x_to_x` usage, use smart pointers in correct way
 	protected:
-		std::vector<T*> defs;
+		//std::vector<T*> defs;
+		std::unordered_map<int, std::unique_ptr<T>> defs;
+		std::unordered_map<std::string, int> name_to_id;
+		int max_id = 0;
 	public:
 		void clear() {
-			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]) { delete defs[i]; defs[i]=NULL;}
-			defs.resize(0);
+			defs.clear();
+			name_to_id.clear();
+			max_id = 0;
 			}
-		virtual ~BaseDefServer() {
-			clear();
-			}
-		int GetDef(std::string name) {
-			for (unsigned int i=0; i<defs.size(); i++) if (defs[i]->GetName()==name) { return (i); }
-			return -1;
-			}
+		virtual ~BaseDefServer() {}
 		void Reload() {
-			for (unsigned int i=0; i<defs.size(); i++) { defs[i]->Reload(); }
+			for(auto& elem: defs) elem.second->Reload();
 			}
 		int AddDef(std::string name) {
-			int def=GetDef(name);
-			if (def>-1) { return def; } //Have it already
-			defs.push_back(new T());
-			defs.back()->SetName(name);
-			def=defs.size()-1;
-			defs[def]->SetID(def);
-			defs[def]->LoadDef();
-			return def;
+			if (name_to_id.count(name)) return name_to_id.at(name);
+			int id = max_id++;
+			name_to_id.emplace(name, id);
+			defs.emplace(id, std::make_unique<T>());
+			auto& obj = defs.at(id);
+			obj->SetName(name);
+			obj->SetID(id);
+			obj->LoadDef();
+			return id;
 			}
-		T* GetDefPtr(int i) {return defs[i];}
+		T* GetDefPtr(int i) {return defs[i].get();}
 	};
 
 ////////////////////////////////////

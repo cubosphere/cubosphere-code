@@ -122,7 +122,7 @@ class ActorDef : public BaseLuaDef {
 
 class ActorDefServer : public BaseDefServer<ActorDef> {
 	public:
-		int GetDef(std::string name, int forplayer=1);
+		//int GetDef(std::string name, int forplayer=1);
 		int AddEDef(std::string name);
 	};
 
