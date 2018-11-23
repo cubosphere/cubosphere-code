@@ -12,19 +12,6 @@ You should have received a copy of the GNU General Public License along with thi
 if not, see <http://www.gnu.org/licenses/>.
 **/
 
-// TODO: Replace and remove defines
-
-#ifndef OLDLUA
-#define lua_dofile(s,f) luaL_dofile(s,f)
-
-#define lua_mathlibopen(s) luaopen_math(s)
-#define lua_tablibopen(s) luaopen_table(s)
-
-#define lua_baselibopen(s) luaopen_base(s)
-#define lua_strlibopen(s) luaopen_string(s)
-#define lua_oslibopen(s) luaopen_os(s)
-#endif
-
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -97,7 +84,7 @@ LuaCuboLib* g_CuboLib() {return &g_cubolib;}
 
 int lua_doCuboFile(lua_State *state, CuboFile *f) {
 	int res;
-	if (f->IsHDDFile()) { res=lua_dofile(state,f->GetHDDName().c_str()); }
+	if (f->IsHDDFile()) { res=luaL_dofile(state,f->GetHDDName().c_str()); }
 	else {
 			char *c=(char*)(f->GetData());
 			//cout << c << endl;
@@ -157,11 +144,7 @@ void LuaAccess::Reset() {
 
 void LuaAccess::LoadStdLibs() {
 	if (!state) { return; }
-	lua_baselibopen(state);
-	lua_tablibopen(state);
-	lua_strlibopen(state);
-	lua_mathlibopen(state);
-	lua_oslibopen(state);
+	luaL_openlibs(state);
 	}
 
 /*
@@ -354,18 +337,18 @@ bool LuaAccess::CallVA (const char *func, LuaVAList args) {
 					auto& vec = *arg;
 					lua_getfield(state, nres, "x");
 					if (lua_isnumber(state, 1)) {
-						vec.x = lua_tonumber(state, 1);
-					}
+							vec.x = lua_tonumber(state, 1);
+							}
 					lua_pop(state, 1);
 					lua_getfield(state, nres, "y");
 					if (lua_isnumber(state, 1)) {
-						vec.y = lua_tonumber(state, 1);
-					}
+							vec.y = lua_tonumber(state, 1);
+							}
 					lua_pop(state, 1);
 					lua_getfield(state, nres, "z");
 					if (lua_isnumber(state, 1)) {
-						vec.z = lua_tonumber(state, 1);
-					}
+							vec.z = lua_tonumber(state, 1);
+							}
 					lua_pop(state, 1);
 					},
 				[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
@@ -902,7 +885,7 @@ int LuaCuboLib::SCORE_Load(lua_State *state) {
 			return 1;
 			}
 	fclose(f);
-	lua_dofile(state,cf->GetHDDName().c_str());
+	luaL_dofile(state,cf->GetHDDName().c_str());
 	LUA_SET_NUMBER(state, 1);
 	delete cf;
 	return 1;
@@ -956,7 +939,7 @@ int LuaCuboLib::SAVE_Load(lua_State *state) {
 			return 1;
 			}
 	fclose(f);
-	lua_dofile(state,s.c_str());
+	luaL_dofile(state,s.c_str());
 	LUA_SET_NUMBER(state, 1);
 	return 1;
 	}
@@ -1133,7 +1116,7 @@ int LuaCuboLib::CONFIG_Load(lua_State *state) {
 			return 1;
 			}
 	fclose(f);
-	lua_dofile(state,cf->GetHDDName().c_str());
+	luaL_dofile(state,cf->GetHDDName().c_str());
 	LUA_SET_NUMBER(state, 1);
 	delete cf;
 	return 1;

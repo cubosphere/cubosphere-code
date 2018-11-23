@@ -17,7 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
-
+#include <memory>
 
 #define GL_GLEXT_PROTOTYPES 1
 
@@ -60,7 +60,7 @@ class Texture {
 
 class JPEGTexture: public Texture {
 	protected:
-		void * raw;
+		void * raw; // TODO: use spart pointer?
 		int trans,channels;
 		void shrink_blur(int ammount);
 		void shrink_half_blur();
@@ -113,7 +113,7 @@ class TextureContainer {
 		TextureContainer() :tind(0) {}
 	};
 
-class TextureServer {
+class TextureServer { // FIXME: Use unordered_map
 	protected:
 		std::vector<TextureContainer> Textures;
 		std::vector<std::string> filenames,alphanames;
@@ -121,20 +121,20 @@ class TextureServer {
 		std::vector<int> activetextures;
 		int timer1,timer2,timer3,numloads;
 		int maxsize;
-		int txtenabled;
+		bool txtenabled = false;
 //      int makeNoiseTexture(int size) {TNoiseRGBTexture t(size,size); return addTexture(&t);} //Should not be used
 		int addTexture(Texture *tex, int asfont) {
 			TextureContainer cont; cont.makeFromTTexture(tex,asfont,maxsize);  timer2+=cont.duration1;
 			timer3+=cont.duration2; Textures.push_back(cont); return (Textures.size()-1);
 			} //Should not be used directly
 	public:
-		TextureServer() : maxsize(512),txtenabled(-1) {};
+		TextureServer() : maxsize(512) {};
 		void DeactivateStage(int stage);
 		void activate(int i,int stage);
 		void activate(int i);
 		void Reload();
-		void EnableTexturing() {if (txtenabled!=1) {glEnable( GL_TEXTURE_2D ); txtenabled=1;}}
-		void DisableTexturing() {if (txtenabled!=0) {glDisable( GL_TEXTURE_2D ); txtenabled=0;}}
+		void EnableTexturing() {if (not txtenabled) {glEnable( GL_TEXTURE_2D ); txtenabled = true;}}
+		void DisableTexturing() {if (txtenabled) {glDisable( GL_TEXTURE_2D ); txtenabled = false;}}
 		void Invalidate();
 		void SetMaxTextureSize(int s) {maxsize=s;}
 		int GetMaxTextureSize() {return maxsize;}

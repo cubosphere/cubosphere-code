@@ -226,16 +226,15 @@ static int iabs(int x) {
 int JPEGTexture::LoadAlphaTexture(CuboFile *finfo) {
 	std::string aname=finfo->GetName();
 
-
-	JPEGTexture *alp=new JPEGTexture();
+	auto alp = std::make_unique<JPEGTexture>();
 	alp->loadFromFile(finfo);
-	if (!(alp->getRGBPointer())) {delete alp; return 0;}
+	if (!(alp->getRGBPointer())) {return 0;}
 
-	if (alp->GetChannels()!=1) { coutlog("Alpha-Texture "+aname+" is not a grayscale jpeg",2); delete alp; return 0;}
+	if (alp->GetChannels()!=1) { coutlog("Alpha-Texture "+aname+" is not a grayscale jpeg",2); return 0;}
 	if (alp->getWidth()!=this->getWidth() ||  alp->getHeight()!=this->getHeight()) {
 			std::ostringstream oss; oss <<"Alpha-Texture "+aname+" has wrong extents ("<< alp->getWidth()<< " x " <<alp->getHeight() <<")" << "! Must have " << getWidth() << " x " << getHeight();
 			coutlog(oss.str(),2);
-			delete alp; return 0;
+			return 0;
 			}
 
 	unsigned char *araw=(unsigned char*)(alp->getRGBPointer());
@@ -257,7 +256,6 @@ int JPEGTexture::LoadAlphaTexture(CuboFile *finfo) {
 	raw=newraw;
 	trans=1;
 
-	delete alp;
 	return 1;
 	}
 
