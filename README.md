@@ -8,7 +8,7 @@ And after a while he decided to pick it up and at least make look like a modern 
 This is why this organisation exists now.
 
 # What is this game about?
-Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, Lua, GLSL-Shader.
+Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, libpng(++), Lua, GLSL-Shader.
 
 ## Features
 * Game similar to Kula World
@@ -28,7 +28,8 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Made code C++17 compatible (no either warnings or errors)
 * Configured Cricle CI with auto .deb build for Ubuntu LTS + last release (read next section), cross-linux .tar.gz
 * Created icon and .desktop file
-* Moved editor manual to GitHub wiki
+* Moved editor manual to GitHub wiki which can be opened from editor menu
+* Added `.png` support and converted some textures to it
 
 # How to download last git build?
 1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last build artifacts are kept, some of them may be missing if build is uploading now)
