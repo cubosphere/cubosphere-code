@@ -171,8 +171,8 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 		virtual  int IsHDDFile() const {return 1;}
 		virtual  int IsPacked() const {return 0;}
 
-		virtual void * GetData(const int binary=1) const {
-			if (data) { return data; }
+		virtual char * GetData(const int binary=1) const {
+			if (data) { return (char*)data; }
 			FILE *pFile=fopen(fname.c_str(),(binary ? "rb" : "r"));
 			if (!pFile) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			fseek (pFile, 0, SEEK_END);
@@ -184,7 +184,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 			if (res != size) { CLS_FILE_ERROR("cannot read file (("+fname+")) into memory",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			((char*)(data))[size]='\0';
 			fclose(pFile);
-			return data;
+			return (char *)data;
 			}
 
 		virtual unsigned long GetSize(const int binary=1) const {
@@ -248,15 +248,15 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 		virtual int IsHDDFile() const {return 0;}
 		virtual int IsPacked() const {return 1;}
 
-		virtual void * GetData(const int binary=1) const {
-			if (data) { return data; }
+		virtual char * GetData(const int binary=1) const {
+			if (data) { return (char *)data; }
 			data=malloc(sizeof(char)*(size+1));
 			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			JumpToZipItem(hz,index,cdi);
 			if (UnzipItem(hz,index,data,size)!=ZR_OK)
 					{CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			((char*)(data))[size]='\0';
-			return data;
+			return (char *)data;
 			}
 
 		virtual unsigned long GetSize(const int binary=1) const { return size; }

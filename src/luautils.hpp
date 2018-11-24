@@ -27,17 +27,17 @@ if not, see <http://www.gnu.org/licenses/>.
 
 using LuaVATypes = std::variant<
 // Input
-double,
-float,
-int,
-std::string,
-Vector3d *, // Warning: both input and output
-std::nullptr_t, // Separator
-double *,
-float *,
-int *,
-std::string *
->;
+		double,
+		float,
+		int,
+		std::string,
+		Vector3d *, // Warning: both input and output
+		std::nullptr_t, // Separator
+		double *,
+		float *,
+		int *,
+		std::string *
+		>;
 
 using LuaVAList = std::initializer_list<LuaVATypes>;
 

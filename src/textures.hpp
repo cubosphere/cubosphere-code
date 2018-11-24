@@ -23,12 +23,37 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <GL/glew.h>
 #include <SDL.h>
+#include <png.hpp>
 
 #include "definitions.hpp"
 #include "filesystem.hpp"
 
 ////Texture Defs
 
+struct membuf : std::streambuf {
+	membuf(char* begin, char* end) {
+		this->setg(begin, begin, end);
+		}
+	};
+
+enum class TextureType {
+	Invalid,
+	JPEG,
+	PNG
+	};
+
+using RGBAPixel = struct {
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+	unsigned char a;
+	};
+
+using RGBPixel = struct {
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+	};
 
 class TextureDef : public BaseLuaDef {
 	public:
@@ -43,14 +68,14 @@ using TextureDefServer = BaseDefServer<TextureDef>;
 //Inherited the different formats herefrom
 class Texture {
 	protected:
-		int width,height;
+		unsigned int width,height;
 	public:
 		int getWidth() {return width;}
 		int getHeight() {return height;}
 		Texture() : width(0), height(0) {}
 		Texture(int w,int h) : width(w), height(h) {}
 		virtual void* getRGBPointer() {return NULL;}
-		virtual bool loadFromFile(CuboFile *finfo) {return false;}
+		virtual bool loadFromFile(CuboFile *finfo) = 0;
 		virtual int HasAlpha() {return 0;}
 		virtual int CanFastResize(int maxdim) {return 0;}
 		virtual void FastResize(int maxdim) {}
@@ -60,7 +85,7 @@ class Texture {
 
 class JPEGTexture: public Texture {
 	protected:
-		void * raw; // TODO: use spart pointer?
+		void * raw; // TODO: use smart pointer?
 		int trans,channels;
 		void shrink_blur(int ammount);
 		void shrink_half_blur();
@@ -78,18 +103,15 @@ class JPEGTexture: public Texture {
 		virtual void FastResize(int maxdim);
 	};
 
-/*class TPNGTexture: public TTexture
-{
- protected:
-   void * raw;
-   int hasAlphaChannel;
-   int hasTransparency;
- public:
-   virtual void loadFromFile(string fname);
-   virtual void* getRGBPointer() {return raw;}
-   virtual int HasAlpha() {return hasAlphaChannel;} //TODO: Fix it appropriate
-
-};*/
+class PNGTexture: public Texture {
+		std::unique_ptr<RGBAPixel[]> data;
+	public:
+		virtual void* getRGBPointer() {return data.get();}
+		virtual bool loadFromFile(CuboFile *finfo);
+		virtual int HasAlpha() {return 1;}
+		// TODO: always alpha, no fast resize for png
+		virtual ~PNGTexture() {};
+	};
 
 
 
@@ -105,7 +127,7 @@ class TextureContainer {
 		void AddChar(int x,int y,void *data,int width,int fsize);
 	public:
 		int duration1,duration2;
-		void makeFromTTexture(Texture* texture,int asfont,int maxsize);
+		void makeFromTexture(Texture* texture,int asfont,int maxsize);
 		void activate();
 		void activate(int stage);
 		FontExtend GetFontExtend(int num) {return chars[num];}
@@ -124,7 +146,7 @@ class TextureServer { // FIXME: Use unordered_map
 		bool txtenabled = false;
 //      int makeNoiseTexture(int size) {TNoiseRGBTexture t(size,size); return addTexture(&t);} //Should not be used
 		int addTexture(Texture *tex, int asfont) {
-			TextureContainer cont; cont.makeFromTTexture(tex,asfont,maxsize);  timer2+=cont.duration1;
+			TextureContainer cont; cont.makeFromTexture(tex,asfont,maxsize);  timer2+=cont.duration1;
 			timer3+=cont.duration2; Textures.push_back(cont); return (Textures.size()-1);
 			} //Should not be used directly
 	public:

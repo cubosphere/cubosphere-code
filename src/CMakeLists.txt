@@ -7,7 +7,7 @@ find_package(Lua51     REQUIRED)
 find_package(GLEW      REQUIRED)
 #find_package(GLUT      REQUIRED)
 find_package(JPEG      REQUIRED)
-find_package(PNG       REQUIRED)
+find_package(PNG++       REQUIRED)
 
 # SDL
 find_package(SDL       REQUIRED)
@@ -33,7 +33,7 @@ target_include_directories(cubosphere PRIVATE
 	${GLEW_INCLUDE_DIRS}
 #	${GLUT_INCLUDE_DIR}
 	${JPEG_INCLUDE_DIRS}
-	${PNG_INCLUDE_DIRS}
+	${PNG++_INCLUDE_DIRS}
 
 # SDL
 	${SDL_INCLUDE_DIR}
@@ -48,7 +48,7 @@ target_link_libraries(cubosphere
 	${GLEW_LIBRARIES}
 #	${GLUT_LIBRARIES}
 	${JPEG_LIBRARIES}
-	${PNG_LIBRARIES}
+	${PNG++_LIBRARIES}
 
 # SDL
 	${SDL_LIBRARY}
@@ -58,7 +58,7 @@ target_link_libraries(cubosphere
 
 target_compile_definitions(cubosphere PRIVATE
 	# Various libs
-	${PNG_DEFINITIONS}
+	${PNG++_DEFINITIONS}
 )
 
 install(TARGETS cubosphere DESTINATION "${BINDIR}" COMPONENT BIN)

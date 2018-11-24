@@ -39,8 +39,22 @@ using boolean = bool;
 #include "game.hpp"
 #include "luautils.hpp"
 
+using namespace std::string_view_literals;
+
 ///////////////////////////////////////////////
 
+inline TextureType extToTexType(std::string_view ext) {
+	if (ext == "jpg"sv or ext == "jpeg"sv) { return TextureType::JPEG; }
+	else if (ext == "png"sv) { return TextureType::PNG; }
+	else { return TextureType::Invalid; }
+	}
+
+inline CuboFile* getTextrueFile(std::string subname,int type) {
+	CuboFile* finfo=GetFileName(subname, type,".png"); // Try PNG first
+	if (!finfo) { finfo=GetFileName(subname, type,".jpg"); }
+	if (!finfo) { finfo=GetFileName(subname, type,".jpeg"); }
+	return finfo;
+	}
 
 void TextureDef::Call_Render(int sideid) {
 	if (lua.FuncExists("Render")) {
@@ -218,6 +232,41 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo) {
 	return true;
 	}
 
+bool PNGTexture::loadFromFile(CuboFile* finfo) {
+	try {
+			std::unique_ptr<png::image<png::rgba_pixel>> img;
+			if (finfo->IsHDDFile()) {
+					img = std::make_unique<png::image<png::rgba_pixel>>(finfo->GetHDDName());
+					}
+			else {
+					membuf sbuf(finfo->GetData(), finfo->GetData()+finfo->GetSize());
+					std::istream in(&sbuf);
+					img = std::make_unique<png::image<png::rgba_pixel>>(in);
+					}
+
+			width = img->get_width();
+			height = img->get_height();
+
+			data = std::make_unique<RGBAPixel[]>(width*height);
+			for(int x=0; x<img->get_width(); ++x) {
+					for(int y=0; y<img->get_height(); ++y) {
+							//std::cout << "getting pixel (" << x << "," << y << ") " << x*img->get_width()+y << std::endl;
+							png::rgba_pixel pixel = img->get_pixel(x,y);
+							auto& datapx = data[y*img->get_width()+x];
+							datapx.r = pixel.red;
+							datapx.g = pixel.green;
+							datapx.b = pixel.blue;
+							datapx.a = pixel.alpha;
+							}
+					}
+			return true;
+			}
+	catch(png::error) {
+			return false;
+			}
+	}
+
+
 static int iabs(int x) {
 	if (x<0) { return -x; }
 	return x;
@@ -298,12 +347,13 @@ static int isPowerOf2(int n) {
 	return (n & (n - 1)) == 0 && n != 0;
 	}
 
-static short myLog2(int n) {
-	int i = (n & 0xffff0000) ? 16 : 0;
-	if ((n >>= i) & 0xff00) { i |= 8, n >>= 8; }
-	if (n & 0xf0) { i |= 4, n >>= 4; }
-	if (n & 0xc) { i |= 2, n >>= 2; }
-	return (short)(i | (n >> 1));
+static uint32_t myLog2(uint32_t x) {
+	uint32_t y;
+	asm ( "\tbsr %1, %0\n"
+			: "=r"(y)
+			: "r" (x)
+		);
+	return y;
 	}
 
 
@@ -342,10 +392,7 @@ void JPEGTexture::shrink_blur(int ammount) {
 	}
 
 int JPEGTexture::CanFastResize(int maxdim) {
-	//return 0;
-
-	if (isPowerOf2(width) & isPowerOf2(height) & (width==height) & (width>maxdim)) { return 1; }
-	return 0;
+	return isPowerOf2(width) & isPowerOf2(height) & (width==height) & (width>maxdim);
 	}
 
 void JPEGTexture::FastResize(int maxdim) {
@@ -399,7 +446,7 @@ void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize) {
 	chars.push_back(fe);
 	}
 
-void TextureContainer::makeFromTTexture(Texture* texture,int asfont,int maxsize) {
+void TextureContainer::makeFromTexture(Texture* texture,int asfont,int maxsize) {
 	int clo=clock();
 	int canfastresize=texture->CanFastResize(maxsize) && (!asfont) && (!(texture->HasAlpha()));
 	if (canfastresize) {
@@ -549,22 +596,33 @@ int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont
 			ext=fname.substr(extind+1);
 			}
 	else { ext=""; }
-	if (ext=="jpg" || ext=="jpeg") { tex=new JPEGTexture; }
+	auto texType = extToTexType(ext);
+	switch(texType) {
+			case TextureType::JPEG:
+				tex = new JPEGTexture;
+				break;
+			case TextureType::PNG:
+				tex = new PNGTexture;
+				break;
+			default:
+				coutlog("Unknown texture type for "+fname+"\n", 2);
+				return -1;
+			};
 
-	if (!tex) { std::ostringstream os; os << "Cannot load Texture "<< fname << std::endl; coutlog(os.str(),2); return -1;}
-	if (!tex->loadFromFile(finfo)) { std::ostringstream os; os << "Cannot load Texture "<< fname << std::endl; coutlog(os.str(),2); return -1;}
-	if (colorkey) {
+	if (!tex) { coutlog("Failed to load "+fname+"\n", 2); return -1;}
+	if (!tex->loadFromFile(finfo)) { coutlog("Failed to load "+fname+"\n", 2); return -1;}
+	if (colorkey && texType == TextureType::JPEG) {
 			((JPEGTexture *)tex)->ColorKeyTransparency(colorkey);
 			}
 
-	cont->makeFromTTexture(tex,asfont,maxsize);
+	cont->makeFromTexture(tex,asfont,maxsize);
 
 	delete tex;
 
 	return index;
 	}
 
-int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa) {
+int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa) { // JPEG only, deprecated
 	std::string fname=finfo->GetName();
 	std::string aname=finfoa->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (fname==filenames[i] && aname==alphanames[i]) { return i; }
@@ -606,14 +664,24 @@ int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey)
 			ext=s.substr(extind+1);
 			}
 	else { ext=""; }
-	if (ext=="jpg" || ext=="jpeg") { tex=new JPEGTexture; }
-
+	auto texType = extToTexType(ext);
+	switch(texType) {
+			case TextureType::JPEG:
+				tex = new JPEGTexture;
+				break;
+			case TextureType::PNG:
+				tex = new PNGTexture;
+				break;
+			default:
+				coutlog("Unknown texture type for "+s+"\n", 2);
+				return -1;
+			};
 
 	if (!tex) { std::ostringstream os; os << "Cannot load Texture "<< s << std::endl; coutlog(os.str(),2); return -1;}
 	int clo=clock();
 	tex->loadFromFile(finfo);
 	timer1+=clock()-clo;
-	if (colorkey) {
+	if (colorkey && texType == TextureType::JPEG) {
 			((JPEGTexture *)tex)->ColorKeyTransparency(colorkey);
 			}
 	int res=addTexture(tex,asfont);
@@ -796,8 +864,8 @@ void LUA_TEXDEF_RegisterLib() {
 
 int TEXTURE_LoadSkyTexture(lua_State *state) {
 	std::string name = LUA_GET_STRING(state);
-	CuboFile* finfo=GetFileName(name,FILE_SKYBOX,".jpg");
-	if (!finfo) {coutlog("SkyTexture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
+	CuboFile* finfo=getTextrueFile(name,FILE_SKYBOX);
+	if (!finfo) {coutlog("SkyTexture "+name+ " not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
 	LUA_SET_NUMBER(state, r);
@@ -821,8 +889,7 @@ int TEXTURE_Load(lua_State *state) {
 	//lua_pop(state,1);
 	std::string name = LUA_GET_STRING(state);
 
-	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
-	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
+	CuboFile* finfo=getTextrueFile(name,FILE_TEXTURE);
 // coutlog("Loading Texture "+Texturename);
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
 	delete finfo;
