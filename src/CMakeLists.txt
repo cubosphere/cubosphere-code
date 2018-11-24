@@ -1,4 +1,4 @@
-# Please, keep order of find_package/target_include_directories/target_link_libraries
+# Please, keep order of find_package/target_include_directories/target_link_libraries/target_compile_definitions
 # same to make future editing easier.
 
 # Various libs
@@ -7,6 +7,7 @@ find_package(Lua51     REQUIRED)
 find_package(GLEW      REQUIRED)
 #find_package(GLUT      REQUIRED)
 find_package(JPEG      REQUIRED)
+find_package(PNG       REQUIRED)
 
 # SDL
 find_package(SDL       REQUIRED)
@@ -32,6 +33,7 @@ target_include_directories(cubosphere PRIVATE
 	${GLEW_INCLUDE_DIRS}
 #	${GLUT_INCLUDE_DIR}
 	${JPEG_INCLUDE_DIRS}
+	${PNG_INCLUDE_DIRS}
 
 # SDL
 	${SDL_INCLUDE_DIR}
@@ -46,11 +48,17 @@ target_link_libraries(cubosphere
 	${GLEW_LIBRARIES}
 #	${GLUT_LIBRARIES}
 	${JPEG_LIBRARIES}
+	${PNG_LIBRARIES}
 
 # SDL
 	${SDL_LIBRARY}
 	${SDL_MIXER_LIBRARIES}
 	${SDL_TTF_LIBRARIES}
+)
+
+target_compile_definitions(cubosphere PRIVATE
+	# Various libs
+	${PNG_DEFINITIONS}
 )
 
 install(TARGETS cubosphere DESTINATION "${BINDIR}" COMPONENT BIN)
