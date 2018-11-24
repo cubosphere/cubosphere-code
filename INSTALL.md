@@ -40,4 +40,4 @@ sudo make install
 * `-DDATADIR=` — custom place to install all game data (overrides `-DCMAKE_INSTALL_PREFIX` for data).
 * `-DRUNTIME_DATADIR=` — where game will look up for data (overrides both `-DCMAKE_INSTALL_PREFIX` and `-DDATADIR` for runtime).
 * `-DINSTALL_DESKTOP=` — install linux menu entery or not (defaults to `UNIX`, so on on linux and off on others)
-* `-DNO_ZIP=TRUE` — install all data files 'as is', without zipping. Useful for devs and other people who update directly from git.
+* `-DZIP=TRUE` — zip most resources (useful for standalone builds, bad for most users)
