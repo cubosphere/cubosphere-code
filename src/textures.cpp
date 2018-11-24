@@ -891,9 +891,14 @@ int TEXTURE_Load(lua_State *state) {
 
 	CuboFile* finfo=getTextrueFile(name,FILE_TEXTURE);
 // coutlog("Loading Texture "+Texturename);
-	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
-	delete finfo;
-	LUA_SET_NUMBER(state, r);
+	if(finfo) {
+			int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
+			delete finfo;
+			LUA_SET_NUMBER(state, r);
+			}
+	else {
+			LUA_SET_NUMBER(state, -1);
+			}
 
 	return 1;
 	}
