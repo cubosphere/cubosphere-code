@@ -40,6 +40,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "sounds.hpp"
 #include "glutils.hpp"
 #include <jpeglib.h>
+#include <png.hpp>
 
 
 #ifdef PARALLELIZE
@@ -370,11 +371,10 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 	int h=viewport[3];
 
 	FILE *fScreenshot;
-	int nSize = w*h* 3;
+	int nSize = w*h*3;
 
 	auto pixels = std::make_unique<GLubyte[]>(nSize);
 	//GLubyte *pixels = new GLubyte [nSize];
-	if (pixels == NULL) { return; }
 
 	fScreenshot = fopen(fname.c_str(),"wb");
 
@@ -447,6 +447,25 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
 
 
+			}
+	else if (ext=="png") {
+			try {
+					png::image<png::rgb_pixel> img(w,h);
+					std::cout << "Saving "<< w << "x" << h << " preview" << std::endl;
+					for(int y=0; y<img.get_height(); ++y) {
+							for(int x=0; x<img.get_width(); ++x) {
+									//std::cout << "setting pixel (" << x << "," << y << ") " << y*img.get_width()+x << std::endl;
+									png::rgb_pixel px;
+									auto datapx = &pixels[(y*img.get_width()+x)*3];
+									px.red = *datapx++;
+									px.green = *datapx++;
+									px.blue = *datapx++;
+									img.set_pixel(x, img.get_height()-y-1, px);
+									}
+							}
+					img.write(fname);
+					}
+			catch(png::error) {}
 			}
 
 	}
