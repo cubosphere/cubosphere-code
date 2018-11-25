@@ -58,7 +58,7 @@ inline CuboFile* getTextrueFile(std::string subname,int type) {
 
 void TextureDef::Call_Render(int sideid) {
 	if (lua.FuncExists("Render")) {
-			lua.CallVA("Render","i",sideid);
+			lua.CallVA("Render", std::optional<LuaVAListIn>({sideid}));
 			}
 	}
 
@@ -359,7 +359,7 @@ void JPEGTexture::shrink_half_blur() {
 	int offsy=3*width;
 	for (int j=0; j<newh; j++) {
 			for (int i=0; i<neww; i++) {
-					int nc=(raw_image[sp]+raw_image[sp+3]+raw_image[sp+offsy]+raw_image[sp+offsy+3])>>2;
+					auto nc=(raw_image[sp]+raw_image[sp+3]+raw_image[sp+offsy]+raw_image[sp+offsy+3])>>2;
 					nraw_image[di]=nc;
 					nc=(raw_image[sp+1]+raw_image[sp+3+1]+raw_image[sp+offsy+1]+raw_image[sp+offsy+3+1])>>2;
 					nraw_image[di+1]=nc;
@@ -381,23 +381,20 @@ void JPEGTexture::shrink_blur(int ammount) {
 	}
 
 int JPEGTexture::CanFastResize(int maxdim) {
-	return isPowerOf2(width) & isPowerOf2(height) & (width==height) & (width>maxdim);
+	return !HasAlpha() and isPowerOf2(width) and isPowerOf2(height) and (width==height) and (width>maxdim);
 	}
 
 void JPEGTexture::FastResize(int maxdim) {
 	if (!CanFastResize(maxdim)) { return; }
 //Ok, calc the ammount
-	short maxammount=myLog2(maxdim);
-	short thisammount=myLog2(width);
-	int ammount=thisammount-maxammount;
+	auto maxammount=myLog2(maxdim);
+	auto thisammount=myLog2(width);
+	auto ammount = thisammount-maxammount;
 	shrink_blur(ammount);
 	}
 
-
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
-
-
 
 void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize) {
 
@@ -437,7 +434,7 @@ void TextureContainer::AddChar(int x,int y,void *data,int width,int fsize) {
 
 void TextureContainer::makeFromTexture(Texture* texture,int asfont,int maxsize) {
 	int clo=clock();
-	int canfastresize=texture->CanFastResize(maxsize) && (!asfont) && (!(texture->HasAlpha()));
+	int canfastresize=texture->CanFastResize(maxsize) and (!asfont);
 	if (canfastresize) {
 			texture->FastResize(maxsize);
 
@@ -456,7 +453,7 @@ void TextureContainer::makeFromTexture(Texture* texture,int asfont,int maxsize) 
 			if (texture->HasAlpha()) { type=GL_RGBA; }
 			if (width>maxsize) { width=maxsize; }
 			if (height>maxsize) { height=maxsize; }
-			newdata=(void*)malloc(width*height*(3+texture->HasAlpha()));
+			newdata=malloc(width*height*(3+texture->HasAlpha()));
 			gluScaleImage(type,owidth,oheight,GL_UNSIGNED_BYTE,data,width,height,GL_UNSIGNED_BYTE,newdata);
 			data=newdata;
 			scaled=1;

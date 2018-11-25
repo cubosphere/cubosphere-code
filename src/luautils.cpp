@@ -281,25 +281,27 @@ std::string LuaAccess::PopString() {
 	return s;
 	}
 
-bool LuaAccess::CallVA (const char *func, LuaVAList args) {
+bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::optional<LuaVAListOut> oargs) {
 	CallAccess=this;
 	int narg = 0;
+	lua_getglobal(state, func);
 
-	auto iter = args.begin();
-	for (; (iter != args.end()) and !std::holds_alternative<std::nullptr_t>(*iter); ++iter) {
-			++narg;
-			std::visit(overloaded {
-				[this](double arg) { LUA_SET_NUMBER(state, arg); },
-				[this](float arg) { LUA_SET_NUMBER(state, arg); },
-				[this](int arg) { LUA_SET_NUMBER(state, arg); },
-				[this](std::string arg) { LUA_SET_STRING(state, arg); },
-				[this](Vector3d* arg) { LUA_SET_VECTOR3(state, *arg); },
-				[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
-				}, *iter);
-			luaL_checkstack(state, 1, "too many arguments");
+	if (iargs) {
+			narg = iargs->size();
+			for (auto const& elem: *iargs) {
+					std::visit(overloaded {
+						[this](double arg) { LUA_SET_NUMBER(state, arg); },
+						[this](float arg) { LUA_SET_NUMBER(state, arg); },
+						[this](int arg) { LUA_SET_NUMBER(state, arg); },
+						[this](std::string arg) { LUA_SET_STRING(state, arg); },
+						[this](Vector3d* arg) { LUA_SET_VECTOR3(state, *arg); },
+						[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
+						}, elem);
+					luaL_checkstack(state, 1, "too many arguments");
+					}
 			}
-	int nres = args.size() - narg;
-	if (std::holds_alternative<std::nullptr_t>(*iter)) { ++iter; } --nres;
+	int nres = 0;
+	if (oargs) nres = oargs->size();
 	/* do the call */
 	if (lua_pcall(state, narg, nres, 0) != 0) { /* do the call */
 			std::ostringstream os;
@@ -307,52 +309,54 @@ bool LuaAccess::CallVA (const char *func, LuaVAList args) {
 			coutlog(os.str(),1);
 			return false;
 			}
-	nres = -nres;  /* stack index of first result */
-	auto print_err = [func]() {
-		coutlog("Error running function '"s + func + "' : wrong result type"s, 1);
-		};
-	for (; iter != args.end(); ++iter) {
-			std::visit(overloaded {
-				[this,nres,&print_err](double* arg) {
-					if (!lua_isnumber(state, nres)) { print_err(); }
-					else { (*arg) = lua_tonumber(state, nres); }
-					},
-				[this,nres,&print_err](float* arg) {
-					if (!lua_isnumber(state, nres)) { print_err(); }
-					else { (*arg) = lua_tonumber(state, nres); }
-					},
-				[this,nres,&print_err](int* arg) {
-					if (!lua_isnumber(state, nres)) { print_err(); }
-					else { (*arg) = lua_tonumber(state, nres); }
-					},
-				[this,nres,&print_err](std::string* arg) {
-					if (!lua_isnumber(state, nres)) { print_err(); }
-					else {
-							size_t len;
-							auto pointer = lua_tolstring(state, nres, &len);
-							(*arg) = std::string(pointer, len);
-							}
-					},
-				[this,nres,&print_err](Vector3d* arg) {
-					auto& vec = *arg;
-					lua_getfield(state, nres, "x");
-					if (lua_isnumber(state, 1)) {
-							vec.x = lua_tonumber(state, 1);
-							}
-					lua_pop(state, 1);
-					lua_getfield(state, nres, "y");
-					if (lua_isnumber(state, 1)) {
-							vec.y = lua_tonumber(state, 1);
-							}
-					lua_pop(state, 1);
-					lua_getfield(state, nres, "z");
-					if (lua_isnumber(state, 1)) {
-							vec.z = lua_tonumber(state, 1);
-							}
-					lua_pop(state, 1);
-					},
-				[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
-				}, *iter);
+	if (oargs) {
+			nres = -nres;  /* stack index of first result */
+			auto print_err = [func]() {
+				coutlog("Error running function '"s + func + "' : wrong result type"s, 1);
+				};
+			for (auto const& elem: *oargs) {
+					std::visit(overloaded {
+						[this,nres,&print_err](double* arg) {
+							if (!lua_isnumber(state, nres)) { print_err(); }
+							else { (*arg) = lua_tonumber(state, nres); }
+							},
+						[this,nres,&print_err](float* arg) {
+							if (!lua_isnumber(state, nres)) { print_err(); }
+							else { (*arg) = lua_tonumber(state, nres); }
+							},
+						[this,nres,&print_err](int* arg) {
+							if (!lua_isnumber(state, nres)) { print_err(); }
+							else { (*arg) = lua_tonumber(state, nres); }
+							},
+						[this,nres,&print_err](std::string* arg) {
+							if (!lua_isnumber(state, nres)) { print_err(); }
+							else {
+									size_t len;
+									auto pointer = lua_tolstring(state, nres, &len);
+									(*arg) = std::string(pointer, len);
+									}
+							},
+						[this,nres,&print_err](Vector3d* arg) {
+							auto& vec = *arg;
+							lua_getfield(state, nres, "x");
+							if (lua_isnumber(state, 1)) {
+									vec.x = lua_tonumber(state, 1);
+									}
+							lua_pop(state, 1);
+							lua_getfield(state, nres, "y");
+							if (lua_isnumber(state, 1)) {
+									vec.y = lua_tonumber(state, 1);
+									}
+							lua_pop(state, 1);
+							lua_getfield(state, nres, "z");
+							if (lua_isnumber(state, 1)) {
+									vec.z = lua_tonumber(state, 1);
+									}
+							lua_pop(state, 1);
+							},
+						[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
+						}, elem);
+					}
 			}
 	return true;
 	}

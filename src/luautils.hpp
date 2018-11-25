@@ -22,24 +22,28 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <stdarg.h>
 #include <sstream>
 #include <variant>
+#include <optional>
 #include "vectors.hpp"
 #include "filesystem.hpp"
 
-using LuaVATypes = std::variant<
-// Input
+using LuaVATypesIn = std::variant<
 		double,
 		float,
 		int,
 		std::string,
-		Vector3d *, // Warning: both input and output
-		std::nullptr_t, // Separator
+		Vector3d *
+		>;
+
+using LuaVATypesOut = std::variant<
+		Vector3d *,
 		double *,
 		float *,
 		int *,
 		std::string *
 		>;
 
-using LuaVAList = std::initializer_list<LuaVATypes>;
+using LuaVAListIn = std::initializer_list<LuaVATypesIn>;
+using LuaVAListOut = std::initializer_list<LuaVATypesOut>;
 
 inline std::string LUA_GET_STRING(lua_State* state) { // Complicated due to zero-terminators and garbage collection
 	size_t len;
@@ -196,7 +200,7 @@ class LuaAccess {
 		bool LoadFile(CuboFile *finfo,int t,int id);
 		void Include(LuaCFunctions *funcs);
 		[[deprecated]] void CallVA (const char *func, const char *sig, ...);
-		bool CallVA(const char* func, LuaVAList args);
+		bool CallVA(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
 		bool FuncExists (const char *func);
 		void PushInt(int i);
 		int PopInt();
