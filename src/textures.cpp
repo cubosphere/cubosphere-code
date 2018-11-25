@@ -234,31 +234,20 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo) {
 
 bool PNGTexture::loadFromFile(CuboFile* finfo) {
 	try {
-			std::unique_ptr<png::image<png::rgba_pixel>> img;
+			std::unique_ptr<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>> img;
 			if (finfo->IsHDDFile()) {
-					img = std::make_unique<png::image<png::rgba_pixel>>(finfo->GetHDDName());
+					img = std::make_unique<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>>(finfo->GetHDDName());
 					}
 			else {
 					membuf sbuf(finfo->GetData(), finfo->GetData()+finfo->GetSize());
 					std::istream in(&sbuf);
-					img = std::make_unique<png::image<png::rgba_pixel>>(in);
+					img = std::make_unique<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>>(in);
 					}
 
 			width = img->get_width();
 			height = img->get_height();
 
-			data = std::make_unique<RGBAPixel[]>(width*height);
-			for(int y=0; y<img->get_height(); ++y) {
-					for(int x=0; x<img->get_width(); ++x) {
-							//std::cout << "getting pixel (" << x << "," << y << ") " << x*img->get_width()+y << std::endl;
-							png::rgba_pixel pixel = img->get_pixel(x,y);
-							auto& datapx = data[y*img->get_width()+x];
-							datapx.r = pixel.red;
-							datapx.g = pixel.green;
-							datapx.b = pixel.blue;
-							datapx.a = pixel.alpha;
-							}
-					}
+			data = img->get_pixbuf().fetch_bytes();
 			return true;
 			}
 	catch(png::error) {

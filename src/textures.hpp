@@ -23,6 +23,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <GL/glew.h>
 #include <SDL.h>
+#define PNGPP_HAS_STD_MOVE // Not detected on clang, 100% is working in C++17
 #include <png.hpp>
 
 #include "definitions.hpp"
@@ -104,12 +105,12 @@ class JPEGTexture: public Texture {
 	};
 
 class PNGTexture: public Texture {
-		std::unique_ptr<RGBAPixel[]> data;
+		std::vector<png::byte> data;
 	public:
-		virtual void* getRGBPointer() {return data.get();}
+		virtual void* getRGBPointer() {return data.data();}
 		virtual bool loadFromFile(CuboFile *finfo);
 		virtual int HasAlpha() {return 1;}
-		// TODO: always alpha, no fast resize for png
+		// TODO: always alpha, no fast resize for png… or not?
 		virtual ~PNGTexture() {};
 	};
 
