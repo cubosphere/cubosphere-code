@@ -248,8 +248,8 @@ bool PNGTexture::loadFromFile(CuboFile* finfo) {
 			height = img->get_height();
 
 			data = std::make_unique<RGBAPixel[]>(width*height);
-			for(int x=0; x<img->get_width(); ++x) {
-					for(int y=0; y<img->get_height(); ++y) {
+			for(int y=0; y<img->get_height(); ++y) {
+					for(int x=0; x<img->get_width(); ++x) {
 							//std::cout << "getting pixel (" << x << "," << y << ") " << x*img->get_width()+y << std::endl;
 							png::rgba_pixel pixel = img->get_pixel(x,y);
 							auto& datapx = data[y*img->get_width()+x];

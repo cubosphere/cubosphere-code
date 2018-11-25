@@ -54,6 +54,7 @@ You can:
 * Fork repo and make pull request or
 * If you have made a lot of contributions and I trust you then you can ask for direct write access
 * Test game, report issues, tell friends about it
+* If you have experience with CMake on Windows™ or MacOs, any help with it will be appreciated!
 * Join IRC (check badge) and talk to me, other players and (if they are here!) team members
 * Support development on [![Beerpay](https://beerpay.io/cubosphere/cubosphere-code/badge.svg?style=flat)](https://beerpay.io/cubosphere/cubosphere-code), motivate using [![Beerpay](https://beerpay.io/cubosphere/cubosphere-code/make-wish.svg?style=flat)](https://beerpay.io/cubosphere/cubosphere-code)
 
