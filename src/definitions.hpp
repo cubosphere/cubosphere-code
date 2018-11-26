@@ -27,7 +27,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define COND_LUA_CALL(nam,stret,pspec,...) if (!(lua.FuncExists(nam))) return stret; lua.CallVA(nam,pspec, ##__VA_ARGS__)
 
-
 class BaseLuaDef {
 	protected:
 		std::string name;
@@ -87,6 +86,7 @@ class Menu : public BaseLuaDef {
 	public:
 		virtual int GetType() {return FILE_MENUDEF;}
 		Menu() : BaseLuaDef(), change(0) {};
+		virtual void LoadDef() { BaseLuaDef::LoadDef(); };
 		virtual void LoadDef(std::string cname);
 		// virtual void Reload();
 		void Render();

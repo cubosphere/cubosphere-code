@@ -362,32 +362,32 @@ void Font::TextOut(std::string s) {
 			}
 	}
 
-std::string Font::RemapString(std::string s) {
+std::string Font::RemapString(std::string s) { // FIXME: Remove?
 
 	///SENSELESS
 	return s;
 
+	/*
+		size_t pos=0;
 
-	size_t pos=0;
-
-	while (1) {
-			size_t minpos=std::string::npos;
-			unsigned int minind=0;
-			for (unsigned int r=0; r<remaps.size(); r++) {
-					size_t p=s.find(remaps[r].oldc,pos);
-					if (p!=std::string::npos) {
-							minpos=p;
-							minind=r;
-							}
-					}
-			if (minpos==std::string::npos) {
-					//Finished
-					return s;
-					}
-//Substitute now and getting a new pos
-			s=s.substr(0,minpos)+remaps[minind].newc+s.substr(minpos+remaps[minind].oldc.length());
-			pos=minpos+remaps[minind].oldc.length();
-			}
+		while (1) {
+				size_t minpos=std::string::npos;
+				unsigned int minind=0;
+				for (unsigned int r=0; r<remaps.size(); r++) {
+						size_t p=s.find(remaps[r].oldc,pos);
+						if (p!=std::string::npos) {
+								minpos=p;
+								minind=r;
+								}
+						}
+				if (minpos==std::string::npos) {
+						//Finished
+						return s;
+						}
+	//Substitute now and getting a new pos
+				s=s.substr(0,minpos)+remaps[minind].newc+s.substr(minpos+remaps[minind].oldc.length());
+				pos=minpos+remaps[minind].oldc.length();
+				}*/
 	}
 
 void Font::SetSize(float s) {

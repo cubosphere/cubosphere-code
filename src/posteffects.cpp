@@ -31,25 +31,17 @@ void LoadPostEffect(std::string name) {
 
 void PostEffect::CallDefaultSpecialRender(std::string nam,std::string what,int index) {
 	if (!isprecached) { Precache(); }
-	if (lua.FuncExists("DefaultSpecialRender")) {
-
-			lua.CallVA("DefaultSpecialRender","ssi",nam.c_str(),what.c_str(),index);
-			}
+	lua.CallVAIfPresent("DefaultSpecialRender", {{nam.c_str(),what.c_str(),index}});
 	}
 
 void PostEffect::CallRender() {
 	if (!isprecached) { Precache(); }
-	if (lua.FuncExists("Render")) {
-
-			lua.CallVA("Render","");
-			}
+	lua.CallVAIfPresent("Render");
 	}
 
 void PostEffect::Precache() {
 	isprecached=1;
-	if (lua.FuncExists("Precache")) {
-			lua.CallVA("Precache","");
-			}
+	lua.CallVAIfPresent("Precache");
 
 	}
 

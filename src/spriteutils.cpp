@@ -417,15 +417,11 @@ ParticleDef::~ParticleDef() {
 	}
 
 void ParticleDef::Call_EmitterThink(int eid,double elapsed) {
-	if (lua.FuncExists("EmitterThink")) {
-			lua.CallVA("EmitterThink","id",eid,elapsed);
-			}
+	lua.CallVAIfPresent("EmitterThink", {{eid, elapsed}});
 	}
 
 void ParticleDef::Call_EmitterConstructor(int eid) {
-	if (lua.FuncExists("EmitterConstructor")) {
-			lua.CallVA("EmitterConstructor","i",eid);
-			}
+	lua.CallVAIfPresent("EmitterConstructor", {{eid}});
 	}
 
 

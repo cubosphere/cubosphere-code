@@ -517,25 +517,15 @@ MdlDef::~MdlDef() {
 void MdlDef::Call_RenderModel() {
 
 	if (totalrenderlist && (!g_norenderlist)) {glCallList(totalrenderlist); InvalidateMaterial(); }
-	else if (lua.FuncExists("Render")) {
-
-			lua.CallVA("Render","i",myid);
-
-			}
+	else lua.CallVAIfPresent("Render", {{myid}});
 
 	}
 
 void MdlDef::Call_RenderGroup(int g) {
 	if (g>=(int)grenderlists.size()) { grenderlists.resize(g+1,0); }
 	if (grenderlists[g] && (!g_norenderlist)) {glCallList(grenderlists[g]);  }
-	else if (lua.FuncExists("RenderGroup")) {
-
-			lua.CallVA("RenderGroup","i",g);
-
-			}
-
+	else lua.CallVAIfPresent("RenderGroup", {{g}});
 	}
-
 
 ///////////////////////////////////////////////
 

@@ -44,16 +44,16 @@ void BaseLuaDef::LoadDef() {
 	delete fileinfo;
 // if (lua.FuncExists("Precache")) lua.CallVA("Precache","");
 	if (SendIDWhenPrecache()==0) {
-			COND_LUA_CALL("Precache",,"");
+			lua.CallVAIfPresent("Precache");
 			}
 	else if (SendIDWhenPrecache()==1) {
-			COND_LUA_CALL("Precache",,"i",myid);
+			lua.CallVAIfPresent("Precache", {{myid}});
 			}
 	//Otherwise no Precache-Call
 	}
 
 BaseLuaDef::~BaseLuaDef() {
-	COND_LUA_CALL("CleanUp",,"");
+	lua.CallVAIfPresent("CleanUp");
 	}
 
 void BaseLuaDef::Reload() {
@@ -94,7 +94,7 @@ void Menu::PostThink() {
 	delete finfo;
 	if (lua.FuncExists("Precache")) {
 
-			lua.CallVA("Precache","");
+			lua.CallVA("Precache");
 			}
 
 
@@ -106,7 +106,7 @@ void Menu::Render() {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("Render")) {
 
-			lua.CallVA("Render","");
+			lua.CallVA("Render");
 			}
 	}
 
@@ -115,7 +115,7 @@ void Menu::Think() {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("Think")) {
 
-			lua.CallVA("Think","");
+			lua.CallVA("Think");
 			}
 	}
 
@@ -123,7 +123,7 @@ void Menu::JoyAxisChange(int joys,int axis,double val,double pval) {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("OnJoyAxisChange")) {
 
-			lua.CallVA("OnJoyAxisChange","iidd",joys,axis,val,pval);
+			lua.CallVA("OnJoyAxisChange", {{joys,axis,val,pval}});
 			}
 
 	}
@@ -133,7 +133,7 @@ void Menu::SendKey(int key,int down, int toggle) {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("OnKeyPressed")) {
 
-			lua.CallVA("OnKeyPressed","iii",key,down,toggle);
+			lua.CallVA("OnKeyPressed", {{key,down,toggle}});
 			}
 	}
 
@@ -142,7 +142,7 @@ void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle) {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("OnJoyButton")) {
 
-			lua.CallVA("OnJoyButton","iiiii",joy,button,dir,down,toggle);
+			lua.CallVA("OnJoyButton", {{joy,button,dir,down,toggle}});
 			}
 	}
 

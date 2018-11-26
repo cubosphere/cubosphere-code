@@ -376,7 +376,7 @@ bool CuboLevel::LoadFromLua(std::string fname) {
 	if (!lief) { return false; }
 
 	if (g_VerboseMode()) { coutlog("Calling Level-Function"); }
-	lua.CallVA("Level","");
+	assert(lua.CallVA("Level"));
 
 	if (g_VerboseMode()) { coutlog("Merging block sides"); }
 	if (!(g_Vars()->GetVarString("EditorMode")=="1")) {
@@ -433,11 +433,9 @@ void CuboLevel::CheckCollides() {
 void CuboLevel::Think() {
 	leveltime+=Elapsed();
 
-	if (lua.FuncExists("Think")) {
-			lua.CallVA("Think","");
-			}
+	lua.CallVAIfPresent("Think");
 
-#ifdef PARALLELIZE2
+#ifdef PARALLELIZE2 // It's VERY bad idea because of lua
 	#pragma omp parallel for
 #endif
 	for (unsigned int i=0; i<blocks.size(); i++) { blocks[i]->Think(); }
@@ -445,43 +443,25 @@ void CuboLevel::Think() {
 	#pragma omp parallel for
 #endif
 	for (unsigned int i=0; i<items.size(); i++) { items[i]->Think(); }
-
-
-
-
-
+	lua.CallVAIfPresent("CheckWinAndLoose");
 	//And call the levels WinLooseConditions
-	if (lua.FuncExists("CheckWinAndLoose")) {
-			lua.CallVA("CheckWinAndLoose","");
-			}
-	}
+}
 
 void CuboLevel::DrawHUD() {
-	if (lua.FuncExists("DrawHUD")) {
-			lua.CallVA("DrawHUD","");
-			}
+	lua.CallVAIfPresent("DrawHUD");
 	}
 
 void CuboLevel::SendKey(int key,int down,int toggle) {
-	if (lua.FuncExists("OnKeyPressed")) {
-			lua.CallVA("OnKeyPressed","iii",key,down,toggle);
-			}
+	lua.CallVAIfPresent("OnKeyPressed", {{key, down, toggle}});
 	}
 
 void CuboLevel::SendJoyButton(int joy, int button,int dir,int down, int toggle) {
-	if (lua.FuncExists("OnJoyButton")) {
-
-			lua.CallVA("OnJoyButton","iiiii",joy,button,dir,down,toggle);
-			}
+	lua.CallVAIfPresent("OnJoyButton", {{joy,button,dir,down,toggle}});
 	}
 
 
 void CuboLevel::JoyAxisChange(int joys,int axis,double val,double pval) {
-	if (lua.FuncExists("OnJoyAxisChange")) {
-
-			lua.CallVA("OnJoyAxisChange","iidd",joys,axis,val,pval);
-			}
-
+	lua.CallVAIfPresent("OnJoyAxisChange", {{joys,axis,val,pval}});
 	}
 
 Vector3d CuboLevel::GetCenter() {
@@ -514,25 +494,18 @@ bool sortfunc(const DistRenderObj  o1, const DistRenderObj o2 ) {
 
 
 void CuboLevel::FrameRenderEnd() {
-	if (lua.FuncExists("FrameRenderEnd")) {
-			lua.CallVA("FrameRenderEnd","");
-			}
+	lua.CallVAIfPresent("FrameRenderEnd");
 	}
 
 void CuboLevel::FrameRenderStart() {
-	if (lua.FuncExists("FrameRenderStart")) {
-			lua.CallVA("FrameRenderStart","");
-			}
+	lua.CallVAIfPresent("FrameRenderStart");
 	}
 
 void CuboLevel::Render(Camera *cam) {
 	glEnable(GL_LIGHTING);
 
 
-	if (lua.FuncExists("PreRender")) {
-			lua.CallVA("PreRender","");
-			}
-
+	lua.CallVAIfPresent("PreRender");
 
 	if (rlist.capacity()<6*blocks.size()) { rlist.reserve(6*blocks.size()); }
 //  cout << "pre "<< rlist.capacity() << endl;
@@ -563,9 +536,7 @@ void CuboLevel::Render(Camera *cam) {
 			rlist[i].Render(cam);
 			}
 	SetLastRendered("");
-	if (lua.FuncExists("PostRender")) {
-			lua.CallVA("PostRender","");
-			}
+	lua.CallVAIfPresent("PostRender");
 
 ///TODO: ITEMS CULLING??? CAN BE BAD.. ESP by Item->GetPos is a fixed c-intern result
 	for (unsigned int i=0; i<items.size(); i++) {
@@ -580,13 +551,8 @@ void CuboLevel::Render(Camera *cam) {
 void CuboLevel::SpecialRender(Camera *cam,std::string nam,int defrender) {
 	glEnable(GL_LIGHTING);
 
-	if (lua.FuncExists("PreSpecialRender")) {
-			lua.CallVA("PreSpecialRender","");
-			}
-	else if (defrender==1) {
-			if (lua.FuncExists("PreRender")) {
-					lua.CallVA("PreRender","");
-					}
+	if (!lua.CallVAIfPresent("PreSpecialRender") && defrender==1) {
+			lua.CallVAIfPresent("PreRender");
 			}
 	else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"prelevel",0); }
 
@@ -619,13 +585,8 @@ void CuboLevel::SpecialRender(Camera *cam,std::string nam,int defrender) {
 			rlist[i].SpecialRender(cam,nam,defrender);
 			}
 	SetLastRendered("");
-	if (lua.FuncExists("PostSpecialRender")) {
-			lua.CallVA("PostSpecialRender","");
-			}
-	else if (defrender==1) {
-			if (lua.FuncExists("PostRender")) {
-					lua.CallVA("PostRender","");
-					}
+	if (!lua.CallVAIfPresent("PostSpecialRender") and defrender == 1) {
+			lua.CallVAIfPresent("PostRender");
 			}
 	else if (defrender==0 && g_PostEffect()) { g_PostEffect()->CallDefaultSpecialRender(nam,"postlevel",0); }
 
@@ -783,24 +744,10 @@ int CuboLevel::GetSideOfType(std::string tname,int startside,int offs) {
 	}
 
 std::string CuboLevel::CheckDefExchange(std::string defname,std::string deftype) {
-	if (lua.FuncExists("CheckDefExchange")) {
-			char *res=NULL;
-			//coutlog("Calling CheckDefEx with "+defname+"  "+deftype);
-			lua.CallVA("CheckDefExchange","ss>s",defname.c_str(),deftype.c_str(),&res);
-			//coutlog(res);
-			if (!res) { return defname; }
-			return res;
-			}
-	else { return defname; }
+	std::string res = defname;
+	lua.CallVAIfPresent("CheckDefExchange", {{defname,deftype}},{{&res}});
+	return res;
 	}
-
-
-
-
-
-
-
-
 
 ////////////////////LUA-IMPLEM////////////////////
 
@@ -1109,3 +1056,4 @@ void LUA_LEVEL_RegisterLib() {
 	g_CuboLib()->AddFunc("LEVEL_SetCollisionChecksActive",LEVEL_SetCollisionChecksActive);
 	}
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 
+

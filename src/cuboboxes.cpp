@@ -44,7 +44,7 @@ void g_SetAlphaFunc(LuaAccess *acc,std::string func) {
 
 float ExecSideAlpha(float x,float y,float z) {
 	double res;
-	s_AlphaAccess->CallVA(s_AlphaFunc.c_str(),"ddd>d",x,y,z,&res);
+	s_AlphaAccess->CallVA(s_AlphaFunc.c_str(), {{x,y,z}}, {{&res}});
 	return (float)res;
 	}
 
@@ -595,34 +595,40 @@ std::string CuboBlock::GetName() {
 ////////////////////////////////////////////////
 
 
-void BlockDef::Call_CollisionCheck(int actorid, int itemid) {    COND_LUA_CALL("SideCollisionCheck",,"ii",actorid,itemid);}
-std::string BlockDef::Call_GetEditorInfo(std::string what,std::string std) {char *res;  COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res);  return res; }
-void BlockDef::Call_RenderSide(int sideid) { COND_LUA_CALL("RenderSide",,"i",sideid);}
-void BlockDef::Call_DistRenderSide(int sideid) {COND_LUA_CALL("DistRenderSide",,"i",sideid);}
-void BlockDef::Call_OnBlockEvent(int blockid,int actorid) { COND_LUA_CALL("Event_OnBlock",,"ii",blockid,actorid);}
-void BlockDef::Call_OnSideEvent(int sideid,int actorid) { COND_LUA_CALL("Event_OnSide",,"ii",sideid,actorid);}
-int BlockDef::Call_MayMove(int sideid,int actorid,std::string movetype) { int res; COND_LUA_CALL("MayMove",1,"iis>i",sideid,actorid,movetype.c_str(),&res); return res;}
-int BlockDef::Call_HasTransparency(int blockid) { int res; COND_LUA_CALL("HasTransparency",0,"i>i",blockid,&res); return res;}
-int BlockDef::Call_IsPassable(int blockid) { int res; COND_LUA_CALL("IsPassable",0,"i>i",blockid,&res); return res;}
-int BlockDef::Call_IsMoving(int blockid) { int res; COND_LUA_CALL("IsMoving",0,"i>i",blockid,&res); return res;}
-void BlockDef::Call_BlockThink(int blockid) {COND_LUA_CALL("BlockThink",,"i",blockid);}
-int BlockDef::Call_SpecialRender(std::string nam,int index) { COND_LUA_CALL("SpecialRender",0,"si",nam.c_str(),index); return 1;}
-void BlockDef::Call_SideThink(int sideid) {COND_LUA_CALL("SideThink",,"i",sideid);}
-void BlockDef::Call_SideVarChanged(std::string var,int sideid) {COND_LUA_CALL("SideVarChanged",,"si",var.c_str(),sideid);}
-int BlockDef::Call_MaySlideDown(int sideid,int actorid) {int res; COND_LUA_CALL("MaySlideDown",0,"ii>i",sideid,actorid,&res); return res;}
-int BlockDef::Call_MayCull(int sideid) { int res; COND_LUA_CALL("MayCull",1,"i>i",sideid,&res); return res;}
-void BlockDef::Call_BlockConstructor(int id) {COND_LUA_CALL("BlockConstructor",,"i",id);}
-void BlockDef::Call_SideConstructor(int id) {COND_LUA_CALL("SideConstructor",,"i",id);}
+void BlockDef::Call_CollisionCheck(int actorid, int itemid) {lua.CallVAIfPresent("SideCollisionCheck", {{actorid,itemid}});}
+
+std::string BlockDef::Call_GetEditorInfo(std::string what,std::string std) {
+	std::string res;
+	auto ok = lua.CallVAIfPresent("GetEditorInfo", {{what, std}}, {{&res}});
+	return ok ? res : std;
+	}
+
+void BlockDef::Call_RenderSide(int sideid) { lua.CallVAIfPresent("RenderSide", {{sideid}});}
+void BlockDef::Call_DistRenderSide(int sideid) {lua.CallVAIfPresent("DistRenderSide", {{sideid}});}
+void BlockDef::Call_OnBlockEvent(int blockid,int actorid) { lua.CallVAIfPresent("Event_OnBlock", {{blockid,actorid}});}
+void BlockDef::Call_OnSideEvent(int sideid,int actorid) { lua.CallVAIfPresent("Event_OnSide", {{sideid,actorid}});}
+int BlockDef::Call_MayMove(int sideid,int actorid,std::string movetype) { int res = 1; lua.CallVAIfPresent("MayMove", {{sideid,actorid,movetype}}, {{&res}}); return res;}
+int BlockDef::Call_HasTransparency(int blockid) { int res = 0; lua.CallVAIfPresent("HasTransparency", {{blockid}}, {{&res}}); return res;}
+int BlockDef::Call_IsPassable(int blockid) { int res = 0; lua.CallVAIfPresent("IsPassable", {{blockid}}, {{&res}}); return res;}
+int BlockDef::Call_IsMoving(int blockid) { int res = 0; lua.CallVAIfPresent("IsMoving", {{blockid}}, {{&res}}); return res;}
+void BlockDef::Call_BlockThink(int blockid) {lua.CallVAIfPresent("BlockThink", {{blockid}});}
+int BlockDef::Call_SpecialRender(std::string nam,int index) { return lua.CallVAIfPresent("SpecialRender", {{nam, index}}); }
+void BlockDef::Call_SideThink(int sideid) {lua.CallVAIfPresent("SideThink", {{sideid}});}
+void BlockDef::Call_SideVarChanged(std::string var,int sideid) {lua.CallVAIfPresent("SideVarChanged", {{var, sideid}});}
+int BlockDef::Call_MaySlideDown(int sideid,int actorid) {int res = 0; lua.CallVAIfPresent("MaySlideDown", {{sideid, actorid}}, {{&res}}); return res;}
+int BlockDef::Call_MayCull(int sideid) { int res = 1; lua.CallVAIfPresent("MayCull", {{sideid}}, {{&res}}); return res;}
+void BlockDef::Call_BlockConstructor(int id) {lua.CallVAIfPresent("BlockConstructor", {{id}});}
+void BlockDef::Call_SideConstructor(int id) {lua.CallVAIfPresent("SideConstructor", {{id}});}
 
 
 
-void ItemDef::Call_Think(int itemid) { COND_LUA_CALL("Think",,"i",itemid);}
-int ItemDef::Call_SpecialRender(std::string nam,int index) {   COND_LUA_CALL("SpecialRender",0,"i",nam.c_str(),index); return 1;}
-std::string ItemDef::Call_GetEditorInfo(std::string what,std::string std) {char *res; COND_LUA_CALL("GetEditorInfo",std,"ss>s",what.c_str(),std.c_str(),&res); return res;}
-void ItemDef::Call_Render(int itemindex) {   COND_LUA_CALL("Render",,"i",itemindex);}
-void ItemDef::Call_CollisionCheck(int actorid, int itemid) {  COND_LUA_CALL("CollisionCheck",,"ii",actorid,itemid);}
-void ItemDef::Call_DistRender(int itemindex) {   COND_LUA_CALL("DistRender",,"i",itemindex);}
-void ItemDef::Call_Constructor(int id) {   COND_LUA_CALL("Constructor",,"i",id);}
+void ItemDef::Call_Think(int itemid) { lua.CallVAIfPresent("Think", {{itemid}});}
+int ItemDef::Call_SpecialRender(std::string nam,int index) { return lua.CallVAIfPresent("SpecialRender", {{nam, index}}); }
+std::string ItemDef::Call_GetEditorInfo(std::string what,std::string std) {std::string res = std; lua.CallVAIfPresent("GetEditorInfo", {{what, std}}, {{&res}}); return res;}
+void ItemDef::Call_Render(int itemindex) { lua.CallVAIfPresent("Render", {{itemindex}});}
+void ItemDef::Call_CollisionCheck(int actorid, int itemid) {  lua.CallVAIfPresent("CollisionCheck", {{actorid,itemid}});}
+void ItemDef::Call_DistRender(int itemindex) { lua.CallVAIfPresent("DistRender", {{itemindex}});}
+void ItemDef::Call_Constructor(int id) { lua.CallVAIfPresent("Constructor", {{id}});}
 
 
 ///////////////////LUA IMPLEMENT////////////////

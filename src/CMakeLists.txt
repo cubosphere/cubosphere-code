@@ -59,6 +59,7 @@ target_link_libraries(cubosphere
 target_compile_definitions(cubosphere PRIVATE
 	# Various libs
 	${PNG++_DEFINITIONS}
+	-DPNGPP_HAS_STD_MOVE # Should always work in C++17
 )
 
 install(TARGETS cubosphere DESTINATION "${BINDIR}" COMPONENT BIN)

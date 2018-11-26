@@ -58,7 +58,7 @@ inline CuboFile* getTextrueFile(std::string subname,int type) {
 
 void TextureDef::Call_Render(int sideid) {
 	if (lua.FuncExists("Render")) {
-			lua.CallVA("Render", std::optional<LuaVAListIn>({sideid}));
+			lua.CallVA("Render", {{sideid}});
 			}
 	}
 
@@ -94,8 +94,8 @@ void TextureDef::Render2d() {
 ///////////////////////////////////////////////
 
 /* Read JPEG image from a memory segment */
-static void init_source (j_decompress_ptr cinfo) {}
-static boolean fill_input_buffer (j_decompress_ptr cinfo) {
+static void init_source ([[maybe_unused]] j_decompress_ptr cinfo) {}
+static boolean fill_input_buffer ([[maybe_unused]] j_decompress_ptr cinfo) {
 //    ERREXIT(cinfo, JERR_INPUT_EMPTY);
 	return TRUE;
 	}
@@ -107,7 +107,7 @@ static void skip_input_data (j_decompress_ptr cinfo, long num_bytes) {
 			src->bytes_in_buffer -= (size_t) num_bytes;
 			}
 	}
-static void term_source (j_decompress_ptr cinfo) {}
+static void term_source ([[maybe_unused]] j_decompress_ptr cinfo) {}
 static void jpeg_mem_src (j_decompress_ptr cinfo, void* buffer, long nbytes) {
 	struct jpeg_source_mgr* src;
 
@@ -828,7 +828,7 @@ int TEXDEF_GetLastRenderedType(lua_State *state) {
 	return 1;
 	}
 
-int TEXDEF_ResetLastRenderedType(lua_State *state) {
+int TEXDEF_ResetLastRenderedType([[maybe_unused]] lua_State *state) {
 	g_Game()->GetLevel()->SetLastRendered("");
 	if (_TEXTDEF_ResetMeanwhile) { _TEXTDEF_ResetMeanwhile=2; }
 	return 0;

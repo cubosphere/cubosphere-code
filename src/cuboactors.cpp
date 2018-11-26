@@ -1378,109 +1378,68 @@ int ActorDefServer::AddEDef(std::string name) { // NOTE: there was check for IsP
 
 
 void ActorDef::Call_Constructor(int id) {
-	if (lua.FuncExists("Constructor")) {
-			lua.CallVA("Constructor","i",id);
-			}
-
+	lua.CallVAIfPresent("Constructor", {{id}});
 	}
 
 void ActorDef::Call_ActorCollide(int id,int oid) {
-	if (lua.FuncExists("ActorCollide")) {
-			lua.CallVA("ActorCollide","ii",id,oid);
-			}
+	lua.CallVAIfPresent("ActorCollide", {{id,oid}});
 
 	}
 
 
 void ActorDef::Call_ActorCollidePlayer(int id,int oid) {
-	if (lua.FuncExists("ActorCollidePlayer")) {
-			lua.CallVA("ActorCollidePlayer","ii",id,oid);
-			}
+	lua.CallVAIfPresent("ActorCollidePlayer", {{id,oid}});
 
 	}
 
 void ActorDef::Call_Render(int id) {
-	if (lua.FuncExists("Render")) {
-			lua.CallVA("Render","i",id);
-			}
+	lua.CallVAIfPresent("Render", {{id}});
 
 	}
 
 int ActorDef::Call_SpecialRender(std::string nam,int index) {
-	if (lua.FuncExists("SpecialRender")) {
-			lua.CallVA("SpecialRender","i",nam.c_str(),index);
-			return 1;
-			}
-	return 0;
+	return lua.CallVAIfPresent("SpecialRender", {{nam,index}});
 	}
 
 void ActorDef::Call_DistRender(int id) {
-	if (lua.FuncExists("DistRender")) {
-			lua.CallVA("DistRender","i",id);
-			}
-
+	lua.CallVAIfPresent("DistRender", {{id}});
 	}
 
 void ActorDef::Call_PostThink(int id) {
-	if (lua.FuncExists("PostThink")) {
-			lua.CallVA("PostThink","i",id);
-			}
-
+	lua.CallVAIfPresent("PostThink", {{id}});
 	}
 
 void ActorDef::Call_Think(int id) {
-	if (lua.FuncExists("Think")) {
-			lua.CallVA("Think","i",id);
-			}
-
+	lua.CallVAIfPresent("Think", {{id}});
 	}
 
 void ActorDef::SendKey(int actor,int key,int down,int toggle) {
-	if (lua.FuncExists("OnKeyPressed")) {
-			lua.CallVA("OnKeyPressed","iiii",actor,key,down,toggle);
-			}
+	lua.CallVAIfPresent("OnKeyPressed", {{actor,key,down,toggle}});
 	}
 
 void ActorDef::SendJoyButton(int actor,int stick,int button,int dir,int down,int toggle) {
-	if (lua.FuncExists("OnJoyButton")) {
-			lua.CallVA("OnJoyButton","iiiiii",actor,stick,button,dir,down,toggle);
-			}
+	lua.CallVAIfPresent("OnJoyButton", {{actor,stick,button,dir,down,toggle}});
 	}
 
 
 void ActorDef::Call_ChangeMove(int id,std::string newmove) {
-	if (lua.FuncExists("ChangeMove")) {
-			lua.CallVA("ChangeMove","is",id,newmove.c_str());
-			}
-
+	lua.CallVAIfPresent("ChangeMove", {{id, newmove}});
 	}
 
 int ActorDef::Call_CheckLandingOnSide(int id,int side) {
-	if (lua.FuncExists("CheckLandingOnSide")) {
-			int res;
-			lua.CallVA("CheckLandingOnSide","ii>i",id,side,&res);
-			return res;
-			}
-	return 1;
+	int res = 1;
+	lua.CallVAIfPresent("CheckLandingOnSide", {{id,side}}, {{&res}});
+	return res;
 	}
 
 void ActorDef::Call_Event(int id,std::string ev) {
-	if (lua.FuncExists("Event")) {
-			lua.CallVA("Event","is",id,ev.c_str());
-			}
-
+	lua.CallVAIfPresent("Event", {{id, ev}});
 	}
 
 std::string ActorDef::Call_GetEditorInfo(std::string what,std::string std) {
-	if (lua.FuncExists("GetEditorInfo")) {
-			char *res;
-			lua.CallVA("GetEditorInfo","ss>s",what.c_str(),std.c_str(),&res);
-
-			std::string sres=res;
-
-			return sres;
-			}
-	return std;
+	std::string res = std::move(std);
+	lua.CallVAIfPresent("GetEditorInfo", {{what, std}}, {{&res}});
+	return res;
 	}
 
 

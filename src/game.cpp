@@ -229,10 +229,7 @@ void Game::HandleEvents() {
 	}
 
 void Game::GameLoopFrame() {
-	if (GameLua.FuncExists("GameLoop")) {
-			GameLua.CallVA("GameLoop","");
-			}
-	else {
+	if (!GameLua.CallVAIfPresent("GameLoop")) {
 			this->HandleEvents(); //This will parse keyboard and mouse input
 			//Call the input's Handler
 			this->HandleInput();
@@ -349,7 +346,7 @@ void Game::Start() {
 			GameLua.ExecStrings(defaultcmds);
 			}
 
-	if (GameLua.FuncExists("Init")) { GameLua.CallVA("Init",""); }
+	GameLua.CallVAIfPresent("Init");
 
 	time=oldtime=SDL_GetTicks();
 	GameLoop();

@@ -293,9 +293,10 @@ bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::
 						[this](double arg) { LUA_SET_NUMBER(state, arg); },
 						[this](float arg) { LUA_SET_NUMBER(state, arg); },
 						[this](int arg) { LUA_SET_NUMBER(state, arg); },
+						[this](bool arg) { LUA_SET_NUMBER(state, arg); },
 						[this](std::string arg) { LUA_SET_STRING(state, arg); },
 						[this](Vector3d* arg) { LUA_SET_VECTOR3(state, *arg); },
-						[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
+						[&func](auto) {coutlog("Error running function '"s + func + "' : unknown argument type"s,1); std::abort();}
 						}, elem);
 					luaL_checkstack(state, 1, "too many arguments");
 					}
@@ -318,198 +319,41 @@ bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::
 					std::visit(overloaded {
 						[this,nres,&print_err](double* arg) {
 							if (!lua_isnumber(state, nres)) { print_err(); }
-							else { (*arg) = lua_tonumber(state, nres); }
+							else { (*arg) = LUA_GET_DOUBLE(state, nres); }
 							},
 						[this,nres,&print_err](float* arg) {
 							if (!lua_isnumber(state, nres)) { print_err(); }
-							else { (*arg) = lua_tonumber(state, nres); }
+							else { (*arg) = LUA_GET_FLOAT(state, nres); }
 							},
 						[this,nres,&print_err](int* arg) {
 							if (!lua_isnumber(state, nres)) { print_err(); }
-							else { (*arg) = lua_tonumber(state, nres); }
+							else { (*arg) = LUA_GET_INT(state, nres); }
 							},
 						[this,nres,&print_err](std::string* arg) {
-							if (!lua_isnumber(state, nres)) { print_err(); }
+							if (!lua_isstring(state, nres)) { print_err(); }
 							else {
-									size_t len;
-									auto pointer = lua_tolstring(state, nres, &len);
-									(*arg) = std::string(pointer, len);
+									(*arg) = LUA_GET_STRING(state, nres);
 									}
 							},
 						[this,nres,&print_err](Vector3d* arg) {
-							auto& vec = *arg;
-							lua_getfield(state, nres, "x");
-							if (lua_isnumber(state, 1)) {
-									vec.x = lua_tonumber(state, 1);
+							auto res = LUA_GET_VECTOR3(state, nres);
+							if (res) {
+									(*arg) = std::move(*res);
 									}
-							lua_pop(state, 1);
-							lua_getfield(state, nres, "y");
-							if (lua_isnumber(state, 1)) {
-									vec.y = lua_tonumber(state, 1);
-									}
-							lua_pop(state, 1);
-							lua_getfield(state, nres, "z");
-							if (lua_isnumber(state, 1)) {
-									vec.z = lua_tonumber(state, 1);
-									}
-							lua_pop(state, 1);
+							else print_err();
 							},
-						[this,&func](auto) {std::ostringstream os; os << "ERROR (in calling '"<< func <<"')"<< " -> " << lua_tostring(state, -1); coutlog(os.str(),1);}
+						[this,&func](auto) {coutlog("Error running function '"s + func + "' : unknown result type"s,1); std::abort();}
 						}, elem);
 					}
+			auto pop_count = oargs->size() - 1;
+			if (pop_count > 0) lua_pop(state, pop_count);
 			}
 	return true;
 	}
 
-void LuaAccess::CallVA (const char *func, const char *sig, ...) {
-	CallAccess=this;
-	va_list vl;
-	int narg, nres;  /* number of arguments and results */
-
-	va_start(vl, sig);
-	lua_getglobal(state, func);  /* get function */
-
-	//if (lua_isnil(state,lua_gettop(state))) { lua_pop(state,1); return false; }
-
-	/* push arguments */
-	narg = 0;
-	Vector3d p;
-	while (*sig) {  /* push arguments */
-			switch (*sig++) {
-
-					case 'd':  /* double argument */
-						lua_pushnumber(state, va_arg(vl, double));
-						break;
-					/*case 'f':
-					    lua_pushnumber(state, va_arg(vl, float));
-					    break;
-					*/
-					case 'i':  /* int argument */
-						lua_pushnumber(state, va_arg(vl, int));
-						break;
-
-					case 's':  /* string argument */
-						lua_pushstring(state, va_arg(vl, char *));
-						break;
-
-					case 'v': //Push a 3d-Vector POINTER!!
-						p=*((Vector3d*)va_arg(vl, Vector3d*));
-						lua_newtable(state);
-
-						lua_pushstring(state, "x");
-						lua_pushnumber(state, p.x);
-						lua_rawset(state, -3);
-
-						lua_pushstring(state, "y");
-						lua_pushnumber(state, p.y);
-						lua_rawset(state, -3);
-
-						lua_pushstring(state, "z");
-						lua_pushnumber(state, p.z);
-						lua_rawset(state, -3);
-
-
-						break;
-
-					case '>':
-						goto endwhile;
-
-					default:
-						std::ostringstream os;
-						os << "ERROR "<< " ->  Calling '"<<func << "' : invalid option ("<< "" << *(sig - 1) <<")";
-						coutlog(os.str(),1);
-					}
-			narg++;
-			luaL_checkstack(state, 1, "too many arguments");
-		} endwhile:
-
-	/* do the call */
-	nres = strlen(sig);  /* number of expected results */
-	if (lua_pcall(state, narg, nres, 0) != 0) { /* do the call */
-			std::ostringstream os;
-			os << "ERROR (in calling '"<<func <<"')"<< " -> " << lua_tostring(state, -1);
-			coutlog(os.str(),1);
-			}
-	/* retrieve results */
-	nres = -nres;  /* stack index of first result */
-	while (*sig) {  /* get results */
-			switch (*sig++) {
-
-					case 'd':  /* double result */
-						if (!lua_isnumber(state, nres)) {
-								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
-
-								}
-						*va_arg(vl, double *) = lua_tonumber(state, nres);
-						lua_pop(state,1);
-						break;
-
-					case 'i':  /* int result */
-						if (!lua_isnumber(state, nres)) {
-								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
-
-								}
-						*va_arg(vl, int *) = (int)lua_tonumber(state, nres);
-						lua_pop(state,1);
-						break;
-
-					case 's':  /* string result */
-						if (!lua_isstring(state, nres)) {
-								std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
-
-								}
-						*va_arg(vl, const char **) = lua_tostring(state, nres);
-						lua_pop(state,1);
-						break;
-
-					case 'v':
-						/*  lua_rawgeti(state,-1,1);
-						  p.x= lua_tonumber(state, -1);
-						  lua_pop(state, 1);
-
-						  lua_next(state, -3);
-						  p.y= lua_tonumber(state, -1);
-						  lua_pop(state, 1);
-
-						  lua_next(state, -3);
-						  p.z= lua_tonumber(state, -1);
-						  lua_pop(state, 1);
-
-						*/
-						lua_pushnil(state);
-
-						while(lua_next(state, -2)) {  // <== here is your mistake
-								if(lua_isnumber(state, -1)) {
-										std::string kompo = (char *)lua_tostring(state, -2);
-										float v = (float)lua_tonumber(state, -1);
-										if (kompo=="x") { p.x=v; }
-										else if (kompo=="y") { p.y=v; }
-										else if (kompo=="z") { p.z=v; }
-										//use number
-										}
-								lua_pop(state, 1);
-								}
-						// lua_pop(state, 1);
-
-
-
-
-						((Vector3d *)(va_arg(vl, Vector3d *)))->xyz(p.x,p.y,p.z);
-
-						lua_pop(state, 1);
-						break;
-
-
-
-					default: {
-							std::ostringstream os; os << "Error running function '" << func << "' : wrong result type" ; coutlog(os.str(),1);
-
-							}
-					}
-			nres++;
-			}
-	va_end(vl);
-	return ;
+bool LuaAccess::CallVAIfPresent(const char* func, std::optional<LuaVAListIn> iargs, std::optional<LuaVAListOut> oargs) {
+	if (FuncExists(func)) { return CallVA(func, iargs, oargs); }
+	else {return false;}
 	}
 
 bool LuaAccess::FuncExists (const char *func) {

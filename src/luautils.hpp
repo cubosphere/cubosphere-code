@@ -30,6 +30,7 @@ using LuaVATypesIn = std::variant<
 		double,
 		float,
 		int,
+		bool,
 		std::string,
 		Vector3d *
 		>;
@@ -39,47 +40,79 @@ using LuaVATypesOut = std::variant<
 		double *,
 		float *,
 		int *,
+		bool *,
 		std::string *
 		>;
 
 using LuaVAListIn = std::initializer_list<LuaVATypesIn>;
 using LuaVAListOut = std::initializer_list<LuaVATypesOut>;
 
-inline std::string LUA_GET_STRING(lua_State* state) { // Complicated due to zero-terminators and garbage collection
+inline std::string LUA_GET_STRING(lua_State* state, int idx = -1) { // Complicated due to zero-terminators and garbage collection
 	size_t len;
-	auto pointer = lua_tolstring(state, -1, &len);
+	auto pointer = lua_tolstring(state, idx, &len);
 	auto str = std::string(pointer, len);
-	lua_pop(state,1);
+	if(idx == -1) lua_pop(state,1);
 	return str;
 	}
 
-inline bool LUA_GET_BOOL(lua_State* state) {
-	bool res = lua_toboolean(state,-1);
-	lua_pop(state,1);
+inline bool LUA_GET_BOOL(lua_State* state, int idx = -1) {
+	bool res = lua_toboolean(state,idx);
+	if(idx == -1) lua_pop(state,1);
 	return res;
 	}
 
-inline int LUA_GET_INT(lua_State* state) {
-	int res = lua_tointeger(state,-1);
-	lua_pop(state,1);
+inline int LUA_GET_INT(lua_State* state, int idx = -1) {
+	int res = lua_tointeger(state,idx);
+	if(idx == -1) lua_pop(state,1);
 	return res;
 	}
 
-inline unsigned long int LUA_GET_ULINT(lua_State* state) {
-	unsigned long int res = lua_tonumber(state,-1);
-	lua_pop(state,1);
+inline unsigned long int LUA_GET_ULINT(lua_State* state, int idx = -1) {
+	unsigned long int res = lua_tonumber(state,idx);
+	if(idx == -1) lua_pop(state,1);
 	return res;
 	}
 
 
-inline double LUA_GET_DOUBLE(lua_State* state) {
-	double res = lua_tonumber(state,-1);
-	lua_pop(state,1);
+inline double LUA_GET_DOUBLE(lua_State* state, int idx = -1) {
+	double res = lua_tonumber(state,idx);
+	if(idx == -1) lua_pop(state,1);
 	return res;
+	}
+
+inline float LUA_GET_FLOAT(lua_State* state, int idx = -1) {
+	float res = lua_tonumber(state,idx);
+	if(idx == -1) lua_pop(state,1);
+	return res;
+	}
+
+inline std::optional<Vector3d> LUA_GET_VECTOR3(lua_State* state, int idx = -1) {
+	if (!lua_istable(state, idx)) { return std::nullopt; }
+	Vector3d vec;
+	lua_getfield(state, idx, "x");
+	if (lua_isnumber(state, -1)) {
+			vec.x = lua_tonumber(state, 1);
+			}
+	lua_pop(state, 1);
+	lua_getfield(state, idx, "y");
+	if (lua_isnumber(state, -1)) {
+			vec.y = lua_tonumber(state, 1);
+			}
+	lua_pop(state, 1);
+	lua_getfield(state, idx, "z");
+	if (lua_isnumber(state, -1)) {
+			vec.z = lua_tonumber(state, 1);
+			}
+	lua_pop(state, 1);
+	return vec;
 	}
 
 inline void LUA_SET_NUMBER(lua_State* state, const lua_Number& num) {
 	lua_pushnumber(state,num);
+	}
+
+inline void LUA_SET_BOOL(lua_State* state, const bool& b) {
+	lua_pushboolean(state,b);
 	}
 
 inline void LUA_SET_STRING(lua_State* state, const std::string& str) {
@@ -199,8 +232,8 @@ class LuaAccess {
 		std::string GetFileName() {return lfname;}
 		bool LoadFile(CuboFile *finfo,int t,int id);
 		void Include(LuaCFunctions *funcs);
-		[[deprecated]] void CallVA (const char *func, const char *sig, ...);
 		bool CallVA(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
+		bool CallVAIfPresent(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
 		bool FuncExists (const char *func);
 		void PushInt(int i);
 		int PopInt();

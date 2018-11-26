@@ -23,7 +23,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <GL/glew.h>
 #include <SDL.h>
-#define PNGPP_HAS_STD_MOVE // Not detected on clang, 100% is working in C++17
 #include <png.hpp>
 
 #include "definitions.hpp"
@@ -78,15 +77,15 @@ class Texture {
 		virtual void* getRGBPointer() {return NULL;}
 		virtual bool loadFromFile(CuboFile *finfo) = 0;
 		virtual int HasAlpha() {return 0;}
-		virtual int CanFastResize(int maxdim) {return 0;}
-		virtual void FastResize(int maxdim) {}
+		virtual int CanFastResize([[maybe_unused]] int maxdim) {return 0;}
+		virtual void FastResize([[maybe_unused]] int maxdim) {}
 		virtual ~Texture() {};
 	};
 
 
-class JPEGTexture: public Texture {
+class JPEGTexture: public Texture { // WARNING: JPEG code is not supported and will be removed in 0.4
 	protected:
-		void * raw; // TODO: use smart pointer?
+		void * raw;
 		int trans,channels;
 		void shrink_blur(int ammount);
 		void shrink_half_blur();
