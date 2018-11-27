@@ -13,7 +13,6 @@ You will need (with headers, which often stored in `-dev` packages):
 * SDL_mixer 1.2
 * libjpeg (libturbojpeg is ok too)
 * libpng (and libpng++ for build)
-* libarchive
 
 Also, you will need C++ compiler (`gcc/g++`, `clang` or another one), CMake and `make`/`ninja`.
 
@@ -23,7 +22,7 @@ Optimal setpup on Ubuntu 18.04/18.10 (CI build use it):
 sudo apt-get install -y clang \
 extra-cmake-modules cmake \
 lsb-release dpkg-dev \
-libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev libarchive-dev \
+libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev \
 libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
 ```
 
