@@ -376,7 +376,7 @@ bool CuboLevel::LoadFromLua(std::string fname) {
 	if (!lief) { return false; }
 
 	if (g_VerboseMode()) { coutlog("Calling Level-Function"); }
-	assert(lua.CallVA("Level"));
+	lua.CallVA("Level");
 
 	if (g_VerboseMode()) { coutlog("Merging block sides"); }
 	if (!(g_Vars()->GetVarString("EditorMode")=="1")) {
