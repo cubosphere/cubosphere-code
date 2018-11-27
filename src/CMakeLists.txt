@@ -2,12 +2,13 @@
 # same to make future editing easier.
 
 # Various libs
-find_package(OpenGL    REQUIRED COMPONENTS OpenGL)
-find_package(Lua51     REQUIRED)
-find_package(GLEW      REQUIRED)
+find_package(OpenGL     REQUIRED COMPONENTS OpenGL)
+find_package(Lua51      REQUIRED)
+find_package(GLEW       REQUIRED)
 #find_package(GLUT      REQUIRED)
-find_package(JPEG      REQUIRED)
-find_package(PNG++       REQUIRED)
+find_package(JPEG       REQUIRED) # TODO: remove in 0.4
+find_package(PNG++      REQUIRED)
+find_package(LibArchive REQUIRED)
 
 # SDL
 find_package(SDL       REQUIRED)
@@ -34,6 +35,7 @@ target_include_directories(cubosphere PRIVATE
 #	${GLUT_INCLUDE_DIR}
 	${JPEG_INCLUDE_DIRS}
 	${PNG++_INCLUDE_DIRS}
+	${LibArchive_INCLUDE_DIRS}
 
 # SDL
 	${SDL_INCLUDE_DIR}
@@ -49,6 +51,7 @@ target_link_libraries(cubosphere
 #	${GLUT_LIBRARIES}
 	${JPEG_LIBRARIES}
 	${PNG++_LIBRARIES}
+	${LibArchive_LIBRARIES}
 
 # SDL
 	${SDL_LIBRARY}

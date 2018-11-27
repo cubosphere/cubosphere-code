@@ -8,7 +8,7 @@ And after a while he decided to pick it up and at least make look like a modern 
 This is why this organisation exists now.
 
 # What is this game about?
-Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, libpng(++), Lua, GLSL-Shader.
+Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, libpng(++), libarchive, Lua, GLSL-Shader.
 
 ## Features
 * Game similar to Kula World
