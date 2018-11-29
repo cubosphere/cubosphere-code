@@ -76,7 +76,7 @@ static void clsFileErrorLog(std::string msg, const int t) {
 
 #ifdef LOG_USED_FILES
 #include <fstream>
-std::ofstream * logufiles;
+std::unique_ptr<std::ofstream> logufiles;
 #endif
 
 /////////////////////////////////////////////
@@ -513,14 +513,10 @@ class cls_ZipMountDirEntry {
 		std::unordered_map<std::string, std::shared_ptr<cls_ZipMountDirEntry>> subdirs;
 		std::unordered_set<std::string> files;
 		std::string name;
-		//std::vector<cls_ZipMountDirEntry*> subdirs;
-		//std::vector<cls_ZipMountFileEntry*> files;
 	public:
 		cls_ZipMountDirEntry(const std::string n) : name(n) {}
 
 		std::string GetName() const {return name;}
-		//std::vector<cls_ZipMountDirEntry*> & GetSubDirs()  {return subdirs;}
-		//std::vector<cls_ZipMountFileEntry*> & GetFiles() {return files;}
 		std::unordered_map<std::string, std::shared_ptr<cls_ZipMountDirEntry>>& GetSubDirs() {return subdirs;}
 		std::unordered_set<std::string>& GetFiles() {return files;}
 
@@ -600,41 +596,9 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 							ptr->GetSubDir(sds.back(), 1);
 							}
 					}
-			/*
-				std::vector<std::string> fnames;
-				std::vector<unsigned long> cdis;
-				std::vector<unsigned long> sizes;
-				std::vector<bool> isdirs;
-				ZIPENTRY ze; GetZipItem(hz,-1,&ze);
-				numitems=ze.index;
-				fnames.resize(numitems); cdis.resize(numitems);
-				sizes.resize(numitems); isdirs.resize(numitems);
-				for (int i=0; i<numitems; i++) {
-						GetZipItem(hz,i,&ze);
-						fnames[i]=ze.name;
-						GetCurrentCentralDirIndex(hz,&(cdis[i]));
-						sizes[i]=ze.unc_size;
-						isdirs[i]=(S_ISDIR(ze.attr)!=0);
-						}
-				for (int i=0; i<numitems; i++) if (isdirs[i]) {
-							std::vector<std::string> sds;
-							Tokenize(fnames[i],sds);
-							cls_ZipMountDirEntry *de=rootdir;
-							for (unsigned int si=0; si<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
-							}
-				for (int i=0; i<numitems; i++) if (!(isdirs[i])) {
-							std::vector<std::string> sds;
-							Tokenize(fnames[i],sds);
-							cls_ZipMountDirEntry *de=rootdir;
-							for (unsigned int si=0; si+1<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
-							de->AddFile(new cls_ZipMountFileEntry(sds.back(),i,cdis[i],sizes[i]));
-							}*/
 			}
 
 		virtual ~cls_FileSubSystemZipMount() {
-			/*
-				if (hz) { CloseZip(hz); }
-				if (rootdir) { delete rootdir; }*/
 			}
 
 		virtual bool ListDirectoryEntries(
@@ -815,8 +779,12 @@ class cls_FileSystem_Info_ {
 		bool MountZipFile(std::string zipf,std::string mountbase="") {
 			std::vector<std::string> mntb;
 			if (!StrToElems(mountbase,mntb)) {ErrorF("cannot mount zip-file (( "+zipf+" )) at invalid mountpoint (( "+mountbase+" ))"); return false;}
-			cls_FileSubSystemZipMount * md=new cls_FileSubSystemZipMount(mntb,zipf);
-//    if (md->GetLastError()!="") {delete md; return false; }
+			cls_FileSubSystemZipMount *md;
+			try {
+					md = new cls_FileSubSystemZipMount(mntb,zipf);
+					}
+			catch(std::exception) {delete md; return false; }
+
 			//Now check the version
 			std::vector<std::string> elems;
 			elems.push_back("package_version");
@@ -828,7 +796,6 @@ class cls_FileSystem_Info_ {
 					auto pfloat=std::atof(pversion.c_str());
 					auto cfloat=std::atof(cversion.c_str());
 					if (pfloat<cfloat) { delete vers; vers=NULL;}
-
 					}
 
 			if (!vers) {
@@ -931,7 +898,7 @@ cls_FileSystem::cls_FileSystem() {
 	info=new cls_FileSystem_Info_();
 
 #ifdef LOG_USED_FILES
-	logufiles=new std::ofstream("_used_files.lst");
+	logufiles = std::make_unique<std::ofstream>("_used_files.lst");
 #endif
 
 	}
@@ -954,7 +921,6 @@ cls_FileSystem::~cls_FileSystem() {
 	delete FSINFO;
 #ifdef LOG_USED_FILES
 	logufiles->close();
-	delete logufiles;
 #endif
 	}
 
