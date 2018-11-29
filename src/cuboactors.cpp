@@ -1365,7 +1365,7 @@ int ActorDefServer::GetDef(std::string name,int forplayer) {
 */
 
 int ActorDefServer::AddEDef(std::string name) { // NOTE: there was check for IsPlayer()
-	if (name_to_id.count(name)) return name_to_id.at(name);
+	if (name_to_id.count(name)) { return name_to_id.at(name); }
 	int id = max_id++;
 	name_to_id.emplace(name, id);
 	defs.emplace(id, std::make_unique<EnemyDef>());

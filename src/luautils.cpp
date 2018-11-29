@@ -302,7 +302,7 @@ bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::
 					}
 			}
 	int nres = 0;
-	if (oargs) nres = oargs->size();
+	if (oargs) { nres = oargs->size(); }
 	/* do the call */
 	if (lua_pcall(state, narg, nres, 0) != 0) { /* do the call */
 			std::ostringstream os;
@@ -340,13 +340,13 @@ bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::
 							if (res) {
 									(*arg) = std::move(*res);
 									}
-							else print_err();
+							else { print_err(); }
 							},
 						[this,&func](auto) {coutlog("Error running function '"s + func + "' : unknown result type"s,1); std::abort();}
 						}, elem);
 					}
 			auto pop_count = oargs->size() - 1;
-			if (pop_count > 0) lua_pop(state, pop_count);
+			if (pop_count > 0) { lua_pop(state, pop_count); }
 			}
 	return true;
 	}

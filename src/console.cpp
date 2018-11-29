@@ -89,7 +89,7 @@ CuboConsole::~CuboConsole() {
 
 bool CuboConsole::CheckBindKey(int ident,bool down,bool toggle) {
 	if (binds.count(ident)) {
-			if (down && toggle) ParseCmdLine(binds[ident]);
+			if (down && toggle) { ParseCmdLine(binds[ident]); }
 			return true;
 			}
 	else {
@@ -106,7 +106,7 @@ bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind) {
 	bool have_binding = binds.count(k);
 	if (unbind || (extratoks.size() == 1)) {
 			if (not have_binding) {
-					if (unbind) coutlog("Key "+key+" was not bound to any command", 2);
+					if (unbind) { coutlog("Key "+key+" was not bound to any command", 2); }
 					return false;
 					}
 			binds.erase(k);

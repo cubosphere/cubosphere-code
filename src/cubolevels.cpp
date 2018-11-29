@@ -445,7 +445,7 @@ void CuboLevel::Think() {
 	for (unsigned int i=0; i<items.size(); i++) { items[i]->Think(); }
 	lua.CallVAIfPresent("CheckWinAndLoose");
 	//And call the levels WinLooseConditions
-}
+	}
 
 void CuboLevel::DrawHUD() {
 	lua.CallVAIfPresent("DrawHUD");
@@ -745,7 +745,7 @@ int CuboLevel::GetSideOfType(std::string tname,int startside,int offs) {
 
 std::string CuboLevel::CheckDefExchange(std::string defname,std::string deftype) {
 	std::string res = defname;
-	lua.CallVAIfPresent("CheckDefExchange", {{defname,deftype}},{{&res}});
+	lua.CallVAIfPresent("CheckDefExchange", {{defname,deftype}}, {{&res}});
 	return res;
 	}
 

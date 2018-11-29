@@ -29,6 +29,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <regex>
 
 using namespace Poco::Zip;
 
@@ -88,59 +89,8 @@ bool cls_DirectoryExists(const std::string d) {
 	else { closedir(dip); return true; }
 	}
 
-#define MATCH_FAIL 1
-#define MATCH_ERROR 2
-#define MATCH_SUCCESS 3
-
-int globMatch(const char * pattern, const char * text) {
-	while(*pattern && *text) {
-			char p = *pattern++;
-			switch(p) {
-					case '*':
-						while(*text) {
-								int rc = globMatch(pattern, text++);
-								if(rc != MATCH_FAIL) {
-										return rc;
-										}
-								}
-						return MATCH_FAIL;
-					case '\\':
-						if((p = *pattern++) == 0) {
-								return MATCH_ERROR;
-								}
-						if(p != *text++) {
-								return MATCH_FAIL;
-								}
-						break;
-					case '?':
-						text++;
-						break;
-					default:
-						if(p != *text++) {
-								return MATCH_FAIL;
-								}
-					}
-			}
-	return ((*pattern == 0) && (*text == 0))? MATCH_SUCCESS: MATCH_FAIL;
-	}
-
-bool winfnmatch(std::string pattern,std::string curr) {
-	return (globMatch(pattern.c_str(),curr.c_str()) == MATCH_SUCCESS);
-	/*std::vector<std::string> pelems;
-	coutlog("Go with |"+pattern+"|  and "+curr);
-	std::string::size_type lastPos =0;
-	std::string::size_type pos     = pattern.find_first_of("*", lastPos);
-	while (std::string::npos != pos || std::string::npos != lastPos)
-	{
-	         pelems.push_back(pattern.substr(lastPos, pos - lastPos));
-	         lastPos = pos+1;
-	         pos = pattern.find_first_of("*", lastPos);
-	         std::ostringstream oss; oss<< "added |" << pelems.back() << "| to the pattern for  " << curr << std::endl;
-	         coutlog(oss.str());
-	}
-	*/
-
-
+bool winfnmatch(const std::regex& pattern,std::string curr) {
+	return std::regex_match(curr, pattern); // Easy peasy!
 	}
 
 /////////////////////////////////////////////
@@ -612,7 +562,7 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 			std::string dname=elems.front();
 			for (unsigned int i = mountbase.size()+1; i<elems.size()-1; i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
 			std::string nam = dname;
-			if (elems.size() > 1) nam.append(CLS_PATH_SEPARATOR+elems.back());
+			if (elems.size() > 1) { nam.append(CLS_PATH_SEPARATOR+elems.back()); }
 			auto it = arch.findHeader(nam);
 			if (it == arch.headerEnd() or it->second.isDirectory()) { return nullptr; } // File not found or isn't file
 			return new cls_FileZipMountedForReading(elems.back(),dname,zipname,it->second);
@@ -771,7 +721,7 @@ class cls_FileSystem_Info_ {
 			return 1;
 			}
 
-		bool ListDirectoryEntries(const std::string d,std::vector<std::string> & lsts, const int mode,const char * const pattern) const {
+		bool ListDirectoryEntries(const std::string d,std::vector<std::string> & lsts, const int mode, const std::string& pattern) const {
 			bool res=false;
 			std::vector<std::string> direlems; StrToElems(d,direlems);
 			std::vector<std::string> newentries;
@@ -790,15 +740,7 @@ class cls_FileSystem_Info_ {
 							if (alreadyin) { continue; }
 
 
-							if (pattern) {
-									/*       #ifndef _WIN32
-									      int matchres=fnmatch(pattern, curr.c_str(),CLS_FILE_PATTERN_MATCH_FLAGS);
-									      if (matchres==FNM_NOMATCH) continue;
-									      #else
-									        ///TODO: Windows-Match*/
-									if (!winfnmatch(pattern,curr)) { continue; }
-									// #endif
-									}
+							if (pattern != "" and not std::regex_match(curr, std::regex(pattern))) { continue; }
 
 							std::vector<std::string> newelems;
 							std::string curr2;

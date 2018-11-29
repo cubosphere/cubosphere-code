@@ -51,38 +51,38 @@ inline std::string LUA_GET_STRING(lua_State* state, int idx = -1) { // Complicat
 	size_t len;
 	auto pointer = lua_tolstring(state, idx, &len);
 	auto str = std::string(pointer, len);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return str;
 	}
 
 inline bool LUA_GET_BOOL(lua_State* state, int idx = -1) {
 	bool res = lua_toboolean(state,idx);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return res;
 	}
 
 inline int LUA_GET_INT(lua_State* state, int idx = -1) {
 	int res = lua_tointeger(state,idx);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return res;
 	}
 
 inline unsigned long int LUA_GET_ULINT(lua_State* state, int idx = -1) {
 	unsigned long int res = lua_tonumber(state,idx);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return res;
 	}
 
 
 inline double LUA_GET_DOUBLE(lua_State* state, int idx = -1) {
 	double res = lua_tonumber(state,idx);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return res;
 	}
 
 inline float LUA_GET_FLOAT(lua_State* state, int idx = -1) {
 	float res = lua_tonumber(state,idx);
-	if(idx == -1) lua_pop(state,1);
+	if(idx == -1) { lua_pop(state,1); }
 	return res;
 	}
 

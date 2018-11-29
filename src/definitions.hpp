@@ -61,10 +61,10 @@ template<typename T> class BaseDefServer { // TODO: Get rid of `x_to_x` usage, u
 			}
 		virtual ~BaseDefServer() {}
 		void Reload() {
-			for(auto& elem: defs) elem.second->Reload();
+			for(auto& elem: defs) { elem.second->Reload(); }
 			}
 		int AddDef(std::string name) {
-			if (name_to_id.count(name)) return name_to_id.at(name);
+			if (name_to_id.count(name)) { return name_to_id.at(name); }
 			int id = max_id++;
 			name_to_id.emplace(name, id);
 			defs.emplace(id, std::make_unique<T>());
