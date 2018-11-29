@@ -18,7 +18,11 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <dirent.h>
 #include <algorithm>
 #include <cstdio>
-#include "unzip.hpp"
+#include <Poco/Zip/ZipArchive.h>
+#include <Poco/Zip/ZipStream.h>
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
 #include "globals.hpp"
 
 #include <sys/types.h>
@@ -26,6 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <sys/stat.h>
 
+using namespace Poco::Zip;
 
 #ifdef __unix__
 constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
@@ -57,6 +62,7 @@ constexpr auto CLS_FILE_ERROR_TYPE_CRITICAL = 2;
 
 ///Exemplary for Cubosphere
 #include "luautils.hpp"
+#include <Poco/StreamCopier.h>
 static void clsFileErrorLog(std::string msg, const int t) {
 	if (t==CLS_FILE_ERROR_TYPE_ERROR) { msg="ERROR: "+msg; }
 	else if (t==CLS_FILE_ERROR_TYPE_WARNING) { msg="WARNING: "+msg; }
@@ -232,14 +238,24 @@ class cls_FileDirMountedForWriting : public cls_FileWriteable {
 class cls_FileZipMountedForReading : public cls_FileReadable {
 	protected:
 		std::string zipname;
-		mutable void *data;
-		int index;
-		unsigned long cdi;
+		mutable char *data = NULL;
 		unsigned long size;
-		HZIP  hz;
+		mutable std::ifstream istr;
+		mutable ZipInputStream zipin;
 	public:
-		cls_FileZipMountedForReading(const std::string nam,const std::string dnam,const std::string zipnam,HZIP  hzi,const int ind,const unsigned long cdip,const unsigned long siz)
-			: cls_FileReadable(nam,dnam), zipname(zipnam), data(NULL), index(ind), cdi(cdip), size(siz), hz(hzi) {}
+		cls_FileZipMountedForReading(
+				const std::string& nam,
+				const std::string& dnam,
+				const std::string& zipnam,
+				const ZipLocalFileHeader& fileEntry
+		)
+			: cls_FileReadable(nam,dnam),
+			  zipname(zipnam),
+			  istr(zipname, std::ifstream::binary),
+			  zipin(istr, fileEntry) {
+			ZipFileInfo info(fileEntry);
+			size = info.getUncompressedSize();
+			}
 
 		virtual ~cls_FileZipMountedForReading() { if (data) free(data); data=NULL; }
 
@@ -250,13 +266,16 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 
 		virtual char * GetData(const int binary=1) const {
 			if (data) { return (char *)data; }
-			data=malloc(sizeof(char)*(size+1));
-			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
-			JumpToZipItem(hz,index,cdi);
-			if (UnzipItem(hz,index,data,size)!=ZR_OK)
-					{CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
-			((char*)(data))[size]='\0';
-			return (char *)data;
+			data = (char*) malloc(size+1);
+			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR); return NULL; }
+			try {
+					std::ostringstream out(std::ios::binary);
+					Poco::StreamCopier::copyStream(zipin, out);
+					memcpy(data, out.str().c_str(), size);
+					}
+			catch(std::exception) {CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
+			data[size]='\0';
+			return data;
 			}
 
 		virtual unsigned long GetSize(const int binary=1) const { return size; }
@@ -539,53 +558,34 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase {
 
 //Entry classes
 
-
-class cls_ZipMountFileEntry {
-	protected:
-		std::string name;
-		int index;
-		unsigned long pos;
-		unsigned long size;
-	public:
-		int GetIndex() const {return index;}
-		unsigned long GetCDI() const {return pos;}
-		unsigned long GetSize() const {return size;}
-		cls_ZipMountFileEntry(const std::string n, const  int i, const unsigned long ps, const unsigned long s)
-			: name(n), index(i), pos(ps), size(s) {}
-		std::string GetName() const {return name;}
-	};
-
 class cls_ZipMountDirEntry {
 	protected:
+		std::unordered_map<std::string, std::shared_ptr<cls_ZipMountDirEntry>> subdirs;
+		std::unordered_set<std::string> files;
 		std::string name;
-		std::vector<cls_ZipMountDirEntry*> subdirs;
-		std::vector<cls_ZipMountFileEntry*> files;
+		//std::vector<cls_ZipMountDirEntry*> subdirs;
+		//std::vector<cls_ZipMountFileEntry*> files;
 	public:
 		cls_ZipMountDirEntry(const std::string n) : name(n) {}
 
 		std::string GetName() const {return name;}
-		std::vector<cls_ZipMountDirEntry*> & GetSubDirs()  {return subdirs;}
-		std::vector<cls_ZipMountFileEntry*> & GetFiles() {return files;}
+		//std::vector<cls_ZipMountDirEntry*> & GetSubDirs()  {return subdirs;}
+		//std::vector<cls_ZipMountFileEntry*> & GetFiles() {return files;}
+		std::unordered_map<std::string, std::shared_ptr<cls_ZipMountDirEntry>>& GetSubDirs() {return subdirs;}
+		std::unordered_set<std::string>& GetFiles() {return files;}
 
-		virtual ~cls_ZipMountDirEntry() {
-			for (unsigned int i=0; i<subdirs.size(); i++) if (subdirs[i]) {delete subdirs[i]; subdirs[i]=NULL;}
-			for (unsigned int i=0; i<files.size(); i++) if (files[i]) {delete files[i]; files[i]=NULL;}
-			subdirs.clear(); files.clear();
+		virtual ~cls_ZipMountDirEntry() {}
+
+		std::shared_ptr<cls_ZipMountDirEntry> GetSubDir(const std::string s, const int autocreate) {
+			if (subdirs.count(s)) { return subdirs.at(s); }
+			if (autocreate) {subdirs.emplace(s, std::make_shared<cls_ZipMountDirEntry>(s)); return subdirs.at(s);}
+			return std::shared_ptr<cls_ZipMountDirEntry>(nullptr);
 			}
 
-		cls_ZipMountDirEntry * GetSubDir(const std::string s, const int autocreate) {
-			int ind=-1;
-			for (unsigned int i=0; i<subdirs.size(); i++) if (subdirs[i]->name==s) {ind=i; break;}
-			if (ind!=-1) { return subdirs[ind]; }
-			else if (autocreate) {subdirs.push_back(new cls_ZipMountDirEntry(s)); return subdirs.back();}
-			else { return NULL; }
-			}
+		//void AddFile(std::shared_ptr<cls_ZipMountFileEntry> f) {  files.emplace(f->GetName(), f); }
 
-		void AddFile(cls_ZipMountFileEntry *f) {  files.push_back(f); }
-
-		cls_ZipMountFileEntry * GetFile(const std::string name) const {
-			for (unsigned int i=0; i<files.size(); i++) if (files[i]->GetName()==name) {return files[i];}
-			return NULL;
+		bool HaveFile(const std::string name) const {
+			return files.count(name);
 			}
 
 
@@ -599,23 +599,23 @@ class cls_ZipMountDirEntry {
 class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 	protected:
 		std::string zipname;
-		HZIP hz;
-		cls_ZipMountDirEntry *rootdir;
-		int numitems;
+		std::ifstream istr;
+		ZipArchive arch;
+		std::shared_ptr<cls_ZipMountDirEntry> rootdir;
 
 		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {
-			return NULL; //Can't write in zips
+			return NULL; // FIXME: we can write to zips… if they are writable
 			}
 
 		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
-
-			cls_ZipMountDirEntry *de=rootdir;
-			for (unsigned int si=mountbase.size(); si+1<elems.size(); si++) { de=de->GetSubDir(elems[si],0); if (!de) return NULL; }
-			cls_ZipMountFileEntry *fe=de->GetFile(elems.back());
-			if (!fe) { return NULL; }
-			std::string dname="";
-			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
-			return new cls_FileZipMountedForReading(elems.back(),dname,zipname,hz,fe->GetIndex(),fe->GetCDI(),fe->GetSize());
+			auto de = rootdir;
+			std::string dname=elems.front();
+			for (unsigned int i = mountbase.size()+1; i<elems.size()-1; i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
+			std::string nam = dname;
+			if (elems.size() > 1) nam.append(CLS_PATH_SEPARATOR+elems.back());
+			auto it = arch.findHeader(nam);
+			if (it == arch.headerEnd() or it->second.isDirectory()) { return nullptr; } // File not found or isn't file
+			return new cls_FileZipMountedForReading(elems.back(),dname,zipname,it->second);
 			}
 
 		void Tokenize(const std::string& str,std::vector<std::string>& tokens) {
@@ -630,84 +630,107 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 
 
 	public:
-		cls_FileSubSystemZipMount(const std::vector<std::string>  mntbase,const std::string zipf) : cls_FileSubSystemBase(mntbase), zipname(zipf) {
-			rootdir=new cls_ZipMountDirEntry("");
-
-			hz=OpenZip(zipname.c_str(),0);
-			if (!hz) {
-					CLS_FILE_ERROR("Cannot load zipfile (("+zipname+"))",CLS_FILE_ERROR_TYPE_ERROR);
-					return;
+		cls_FileSubSystemZipMount(const std::vector<std::string> mntbase, const std::string zipf):
+			cls_FileSubSystemBase(mntbase),
+			zipname(zipf),
+			istr(zipname, std::ifstream::binary),
+			arch(istr) {
+			rootdir = std::make_shared<cls_ZipMountDirEntry>("");
+			for(auto it = arch.fileInfoBegin(); it != arch.fileInfoEnd(); ++it) {
+					auto nam = it->first;
+					auto info = it->second;
+					std::vector<std::string> sds;
+					Tokenize(nam, sds);
+					std::shared_ptr<cls_ZipMountDirEntry> ptr = rootdir;
+					for (unsigned int si=0; si<sds.size()-1; si++) { ptr = ptr->GetSubDir(sds[si],true); }
+					if (info.isFile()) {
+							ptr->GetFiles().emplace(sds.back());
+							}
+					else {
+							ptr->GetSubDir(sds.back(), 1);
+							}
 					}
-
-			std::vector<std::string> fnames;
-			std::vector<unsigned long> cdis;
-			std::vector<unsigned long> sizes;
-			std::vector<bool> isdirs;
-			ZIPENTRY ze; GetZipItem(hz,-1,&ze);
-			numitems=ze.index;
-			fnames.resize(numitems); cdis.resize(numitems);
-			sizes.resize(numitems); isdirs.resize(numitems);
-			for (int i=0; i<numitems; i++) {
-					GetZipItem(hz,i,&ze);
-					fnames[i]=ze.name;
-					GetCurrentCentralDirIndex(hz,&(cdis[i]));
-					sizes[i]=ze.unc_size;
-					isdirs[i]=(S_ISDIR(ze.attr)!=0);
-					}
-			for (int i=0; i<numitems; i++) if (isdirs[i]) {
-						std::vector<std::string> sds;
-						Tokenize(fnames[i],sds);
-						cls_ZipMountDirEntry *de=rootdir;
-						for (unsigned int si=0; si<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
+			/*
+				std::vector<std::string> fnames;
+				std::vector<unsigned long> cdis;
+				std::vector<unsigned long> sizes;
+				std::vector<bool> isdirs;
+				ZIPENTRY ze; GetZipItem(hz,-1,&ze);
+				numitems=ze.index;
+				fnames.resize(numitems); cdis.resize(numitems);
+				sizes.resize(numitems); isdirs.resize(numitems);
+				for (int i=0; i<numitems; i++) {
+						GetZipItem(hz,i,&ze);
+						fnames[i]=ze.name;
+						GetCurrentCentralDirIndex(hz,&(cdis[i]));
+						sizes[i]=ze.unc_size;
+						isdirs[i]=(S_ISDIR(ze.attr)!=0);
 						}
-			for (int i=0; i<numitems; i++) if (!(isdirs[i])) {
-						std::vector<std::string> sds;
-						Tokenize(fnames[i],sds);
-						cls_ZipMountDirEntry *de=rootdir;
-						for (unsigned int si=0; si+1<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
-						de->AddFile(new cls_ZipMountFileEntry(sds.back(),i,cdis[i],sizes[i]));
-						}
+				for (int i=0; i<numitems; i++) if (isdirs[i]) {
+							std::vector<std::string> sds;
+							Tokenize(fnames[i],sds);
+							cls_ZipMountDirEntry *de=rootdir;
+							for (unsigned int si=0; si<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
+							}
+				for (int i=0; i<numitems; i++) if (!(isdirs[i])) {
+							std::vector<std::string> sds;
+							Tokenize(fnames[i],sds);
+							cls_ZipMountDirEntry *de=rootdir;
+							for (unsigned int si=0; si+1<sds.size(); si++) { de=de->GetSubDir(sds[si],1); }
+							de->AddFile(new cls_ZipMountFileEntry(sds.back(),i,cdis[i],sizes[i]));
+							}*/
 			}
 
 		virtual ~cls_FileSubSystemZipMount() {
-			if (hz) { CloseZip(hz); }
-			if (rootdir) { delete rootdir; }
+			/*
+				if (hz) { CloseZip(hz); }
+				if (rootdir) { delete rootdir; }*/
 			}
 
-		virtual bool ListDirectoryEntries(const std::vector<std::string> d,const std::vector<std::string> & lsts,
-				std::vector<std::string> & newelems, const int mode,const std::string pds) const {
-			if (d.size()<mountbase.size()) {
+		virtual bool ListDirectoryEntries(
+				const std::vector<std::string> d,
+				const std::vector<std::string> & lsts,
+				std::vector<std::string> & newelems,
+				const int mode,
+				const std::string pds) const {
+			if (d.size()<mountbase.size()) { // I don't completely unerstand this code :(
 					if ( (mode & (CLS_FILE_LIST_DIRS | CLS_FILE_LIST_RECURSIVE )) ==0) { return false; } //No need to show
 					for (unsigned int i=0; i<d.size(); i++) { if (mountbase[i]!=d[i]) return false;} // not the same
 					if ((mode & CLS_FILE_LIST_DIRS) != 0) { newelems.push_back(pds+mountbase[d.size()]+CLS_PATH_SEPARATOR); }
-					std::vector<std::string> nd(d); nd.push_back(mountbase[d.size()]);
+					std::vector<std::string> nd(d);
+					nd.push_back(mountbase[d.size()]);
 					return ListDirectoryEntries(nd,lsts,newelems,mode,pds+mountbase[d.size()]+CLS_PATH_SEPARATOR);
 					}
 
-			cls_ZipMountDirEntry * de=rootdir;
+			auto de = rootdir;
 			for (unsigned int i=mountbase.size(); i<d.size(); i++) { de=de->GetSubDir(d[i],0); if (!de) return false;}
 			//Iterate through the contents
 			if ((mode & CLS_FILE_LIST_FILES) !=0) {
-					for (unsigned int i=0; i<de->GetFiles().size(); i++) { newelems.push_back(pds+de->GetFiles()[i]->GetName()); }
+					for (auto &f: de->GetFiles()) { newelems.push_back(pds+f); }
 					}
 
-			for (unsigned int i=0; i<de->GetSubDirs().size(); i++) {
-					if ((mode & CLS_FILE_LIST_DIRS) !=0) { newelems.push_back(pds+(de->GetSubDirs()[i]->GetName())+CLS_PATH_SEPARATOR); }
-					if ((mode & CLS_FILE_LIST_RECURSIVE)!=0) {
-							std::vector<std::string> nd(d); nd.push_back(de->GetSubDirs()[i]->GetName());
-							ListDirectoryEntries(nd,lsts,newelems,mode,pds+de->GetSubDirs()[i]->GetName()+CLS_PATH_SEPARATOR);
+			bool list_dirs = (mode & CLS_FILE_LIST_DIRS) != 0;
+			bool list_recurse = (mode & CLS_FILE_LIST_RECURSIVE) != 0;
+			if (list_dirs or list_recurse) {
+					for (auto& elem: de->GetSubDirs()) {
+							if (list_dirs) { newelems.push_back(pds+elem.first+CLS_PATH_SEPARATOR); }
+							if (list_recurse) {
+									std::vector<std::string> nd(d);
+									nd.push_back(elem.first);
+									ListDirectoryEntries(nd,lsts,newelems,mode,pds+elem.first+CLS_PATH_SEPARATOR);
+									}
 							}
 					}
 			return true;
 			}
 		virtual int IsWriteable() const {return 0;}
 
-
 		virtual bool DirExists(const std::vector<std::string> & elems, int & denied) const {
 			if (!cls_FileSubSystemBase::DirExists(elems,denied)) { return false; } //Wrong mount point
-			cls_ZipMountDirEntry *de=rootdir;
-			for (unsigned int si=mountbase.size(); si<elems.size(); si++) { de=de->GetSubDir(elems[si],0); if (!de) return false; }
-			return true;
+			std::string dname;
+			for (unsigned int i = mountbase.size(); i<elems.size(); i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
+			auto it = arch.findHeader(dname);
+			return it != arch.headerEnd() and it->second.isDirectory();
 			}
 
 	};
@@ -789,7 +812,6 @@ class cls_FileSystem_Info_ {
 									cls_FileMountStackMask *sm=dynamic_cast<cls_FileMountStackMask *>(subsys[j]);
 									if (!sm) { continue; }
 									int mode=sm->GetMode(newelems);
-									//   std::cout << "Element " << curr << " has mode " << mode << std::endl;
 									if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST))==(CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST)) { blocked=1; break;}
 									}
 							if (blocked) { continue; }
@@ -833,9 +855,9 @@ class cls_FileSystem_Info_ {
 			std::vector<std::string> mntb;
 			while (dir.length()>1 && dir.substr(dir.length()-1,1)==CLS_PATH_SEPARATOR_SYS) { dir=dir.substr(0,dir.length()-1); }
 			if (!cls_DirectoryExists(dir)) {
-					int dircreated=0;
+					bool dircreated=0;
 					if (writeable && autocreate_write_dir) {
-							dircreated=(cls_FileSubSystemDirMount::RecursiveMkDir(dir) ? true : false);
+							dircreated = cls_FileSubSystemDirMount::RecursiveMkDir(dir);
 							}
 					if (!dircreated) {
 							ErrorF("cannot mount directory (( "+dir+" )), because it was not found"+(writeable && autocreate_write_dir ? " and could not be created" : ""));
@@ -861,8 +883,8 @@ class cls_FileSystem_Info_ {
 			if (vers) {
 					char * conts=(char *)vers->GetData(0); std::string pversion=conts;
 					std::string cversion=g_Vars()->GetVarString("CuboVersion",0);
-					float pfloat=atof(pversion.c_str());
-					float cfloat=atof(cversion.c_str());
+					auto pfloat=std::atof(pversion.c_str());
+					auto cfloat=std::atof(cversion.c_str());
 					if (pfloat<cfloat) { delete vers; vers=NULL;}
 
 					}

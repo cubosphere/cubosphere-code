@@ -7,6 +7,6 @@ cmake -H. -Bbuild \
 -DCMAKE_CXX_COMPILER=clang++ -DCPACK_SET_DESTDIR=TRUE \
 -DCPACK_PACKAGE_VERSION="`git log --pretty=format:'%at+git-%H' -n 1`-x64" \
 -DDATADIR=/data -DRUNTIME_DATADIR='./data' -DBINDIR=/ -DINSTALL_DESKTOP=FALSE -DCPACK_ARCHIVE_COMPONENT_INSTALL=FALSE \
--DZIP=TRUE # Not sure about it…
+-DZIP=FALSE # Not sure about it…
 
 cmake --build build --target package -- -j4

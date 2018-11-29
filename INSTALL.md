@@ -13,6 +13,7 @@ You will need (with headers, which often stored in `-dev` packages):
 * SDL_mixer 1.2
 * libjpeg (libturbojpeg is ok too)
 * libpng (and libpng++ for build)
+* POCO libraries (`Zip` one is used)
 
 Also, you will need C++ compiler (`gcc/g++`, `clang` or another one), CMake and `make`/`ninja`.
 
@@ -22,7 +23,7 @@ Optimal setpup on Ubuntu 18.04/18.10 (CI build use it):
 sudo apt-get install -y clang \
 extra-cmake-modules cmake \
 lsb-release dpkg-dev \
-libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev \
+libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev libpoco-dev \
 libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
 ```
 
@@ -42,4 +43,5 @@ sudo make install
 * `-DDATADIR=` — custom place to install all game data (overrides `-DCMAKE_INSTALL_PREFIX` for data).
 * `-DRUNTIME_DATADIR=` — where game will look up for data (overrides both `-DCMAKE_INSTALL_PREFIX` and `-DDATADIR` for runtime).
 * `-DINSTALL_DESKTOP=` — install linux menu entery or not (defaults to `UNIX`, so on on linux and off on others)
-* `-DZIP=TRUE` — zip most resources (useful for standalone builds, bad for most users)
+* `-DZIP=TRUE` — zip most resources (useful for standalone builds, bad for most users) 
+**IMPORTANT: POCO Zip (library used by cubosphere) before 1.9.1 (unreleased at `29.11.2018`) will have problems reading it, so don't use**

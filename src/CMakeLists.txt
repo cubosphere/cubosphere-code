@@ -7,7 +7,8 @@ find_package(Lua51     REQUIRED)
 find_package(GLEW      REQUIRED)
 #find_package(GLUT      REQUIRED)
 find_package(JPEG      REQUIRED)
-find_package(PNG++       REQUIRED)
+find_package(PNG++     REQUIRED)
+find_package(Poco      REQUIRED COMPONENTS Zip)
 
 # SDL
 find_package(SDL       REQUIRED)
@@ -49,6 +50,7 @@ target_link_libraries(cubosphere
 #	${GLUT_LIBRARIES}
 	${JPEG_LIBRARIES}
 	${PNG++_LIBRARIES}
+	${Poco_LIBRARIES}
 
 # SDL
 	${SDL_LIBRARY}
@@ -61,5 +63,7 @@ target_compile_definitions(cubosphere PRIVATE
 	${PNG++_DEFINITIONS}
 	-DPNGPP_HAS_STD_MOVE # Should always work in C++17
 )
+
+target_compile_options(cubosphere PRIVATE "$<$<CONFIG:DEBUG>:-fstandalone-debug>")
 
 install(TARGETS cubosphere DESTINATION "${BINDIR}" COMPONENT BIN)

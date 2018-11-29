@@ -30,6 +30,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Created icon and .desktop file
 * Moved editor manual to GitHub wiki which can be opened from editor menu
 * Added `.png` support and converted all textures to it, previews are saved in it too
+* Replaced self-patched minizip with POCO Zip
 
 # How to download last git build?
 1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last build artifacts are kept, some of them may be missing if build is uploading now)
