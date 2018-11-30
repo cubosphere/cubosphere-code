@@ -89,10 +89,6 @@ bool cls_DirectoryExists(const std::string d) {
 	else { closedir(dip); return true; }
 	}
 
-bool winfnmatch(const std::regex& pattern,std::string curr) {
-	return std::regex_match(curr, pattern); // Easy peasy!
-	}
-
 /////////////////////////////////////////////
 //       FILE BASES BASE CLASS             //
 /////////////////////////////////////////////
