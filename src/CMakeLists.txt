@@ -8,7 +8,7 @@ find_package(GLEW      REQUIRED)
 #find_package(GLUT      REQUIRED)
 find_package(JPEG      REQUIRED)
 find_package(PNG++     REQUIRED)
-find_package(Poco      REQUIRED COMPONENTS Zip)
+find_package(Poco      REQUIRED COMPONENTS Zip Foundation)
 
 # SDL
 find_package(SDL       REQUIRED)
