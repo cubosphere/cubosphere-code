@@ -234,16 +234,7 @@ bool JPEGTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 
 bool PNGTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 	try {
-			std::unique_ptr<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>> img;
-			if (finfo->IsHDDFile()) {
-					img = std::make_unique<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>>(finfo->GetHDDName());
-					}
-			else {
-					membuf sbuf(finfo->GetData(), finfo->GetData()+finfo->GetSize());
-					std::istream in(&sbuf);
-					img = std::make_unique<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>>(in);
-					}
-
+			auto img = std::make_unique<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>>(*finfo->GetStream());
 			width = img->get_width();
 			height = img->get_height();
 

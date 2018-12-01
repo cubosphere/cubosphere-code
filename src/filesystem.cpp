@@ -85,10 +85,10 @@ std::unique_ptr<std::ofstream> logufiles;
 /////////////////////////////////////////////
 
 template<typename TO, typename FROM>
-std::unique_ptr<TO> static_unique_pointer_cast (std::unique_ptr<FROM>&& old){
-    return std::unique_ptr<TO>{static_cast<TO*>(old.release())};
-    //conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
-}
+std::unique_ptr<TO> static_unique_pointer_cast (std::unique_ptr<FROM>&& old) {
+	return std::unique_ptr<TO> {static_cast<TO*>(old.release())};
+	//conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
+	}
 
 #ifdef USE_CPP_FILESYSTEM
 bool cls_DirectoryExists(const std::string& d) {
@@ -99,10 +99,10 @@ bool cls_DirectoryExists(const std::string& d) {
 std::filesystem::path vecToPath(const std::vector<std::string>& vec) { // FIXME: use it when Windows will be working
 	std::filesystem::path res;
 	for(auto const& elem: vec) {
-		res = res / elem;
-	}
+			res = res / elem;
+			}
 	return res;
-}
+	}
 #else
 bool cls_DirectoryExists(const std::string& d) {
 	Poco::File f(d);
@@ -142,7 +142,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 							}
 					return true;
 					}
-			catch(std::exception) {return false; }
+			catch(std::exception) { return false; }
 			}
 	public:
 		cls_FileDirMountedForReading(const std::string nam,const std::string dnam,const std::string fnameOnHD) : cls_FileReadable(nam,dnam), fname(fnameOnHD), data(NULL), size(0) {}
@@ -154,8 +154,12 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 		virtual  int IsHDDFile() const {return 1;}
 		virtual  int IsPacked() const {return 0;}
 
-		virtual char* GetData(const int binary=1) {
-			bin = binary;
+		virtual std::shared_ptr<std::istream> GetStream() {
+			if(openStream()) { return ifs; }
+			else { return nullptr; }
+			}
+
+		virtual char* GetData() {
 			if (data) { return (char*)data; }
 			if (!openStream()) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			ifs->seekg(0, std::ios::end);
@@ -223,7 +227,7 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 		mutable char *data = NULL;
 		unsigned long size;
 		mutable std::ifstream istr;
-		mutable ZipInputStream zipin;
+		std::shared_ptr<ZipInputStream> zipin;
 	public:
 		cls_FileZipMountedForReading(
 				const std::string& nam,
@@ -234,7 +238,7 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 			: cls_FileReadable(nam,dnam),
 			  zipname(zipnam),
 			  istr(zipname, std::ifstream::binary),
-			  zipin(istr, fileEntry) {
+			  zipin(std::make_shared<ZipInputStream>(istr, fileEntry)) {
 			ZipFileInfo info(fileEntry);
 			size = info.getUncompressedSize();
 			}
@@ -246,13 +250,17 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 		virtual int IsHDDFile() const {return 0;}
 		virtual int IsPacked() const {return 1;}
 
-		virtual char * GetData(const int binary=1) {
+		virtual std::shared_ptr<std::istream> GetStream() {
+			return zipin;
+			}
+
+		virtual char *GetData() {
 			if (data) { return (char *)data; }
 			data = (char*) malloc(size+1);
 			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR); return NULL; }
 			try {
 					std::ostringstream out(std::ios::binary);
-					Poco::StreamCopier::copyStream(zipin, out);
+					Poco::StreamCopier::copyStream(*zipin, out);
 					memcpy(data, out.str().c_str(), size);
 					}
 			catch(std::exception) {CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
@@ -327,8 +335,8 @@ class cls_FileMountStackMaskEntry {
 		int GetMode() const {return mode;}
 		void SetMode(const int m) {if (m==CLS_FILE_MASK_UNSET) mode=m; else mode=(m | CLS_FILE_MASK_SET);}
 		std::shared_ptr<cls_FileMountStackMaskEntry> GetSubEntry(const std::string s) {
-			if(subs.count(s)) return subs.at(s);
-			else return nullptr;
+			if(subs.count(s)) { return subs.at(s); }
+			else { return nullptr; }
 			}
 		std::shared_ptr<cls_FileMountStackMaskEntry> AddSubEntry(const std::string n) {
 			auto res = GetSubEntry(n);
@@ -820,7 +828,7 @@ class cls_FileSystem_Info_ {
 			int dendumm;
 			auto vers = md->GetFileForReading(elems,dendumm);
 			if (vers) {
-					char * conts=(char *)vers->GetData(0); std::string pversion=conts;
+					char * conts=(char *)vers->GetData(); std::string pversion=conts;
 					std::string cversion=g_Vars()->GetVarString("CuboVersion",0);
 					auto pfloat=std::atof(pversion.c_str());
 					auto cfloat=std::atof(cversion.c_str());

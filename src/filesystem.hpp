@@ -47,8 +47,9 @@ class cls_FileReadable : public cls_FileBaseClass {
 	public:
 		cls_FileReadable(const std::string nam,const std::string dnam) : cls_FileBaseClass(nam,dnam) {}
 		virtual unsigned long GetSize(const int binary=1) const=0;
-		virtual char *GetData(const int binary=1)=0;
+		virtual char *GetData()=0;
 		virtual void DisownData() const=0;  //After getting data, the data will be deleted in the file destructor. Disown it to let the data at *GetData() survive
+		virtual std::shared_ptr<std::istream> GetStream()=0;
 		///Added for Cubo
 		SDL_RWops * GetAsRWops(int binary=1) {
 			if  (IsHDDFile()) { return SDL_RWFromFile(GetHDDName().c_str(),binary==1 ? "rb" : "r"); }
