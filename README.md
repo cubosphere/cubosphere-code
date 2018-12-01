@@ -1,5 +1,5 @@
 # Cubosphere [reborn] :basketball: :video_game:
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://webchat.freenode.net/?channels=cubosphere)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code/master.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://webchat.freenode.net/?channels=cubosphere) [![linux downloads](https://img.shields.io/badge/downloads-linux-brightgreen.svg)](http://cubosphere.vallua.ru/artifacts)
 ## A little story behind it
 One upon a time on planet called Earth one man have found very very cool but anadobed in 2011-12 years game called "cubosphere". He enjoyed it and dreamt that some day it will become great.
 
@@ -8,7 +8,7 @@ And after a while he decided to pick it up and at least make look like a modern 
 This is why this organisation exists now.
 
 # What is this game about?
-Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, libpng(++), Lua, GLSL-Shader.
+Goal of this project is a freeware game similar to the PSX game "Kula World" / "Roll Away". It is designed platform independent, written in C++ and using the following libraries: OpenGL, SDL (Simple DirectMedia Layer), libjpeg, libpng(++), Lua, GLSL-Shader and POCO libraries set.
 
 ## Features
 * Game similar to Kula World
@@ -31,6 +31,8 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Moved editor manual to GitHub wiki which can be opened from editor menu
 * Added `.png` support and converted all textures to it, previews are saved in it too
 * Replaced self-patched minizip with POCO Zip
+
+… and a lot of technical or smaller internal changes!
 
 # How to download last git build?
 1. Go to http://cubosphere.vallua.ru/artifacts (warning: only last build artifacts are kept, some of them may be missing if build is uploading now)
