@@ -13,7 +13,6 @@ if not, see <http://www.gnu.org/licenses/>.
 **/
 
 #include "filesystem.hpp"
-#include <filesystem> // It's C++17
 #include <fstream>
 #include <cstdlib>
 #include <dirent.h>
@@ -32,6 +31,12 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sys/stat.h>
 #include <regex>
 #include <Poco/StreamCopier.h>
+
+#ifdef USE_CPP_FILESYSTEM
+#include <filesystem>
+#else
+#include <Poco/File.h>
+#endif
 
 using namespace Poco::Zip;
 
@@ -79,9 +84,11 @@ std::unique_ptr<std::ofstream> logufiles;
 //            SOME HELPER FUNCS            //
 /////////////////////////////////////////////
 
+#ifdef USE_CPP_FILESYSTEM
 bool cls_DirectoryExists(const std::string& d) {
-	return std::filesystem::is_directory(d);
+	return std::filesystem::is_directory(std::filesystem::path(d));
 	}
+
 
 std::filesystem::path vecToPath(const std::vector<std::string>& vec) { // FIXME: use it when Windows will be working
 	std::filesystem::path res;
@@ -90,6 +97,12 @@ std::filesystem::path vecToPath(const std::vector<std::string>& vec) { // FIXME:
 	}
 	return res;
 }
+#else
+bool cls_DirectoryExists(const std::string& d) {
+	Poco::File f(d);
+	return f.exists() and f.isDirectory();
+	}
+#endif
 
 /////////////////////////////////////////////
 //       FILE BASES BASE CLASS             //
