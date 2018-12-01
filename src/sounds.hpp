@@ -31,7 +31,7 @@ class SoundContainer {
 		SoundContainer() : sound(NULL), fname("") {}
 		~SoundContainer();
 		Mix_Chunk *GetSound() {return sound;}
-		int Load(CuboFile *finfo);
+		int Load(std::unique_ptr<CuboFile>& finfo);
 		void Reload();
 		std::string Filename() {return fname;}
 	};
@@ -51,7 +51,7 @@ class MusicContainer {
 		void SetLoop(double from,double to);
 		MusicContainer() : music(NULL), fname("") {}
 		~MusicContainer();
-		int Load(CuboFile *finfo);
+		int Load(std::unique_ptr<CuboFile>& finfo);
 		void Reload();
 		Mix_Music *GetMusic() {return music;}
 		std::string Filename() {return fname;}
@@ -75,8 +75,8 @@ class SoundServer {
 		SoundServer() : initialized(0) {};
 		int InitSound(int freq,int bits,int stereo,int buffsize);
 		void KillSound();
-		int LoadSound(CuboFile *finfo);
-		int LoadMusic(CuboFile *finfo);
+		int LoadSound(std::unique_ptr<CuboFile>& finfo);
+		int LoadMusic(std::unique_ptr<CuboFile>& finfo);
 		int PlaySound(int index,int channel);
 		int PlaySoundLooped(int index,int channel,int numloops);
 		void StopChannel(int chind);

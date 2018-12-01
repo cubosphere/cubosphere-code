@@ -71,7 +71,7 @@ void TextFileReader::RemoveComments(std::string commentindicator,bool trim,bool 
 
 	}
 
-bool TextFileReader::LoadFile(CuboFile *finfo) {
+bool TextFileReader::LoadFile(std::unique_ptr<CuboFile>& finfo) {
 	lines.clear();
 	linenums.clear();
 	FILE *f;
@@ -209,16 +209,15 @@ std::vector<std::string> TextFileReader::Seperate(std::string s,std::string sep)
 void BaseModel::Reload() {
 	std::string fna=name;
 	Clear();
-	CuboFile * finfo =g_BaseFileSystem()->GetFileForReading(name);
+	auto finfo =g_BaseFileSystem()->GetFileForReading(name);
 	if (!finfo) {coutlog("Cannot reload model "+name,2); }
 	LoadFromFile(finfo);
-	delete finfo;
 	}
 
 ////////////////////////////////////////////////7
 
 
-bool OBJModel::LoadFromFile(CuboFile *finfo) {
+bool OBJModel::LoadFromFile(std::unique_ptr<CuboFile>& finfo) {
 	BaseModel::LoadFromFile(finfo);
 	Clear();
 	TextFileReader tr;
@@ -463,7 +462,7 @@ int ModelServer::GetModel(std::string fname) {
 	return -1;
 	}
 
-int ModelServer::AddOBJ(CuboFile * finfo) {
+int ModelServer::AddOBJ(std::unique_ptr<CuboFile>& finfo) {
 
 //TCuboFile * finfo=GetFileName(fname,FILE_MDL,".obj")
 	std::string fname=finfo->GetName();
@@ -574,10 +573,9 @@ int MODEL_Render(lua_State *state) {
 
 int MODEL_LoadOBJ(lua_State *state) {
 	std::string fname=LUA_GET_STRING(state);
-	CuboFile *finfo=GetFileName(fname,FILE_MDL,".obj");
+	auto finfo=GetFileName(fname,FILE_MDL,".obj");
 	if (!finfo) {coutlog("OBJ model "+fname+ " not found!",1); LUA_SET_NUMBER(state, -1) ; return 1;}
 	int r=g_Game()->GetModels()->AddOBJ(finfo);
-	delete finfo;
 	LUA_SET_NUMBER(state, r);
 	return 1;
 	}

@@ -34,9 +34,8 @@ std::string Theme::FileName(std::string dir,std::string fname,std::string ext) {
 
 	for (unsigned int i=0; i<themedirs.size(); i++) {
 			std::string testname=dir+"/"+themedirs[i]+"/"+fname+ext;
-			CuboFile *finfo=GetCuboFileFromRelativeName(testname);
+			auto finfo=GetCuboFileFromRelativeName(testname);
 			if (finfo) {
-					delete finfo;
 					return testname;
 					}
 			}
@@ -58,11 +57,10 @@ void Theme::Load(std::string n) {
 	activeTheme=n;
 
 	LuaAccess lua;
-	CuboFile *finfo=GetFileName(n,FILE_THEMEDEF,".themedef");
+	auto finfo=GetFileName(n,FILE_THEMEDEF,".themedef");
 	if (!finfo) {coutlog("ERROR: Cannot load theme "+n,2); return;}
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_THEMEDEF,-1);
-	delete finfo;
 	}
 
 

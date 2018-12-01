@@ -16,6 +16,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
+#include <memory>
 
 ///Added for Cubo
 #include <GL/glew.h>
@@ -107,10 +108,10 @@ class cls_FileSystem {
 		bool MountHDDDir(std::string dir,std::string mountbase="") const;
 		bool MountWriteableHDDDir(std::string dir,std::string mountbase="",bool autocreatedir=true) const;
 		bool MountZipFile(std::string zipf, std::string mountbase="") const;
-		bool MountZipFile(const cls_FileReadable *const  fr, std::string mountbase="") const;
+		bool MountZipFile(const std::unique_ptr<cls_FileReadable>& fr, std::string mountbase="") const;
 
-		cls_FileReadable * GetFileForReading(const std::string fname) const;
-		cls_FileWriteable * GetFileForWriting(const std::string fname,const bool autocreatesubdirs=false) const;
+		std::unique_ptr<cls_FileReadable> GetFileForReading(const std::string fname) const;
+		std::unique_ptr<cls_FileWriteable> GetFileForWriting(const std::string fname,const bool autocreatesubdirs=false) const;
 
 		bool ListDirectoryEntries(const std::string d,std::vector<std::string> & lsts, const int mode=CLS_FILE_LIST_DEFAULT,const std::string pattern="") const; //false, if not exists
 		bool DirExists(const std::string d,const bool for_write_only,const bool uselisting_deny_mask=true) const;

@@ -272,8 +272,11 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 class cls_FileSubSystemBase {
 	protected:
 		std::vector<std::string> mountbase;
-		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const=0;
-		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const=0;
+		//virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const=0;
+		//virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const=0;
+
+		virtual std::unique_ptr<cls_FileReadable> virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const=0;
+		virtual std::unique_ptr<cls_FileWriteable> virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const=0;
 
 		bool IsInMountBaseScope(const std::vector<std::string> & elems) const {
 			if (elems.size()<mountbase.size()) { return false; }
@@ -289,12 +292,12 @@ class cls_FileSubSystemBase {
 		virtual bool ListDirectoryEntries(const std::vector<std::string> d,const std::vector<std::string> & lsts,
 				std::vector<std::string> & newelems, const int mode,const std::string pds) const=0;
 
-		virtual cls_FileReadable * GetFileForReading(const std::vector<std::string> & elems, int & denied) const {
+		virtual std::unique_ptr<cls_FileReadable> GetFileForReading(const std::vector<std::string> & elems, int & denied) const {
 			if (!IsInMountBaseScope(elems)) { return NULL; }
 			return virtGetFileForReading(elems,denied);
 			}
 
-		virtual cls_FileWriteable * GetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirs, int & denied) const {
+		virtual std::unique_ptr<cls_FileWriteable> GetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirs, int & denied) const {
 			if (!IsInMountBaseScope(elems)) { return NULL; }
 			denied=1;
 			return virtGetFileForWriting(elems,autocreatedirs);
@@ -368,12 +371,12 @@ class cls_FileMountStackMask : public cls_FileSubSystemBase {
 			fe->SetMode(mode);
 			}
 	protected:
-		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
+		virtual std::unique_ptr<cls_FileReadable> virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
 			int mode=GetMode(elems);
 			if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)) == (CLS_FILE_MASK_SET | CLS_FILE_MASK_READ)  ) { denied=1; }
 			return NULL;
 			}
-		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {return NULL;}
+		virtual std::unique_ptr<cls_FileWriteable> virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {return nullptr;}
 	};
 
 
@@ -432,7 +435,7 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase {
 
 
 
-		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirs) const {
+		virtual std::unique_ptr<cls_FileWriteable> virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirs) const {
 			//Mountpoint is already checked, thus check the existance of the Dir, where we like to write into
 			std::string sname="";
 			for (unsigned int i=mountbase.size(); i+1<elems.size(); i++) { sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i]; }
@@ -449,11 +452,11 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase {
 			f=f+CLS_PATH_SEPARATOR_SYS+elems.back(); //This is the filename on HDD
 			std::string dname="";
 			for (unsigned int i=0; i+1<elems.size(); i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
-			return new cls_FileDirMountedForWriting(elems.back(),dname,f);
+			return std::make_unique<cls_FileDirMountedForWriting>(elems.back(),dname,f);
 			}
 
 
-		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
+		virtual std::unique_ptr<cls_FileReadable> virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
 			std::string sname="";
 			for (unsigned int i=mountbase.size(); i<elems.size(); i++) { sname=sname+CLS_PATH_SEPARATOR_SYS+elems[i]; }
 			std::string f=baseOnHD+sname;
@@ -461,7 +464,7 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase {
 			if (ifs.fail()) { return NULL; }
 			ifs.close();
 			std::string dnam="";   for (unsigned int i=0; i+1<elems.size(); i++) dnam=dnam+CLS_PATH_SEPARATOR+elems[i];
-			return new cls_FileDirMountedForReading(elems.back(),dnam,f);
+			return std::make_unique<cls_FileDirMountedForReading>(elems.back(),dnam,f);
 			}
 
 	public:
@@ -577,11 +580,11 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 		ZipArchive arch;
 		std::shared_ptr<cls_ZipMountDirEntry> rootdir;
 
-		virtual cls_FileWriteable * virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {
-			return NULL; // FIXME: we can write to zips… if they are writable
+		virtual std::unique_ptr<cls_FileWriteable> virtGetFileForWriting(const std::vector<std::string> & elems, const bool autocreatedirds) const {
+			return nullptr; // FIXME: we can write to zips… if they are writable
 			}
 
-		virtual cls_FileReadable * virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
+		virtual std::unique_ptr<cls_FileReadable> virtGetFileForReading(const std::vector<std::string> & elems, int & denied) const {
 			auto de = rootdir;
 			std::string dname=elems.front();
 			for (unsigned int i = mountbase.size()+1; i<elems.size()-1; i++) { dname=dname+CLS_PATH_SEPARATOR+elems[i]; }
@@ -589,7 +592,7 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 			if (elems.size() > 1) { nam.append(CLS_PATH_SEPARATOR+elems.back()); }
 			auto it = arch.findHeader(nam);
 			if (it == arch.headerEnd() or it->second.isDirectory()) { return nullptr; } // File not found or isn't file
-			return new cls_FileZipMountedForReading(elems.back(),dname,zipname,it->second);
+			return std::make_unique<cls_FileZipMountedForReading>(elems.back(),dname,zipname,it->second);
 			}
 
 		void Tokenize(const std::string& str,std::vector<std::string>& tokens) {
@@ -758,24 +761,24 @@ class cls_FileSystem_Info_ {
 			return res;
 			}
 
-		cls_FileReadable * GetFileForReading(const std::string fname) const {
+		std::unique_ptr<cls_FileReadable> GetFileForReading(const std::string fname) const {
 			std::vector<std::string> elems;
 			if (!StrToElems(fname,elems)) { return NULL; }
 			for (int i=subsys.size()-1-skiptop; i>=0; i--) {
 					int denied=0;
-					cls_FileReadable * rf=subsys[i]->GetFileForReading(elems,denied);
+					auto rf=subsys[i]->GetFileForReading(elems,denied);
 					if (rf || denied) { return rf; }
 					}
 			return NULL;
 			}
 
-		cls_FileWriteable * GetFileForWriting(const std::string fname,const bool autocreatesubdirs) const {
+		std::unique_ptr<cls_FileWriteable> GetFileForWriting(const std::string fname,const bool autocreatesubdirs) const {
 			std::vector<std::string> elems;
 			if (!StrToElems(fname,elems)) { return NULL; }
 			for (int i=subsys.size()-1-skiptop; i>=0; i--) {
 					if (!subsys[i]->IsWriteable()) { continue; }
 					int denied=0;
-					cls_FileWriteable * rf=subsys[i]->GetFileForWriting(elems,autocreatesubdirs,denied);
+					auto rf = subsys[i]->GetFileForWriting(elems,autocreatesubdirs,denied);
 					if (rf || denied) { return rf; }
 					}
 			return NULL;
@@ -815,13 +818,13 @@ class cls_FileSystem_Info_ {
 			std::vector<std::string> elems;
 			elems.push_back("package_version");
 			int dendumm;
-			cls_FileReadable * vers= md->GetFileForReading(elems,dendumm);
+			auto vers = md->GetFileForReading(elems,dendumm);
 			if (vers) {
 					char * conts=(char *)vers->GetData(0); std::string pversion=conts;
 					std::string cversion=g_Vars()->GetVarString("CuboVersion",0);
 					auto pfloat=std::atof(pversion.c_str());
 					auto cfloat=std::atof(cversion.c_str());
-					if (pfloat<cfloat) { delete vers; vers=NULL;}
+					if (pfloat<cfloat) {vers=NULL;}
 					}
 
 			if (!vers) {
@@ -829,7 +832,6 @@ class cls_FileSystem_Info_ {
 					coutlog(msg,2);
 					return false;
 					}
-			delete vers;
 
 			subsys.push_back(static_unique_pointer_cast<cls_FileSubSystemBase, cls_FileSubSystemZipMount>(std::move(md)));
 			return true;
@@ -928,7 +930,7 @@ cls_FileSystem::cls_FileSystem() {
 
 	}
 
-cls_FileReadable * cls_FileSystem::GetFileForReading(const std::string fname) const {
+std::unique_ptr<cls_FileReadable> cls_FileSystem::GetFileForReading(const std::string fname) const {
 #ifdef LOG_USED_FILES
 	cls_FileReadable *res=FSINFO->GetFileForReading(fname);
 	if (res) { (*logufiles) << fname << std::endl; }
@@ -938,7 +940,7 @@ cls_FileReadable * cls_FileSystem::GetFileForReading(const std::string fname) co
 #endif
 	}
 
-cls_FileWriteable * cls_FileSystem::GetFileForWriting(const std::string fname,bool autocreatesubdirs) const {
+std::unique_ptr<cls_FileWriteable> cls_FileSystem::GetFileForWriting(const std::string fname,bool autocreatesubdirs) const {
 	return FSINFO->GetFileForWriting(fname,autocreatesubdirs);
 	}
 
@@ -961,7 +963,7 @@ bool cls_FileSystem::MountZipFile(std::string zipfile, std::string mountbase) co
 	return FSINFO->MountZipFile(zipfile,mountbase);
 	}
 
-bool cls_FileSystem::MountZipFile(const cls_FileReadable *  const fr,std::string mountbase) const {
+bool cls_FileSystem::MountZipFile(const std::unique_ptr<cls_FileReadable>& fr,std::string mountbase) const {
 	if (!fr) { CLS_FILE_ERROR("try to mount a NULL pointer ZIP file at mountbase "+mountbase, CLS_FILE_ERROR_TYPE_ERROR); return false;}
 	if (!fr->IsHDDFile())  { CLS_FILE_ERROR("can only mount ZIP files from HDD, not from location "+fr->GetNameForLog(), CLS_FILE_ERROR_TYPE_ERROR);  return false;}
 	return MountZipFile(fr->GetHDDName(),mountbase);

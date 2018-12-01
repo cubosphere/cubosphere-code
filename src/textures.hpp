@@ -42,19 +42,6 @@ enum class TextureType {
 	PNG
 	};
 
-using RGBAPixel = struct {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-	unsigned char a;
-	};
-
-using RGBPixel = struct {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-	};
-
 class TextureDef : public BaseLuaDef {
 	public:
 		virtual int GetType() {return FILE_TEXTUREDEF;}
@@ -75,7 +62,7 @@ class Texture {
 		Texture() : width(0), height(0) {}
 		Texture(int w,int h) : width(w), height(h) {}
 		virtual void* getRGBPointer() {return NULL;}
-		virtual bool loadFromFile(CuboFile *finfo) = 0;
+		virtual bool loadFromFile(std::unique_ptr<CuboFile>& finfo) = 0;
 		virtual int HasAlpha() {return 0;}
 		virtual int CanFastResize([[maybe_unused]] int maxdim) {return 0;}
 		virtual void FastResize([[maybe_unused]] int maxdim) {}
@@ -94,8 +81,8 @@ class JPEGTexture: public Texture { // WARNING: JPEG code is not supported and w
 		JPEGTexture() : Texture(), raw(NULL), trans(0) {}
 		JPEGTexture(int w,int h) : Texture(w,h), raw(NULL), trans(0) {}
 		virtual void* getRGBPointer() {return raw;}
-		virtual bool loadFromFile(CuboFile *finfo);
-		virtual int LoadAlphaTexture(CuboFile *finfo);
+		virtual bool loadFromFile(std::unique_ptr<CuboFile>& finfo);
+		virtual int LoadAlphaTexture(std::unique_ptr<CuboFile>& finfo);
 		virtual int GetChannels() {return channels;}
 		virtual int HasAlpha() {return trans;}
 		virtual void ColorKeyTransparency(unsigned int ckey);
@@ -107,7 +94,7 @@ class PNGTexture: public Texture {
 		std::vector<png::byte> data;
 	public:
 		virtual void* getRGBPointer() {return data.data();}
-		virtual bool loadFromFile(CuboFile *finfo);
+		virtual bool loadFromFile(std::unique_ptr<CuboFile>& finfo);
 		virtual int HasAlpha() {return 1;}
 		// TODO: always alpha, no fast resize for png… or not?
 		virtual ~PNGTexture() {};
@@ -162,10 +149,10 @@ class TextureServer { // FIXME: Use unordered_map
 		int GetMaxTextureSize() {return maxsize;}
 		FontExtend GetFontExtend(int index,int num);
 		void clear();
-		int LoadTexture(CuboFile *finfo,int asfont=0,unsigned int colorkey=0);
-		int LoadTextureAndAlpha(CuboFile *finfo,CuboFile *afinfo);
+		int LoadTexture(std::unique_ptr<CuboFile>& finfo,int asfont=0,unsigned int colorkey=0);
+		int LoadTextureAndAlpha(std::unique_ptr<CuboFile>& finfo,std::unique_ptr<CuboFile>& afinfo);
 
-		int LoadTempTexture(std::string tname, CuboFile *finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
+		int LoadTempTexture(std::string tname, std::unique_ptr<CuboFile>& finfo,int asfont=0,unsigned int colorkey=0); //For Preview-pics
 		int TempTextureIndexFromName(std::string tname);
 		void ResetTimerCounters();
 		void CoutTimerString();

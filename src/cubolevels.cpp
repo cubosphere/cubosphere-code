@@ -369,10 +369,9 @@ bool CuboLevel::LoadFromLua(std::string fname) {
 	lua.Include(g_CuboLib());
 
 	filename=fname;
-	CuboFile * finfo=GetFileName(fname,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
+	auto finfo=GetFileName(fname,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
 	if (!finfo) {std::string uls=(nextleveluserlevel==1 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+fname,2); return false;}
 	bool lief=lua.LoadFile(finfo,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,-1);
-	delete finfo;
 	if (!lief) { return false; }
 
 	if (g_VerboseMode()) { coutlog("Calling Level-Function"); }
@@ -969,12 +968,10 @@ int LEVEL_FileBegin(lua_State *state) {
 	g_Game()->GetLevel()->CreateBBox(); //For creating the picture
 
 	std::string s=LUA_GET_STRING(state);
-	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
+	auto fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) {LUA_SET_NUMBER(state, 0); return 1;}
 	if (!fw->IsHDDFile()) {LUA_SET_NUMBER(state, 0); return 1;}
 	s=fw->GetHDDName();
-	delete fw;
-
 
 	char dirs[2048] ;
 	sprintf(dirs,"%s",s.c_str());

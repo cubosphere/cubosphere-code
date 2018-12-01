@@ -82,7 +82,7 @@ int* g_LogMode() {return &g_logmode;}
 
 LuaCuboLib* g_CuboLib() {return &g_cubolib;}
 
-int lua_doCuboFile(lua_State *state, CuboFile *f) {
+int lua_doCuboFile(lua_State *state, const std::unique_ptr<CuboFile>& f) {
 	int res;
 	if (f->IsHDDFile()) { res=luaL_dofile(state,f->GetHDDName().c_str()); }
 	else {
@@ -154,7 +154,7 @@ string TLuaAccess::GetStdDir()
 }
 */
 
-bool LuaAccess::LoadFile(CuboFile *finfo,int t,int id) {
+bool LuaAccess::LoadFile(std::unique_ptr<CuboFile>& finfo,int t,int id) {
 	if (!state) { coutlog("No lua state present",1); return false;}
 
 	typ=t;
@@ -723,29 +723,26 @@ int LuaCuboLib::SCORE_SetVar(lua_State *state) {
 
 int LuaCuboLib::SCORE_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
-	CuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
+	auto cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_NUMBER(state, 0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_NUMBER(state, 0); return 1 ; }
 	FILE *f=fopen(cf->GetHDDName().c_str(),"rt");
 	if (f==NULL) {
 			LUA_SET_NUMBER(state, 0);
-			delete cf;
 			return 1;
 			}
 	fclose(f);
 	luaL_dofile(state,cf->GetHDDName().c_str());
 	LUA_SET_NUMBER(state, 1);
-	delete cf;
 	return 1;
 	}
 
 int LuaCuboLib::SAVE_Open(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
-	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
+	auto fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_NUMBER(state, 0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
 	unsigned long int i=(unsigned long int)f;
-	delete fw;
 	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
@@ -769,7 +766,7 @@ int LuaCuboLib::SAVE_Close(lua_State *state) {
 int LuaCuboLib::SAVE_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 
-	CuboFile *finfo=GetFileName(s,FILE_SAVEGAME,".sdef");
+	auto finfo=GetFileName(s,FILE_SAVEGAME,".sdef");
 	if (!finfo) {
 			LUA_SET_NUMBER(state, 0);
 			return 1;
@@ -779,7 +776,6 @@ int LuaCuboLib::SAVE_Load(lua_State *state) {
 			return 1;
 			}
 	s=finfo->GetHDDName();
-	delete finfo;
 
 	FILE *f=fopen(s.c_str(),"rt");
 	if (f==NULL) {
@@ -794,11 +790,10 @@ int LuaCuboLib::SAVE_Load(lua_State *state) {
 
 int LuaCuboLib::SCORE_Open(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
-	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
+	auto fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_NUMBER(state, 0); return 1;}
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
 	unsigned long int i=(unsigned long int)f;
-	delete fw;
 	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
@@ -914,7 +909,7 @@ int LuaCuboLib::USING(lua_State *state) {
 
 int LuaCuboLib::INCLUDEABSOLUTE(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
-	CuboFile *finfo=g_BaseFileSystem()->GetFileForReading(s);
+	auto finfo=g_BaseFileSystem()->GetFileForReading(s);
 	if (!finfo) {coutlog("Cannot include script "+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
@@ -923,7 +918,6 @@ int LuaCuboLib::INCLUDEABSOLUTE(lua_State *state) {
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
 	lua_doCuboFile(state,finfo);
-	delete finfo;
 	return 0;
 	}
 
@@ -939,7 +933,7 @@ int LuaCuboLib::INCLUDE(lua_State *state) {
 	if (typ==FILE_USERLEVEL || typ==FILE_LEVEL) { dn="/levels/"; }
 ///TODO: Remove in Beta 0.3
 
-	CuboFile *finfo=g_BaseFileSystem()->GetFileForReading(dn+s);
+	auto finfo=g_BaseFileSystem()->GetFileForReading(dn+s);
 	if (!finfo) {coutlog("Cannot include script "+dn+s+ ", since it was not found!",1); return 0;}
 	if (g_VerboseMode()) {
 			lua_getglobal(state,"LUA_DEF_NAME");
@@ -948,25 +942,22 @@ int LuaCuboLib::INCLUDE(lua_State *state) {
 			coutlog("  Including : "+finfo->GetNameForLog()+ " (into file: "+f+")");
 			}
 	lua_doCuboFile(state,finfo);
-	delete finfo;
 	return 0;
 	}
 
-int LuaCuboLib::CONFIG_Load(lua_State *state) {
+int LuaCuboLib::CONFIG_Load(lua_State *state) { // FIXME: do it rigth
 	std::string s=LUA_GET_STRING(state);
-	CuboFile *cf=g_BaseFileSystem()->GetFileForReading(s);
+	auto cf=g_BaseFileSystem()->GetFileForReading(s);
 	if (!cf) { LUA_SET_NUMBER(state, 0); return 1 ; }
 	if (!cf->IsHDDFile()) { LUA_SET_NUMBER(state, 0); return 1 ; }
 	FILE *f=fopen(cf->GetHDDName().c_str(),"rt");
 	if (f==NULL) {
 			LUA_SET_NUMBER(state, 0);
-			delete cf;
 			return 1;
 			}
 	fclose(f);
 	luaL_dofile(state,cf->GetHDDName().c_str());
 	LUA_SET_NUMBER(state, 1);
-	delete cf;
 	return 1;
 	}
 
@@ -983,13 +974,12 @@ int LuaCuboLib::CONFIG_Open(lua_State *state) {
 	// coutlog("Trying to create the dir: "+thedir);
 	 RecursiveMKDir(thedir);
 	*/
-	cls_FileWriteable *fw=g_BaseFileSystem()->GetFileForWriting(s,true);
+	auto fw=g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { LUA_SET_NUMBER(state, 0); return 1;}
 
 
 	FILE* f=fopen(fw->GetHDDName().c_str(),"wt");
 	unsigned long int i=(unsigned long int)f;
-	delete fw;
 	LUA_SET_NUMBER(state, i);
 	return 1;
 	}
@@ -1225,23 +1215,21 @@ std::string g_languagefile="";
 void ReloadLanguage() {
 	LuaAccess lua;
 	//coutlog("Reloading lang: "+g_languagefile,2);
-	CuboFile *finfo=g_BaseFileSystem()->GetFileForReading(g_languagefile);
+	auto finfo=g_BaseFileSystem()->GetFileForReading(g_languagefile);
 	if (!finfo) {coutlog("Cannot reload translation "+g_languagefile+ ", since it was not found!",1); }
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_LANGDEF,-1);
-	delete finfo;
 	}
 
 
 int LuaCuboLib::TRANS_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 	LuaAccess lua;
-	CuboFile *finfo=GetFileName(s,FILE_LANGDEF,".ldef");
+	auto finfo=GetFileName(s,FILE_LANGDEF,".ldef");
 	if (!finfo) {coutlog("Cannot load translation "+s+ ", since it was not found!",1); return 0;}
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_LANGDEF,-1);
 	g_languagefile=finfo->GetName();
-	delete finfo;
 	return 0;
 	}
 

@@ -77,15 +77,14 @@ GLint BaseShader::GetAttributeLocation(std::string name) {
 
 void BaseShader::Load(ShaderServer *ss,std::string fname) {
 	this->filename=fname;
-	CuboFile *temp1=GetFileName(fname,FILE_SHADER,".vert");
-	CuboFile *temp2=GetFileName(fname,FILE_SHADER,".frag");
+	auto temp1=GetFileName(fname,FILE_SHADER,".vert");
+	auto temp2=GetFileName(fname,FILE_SHADER,".frag");
 
 	if (!temp1) {coutlog("Shader "+fname+ ".vert not found!",1); return;}
 	if (!temp2) {coutlog("Shader "+fname+ ".frag not found!",1); return;}
 
 	vertexref=ss->CompileShaderCuboFile(GL_VERTEX_SHADER,temp1);
 	fragmentref=ss->CompileShaderCuboFile(GL_FRAGMENT_SHADER,temp2);
-	delete temp1; delete temp2;
 	programref=ss->LinkShaders(vertexref,fragmentref);
 	assert(glIsProgram(programref));
 	assert(glIsShader(fragmentref));
@@ -167,7 +166,7 @@ ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename) {
 	}
 
 
-GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo) {
+GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, std::unique_ptr<CuboFile>& finfo) {
 	if (finfo->IsHDDFile()) {return CompileShaderFile(shaderType,finfo->GetHDDName().c_str());}
 	else {
 			char * buffer=(char*)finfo->GetData();  buffer[finfo->GetSize()]='\0';

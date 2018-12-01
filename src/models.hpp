@@ -50,7 +50,7 @@ class TextFileReader {
 		int linenr;
 	public:
 		void RemoveComments(std::string commentindicator="#",bool trim=true,bool cutempty=true);
-		bool LoadFile(CuboFile * finfo);
+		bool LoadFile(std::unique_ptr<CuboFile>& finfo);
 		void OutToTTY();
 		int GetLineNr();
 		std::string NextLine();
@@ -76,7 +76,7 @@ class BaseModel {
 		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader) {}
 		virtual void DrawGroup(int g) {}
 		virtual std::string GetName() {return name;}
-		virtual bool LoadFromFile(CuboFile *finfo) {name=finfo->GetName(); return true;}
+		virtual bool LoadFromFile(std::unique_ptr<CuboFile>& finfo) {name=finfo->GetName(); return true;}
 		virtual void RenderByDef(int defindex) {}
 		virtual void Reload();
 	};
@@ -105,7 +105,7 @@ class OBJModel : public BaseModel {
 	public:
 		virtual void DrawGroup(int g);
 		virtual void DrawGroupWithTangent(int g, std::string TangentNameInShader);
-		virtual bool LoadFromFile(CuboFile *finfo);
+		virtual bool LoadFromFile(std::unique_ptr<CuboFile>& finfo);
 		// virtual void RenderAll();
 		virtual void RenderByDef(int defindex);
 	};
@@ -120,7 +120,7 @@ class ModelServer {
 		ModelServer();
 		void Reload();
 		virtual ~ModelServer();
-		virtual int AddOBJ(CuboFile *finfo);
+		virtual int AddOBJ(std::unique_ptr<CuboFile>& finfo);
 		virtual BaseModel *GetModelPtr(int i) {return mdls[i];}
 	};
 

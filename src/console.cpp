@@ -52,7 +52,7 @@ CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  s
 	}
 
 void CuboConsole::Init() {
-	CuboFile * cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
+	auto cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
 	lua.Include(g_CuboLib());
 	if (cscript) {
 			char *c=(char*)cscript->GetData(0);
@@ -60,7 +60,6 @@ void CuboConsole::Init() {
 			std::vector<std::string> lines;
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
 			for (unsigned int i=0; i<lines.size(); i++) if (lines[i]!="") { ParseCmdLine(lines[i]); }
-			delete cscript;
 			}
 	}
 

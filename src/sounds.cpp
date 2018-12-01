@@ -114,7 +114,7 @@ SoundContainer::~SoundContainer() {
 	sound=NULL;
 	}
 
-int SoundContainer::Load(CuboFile *finfo) {
+int SoundContainer::Load(std::unique_ptr<CuboFile>& finfo) {
 	sound = Mix_LoadWAV_RW(finfo->GetAsRWops(1),1);
 	if(sound == NULL) {
 			printf("Unable to load WAV file %s : %s\n", finfo->GetNameForLog().c_str(), Mix_GetError());
@@ -126,13 +126,13 @@ int SoundContainer::Load(CuboFile *finfo) {
 
 void SoundContainer::Reload() {
 
-	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
+	auto finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload sound " +fname,2); return;}
 
 	if (sound) { Mix_FreeChunk(sound); }
 	sound=NULL;
 
-	Load(finfo); delete finfo;
+	Load(finfo);
 	}
 
 
@@ -141,7 +141,7 @@ MusicContainer::~MusicContainer() {
 	music=NULL;
 	}
 
-int MusicContainer::Load(CuboFile *finfo) {
+int MusicContainer::Load(std::unique_ptr<CuboFile>& finfo) {
 	if (!finfo->IsHDDFile()) {
 			coutlog("Music from ZIP can be problematic...",2);
 			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1));
@@ -190,13 +190,13 @@ void MusicContainer::Think(double elapsed) {
 
 void MusicContainer::Reload() {
 
-	CuboFile* finfo=g_BaseFileSystem()->GetFileForReading(fname);
+	auto finfo=g_BaseFileSystem()->GetFileForReading(fname);
 	if (!finfo) {coutlog("Cannot reload music " +fname,2); return;}
 
 	if (music) { Mix_FreeMusic(music); }
 	music=NULL;
 
-	Load(finfo); delete finfo;
+	Load(finfo);
 	}
 
 
@@ -259,14 +259,14 @@ int SoundServer::SetNumChannels(int nchan) {
 	return Mix_AllocateChannels(nchan);
 	}
 
-int SoundServer::LoadSound(CuboFile *finfo) {
+int SoundServer::LoadSound(std::unique_ptr<CuboFile>& finfo) {
 	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<sounds.size(); i++) {
 			if (finfo->GetNameForLog()==sounds[i]->Filename()) { return i; }
 			}
 //Otherwise add it
 	if (g_VerboseMode()) { coutlog("Loading Sound: "+finfo->GetNameForLog()); }
-	SoundContainer *news=new SoundContainer();
+	auto news=new SoundContainer();
 
 	int res=news->Load(finfo);
 	if (res) {
@@ -277,7 +277,7 @@ int SoundServer::LoadSound(CuboFile *finfo) {
 	return -1;
 	}
 
-int SoundServer::LoadMusic(CuboFile *finfo) {
+int SoundServer::LoadMusic(std::unique_ptr<CuboFile>& finfo) {
 	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<musics.size(); i++) {
 			if (finfo->GetNameForLog()==musics[i]->Filename()) { return i; }
@@ -458,21 +458,19 @@ int SOUND_PlayedByChannel(lua_State *state) {
 
 int SOUND_Load(lua_State *state) {
 	std::string fname=LUA_GET_STRING(state);
-	CuboFile * finfo=GetFileName(fname,FILE_SOUND,".wav");
+	auto finfo=GetFileName(fname,FILE_SOUND,".wav");
 	if (!finfo) {coutlog("Sound "+fname+ ".wav not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	int res=g_Sounds()->LoadSound(finfo);
-	delete finfo;
 	LUA_SET_NUMBER(state, res);
 	return 1;
 	}
 
 int SOUND_LoadMusic(lua_State *state) {
 	std::string fname=LUA_GET_STRING(state);
-	CuboFile *finfo=GetFileName(fname,FILE_MUSIC,".mp3");
+	auto finfo=GetFileName(fname,FILE_MUSIC,".mp3");
 	if (!finfo) {coutlog("Music "+fname+ ".mp3 not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 //if (g_VerboseMode()) coutlog("Loading Music : "+fname);
 	int res=g_Sounds()->LoadMusic(finfo);
-	delete finfo;
 	LUA_SET_NUMBER(state, res);
 
 	finfo=GetFileName(fname,FILE_MUSIC,".mdef");

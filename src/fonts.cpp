@@ -55,7 +55,7 @@ int SizedFont::Load(SDL_RWops *rwops,int fontsize) {
 
 int SizedFont::Load(std::string fontname,int fontsize) {
 	DestructFont();
-	CuboFile * finfo=GetFileName(fontname,FILE_FONT,".ttf");
+	auto finfo=GetFileName(fontname,FILE_FONT,".ttf");
 	if (!finfo) {
 			coutlog("Font "+fontname+".ttf not found!",1);
 			return 0;
@@ -66,12 +66,10 @@ int SizedFont::Load(std::string fontname,int fontsize) {
 			os<<"Error loading font: "<<TTF_GetError();
 			coutlog(os.str(),1);
 			font=NULL;
-			delete finfo;
 			return 0;
 			}
 	size=fontsize;
 	finfo->DisownData();
-	delete finfo;
 	return 1;
 	}
 

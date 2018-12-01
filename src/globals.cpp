@@ -205,12 +205,12 @@ std::string GetFileNameForMod(std::string subname,int type,std::string ext,std::
 	}
 
 
-CuboFile* GetCuboFileFromRelativeName(std::string relname) {
+std::unique_ptr<CuboFile> GetCuboFileFromRelativeName(std::string relname) {
 	///TODO: Mod-Stuff
 	return gBaseFileSystem.GetFileForReading(relname);
 	}
 
-CuboFile* GetFileName(std::string subname,int type,std::string ext) {
+std::unique_ptr<CuboFile> GetFileName(std::string subname,int type,std::string ext) {
 //   coutlog("GetFileName is not implemented yet!"); return NULL;
 	if ((type!=FILE_USERLEVEL) && (type!=FILE_SAVEGAME)) {
 			///TODO: Mod-Zeugs, Dir Getting
@@ -486,7 +486,7 @@ class TLuaFileSysLib : public LuaCFunctions {
 		static int FILESYS_MountZip(lua_State *state) {
 			std::string mountbase=LUA_GET_STRING(state);
 			std::string zipf=LUA_GET_STRING(state);
-			cls_FileReadable *zf=gBaseFileSystem.GetFileForReading(zipf);
+			auto zf=gBaseFileSystem.GetFileForReading(zipf);
 			int res;
 			if (!zf) { res=0; }
 			else { res=gBaseFileSystem.MountZipFile(zf,mountbase); }
@@ -528,9 +528,8 @@ class TLuaFileSysLib : public LuaCFunctions {
 
 		static int FILESYS_FileExists(lua_State *state) {
 			std::string f=LUA_GET_STRING(state);
-			CuboFile * cf=gBaseFileSystem.GetFileForReading(f);
+			auto cf=gBaseFileSystem.GetFileForReading(f);
 			if (cf) {
-					delete cf;
 					LUA_SET_NUMBER(state, 1);
 					}
 			else { LUA_SET_NUMBER(state, 0); }
@@ -539,11 +538,9 @@ class TLuaFileSysLib : public LuaCFunctions {
 
 		static int FILESYS_WillOverwrite(lua_State *state) {
 			std::string f=LUA_GET_STRING(state);
-			cls_FileWriteable * cf=gBaseFileSystem.GetFileForWriting(f,false);
+			auto cf=gBaseFileSystem.GetFileForWriting(f,false);
 			if (cf) {
-
 					LUA_SET_NUMBER(state, cf->WillOverwrite());
-					delete cf;
 
 					}
 			else { LUA_SET_NUMBER(state, 0); }
@@ -552,10 +549,9 @@ class TLuaFileSysLib : public LuaCFunctions {
 
 		static int FILESYS_Delete(lua_State *state) {
 			std::string fname=LUA_GET_STRING(state);
-			cls_FileWriteable * f=gBaseFileSystem.GetFileForWriting(fname,false);
+			auto f=gBaseFileSystem.GetFileForWriting(fname,false);
 			if (!f) {LUA_SET_NUMBER(state, 0); return 1;}
 			LUA_SET_NUMBER(state, f->Delete());
-			delete f;
 			return 1;
 			}
 
@@ -600,12 +596,11 @@ LuaCFunctions* g_FileSysLib() {
 bool StartBootScript(std::string name) {
 	// gBaseFileSystem.MountZipFile(dir+"/data.zip");
 	gBaseFileSystem.MountHDDDir(g_DataDir(),"/");
-	CuboFile * cf=gBaseFileSystem.GetFileForReading(name);
+	auto cf=gBaseFileSystem.GetFileForReading(name);
 	if (!cf) { gBaseFileSystem.PopBottom(); return false;}
 	LuaAccess acc;
 	acc.Include(g_CuboLib());
 	int res=acc.LoadFile(cf,-1,-1);
-	delete cf;
 	return res;
 	}
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -419,11 +419,10 @@ int DEVICE_SaveFramePic(lua_State *state) {
 	int h=LUA_GET_INT(state);
 	int w=LUA_GET_INT(state);
 	std::string s=LUA_GET_STRING(state);
-	cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting(s,true);
+	auto fw = g_BaseFileSystem()->GetFileForWriting(s,true);
 	if (!fw) { return 0; }
 	if (!fw->IsHDDFile()) { return 0; }
 	g_Game()->SaveFramePic(fw->GetHDDName(),w,h);
-	delete fw;
 	return 0;
 	}
 

@@ -49,8 +49,8 @@ inline TextureType extToTexType(std::string_view ext) {
 	else { return TextureType::Invalid; }
 	}
 
-inline CuboFile* getTextrueFile(std::string subname,int type) {
-	CuboFile* finfo=GetFileName(subname, type,".png"); // Try PNG first
+inline std::unique_ptr<CuboFile> getTextrueFile(std::string subname,int type) {
+	auto finfo=GetFileName(subname, type,".png"); // Try PNG first
 	if (!finfo) { finfo=GetFileName(subname, type,".jpg"); }
 	if (!finfo) { finfo=GetFileName(subname, type,".jpeg"); }
 	return finfo;
@@ -142,7 +142,7 @@ static void JPGFatalError(j_common_ptr cinfo) {
 	}
 
 
-bool JPEGTexture::loadFromFile(CuboFile *finfo) {
+bool JPEGTexture::loadFromFile(std::unique_ptr<CuboFile>& finfo) {
 	//  coutlog("Jpegloading not implemented yet");
 
 	std::string fname=finfo->GetName();
@@ -232,7 +232,7 @@ bool JPEGTexture::loadFromFile(CuboFile *finfo) {
 	return true;
 	}
 
-bool PNGTexture::loadFromFile(CuboFile* finfo) {
+bool PNGTexture::loadFromFile(std::unique_ptr<CuboFile>& finfo) {
 	try {
 			std::unique_ptr<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>> img;
 			if (finfo->IsHDDFile()) {
@@ -261,7 +261,7 @@ static int iabs(int x) {
 	return x;
 	}
 
-int JPEGTexture::LoadAlphaTexture(CuboFile *finfo) {
+int JPEGTexture::LoadAlphaTexture(std::unique_ptr<CuboFile>& finfo) {
 	std::string aname=finfo->GetName();
 
 	auto alp = std::make_unique<JPEGTexture>();
@@ -557,7 +557,7 @@ int TextureServer::TempTextureIndexFromName(std::string tname) {
 
 	}
 
-int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont,unsigned int colorkey) {
+int TextureServer::LoadTempTexture(std::string tname, std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
 	int index=TempTextureIndexFromName(tname);
 	TextureContainer *cont;
 	if (index==-1) {
@@ -608,7 +608,7 @@ int TextureServer::LoadTempTexture(std::string tname, CuboFile *finfo,int asfont
 	return index;
 	}
 
-int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa) { // JPEG only, deprecated
+int TextureServer::LoadTextureAndAlpha(std::unique_ptr<CuboFile>& finfo,std::unique_ptr<CuboFile>& finfoa) { // JPEG only, deprecated
 	std::string fname=finfo->GetName();
 	std::string aname=finfoa->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (fname==filenames[i] && aname==alphanames[i]) { return i; }
@@ -637,7 +637,7 @@ int TextureServer::LoadTextureAndAlpha(CuboFile *finfo,CuboFile *finfoa) { // JP
 
 	}
 
-int TextureServer::LoadTexture(CuboFile *finfo,int asfont,unsigned int colorkey) {
+int TextureServer::LoadTexture(std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
 //Is it loaded already?
 	std::string s=finfo->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (s==filenames[i] && alphanames[i]=="") { return i; }
@@ -698,7 +698,7 @@ void TextureServer::Reload() {
 
 	for (unsigned int i=0; i<ofilenames.size(); i++) {
 
-			CuboFile* finfo;
+			std::unique_ptr<CuboFile> finfo;
 
 			std::string nam;
 			if (istemp[i]) {
@@ -719,10 +719,9 @@ void TextureServer::Reload() {
 					LoadTexture(finfo,false);
 					}
 			else if (!istemp[i]) {
-					CuboFile* finfoa=g_BaseFileSystem()->GetFileForReading(alphanames[i]);
-					if (!finfoa) {coutlog("Alpha Texture "+alphanames[i]+" not found!",2);  delete finfoa;  Textures.push_back(TextureContainer()); filenames.push_back(ofilenames[i]);  continue; }
+					std::unique_ptr<CuboFile> finfoa=g_BaseFileSystem()->GetFileForReading(alphanames[i]);
+					if (!finfoa) {coutlog("Alpha Texture "+alphanames[i]+" not found!",2); Textures.push_back(TextureContainer()); filenames.push_back(ofilenames[i]);  continue; }
 					LoadTextureAndAlpha(finfo,finfoa);
-					delete finfoa;
 					}
 			else {
 					LoadTempTexture(ofilenames[i],finfo);
@@ -732,7 +731,6 @@ void TextureServer::Reload() {
 
 			//ostringstream oss; oss << "Storing texture " << i << " at " << r << "  fname :"  << filenames[i];
 			//coutlog(oss.str(),2);
-			delete finfo;
 
 			}
 	}
@@ -850,10 +848,9 @@ void LUA_TEXDEF_RegisterLib() {
 
 int TEXTURE_LoadSkyTexture(lua_State *state) {
 	std::string name = LUA_GET_STRING(state);
-	CuboFile* finfo=getTextrueFile(name,FILE_SKYBOX);
+	auto finfo=getTextrueFile(name,FILE_SKYBOX);
 	if (!finfo) {coutlog("SkyTexture "+name+ " not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 	int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
-	delete finfo;
 	LUA_SET_NUMBER(state, r);
 	return 1;
 	}
@@ -875,11 +872,10 @@ int TEXTURE_Load(lua_State *state) {
 	//lua_pop(state,1);
 	std::string name = LUA_GET_STRING(state);
 
-	CuboFile* finfo=getTextrueFile(name,FILE_TEXTURE);
+	auto finfo=getTextrueFile(name,FILE_TEXTURE);
 // coutlog("Loading Texture "+Texturename);
 	if(finfo) {
 			int r=g_Game()->GetTextures()->LoadTexture(finfo,false);
-			delete finfo;
 			LUA_SET_NUMBER(state, r);
 			}
 	else {
@@ -894,13 +890,12 @@ int TEXTURE_LoadWithAlpha(lua_State *state) {
 	std::string aname = LUA_GET_STRING(state);
 	std::string name = LUA_GET_STRING(state);
 
-	CuboFile* finfo=GetFileName(name,FILE_TEXTURE,".jpg");
+	auto finfo=GetFileName(name,FILE_TEXTURE,".jpg");
 	if (!finfo) {coutlog("Texture "+name+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
-	CuboFile* finfoa=GetFileName(aname,FILE_TEXTURE,".jpg");
-	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); delete finfo; return 1;}
+	auto finfoa=GetFileName(aname,FILE_TEXTURE,".jpg");
+	if (!finfoa) {coutlog("Alpha Texture "+aname+ ".jpg not found!",2); LUA_SET_NUMBER(state, -1); return 1;}
 
 	int r=g_Game()->GetTextures()->LoadTextureAndAlpha(finfo,finfoa);
-	delete finfo; delete finfoa;
 	LUA_SET_NUMBER(state, r);
 
 	return 1;
@@ -919,11 +914,10 @@ int TEXTURE_LoadTempTexture(lua_State *state) {
 
 	std::string fname = LUA_GET_STRING(state);
 	std::string tname= LUA_GET_STRING(state);
-	CuboFile *cf=GetCuboFileFromRelativeName(fname);
+	auto cf=GetCuboFileFromRelativeName(fname);
 	int r=0;
 	if (cf) {
 			r=g_Game()->GetTextures()->LoadTempTexture(tname,cf,false);
-			delete cf;
 			}
 	LUA_SET_NUMBER(state, r);
 

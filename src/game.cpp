@@ -479,10 +479,9 @@ void CuboGame::ScreenShot(void) {
 			std::string form="screenshot%03d."+ext;
 			sprintf(cFileName,form.c_str(),nShot);
 			fname=cFileName;
-			cls_FileWriteable *fw= g_BaseFileSystem()->GetFileForWriting("/user/"+fname);
+			auto fw = g_BaseFileSystem()->GetFileForWriting("/user/"+fname);
 			if (!fw) { return; }
 			if (fw->WillOverwrite()) {
-					delete fw;
 					++nShot;
 					if (nShot > 127) {
 							coutlog("Screenshot limit of 128 reached! Delete some in your Cubosphere User dir",2);
@@ -514,9 +513,8 @@ void CuboGame::JoyAxisHandle(int joys,int axis,float val,float pval) {
 int CuboGame::StartLevel(std::string lname,int normal_user_edit) {
 
 	if (normal_user_edit!=2 || lname!="") {
-			CuboFile * finfo=GetFileName(lname,normal_user_edit!=0 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
+			auto finfo=GetFileName(lname,normal_user_edit!=0 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");
 			if (!finfo) {std::string uls=(normal_user_edit!=0 ? "Userlevel" : "Level"); coutlog("Cannot find "+uls+": "+lname,2); return 0 ;}
-			delete finfo;
 			}
 
 	if (normal_user_edit==1) {

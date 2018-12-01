@@ -60,8 +60,8 @@ extern std::vector <std::string> LSCuboSubDir(std::string which);
 
 extern std::string PlattformFilename(std::string in);
 //extern string GetFileName(string subname,int type,string ext);
-extern CuboFile* GetFileName(std::string subname,int type,std::string ext);
-extern CuboFile* GetCuboFileFromRelativeName(std::string relname);
+std::unique_ptr<CuboFile> GetFileName(std::string subname,int type,std::string ext);
+std::unique_ptr<CuboFile> GetCuboFileFromRelativeName(std::string relname);
 
 extern int FileTypeFromString(std::string which,std::string *exte=NULL);
 

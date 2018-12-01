@@ -29,7 +29,7 @@ void BaseLuaDef::LoadDef() {
 	int typ=GetType();
 	std::string ext;
 	FileTypeFromString(g_SubDirs[typ],&ext);
-	CuboFile *fileinfo=GetFileName(name,typ,"."+ext);
+	auto fileinfo=GetFileName(name,typ,"."+ext);
 
 	if (!fileinfo) {
 			coutlog("Lua script "+name+"."+ext+" not found!",1);
@@ -41,7 +41,6 @@ void BaseLuaDef::LoadDef() {
 
 	lua.Include(g_CuboLib());
 	lua.LoadFile(fileinfo,typ,myid);
-	delete fileinfo;
 // if (lua.FuncExists("Precache")) lua.CallVA("Precache","");
 	if (SendIDWhenPrecache()==0) {
 			lua.CallVAIfPresent("Precache");
@@ -87,11 +86,10 @@ void Menu::PostThink() {
 	name=nextname;
 	change=0;
 	lua.Reset();
-	CuboFile * finfo=GetFileName(name,FILE_MENUDEF,".mdef");
+	auto finfo=GetFileName(name,FILE_MENUDEF,".mdef");
 	if (!finfo) { coutlog("Menudef "+name+" not found!",1); isloaded=false; return;}
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_MENUDEF,-1);
-	delete finfo;
 	if (lua.FuncExists("Precache")) {
 
 			lua.CallVA("Precache");

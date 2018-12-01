@@ -72,7 +72,7 @@ class ShaderServer {
 		// GLboolean ShadersSupported(void);
 		GLuint CompileShaderText(GLenum shaderType, const char *text);
 		GLuint CompileShaderFile(GLenum shaderType, const char *filename);
-		GLuint CompileShaderCuboFile(GLenum shaderType, CuboFile *finfo);
+		GLuint CompileShaderCuboFile(GLenum shaderType, std::unique_ptr<CuboFile>& finfo);
 		GLuint LinkShaders(GLuint vertShader, GLuint fragShader);
 		GLboolean ValidateShaderProgram(GLuint program);
 //   void SetUniformValues(GLuint program, struct uniform_info uniforms[]);
