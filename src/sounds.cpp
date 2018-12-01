@@ -114,7 +114,7 @@ SoundContainer::~SoundContainer() {
 	sound=NULL;
 	}
 
-int SoundContainer::Load(std::unique_ptr<CuboFile>& finfo) {
+int SoundContainer::Load(const std::unique_ptr<CuboFile>& finfo) {
 	sound = Mix_LoadWAV_RW(finfo->GetAsRWops(1),1);
 	if(sound == NULL) {
 			printf("Unable to load WAV file %s : %s\n", finfo->GetNameForLog().c_str(), Mix_GetError());
@@ -141,7 +141,7 @@ MusicContainer::~MusicContainer() {
 	music=NULL;
 	}
 
-int MusicContainer::Load(std::unique_ptr<CuboFile>& finfo) {
+int MusicContainer::Load(const std::unique_ptr<CuboFile>& finfo) {
 	if (!finfo->IsHDDFile()) {
 			coutlog("Music from ZIP can be problematic...",2);
 			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1));
@@ -259,7 +259,7 @@ int SoundServer::SetNumChannels(int nchan) {
 	return Mix_AllocateChannels(nchan);
 	}
 
-int SoundServer::LoadSound(std::unique_ptr<CuboFile>& finfo) {
+int SoundServer::LoadSound(const std::unique_ptr<CuboFile>& finfo) {
 	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<sounds.size(); i++) {
 			if (finfo->GetNameForLog()==sounds[i]->Filename()) { return i; }
@@ -277,7 +277,7 @@ int SoundServer::LoadSound(std::unique_ptr<CuboFile>& finfo) {
 	return -1;
 	}
 
-int SoundServer::LoadMusic(std::unique_ptr<CuboFile>& finfo) {
+int SoundServer::LoadMusic(const std::unique_ptr<CuboFile>& finfo) {
 	if (!initialized) { return -1; }
 	for (unsigned int i=0; i<musics.size(); i++) {
 			if (finfo->GetNameForLog()==musics[i]->Filename()) { return i; }

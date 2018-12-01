@@ -71,7 +71,7 @@ void TextFileReader::RemoveComments(std::string commentindicator,bool trim,bool 
 
 	}
 
-bool TextFileReader::LoadFile(std::unique_ptr<CuboFile>& finfo) {
+bool TextFileReader::LoadFile(const std::unique_ptr<CuboFile>& finfo) {
 	lines.clear();
 	linenums.clear();
 	FILE *f;
@@ -217,7 +217,7 @@ void BaseModel::Reload() {
 ////////////////////////////////////////////////7
 
 
-bool OBJModel::LoadFromFile(std::unique_ptr<CuboFile>& finfo) {
+bool OBJModel::LoadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 	BaseModel::LoadFromFile(finfo);
 	Clear();
 	TextFileReader tr;
@@ -462,7 +462,7 @@ int ModelServer::GetModel(std::string fname) {
 	return -1;
 	}
 
-int ModelServer::AddOBJ(std::unique_ptr<CuboFile>& finfo) {
+int ModelServer::AddOBJ(const std::unique_ptr<CuboFile>& finfo) {
 
 //TCuboFile * finfo=GetFileName(fname,FILE_MDL,".obj")
 	std::string fname=finfo->GetName();

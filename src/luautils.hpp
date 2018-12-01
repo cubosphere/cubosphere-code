@@ -230,7 +230,7 @@ class LuaAccess {
 		void Reset();
 		virtual ~LuaAccess();
 		std::string GetFileName() {return lfname;}
-		bool LoadFile(std::unique_ptr<CuboFile>& finfo,int t,int id);
+		bool LoadFile(const std::unique_ptr<CuboFile>& finfo,int t,int id);
 		void Include(LuaCFunctions *funcs);
 		bool CallVA(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
 		bool CallVAIfPresent(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);

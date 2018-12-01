@@ -166,7 +166,7 @@ ShaderServer::CompileShaderFile(GLenum shaderType, const char *filename) {
 	}
 
 
-GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, std::unique_ptr<CuboFile>& finfo) {
+GLuint ShaderServer::CompileShaderCuboFile(GLenum shaderType, const std::unique_ptr<CuboFile>& finfo) {
 	if (finfo->IsHDDFile()) {return CompileShaderFile(shaderType,finfo->GetHDDName().c_str());}
 	else {
 			char * buffer=(char*)finfo->GetData();  buffer[finfo->GetSize()]='\0';

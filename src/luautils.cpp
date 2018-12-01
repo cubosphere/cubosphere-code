@@ -154,7 +154,7 @@ string TLuaAccess::GetStdDir()
 }
 */
 
-bool LuaAccess::LoadFile(std::unique_ptr<CuboFile>& finfo,int t,int id) {
+bool LuaAccess::LoadFile(const std::unique_ptr<CuboFile>& finfo,int t,int id) {
 	if (!state) { coutlog("No lua state present",1); return false;}
 
 	typ=t;

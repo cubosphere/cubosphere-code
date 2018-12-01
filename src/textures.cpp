@@ -142,7 +142,7 @@ static void JPGFatalError(j_common_ptr cinfo) {
 	}
 
 
-bool JPEGTexture::loadFromFile(std::unique_ptr<CuboFile>& finfo) {
+bool JPEGTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 	//  coutlog("Jpegloading not implemented yet");
 
 	std::string fname=finfo->GetName();
@@ -232,7 +232,7 @@ bool JPEGTexture::loadFromFile(std::unique_ptr<CuboFile>& finfo) {
 	return true;
 	}
 
-bool PNGTexture::loadFromFile(std::unique_ptr<CuboFile>& finfo) {
+bool PNGTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 	try {
 			std::unique_ptr<png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>>> img;
 			if (finfo->IsHDDFile()) {
@@ -261,7 +261,7 @@ static int iabs(int x) {
 	return x;
 	}
 
-int JPEGTexture::LoadAlphaTexture(std::unique_ptr<CuboFile>& finfo) {
+int JPEGTexture::LoadAlphaTexture(const std::unique_ptr<CuboFile>& finfo) {
 	std::string aname=finfo->GetName();
 
 	auto alp = std::make_unique<JPEGTexture>();
@@ -557,7 +557,7 @@ int TextureServer::TempTextureIndexFromName(std::string tname) {
 
 	}
 
-int TextureServer::LoadTempTexture(std::string tname, std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
+int TextureServer::LoadTempTexture(std::string tname, const std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
 	int index=TempTextureIndexFromName(tname);
 	TextureContainer *cont;
 	if (index==-1) {
@@ -608,7 +608,7 @@ int TextureServer::LoadTempTexture(std::string tname, std::unique_ptr<CuboFile>&
 	return index;
 	}
 
-int TextureServer::LoadTextureAndAlpha(std::unique_ptr<CuboFile>& finfo,std::unique_ptr<CuboFile>& finfoa) { // JPEG only, deprecated
+int TextureServer::LoadTextureAndAlpha(const std::unique_ptr<CuboFile>& finfo,std::unique_ptr<CuboFile>& finfoa) { // JPEG only, deprecated
 	std::string fname=finfo->GetName();
 	std::string aname=finfoa->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (fname==filenames[i] && aname==alphanames[i]) { return i; }
@@ -637,7 +637,7 @@ int TextureServer::LoadTextureAndAlpha(std::unique_ptr<CuboFile>& finfo,std::uni
 
 	}
 
-int TextureServer::LoadTexture(std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
+int TextureServer::LoadTexture(const std::unique_ptr<CuboFile>& finfo,int asfont,unsigned int colorkey) {
 //Is it loaded already?
 	std::string s=finfo->GetName();
 	for (unsigned int i=0; i<filenames.size(); i++) if (s==filenames[i] && alphanames[i]=="") { return i; }
