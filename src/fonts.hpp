@@ -25,6 +25,7 @@ class SizedFont {
 	protected:
 		int size;
 		TTF_Font* font;
+		std::shared_ptr<CuboFile> finfo; // Current loaded font
 		void DestructFont();
 	public:
 		SizedFont() : size(0), font(NULL) {}

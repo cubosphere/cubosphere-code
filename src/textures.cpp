@@ -184,7 +184,7 @@ bool JPEGTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 			}
 	else {
 
-			jpeg_mem_src(&cinfo, finfo->GetData(), finfo->GetSize());
+			jpeg_mem_src(&cinfo, finfo->GetData()->data(), finfo->GetSize());
 
 			}
 

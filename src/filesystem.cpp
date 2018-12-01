@@ -39,6 +39,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #endif
 
 using namespace Poco::Zip;
+using namespace std::string_literals;
 
 #ifdef __unix__
 constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
@@ -65,6 +66,7 @@ constexpr auto CLS_FILE_ERROR_TYPE_CRITICAL = 2;
 
 ///Exemplary for Cubosphere
 #include "luautils.hpp"
+#include "cuboutils.hpp"
 static void clsFileErrorLog(std::string msg, const int t) {
 	if (t==CLS_FILE_ERROR_TYPE_ERROR) { msg="ERROR: "+msg; }
 	else if (t==CLS_FILE_ERROR_TYPE_WARNING) { msg="WARNING: "+msg; }
@@ -130,12 +132,12 @@ std::string cls_FileBaseClass::GetName() const {return dirname+basename;}
 class cls_FileDirMountedForReading : public cls_FileReadable {
 	protected:
 		std::string fname;
-		mutable void *data;
+		std::shared_ptr<std::string> data;
 		mutable unsigned long size;
 		mutable bool bin = true;
-		std::shared_ptr<std::ifstream> ifs;
+		mutable std::shared_ptr<std::ifstream> ifs;
 
-		virtual bool openStream() {
+		virtual bool openStream() const {
 			try {
 					if (!ifs) {
 							ifs = bin ? std::make_shared<std::ifstream>(fname, std::ios::binary) : std::make_shared<std::ifstream>(fname);
@@ -146,7 +148,6 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 			}
 	public:
 		cls_FileDirMountedForReading(const std::string nam,const std::string dnam,const std::string fnameOnHD) : cls_FileReadable(nam,dnam), fname(fnameOnHD), data(NULL), size(0) {}
-		virtual ~cls_FileDirMountedForReading() { if (data) free(data); data=NULL; }
 
 		virtual  std::string GetNameForLog() const {return "(( "+fname+" ))";}
 		virtual  std::string GetHDDName() const {return fname;}
@@ -158,39 +159,34 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 			if(openStream()) { return ifs; }
 			else { return nullptr; }
 			}
+		
 
-		virtual char* GetData() {
-			if (data) { return (char*)data; }
-			if (!openStream()) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
+		virtual std::shared_ptr<std::string> GetData() {
+			if (data) { return data; }
+			if (!openStream()) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR); return NULL; }
+			data = std::make_shared<std::string>();
 			ifs->seekg(0, std::ios::end);
 			size = ifs->tellg();
 			ifs->seekg(0, std::ios::beg);
-			data=malloc(sizeof(char)*(size+1));
-			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading file (("+fname+"))",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			try {
-					std::stringstream sstr;
-					Poco::StreamCopier::copyStream(*ifs, sstr);
-					memcpy(data, sstr.str().c_str(), size);
+					data = std::make_shared<std::string>(streamToString(*ifs, size+1));
 					}
 			catch(std::exception) {
 					CLS_FILE_ERROR("failed reading file (("+fname+"))",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL;
 					}
-			((char*)(data))[size]='\0';
-			return (char *)data;
+			return data;
 			}
 
 		virtual unsigned long GetSize(const int binary=1) const {
 			if (!data && size==0) {  //If it was read in once, no need to do it again
-					FILE *pFile=fopen(fname.c_str(),(binary ? "rb" : "r"));
-					if (!pFile) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR)  ; return 0; }
-					fseek (pFile, 0, SEEK_END);
-					size=ftell (pFile);
-					fclose (pFile);
+					if (!openStream()) { CLS_FILE_ERROR("file reference to (("+fname+")) lost",CLS_FILE_ERROR_TYPE_ERROR); return 0; }
+					auto oldPos = size = ifs->tellg();
+					ifs->seekg(0, std::ios::end);
+					size = ifs->tellg();
+					ifs->seekg(oldPos, std::ios::beg); // Be nice, return to original position
 					}
 			return size;
 			}
-
-		virtual void DisownData() const {data=NULL;}
 	};
 
 ////////////////////////////////////////
@@ -224,7 +220,7 @@ class cls_FileDirMountedForWriting : public cls_FileWriteable {
 class cls_FileZipMountedForReading : public cls_FileReadable {
 	protected:
 		std::string zipname;
-		mutable char *data = NULL;
+		std::shared_ptr<std::string> data;
 		unsigned long size;
 		mutable std::ifstream istr;
 		std::shared_ptr<ZipInputStream> zipin;
@@ -243,8 +239,6 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 			size = info.getUncompressedSize();
 			}
 
-		virtual ~cls_FileZipMountedForReading() { if (data) free(data); data=NULL; }
-
 		virtual std::string GetNameForLog() const {return "(( "+zipname + " :: " + GetName() + " ))";}
 		virtual std::string GetHDDName() const {return zipname + ":" + GetName();}
 		virtual int IsHDDFile() const {return 0;}
@@ -254,23 +248,16 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 			return zipin;
 			}
 
-		virtual char *GetData() {
-			if (data) { return (char *)data; }
-			data = (char*) malloc(size+1);
-			if (!data)  {CLS_FILE_ERROR("cannot allocate memory for reading zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR); return NULL; }
+		virtual std::shared_ptr<std::string> GetData() {
+			if (data) { return data; }
 			try {
-					std::ostringstream out(std::ios::binary);
-					Poco::StreamCopier::copyStream(*zipin, out);
-					memcpy(data, out.str().c_str(), size);
+					data = std::make_shared<std::string>(streamToString(*zipin, size));
 					}
 			catch(std::exception) {CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
-			data[size]='\0';
 			return data;
 			}
 
 		virtual unsigned long GetSize(const int binary=1) const { return size; }
-
-		virtual void DisownData() const {data=NULL;}
 	};
 
 /////////////////////////////////////////////
@@ -828,7 +815,7 @@ class cls_FileSystem_Info_ {
 			int dendumm;
 			auto vers = md->GetFileForReading(elems,dendumm);
 			if (vers) {
-					char * conts=(char *)vers->GetData(); std::string pversion=conts;
+					std::string pversion = *vers->GetData();
 					std::string cversion=g_Vars()->GetVarString("CuboVersion",0);
 					auto pfloat=std::atof(pversion.c_str());
 					auto cfloat=std::atof(cversion.c_str());

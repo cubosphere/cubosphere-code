@@ -91,8 +91,7 @@ bool TextFileReader::LoadFile(const std::unique_ptr<CuboFile>& finfo) {
 			}
 	else {
 			//coutlog("Textfile (Mdl) Load from ZIP not yet implemented");
-			char *c=(char*)finfo->GetData();
-			c[finfo->GetSize()]='\0';
+			auto c = streamToString(*finfo->GetStream());
 			lines.clear();
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
 			linenums.resize(lines.size());

@@ -55,8 +55,7 @@ void CuboConsole::Init() {
 	auto cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
 	lua.Include(g_CuboLib());
 	if (cscript) {
-			char *c=(char*)cscript->GetData();
-			c[cscript->GetSize()]='\0';
+			std::string c = streamToString(*cscript->GetStream());
 			std::vector<std::string> lines;
 			Tokenize(c,lines,"\n"); //TODO: Careful with windows format!
 			for (unsigned int i=0; i<lines.size(); i++) if (lines[i]!="") { ParseCmdLine(lines[i]); }

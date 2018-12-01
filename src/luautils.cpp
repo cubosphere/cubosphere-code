@@ -86,9 +86,9 @@ int lua_doCuboFile(lua_State *state, const std::unique_ptr<CuboFile>& f) {
 	int res;
 	if (f->IsHDDFile()) { res=luaL_dofile(state,f->GetHDDName().c_str()); }
 	else {
-			char *c=(char*)(f->GetData());
+			auto c= f->GetData();
 			//cout << c << endl;
-			luaL_loadbuffer(state,c,f->GetSize(),f->GetNameForLog().c_str());
+			luaL_loadbuffer(state,c->c_str(),f->GetSize(),f->GetNameForLog().c_str());
 			res=lua_pcall(state, 0, LUA_MULTRET, 0);
 			}
 

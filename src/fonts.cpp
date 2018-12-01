@@ -55,7 +55,7 @@ int SizedFont::Load(SDL_RWops *rwops,int fontsize) {
 
 int SizedFont::Load(std::string fontname,int fontsize) {
 	DestructFont();
-	auto finfo=GetFileName(fontname,FILE_FONT,".ttf");
+	finfo=GetFileName(fontname,FILE_FONT,".ttf");
 	if (!finfo) {
 			coutlog("Font "+fontname+".ttf not found!",1);
 			return 0;
@@ -69,7 +69,6 @@ int SizedFont::Load(std::string fontname,int fontsize) {
 			return 0;
 			}
 	size=fontsize;
-	finfo->DisownData();
 	return 1;
 	}
 
