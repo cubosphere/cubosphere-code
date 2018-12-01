@@ -84,6 +84,12 @@ std::unique_ptr<std::ofstream> logufiles;
 //            SOME HELPER FUNCS            //
 /////////////////////////////////////////////
 
+template<typename TO, typename FROM>
+std::unique_ptr<TO> static_unique_pointer_cast (std::unique_ptr<FROM>&& old){
+    return std::unique_ptr<TO>{static_cast<TO*>(old.release())};
+    //conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
+}
+
 #ifdef USE_CPP_FILESYSTEM
 bool cls_DirectoryExists(const std::string& d) {
 	return std::filesystem::is_directory(std::filesystem::path(d));
@@ -312,33 +318,29 @@ class cls_FileSubSystemBase {
 class cls_FileMountStackMaskEntry {
 	protected:
 		int mode;
-		std::vector<cls_FileMountStackMaskEntry*> subs;
-		std::vector<std::string> names;
+		std::unordered_map<std::string, std::shared_ptr<cls_FileMountStackMaskEntry>> subs;
 	public:
 		cls_FileMountStackMaskEntry() : mode(0) {} // No mode set initially
-		~cls_FileMountStackMaskEntry()  { for (unsigned int i=0; i<subs.size(); i++) if (subs[i]) {delete subs[i]; subs[i]=NULL;} subs.clear(); names.clear();}
 		int GetMode() const {return mode;}
 		void SetMode(const int m) {if (m==CLS_FILE_MASK_UNSET) mode=m; else mode=(m | CLS_FILE_MASK_SET);}
-		cls_FileMountStackMaskEntry * GetSubEntry(const std::string s) {
-			for (unsigned int i=0; i<names.size(); i++) if (names[i]==s) { return  subs[i]; }
-			return NULL;
+		std::shared_ptr<cls_FileMountStackMaskEntry> GetSubEntry(const std::string s) {
+			if(subs.count(s)) return subs.at(s);
+			else return nullptr;
 			}
-		cls_FileMountStackMaskEntry * AddSubEntry(const std::string n) {
-			cls_FileMountStackMaskEntry *res=GetSubEntry(n);
+		std::shared_ptr<cls_FileMountStackMaskEntry> AddSubEntry(const std::string n) {
+			auto res = GetSubEntry(n);
 			if (res) { return res; }
-			names.push_back(n);
-			subs.push_back(new cls_FileMountStackMaskEntry());
-			return subs.back();
+			subs.emplace(n, std::make_shared<cls_FileMountStackMaskEntry>());
+			return subs.at(n);
 			}
 	};
 
 class cls_FileMountStackMask : public cls_FileSubSystemBase {
 	protected:
-		cls_FileMountStackMaskEntry * rootdir;
+		std::shared_ptr<cls_FileMountStackMaskEntry> rootdir;
 
 	public:
-		cls_FileMountStackMask() : cls_FileSubSystemBase(std::vector<std::string>()) {rootdir=new cls_FileMountStackMaskEntry();}
-		virtual ~cls_FileMountStackMask() {delete rootdir;}
+		cls_FileMountStackMask() : cls_FileSubSystemBase(std::vector<std::string>()) {rootdir = std::make_shared<cls_FileMountStackMaskEntry>();}
 		virtual bool ListDirectoryEntries(const std::vector<std::string> d,const std::vector<std::string> & lsts,
 				std::vector<std::string> & newelems, const int mode,const std::string pds) const {return false;}
 
@@ -348,7 +350,7 @@ class cls_FileMountStackMask : public cls_FileSubSystemBase {
 		int GetMode(const std::vector<std::string> & elems) const {
 			int thismode=0;
 			int resumode=0;
-			cls_FileMountStackMaskEntry *fe=rootdir;
+			auto fe = rootdir;
 			for (unsigned int i=0; i<elems.size(); i++) {
 					fe=fe->GetSubEntry(elems[i]);
 					if (!fe) { return resumode; }
@@ -359,7 +361,7 @@ class cls_FileMountStackMask : public cls_FileSubSystemBase {
 			}
 
 		void SetFileMask(std::vector<std::string> & elems, const int mode) {
-			cls_FileMountStackMaskEntry *fe=rootdir;
+			auto fe = rootdir;
 			for (unsigned int i=0; i<elems.size(); i++) {
 					fe=fe->AddSubEntry(elems[i]);
 					}
@@ -685,7 +687,7 @@ class cls_FileSystem_Info_ {
 	protected:
 		int skiptop;
 		std::string lasterror;
-		std::vector<cls_FileSubSystemBase*> subsys;
+		std::vector<std::unique_ptr<cls_FileSubSystemBase>> subsys;
 		void ErrorF(const std::string err,int typ=CLS_FILE_ERROR_TYPE_ERROR) {
 			CLS_FILE_ERROR(err,typ);
 			lasterror=err;
@@ -741,7 +743,7 @@ class cls_FileSystem_Info_ {
 							int blocked=0;
 							for (int j=subsys.size()-1-skiptop; j>i; j--) {
 									if (!subsys[j]->IsMaskLayer()) { continue; }
-									cls_FileMountStackMask *sm=dynamic_cast<cls_FileMountStackMask *>(subsys[j]);
+									cls_FileMountStackMask *sm=dynamic_cast<cls_FileMountStackMask *>(subsys[j].get());
 									if (!sm) { continue; }
 									int mode=sm->GetMode(newelems);
 									if ( (mode & (CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST))==(CLS_FILE_MASK_SET | CLS_FILE_MASK_LIST)) { blocked=1; break;}
@@ -779,9 +781,7 @@ class cls_FileSystem_Info_ {
 			return NULL;
 			}
 
-		void Clear()  { for (unsigned int i=0; i<subsys.size(); i++) {delete  subsys[i];}  subsys.clear();}
-
-		~cls_FileSystem_Info_() {Clear();}
+		void Clear()  {subsys.clear();}
 
 		bool MountHDDDir(std::string dir,bool writeable,std::string mountbase,bool autocreate_write_dir) {
 			std::vector<std::string> mntb;
@@ -797,19 +797,19 @@ class cls_FileSystem_Info_ {
 							}
 					}
 			if (!StrToElems(mountbase,mntb)) {ErrorF("cannot mount directory (( "+dir+" )) at invalid mountpoint (( "+mountbase+" ))"); return false;}
-			cls_FileSubSystemDirMount * md=new cls_FileSubSystemDirMount(mntb,dir,writeable);
-			subsys.push_back(md);
+			auto md = std::make_unique<cls_FileSubSystemDirMount>(mntb,dir,writeable);
+			subsys.push_back(static_unique_pointer_cast<cls_FileSubSystemBase, cls_FileSubSystemDirMount>(std::move(md)));
 			return true;
 			}
 
 		bool MountZipFile(std::string zipf,std::string mountbase="") {
 			std::vector<std::string> mntb;
 			if (!StrToElems(mountbase,mntb)) {ErrorF("cannot mount zip-file (( "+zipf+" )) at invalid mountpoint (( "+mountbase+" ))"); return false;}
-			cls_FileSubSystemZipMount *md;
+			std::unique_ptr<cls_FileSubSystemZipMount> md;
 			try {
-					md = new cls_FileSubSystemZipMount(mntb,zipf);
+					md = std::make_unique<cls_FileSubSystemZipMount>(mntb,zipf);
 					}
-			catch(std::exception) {delete md; return false; }
+			catch(std::exception) { return false; }
 
 			//Now check the version
 			std::vector<std::string> elems;
@@ -827,12 +827,11 @@ class cls_FileSystem_Info_ {
 			if (!vers) {
 					std::string msg="Package "+zipf+" skipped! Version mismatch!";
 					coutlog(msg,2);
-					delete md;
 					return false;
 					}
 			delete vers;
 
-			subsys.push_back(md);
+			subsys.push_back(static_unique_pointer_cast<cls_FileSubSystemBase, cls_FileSubSystemZipMount>(std::move(md)));
 			return true;
 			}
 
@@ -844,7 +843,7 @@ class cls_FileSystem_Info_ {
 					if (for_write_only && (!(wable))) { continue; }
 					int denied=0;
 					if (!wable && subsys[i]->IsMaskLayer()) {
-							cls_FileMountStackMask *msm=dynamic_cast<cls_FileMountStackMask*>(subsys[i]);
+							cls_FileMountStackMask *msm=dynamic_cast<cls_FileMountStackMask*>(subsys[i].get());
 							if (msm) {
 									int mode=msm->GetMode(elems);
 									int mask=CLS_FILE_MASK_SET | (uselisting_deny_mask==true ? CLS_FILE_MASK_LIST : CLS_FILE_MASK_READ);
@@ -861,7 +860,8 @@ class cls_FileSystem_Info_ {
 		std::string GetError(const int reset) {if (lasterror=="") return lasterror; if (reset) { std::string res=lasterror; lasterror=""; return res;} return lasterror;}
 
 		int AddMaskLayer() {
-			subsys.push_back(new cls_FileMountStackMask());
+			auto md = std::make_unique<cls_FileMountStackMask>();
+			subsys.push_back(static_unique_pointer_cast<cls_FileSubSystemBase, cls_FileMountStackMask>(std::move(md)));
 			int res=-1; for (unsigned int i=0; i<subsys.size(); i++) if (subsys[i]->IsMaskLayer()) res++;
 			return res;
 			}
@@ -873,11 +873,11 @@ class cls_FileSystem_Info_ {
 			for (unsigned int i=0; i<subsys.size(); i++)
 				if (subsys[i]->IsMaskLayer()) {
 						thindex++;
-						if (thindex==index) {msk=dynamic_cast<cls_FileMountStackMask*>(subsys[i]); if (msk) break;}
+						if (thindex==index) {msk=dynamic_cast<cls_FileMountStackMask*>(subsys[i].get()); if (msk) break;}
 						if (index==-1) { topmost=i; }
 						}
-			if (topmost !=-1) { msk=dynamic_cast<cls_FileMountStackMask*>(subsys[topmost]); }
-			if (!msk && index==-1) { AddMaskLayer(); msk=dynamic_cast<cls_FileMountStackMask*>(subsys.back()); }
+			if (topmost !=-1) { msk=dynamic_cast<cls_FileMountStackMask*>(subsys[topmost].get()); }
+			if (!msk && index==-1) { AddMaskLayer(); msk=dynamic_cast<cls_FileMountStackMask*>(subsys.back().get()); }
 			return msk;
 			}
 
@@ -888,7 +888,7 @@ class cls_FileSystem_Info_ {
 					if (subsys[i]->IsMaskLayer()) {
 							thindex++;
 							if (thindex==index || index==-1) {
-									cls_FileMountStackMask* msk=dynamic_cast<cls_FileMountStackMask*>(subsys[i]);  if (!msk) { i++; continue; }
+									cls_FileMountStackMask* msk=dynamic_cast<cls_FileMountStackMask*>(subsys[i].get());  if (!msk) { i++; continue; }
 									delete msk;  subsys[i]=NULL;
 									subsys.erase(subsys.begin()+i);
 									i--;
@@ -907,7 +907,6 @@ class cls_FileSystem_Info_ {
 
 		void PopBottom() {
 			if (subsys.size()==0) { return; }
-			delete subsys.front();
 			subsys.erase(subsys.begin());
 			}
 	};
