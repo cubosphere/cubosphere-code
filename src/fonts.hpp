@@ -17,9 +17,34 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <vector>
 #include <string>
+#include <string_view>
 #include <array>
 
 #include <SDL_ttf.h>
+
+using FontID = struct {
+	std::string fname;
+	std::string text;
+	int size;
+	};
+
+inline bool operator==(const FontID& a, const FontID& b) {
+	return (a.fname == b.fname) and (a.text == b.text) and (a.size == b.size);
+}
+
+struct FontHasher {
+	std::size_t operator()(const FontID& k) const {
+		using std::size_t;
+		using std::hash;
+		using std::string;
+
+		size_t res = 17;
+		res = res * 31 + hash<string>()( k.fname );
+		res = res * 31 + hash<string>()( k.text );
+		res = res * 31 + hash<int>()( k.size );
+		return res;
+		}
+	};
 
 class SizedFont {
 	protected:
@@ -53,9 +78,13 @@ class LoadedFont {
 		std::string GetName() {return fname;}
 	};
 
+class Font;
+
 //Stores a Surface with a text
 class FontCache {
+	friend Font;
 	protected:
+		int iw,ih,sw,sh;
 		int mysize,fontsize;
 		std::string mytext;
 		std::string myfontname;
@@ -65,8 +94,7 @@ class FontCache {
 		void Clear();
 		double TimeStamp; //Last used time
 	public:
-		int iw,ih,sw,sh; //Bad, but who cares
-		int IsTheSame(std::string fname,std::string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
+		//int IsTheSame(std::string fname,std::string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
 		FontCache() : initialized(0) {};
 		~FontCache() {Clear();}
 		void Setup(LoadedFont *font,std::string text, int size);
@@ -74,20 +102,20 @@ class FontCache {
 		double GetTime() {return TimeStamp;}
 		GLuint GetTexture() {return texture;}
 		float GetFontSize() {return fontsize;}
-
 	};
 
 
-constexpr unsigned int MAX_FONT_CACHE = 16;
+constexpr unsigned int MAX_FONT_CACHE = 64;
+
 class FontCaches {
 	protected:
-		std::vector<FontCache*> caches;
+		std::unordered_map<FontID, std::unique_ptr<FontCache>, FontHasher> caches;
 
 	public:
 		void Clear();
 		FontCaches() {Clear();}
 		~FontCaches() {Clear();}
-		FontCache *GetCache(LoadedFont *font,std::string text, int size);
+		std::unique_ptr<FontCache>& GetCache(LoadedFont *font,std::string text, int size);
 	};
 
 using FontRemap = struct {
@@ -97,7 +125,7 @@ using FontRemap = struct {
 
 class Font {
 	protected:
-		std::string valign; //top, center, bottom
+		std::string valign; //top, center, bottom TODO: use enum?
 		std::string halign; //left, center, right
 
 		//TTF_Font* font;

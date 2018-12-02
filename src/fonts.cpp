@@ -210,47 +210,41 @@ void FontCache::Setup(LoadedFont *font,std::string text,int size) {
 
 
 void FontCaches::Clear() {
-	for (unsigned int i=0; i<caches.size(); i++) {
-			if (caches[i]) {
-					delete caches[i];
-					caches[i]=NULL;
-					}
-			}
-	caches.resize(0);
+	caches.clear();
 	}
 
-FontCache *FontCaches::GetCache(LoadedFont *font,std::string text,int size) {
-
-	for (unsigned int i=0; i<caches.size(); i++) {
-			if (caches[i]->IsTheSame(font->GetName(),text,size)) {  caches[i]->SetTime(g_Game()->GetTime()); return caches[i]; }
-			}
-	//Test if we can add a surf
+std::unique_ptr<FontCache>& FontCaches::GetCache(LoadedFont *font,std::string text,int size) {
+	FontID id;
+	id.fname = font->GetName();
+	id.text = text;
+	id.size = size;
+	if (caches.count(id)) return caches.at(id);
+	//Test if we can add a font
 	int index=caches.size();
-	if (index<MAX_FONT_CACHE) {
-			FontCache *n=new FontCache();
-			caches.push_back(n);
-			}
-	else {
+	//std::unique_ptr<FontCache>& newcache;
+	if (index >= MAX_FONT_CACHE) {
 			//Oh, no slot left... search the one which is the oldest one
+			FontID old_id;
 			double MinTime=g_Game()->GetTime();
-			index=0;
-			for (unsigned int i=0; i<caches.size(); i++) {
-					if (caches[i]->GetTime()<MinTime) {
-							index=i;
-							MinTime=caches[i]->GetTime();
+			for (auto& elem: caches) {
+					auto time = elem.second->GetTime();
+					if (time < MinTime) {
+							old_id = elem.first;
+							MinTime = time;
 							}
 					}
+			caches.erase(old_id);
 			}
+	caches.emplace(id, std::make_unique<FontCache>());
 
-	caches[index]->Setup(font,text,size);
-	caches[index]->SetTime(g_Game()->GetTime());
-	return caches[index];
-
-
+	auto& newcache = caches.at(id);
+	newcache->Setup(font,text,size);
+	newcache->SetTime(g_Game()->GetTime());
+	return newcache;
 	}
 
 void Font::RenderText(std::string text) {
-	FontCache* c=cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
+	auto& c = cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
 
 	//glEnable(GL_TEXTURE_2D);
 	g_Game()->GetTextures()->EnableTexturing();
