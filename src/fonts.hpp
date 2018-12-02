@@ -66,15 +66,15 @@ constexpr std::array<int, 6> g_FontSizes = {12,14,18,24,32,64};
 class LoadedFont {
 	protected:
 		std::string fname; //Name of the font
-		std::vector<SizedFont*> sized; //Storing the sized fonts
-		SizedFont* GetSized(int dessize);
-		int Prepare(); ///TODO: Load the std sizes
+		std::unordered_map<int, std::shared_ptr<SizedFont>> sized; //Storing the sized fonts
+		std::shared_ptr<SizedFont> GetSized(int dessize);
+		int Prepare();
 	public:
 		void Clear();
 		LoadedFont() {Clear();}
 		~LoadedFont() {Clear();}
 		int Load(std::string fontname);
-		SizedFont *GetBestFont(int pixelsize);
+		std::shared_ptr<SizedFont> GetBestFont(int pixelsize);
 		std::string GetName() {return fname;}
 	};
 
@@ -97,7 +97,7 @@ class FontCache {
 		//int IsTheSame(std::string fname,std::string text,int size) {return ( (initialized==1) && (mysize==size) && (myfontname==fname) && (text==mytext));}
 		FontCache() : initialized(0) {};
 		~FontCache() {Clear();}
-		void Setup(LoadedFont *font,std::string text, int size);
+		void Setup(std::shared_ptr<LoadedFont>& font,std::string text, int size);
 		void SetTime(double T) {TimeStamp=T;}
 		double GetTime() {return TimeStamp;}
 		GLuint GetTexture() {return texture;}
@@ -115,7 +115,7 @@ class FontCaches {
 		void Clear();
 		FontCaches() {Clear();}
 		~FontCaches() {Clear();}
-		std::unique_ptr<FontCache>& GetCache(LoadedFont *font,std::string text, int size);
+		std::unique_ptr<FontCache>& GetCache(std::shared_ptr<LoadedFont>& font,std::string text, int size);
 	};
 
 using FontRemap = struct {
@@ -129,7 +129,7 @@ class Font {
 		std::string halign; //left, center, right
 
 		//TTF_Font* font;
-		LoadedFont font;
+		std::shared_ptr<LoadedFont> font;
 		FontCaches cache;
 		///OLD
 		//   int tindex;
@@ -145,6 +145,7 @@ class Font {
 		std::string RemapString(std::string text);
 		std::string cname;
 	public:
+		Font() { font = std::make_shared<LoadedFont>(); };
 		std::string GetFontName() {return cname;}
 		void Init();
 		void SetSize(float s);

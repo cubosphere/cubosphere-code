@@ -72,18 +72,14 @@ int SizedFont::Load(std::string fontname,int fontsize) {
 	return 1;
 	}
 
-SizedFont* LoadedFont::GetSized(int dessize) {
+std::shared_ptr<SizedFont> LoadedFont::GetSized(int dessize) {
 	//First attempt: The font should be the exactly right size   ///Later: add a delta value
-	for (unsigned int i=0; i<sized.size(); i++) {
-			if (sized[i]) {
-					if (sized[i]->GetSize()==dessize) { return sized[i]; }
-					}
-			}
+	if (sized.count(dessize)) return sized.at(dessize);
 //Oh, none found: Add it
-	SizedFont *n=new SizedFont();
+	auto n = std::make_shared<SizedFont>();
 
-	if (!(n->Load(fname,dessize))) { return NULL; }
-	sized.push_back(n);
+	if (!(n->Load(fname,dessize))) { return nullptr; }
+	sized.emplace(dessize, n);
 
 	return n;
 	}
@@ -107,29 +103,23 @@ int LoadedFont::Prepare() {
 
 
 void LoadedFont::Clear() {
-	for (unsigned int i=0; i<sized.size(); i++) {
-			if (sized[i]) { delete sized[i]; }
-			sized[i]=NULL;
-			}
 	fname="";
-	sized.resize(0);
+	sized.clear();
 	}
 
 
-SizedFont *LoadedFont::GetBestFont(int pixelsize) {
+std::shared_ptr<SizedFont> LoadedFont::GetBestFont(int pixelsize) {
 	int best=-1;
 	int mindev=100000;
-	for (unsigned i=0; i<sized.size(); i++) {
-
-			int dev=sized[i]->GetSize()-pixelsize;
-			if (dev<0) { dev=-dev; }
+	for (auto& elem: sized) {
+			int dev = std::abs(elem.second->GetSize() - pixelsize);
 			if (dev<mindev) {
-					best=i;
-					mindev=dev;
+					best = elem.first;
+					mindev = dev;
 					}
 			}
-	if (best==-1) { return NULL; }
-	return sized[best];
+	if (best == -1) { return GetSized(pixelsize); }
+	return sized.at(best);
 	}
 
 
@@ -147,11 +137,11 @@ double round(double x) {return (double)((int)(x+0.5));}
 #endif
 
 int nextpoweroftwo(int x) {
-	double logbase2 = log((double)x) / log((double)2);
+	double logbase2 = log((double)x) / log(2.0);
 	return (int)round(pow(2,ceil(logbase2)));
 	}
 
-void FontCache::Setup(LoadedFont *font,std::string text,int size) {
+void FontCache::Setup(std::shared_ptr<LoadedFont>& font,std::string text,int size) {
 	Clear();
 	mysize=size;
 	myfontname=font->GetName();
@@ -168,7 +158,7 @@ void FontCache::Setup(LoadedFont *font,std::string text,int size) {
 	color.b=255;
 
 
-	SizedFont *fnt=font->GetBestFont(size);
+	auto fnt = font->GetBestFont(size);
 	fontsize=fnt->GetSize();
 	if (!fnt) { return; }
 	initial = TTF_RenderUTF8_Blended(fnt->GetFont(), text.c_str(), color);
@@ -213,7 +203,7 @@ void FontCaches::Clear() {
 	caches.clear();
 	}
 
-std::unique_ptr<FontCache>& FontCaches::GetCache(LoadedFont *font,std::string text,int size) {
+std::unique_ptr<FontCache>& FontCaches::GetCache(std::shared_ptr<LoadedFont>& font,std::string text,int size) {
 	FontID id;
 	id.fname = font->GetName();
 	id.text = text;
@@ -244,7 +234,7 @@ std::unique_ptr<FontCache>& FontCaches::GetCache(LoadedFont *font,std::string te
 	}
 
 void Font::RenderText(std::string text) {
-	auto& c = cache.GetCache(&font,text,(int)(scaley*g_Game()->GetScreenSize().v));
+	auto& c = cache.GetCache(font,text,(int)(scaley*g_Game()->GetScreenSize().v));
 
 	//glEnable(GL_TEXTURE_2D);
 	g_Game()->GetTextures()->EnableTexturing();
@@ -304,7 +294,7 @@ void Font::Init() {
 
 void Font::Load(std::string textname) {
 	if (textname!=cname) {
-			font.Load(textname);
+			font->Load(textname);
 			cname=textname;
 			}
 	}
@@ -402,7 +392,7 @@ void Font::ClearCache() {
 void Font::StopFontEngine() {
 	ClearCache();
 	ClearRemaps();
-	font.Clear();
+	font->Clear();
 	}
 
 void Font::ClearRemaps() {
