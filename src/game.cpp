@@ -556,7 +556,6 @@ int CuboGame::StartLevel(std::string lname,int normal_user_edit) {
 
 void CuboGame::KeyHandle(int ident,int down,int toggle) {
 	if (ident==-1) { exit(0); }
-	std::cout << ident << " " << down << " " << toggle << std::endl;
 	if ((ident==CuboConsole::GetInstance()->GetToggleKey() ) && down && toggle) {
 			CuboConsole::GetInstance()->Toggle();
 			return;
@@ -571,7 +570,6 @@ void CuboGame::KeyHandle(int ident,int down,int toggle) {
 	if (CuboConsole::GetInstance()->CheckBindKey(ident,down,toggle)) {return;}
 
 	if (MenuActive) {
-			std::cout << "Menu!" << std::endl;
 			menu.SendKey(ident,down,toggle);
 			}
 	if (GameActive) {
