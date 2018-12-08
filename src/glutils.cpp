@@ -433,6 +433,17 @@ int DEVICE_Init(lua_State *state) {
 	return 1;
 	}
 
+int DEVICE_Update(lua_State *state) {
+	int bpp=LUA_GET_INT(state);
+	int fs=LUA_GET_INT(state);
+	int hw=LUA_GET_INT(state);
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
+	bool res=g_Game()->UpdateWindow(w,h,hw,fs,bpp);
+	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
+	return 1;
+	}
+
 int DEVICE_GetVideoHeights(lua_State *state) {
 	int index=LUA_GET_INT(state);
 	LUA_SET_NUMBER(state, videoheights[index]);
@@ -458,6 +469,7 @@ void LUA_DEVICE_RegisterLib() {
 	g_CuboLib()->AddFunc("DEVICE_UnOrtho",DEVICE_UnOrtho);
 	g_CuboLib()->AddFunc("DEVICE_Clear",DEVICE_Clear);
 	g_CuboLib()->AddFunc("DEVICE_Init",DEVICE_Init);
+	g_CuboLib()->AddFunc("DEVICE_Update",DEVICE_Update);
 	g_CuboLib()->AddFunc("DEVICE_Reload",DEVICE_Reload);
 	g_CuboLib()->AddFunc("DEVICE_GetVideoModes",DEVICE_GetVideoModes);
 	g_CuboLib()->AddFunc("DEVICE_GetVideoWidths",DEVICE_GetVideoWidths);

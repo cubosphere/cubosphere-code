@@ -196,6 +196,28 @@ bool Game::InitGL(int w,int h,int hw,int fs,int bpp) {
 	return true;
 	}
 
+bool Game::UpdateWindow(int w,int h,int hw,int fs,int bpp) {
+	textures.clear();
+
+	if (AntiAliasing) {
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+			constexpr int naa=4; // FIXME: WTF?
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, naa);
+			}
+	else {
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+			}
+
+	//OutVideoInfo();
+	screenwidth=w;
+	screenheight=h;
+	SDL_SetWindowSize(sdlWindow, w, h);
+	SDL_SetWindowFullscreen(sdlWindow, fs ? SDL_WINDOW_FULLSCREEN : 0);
+	if (!sdlWindow or !sdlRenderer) return false;
+	return true;
+	}
+
 void Game::Quit() {
 	events.Close();
 	}
@@ -352,7 +374,7 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 	int w=viewport[2];
 	int h=viewport[3];
 
-	FILE *fScreenshot;
+	FILE *fScreenshot; // FIXME: no need to create it here
 	int nSize = w*h*3;
 
 	auto pixels = std::make_unique<GLubyte[]>(nSize);
@@ -940,7 +962,6 @@ void CuboGame::FreeMedia() {
 	g_ParticleDefs()->clear();
 	lvl.clearAll();
 	textures.clear();
-///TODO: Free the Font cache!
 ///What about the sounds?
 	font.ClearCache();
 	GetShaders()->clear();
@@ -950,12 +971,16 @@ void CuboGame::FreeMedia() {
 bool CuboGame::InitGL(int w,int h,int hw,int fs,int bpp) {
 	FreeMedia();
 	return Game::InitGL(w,h,hw,fs,bpp);
-
 	}
+
+bool CuboGame::UpdateWindow(int w, int h, int hw, int fs, int bpp) {
+	FreeMedia(); // FIXME: is required?
+	return Game::UpdateWindow(w,h,hw,fs,bpp);
+}
+
 
 CuboGame::~CuboGame() {
 	for (unsigned int i=0; i<player.size(); i++) if (player[i]) {delete player[i]; player[i]=NULL;}
-
 	}
 
 void CuboBasis::InvertMatrix() {
