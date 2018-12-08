@@ -314,39 +314,28 @@ static std::vector<int> videowidths;
 static std::vector<int> videoheights;
 
 int GetModes(int hw,int fs) {
-	SDL_Rect** modes;
-	int i;
-
 	/* Get available fullscreen/hardware modes */
-	Uint32 flags=SDL_OPENGL;
-	if (fs) { flags|=SDL_FULLSCREEN; }
-	if (hw) { flags|=SDL_HWSURFACE |SDL_DOUBLEBUF; }
-	else { flags|=SDL_SWSURFACE; }
-	modes = SDL_ListModes(NULL, flags);
+	int display_index = 0; // FIXME: add many-display support
+	int modes_count = 0;
+	SDL_DisplayMode mode = { SDL_PIXELFORMAT_UNKNOWN, 0, 0, 0, 0 };
 
 	videowidths.clear();
 	videoheights.clear();
 	/* Check if there are any modes available */
-	if (modes == (SDL_Rect**)0) {
+	if ((modes_count = SDL_GetNumDisplayModes(display_index)) < 1) { // Someting is very wrong
 			return 0;
 			}
 
 	/* Check if our resolution is restricted */
-	if (modes == (SDL_Rect**)-1) {
-			///TODO: Add a few standart resolutions
-			videowidths.push_back(1024); videoheights.push_back(768);
-			videowidths.push_back(800); videoheights.push_back(600);
-			videowidths.push_back(640); videoheights.push_back(480);
-			//  videowidths.push_back(320); videoheights.push_back(240);
-
-			}
-	else {
-			/* Print valid modes */
-			for (i=0; modes[i]; ++i) {
-					videowidths.push_back(modes[i]->w);
-					videoheights.push_back(modes[i]->h);
-					}
-			}
+	videowidths.push_back(1024); videoheights.push_back(768);
+	videowidths.push_back(800); videoheights.push_back(600);
+	videowidths.push_back(640); videoheights.push_back(480);
+	videowidths.push_back(320); videoheights.push_back(240);
+	for (int i = 0; i < modes_count; ++i) {
+		SDL_GetDisplayMode(display_index, i, &mode);
+		videowidths.push_back(mode.w);
+		videoheights.push_back(mode.h);
+		}
 
 	return videoheights.size();
 

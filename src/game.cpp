@@ -137,13 +137,10 @@ void OutVideoInfo()
 bool Game::InitGL(int w,int h,int hw,int fs,int bpp) {
 //  PrintModes();
 	textures.clear();
-	Uint32 flags=SDL_OPENGL  ;
-	if (fs) { flags|=SDL_FULLSCREEN; }
-	if (hw) { flags|=SDL_HWSURFACE | SDL_DOUBLEBUF; }
+	Uint32 flags = SDL_WINDOW_OPENGL  ;
+	if (fs) { flags|= SDL_WINDOW_FULLSCREEN; }
+//	if (hw) { flags|= SDL_HWSURFACE | SDL_DOUBLEBUF; } // TODO: anything like this in sdl2?
 	else { flags|=SDL_SWSURFACE; }
-
-	SDL_Surface *screen;
-
 
 	if (AntiAliasing) {
 // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -160,23 +157,11 @@ bool Game::InitGL(int w,int h,int hw,int fs,int bpp) {
 	//OutVideoInfo();
 	screenwidth=w;
 	screenheight=h;
-	screen = SDL_SetVideoMode( w, h, bpp, flags );
-	if (!screen) { return false; }
-	SDL_WM_SetCaption("Cubosphere","Cubosphere");
-
-
-	//  atexit(SDL_Quit);
-
-	;
-
-	//OutVideoInfo();
-	//screen = SDL_SetVideoMode( 800, 600, 24, SDL_OPENGL | SDL_HWSURFACE | SDL_FULLSCREEN);
-	//screen = SDL_SetVideoMode( 1600, 900, 24, SDL_OPENGL | SDL_HWSURFACE | SDL_FULLSCREEN);
-	//screen = SDL_SetVideoMode( 1024, 768, 24, SDL_OPENGL | SDL_HWSURFACE | SDL_FULLSCREEN);
-//#ifdef WIN32
+	SDL_CreateWindowAndRenderer(w, h, flags, &sdlWindow, &sdlRenderer);
+	if (!sdlWindow or !sdlRenderer) return false;
+	SDL_SetWindowTitle(sdlWindow, "Cubosphere");
 
 	glewInit();
-//#endif
 
 	CheckNeededExtensions();
 
@@ -549,7 +534,7 @@ int CuboGame::StartLevel(std::string lname,int normal_user_edit) {
 
 void CuboGame::KeyHandle(int ident,int down,int toggle) {
 	if (ident==-1) { exit(0); }
-//cout << ident << " " << down << " " << toggle << endl;
+	std::cout << ident << " " << down << " " << toggle << std::endl;
 	if ((ident==CuboConsole::GetInstance()->GetToggleKey() ) && down && toggle) {
 			CuboConsole::GetInstance()->Toggle();
 			return;
@@ -564,6 +549,7 @@ void CuboGame::KeyHandle(int ident,int down,int toggle) {
 	if (CuboConsole::GetInstance()->CheckBindKey(ident,down,toggle)) {return;}
 
 	if (MenuActive) {
+			std::cout << "Menu!" << std::endl;
 			menu.SendKey(ident,down,toggle);
 			}
 	if (GameActive) {
@@ -766,11 +752,14 @@ void CuboGame::Think() {
 
 void CuboGame::PreRender(int wo,int ho) {
 
-	const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
+	//const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
+	int w,h;
+	SDL_GetWindowSize(sdlWindow, &w, &h);
+	
 	Vector2d widthheight;
 
-	if (wo<=0) { wo=vidinfo->current_w; }
-	if (ho<=0) { ho=vidinfo->current_h; }
+	if (wo<=0) { wo=w; }
+	if (ho<=0) { ho=h; }
 
 
 	widthheight.uv(wo,ho);
@@ -838,7 +827,7 @@ void CuboGame::Render() {
 			glFinish();
 			}
 
-	SDL_GL_SwapBuffers();
+	SDL_GL_SwapWindow(sdlWindow);
 
 
 	if (GameActive || NewGameActive) { lvl.PostThink(); }

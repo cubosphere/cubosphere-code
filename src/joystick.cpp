@@ -40,7 +40,7 @@ void Joystick::AxisMotionEvent(int axis,int value) {
 
 
 std::string Joystick::Name() {
-	return SDL_JoystickName(index);
+	return SDL_JoystickName(stick);
 	}
 
 float Joystick::SDLAxisToFloat(int sa) {

@@ -285,6 +285,13 @@ bool LuaAccess::CallVA(const char* func, std::optional<LuaVAListIn> iargs, std::
 	CallAccess=this;
 	int narg = 0;
 	lua_getglobal(state, func);
+	// Uncomment to see debug info about all calls
+	/* Lua debug begin
+	lua_Debug ar;
+	lua_getglobal(state, func);
+	lua_getinfo(state, ">S", &ar);
+	std::cout << "Lua: at " << std::string(ar.short_src) << ":" << std::to_string(ar.linedefined) << std::endl;
+	Lua debug end */
 
 	if (iargs) {
 			narg = iargs->size();
@@ -625,7 +632,7 @@ int LuaCuboLib::DEBUG(lua_State *state) {
 int LuaCuboLib::GLOBAL_StartDeveloperMode(lua_State *state) {
 
 	std::string consolekey=LUA_GET_STRING(state);
-	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(consolekey);
+	SDL_Keycode k=g_Game()->GetKeyboard()->GetKeyConstFor(consolekey);
 	CuboConsole::GetInstance()->SetToggleKey(k);
 	return 0;
 	}

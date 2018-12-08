@@ -29,8 +29,7 @@ void EventManager::HandleEvents() {
 						//	case SDL_TEXTINPUT:
 						//		case SDL_TEXTEDITING:
 						//Send it to Keyboard
-
-						if (keyb) { keyb->DispatchEvent(&event); }
+						if (keyb and event.key.repeat == 0) { std::cout << "Kbd!" << std::endl;; keyb->DispatchEvent(&event); }
 						break;
 					case SDL_MOUSEMOTION:
 					case SDL_MOUSEBUTTONDOWN:

@@ -2,18 +2,18 @@
 # same to make future editing easier.
 
 # Various libs
-find_package(OpenGL    REQUIRED COMPONENTS OpenGL)
-find_package(Lua51     REQUIRED)
-find_package(GLEW      REQUIRED)
+find_package(OpenGL     REQUIRED COMPONENTS OpenGL)
+find_package(Lua51      REQUIRED)
+find_package(GLEW       REQUIRED)
 #find_package(GLUT      REQUIRED)
-find_package(JPEG      REQUIRED)
-find_package(PNG++     REQUIRED)
-find_package(Poco      REQUIRED COMPONENTS Zip Foundation)
+find_package(JPEG       REQUIRED)
+find_package(PNG++      REQUIRED)
+find_package(Poco       REQUIRED COMPONENTS Zip Foundation)
 
 # SDL
-find_package(SDL       REQUIRED)
-find_package(SDL_mixer REQUIRED)
-find_package(SDL_ttf   REQUIRED)
+find_package(SDL2       REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_ttf   REQUIRED)
 
 file(GLOB SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
@@ -37,9 +37,9 @@ target_include_directories(cubosphere PRIVATE
 	${PNG++_INCLUDE_DIRS}
 
 # SDL
-	${SDL_INCLUDE_DIR}
-	${SDL_MIXER_INCLUDE_DIRS}
-	${SDL_TTF_INCLUDE_DIRS}
+	${SDL2_INCLUDE_DIR}
+	${SDL2_MIXER_INCLUDE_DIRS}
+	${SDL2_TTF_INCLUDE_DIRS}
 )
 
 target_link_libraries(cubosphere
@@ -53,9 +53,9 @@ target_link_libraries(cubosphere
 	${Poco_LIBRARIES}
 
 # SDL
-	${SDL_LIBRARY}
-	${SDL_MIXER_LIBRARIES}
-	${SDL_TTF_LIBRARIES}
+	${SDL2_LIBRARY}
+	${SDL2_MIXER_LIBRARIES}
+	${SDL2_TTF_LIBRARIES}
 )
 
 target_compile_definitions(cubosphere PRIVATE

@@ -131,6 +131,7 @@ void Menu::SendKey(int key,int down, int toggle) {
 	if (!isloaded) { return; }
 	if (lua.FuncExists("OnKeyPressed")) {
 
+			//std::cout << "OnKeyPressed in menu" << std::endl;
 			lua.CallVA("OnKeyPressed", {{key,down,toggle}});
 			}
 	}

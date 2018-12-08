@@ -26,31 +26,31 @@ using KeyboardFunc = void(*)(int,int,int);
 class Keyboard {
 	protected:
 		int keynum;
-		Uint8 *keydown;
+		const Uint8 *keydown;
 		std::vector<Uint8> downbefore;
 		std::vector<double> pressedtime;
 		KeyboardFunc handler;
 		double rep_start_time;
 		double rep_rep_time;
 		int textinputmode;
-		SDL_keysym lastkeysim;
+		SDL_Keysym lastkeysim;
 	public:
-		SDL_keysym GetLastKeySim() {return lastkeysim;}
+		SDL_Keysym GetLastKeySim() {return lastkeysim;}
 		void SetKeyRepeatTimes(double rstart,double rrep) {rep_start_time=rstart; rep_rep_time=rrep;}
 		void StartTextInput();
 		void StopTextInput();
 		//TKeyboard();
 		// void Initialize();
-		double & GetPressedTime(int ident) {return pressedtime[ident];}
+		double &GetPressedTime(int ident) {return pressedtime[ident];}
 		int IsPressed(int ident) {return keydown[ident];}
 		int DownBefore(int ident) {return downbefore[ident];}
-		SDLKey GetKeyConstFor(std::string keyname);
+		SDL_Scancode GetKeyConstFor(std::string keyname);
 		void SetHandler(KeyboardFunc h) {handler=h;}
 //    void RegisterKey(SDLKey key,int ident,TKeyboardFunc func, int toggle);
 		void DispatchEvent(SDL_Event *ev);
 		void HandleKeys();
 		void Init();
-		std::string GetKeyName(int key);
+		std::string GetKeyName(SDL_Scancode key);
 	};
 
 extern void LUA_KEYB_RegisterLib();

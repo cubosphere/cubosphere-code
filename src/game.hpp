@@ -52,6 +52,8 @@ class Game {
 		virtual void GameLoopFrame();
 		virtual void CheckNeededExtensions();
 		LuaAccess GameLua;
+		SDL_Window *sdlWindow;
+		SDL_Renderer *sdlRenderer;
 	public:
 		virtual void SetGameLoopSource(std::string s);
 		Game() :  AntiAliasing(0), maxframes(0), GameLoopSource("") {}
