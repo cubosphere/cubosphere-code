@@ -135,7 +135,6 @@ void JoystickServer::ResetButtons() {
 	}
 
 void JoystickServer::AddJoystick(int mindex) {
-	std::ostringstream oss;
 	auto njs = std::make_unique<Joystick>(mindex, this);
 	if (!(njs->GetSDLJoystick())) {
 			coutlog("Joystick \""+njs->Name()+"\" (" + std::to_string(mindex+1) + ") failed to initialize", 2);
@@ -146,6 +145,10 @@ void JoystickServer::AddJoystick(int mindex) {
 			}
 	}
 
+void JoystickServer::RemoveJoystick(int mindex) {
+	coutlog("Joystick \""+sticks.at(mindex)->Name()+"\" (" + std::to_string(mindex+1) + ") disconnected", 2);
+	sticks.erase(mindex);
+	}
 
 void JoystickServer::Initialize() {
 	std::ostringstream oss;
@@ -163,6 +166,7 @@ void JoystickServer::Initialize() {
 	}
 
 void JoystickServer::Free() {
+	sticks.clear();
 	}
 
 

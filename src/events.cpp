@@ -42,6 +42,12 @@ void EventManager::HandleEvents() {
 					case SDL_JOYBUTTONUP:
 						if (joy) { joy->DispatchEvent(&event); }
 						break;
+					case SDL_JOYDEVICEADDED:
+						joy->AddJoystick(event.jdevice.which);
+						break;
+					case SDL_JOYDEVICEREMOVED:
+						joy->RemoveJoystick(event.jdevice.which);
+						break;
 					case SDL_QUIT:
 						//Sollte das Fenster geschlossen werden, soll er auch der Loop beendet werden
 						windowclose=true;
