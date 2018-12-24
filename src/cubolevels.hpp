@@ -135,6 +135,7 @@ class CuboLevel {
 		int PointInBBox(Vector3d cp,float extrasize=40*CUBO_SCALE);
 		std::string GetLevelFileName() {return filename;}
 		void SendKey(int key,int down,int toggle);
+		void SendTextInput(std::string&);
 		void SendJoyButton(int joy,int button,int dir,int down,int toggle);
 		void JoyAxisChange(int joys,int axis,double val,double pval);
 		double Elapsed();

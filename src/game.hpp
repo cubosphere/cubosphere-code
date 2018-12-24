@@ -52,6 +52,8 @@ class Game {
 		virtual void GameLoopFrame();
 		virtual void CheckNeededExtensions();
 		LuaAccess GameLua;
+		SDL_Window *sdlWindow;
+		SDL_Renderer *sdlRenderer;
 	public:
 		virtual void SetGameLoopSource(std::string s);
 		Game() :  AntiAliasing(0), maxframes(0), GameLoopSource("") {}
@@ -65,6 +67,7 @@ class Game {
 		virtual void End();
 		virtual Vector2d GetScreenSize() {Vector2d res(screenwidth,screenheight); return res;}
 		virtual void KeyHandle(int ident,int down,int special) {}
+		virtual void TextInputHandle(std::string&) {}
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval) {}
 		virtual int Init();
 		virtual void SetMinFrames(float t) {minframes=t;}
@@ -80,6 +83,7 @@ class Game {
 		virtual Keyboard *GetKeyboard() {return &keyboard;}
 		virtual JoystickServer *GetJoysticks() {return &joysticks;}
 		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
+		virtual bool UpdateWindow(int w,int h,int hw,int fs,int bpp);
 		virtual int HasGLSL() {return supportingShaders;}
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle) {}
 		virtual void SetMaxPhysElapsed(double t) {if (t>0) maxphyselapsed=t; else maxphyselapsed=100000;}
@@ -122,6 +126,7 @@ class CuboGame : public Game {
 		virtual void Think();
 		virtual void ScreenShot();
 		virtual void KeyHandle(int ident,int down,int toggle);
+		virtual void TextInputHandle(std::string&);
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval);
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle);
 		virtual int Init();
@@ -147,6 +152,7 @@ class CuboGame : public Game {
 		virtual Font* GetFont() {return &font;}
 		virtual Menu* GetMenu() {return &menu;}
 		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
+		virtual bool UpdateWindow(int w,int h,int hw,int fs,int bpp);
 		virtual void FreeMedia();
 		virtual void RenderPass();
 		virtual void SpecialRenderPass(std::string nam,int defrender);

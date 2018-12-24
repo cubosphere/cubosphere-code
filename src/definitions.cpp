@@ -129,11 +129,13 @@ void Menu::JoyAxisChange(int joys,int axis,double val,double pval) {
 
 void Menu::SendKey(int key,int down, int toggle) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnKeyPressed")) {
-
-			lua.CallVA("OnKeyPressed", {{key,down,toggle}});
-			}
+	lua.CallVAIfPresent("OnKeyPressed", {{key,down,toggle}});
 	}
+
+void Menu::SendTextInput(std::string& str) {
+	if (!isloaded) { return; }
+	lua.CallVAIfPresent("OnTextInput", {{str}});
+}
 
 
 void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle) {

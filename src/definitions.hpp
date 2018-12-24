@@ -93,6 +93,7 @@ class Menu : public BaseLuaDef {
 		void Think();
 		void PostThink();
 		void SendKey(int key, int down, int toggle);
+		void SendTextInput(std::string&);
 		void SendJoyButton(int joy,int button,int dir,int down,int toggle);
 		void JoyAxisChange(int joys,int axis,double val,double pval);
 	};

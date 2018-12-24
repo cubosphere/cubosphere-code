@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
 
 	//SDL_Init( SDL_INIT_EVERYTHING) << endl;
 
+	/*
 	SDL_WM_SetCaption("Cubosphere","Cubosphere");
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]) {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 //SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	*/
 
 	atexit(closelog);
 

@@ -17,6 +17,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL.h>
 
 #include <vector>
+#include <memory>
+#include <unordered_map>
 #include "cuboutils.hpp"
 
 class JoystickServer;
@@ -52,11 +54,13 @@ using JoystickButtonFunc = void(*)(int,int,int,int,int);
 
 class JoystickServer {
 	protected:
-		std::vector<Joystick*> sticks;
+		std::unordered_map<int, std::unique_ptr<Joystick>> sticks;
 		JoystickAxisFunc axishandler;
 		JoystickButtonFunc buttonhandler;
 		friend class Joystick;
 	public:
+		void AddJoystick(int mindex);
+		void RemoveJoystick(int mindex);
 		void SetAxisHandler(JoystickAxisFunc h) {axishandler=h;}
 		void SetDiscreteHandler(JoystickButtonFunc b) {buttonhandler=b;}
 		int NumJoysticks();

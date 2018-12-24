@@ -109,13 +109,13 @@ Vector2d Mouse::getRelativeMotion() {
 
 void Mouse::Snap(int active) {
 	if (active) {
-			SDL_WM_GrabInput(SDL_GRAB_ON);
+			SDL_SetRelativeMouseMode(SDL_TRUE);
 			snapping=1;
 			getRelativeMotion();
 			}
 	else {
 			snapping=0;
-			SDL_WM_GrabInput(SDL_GRAB_OFF);
+			SDL_SetRelativeMouseMode(SDL_FALSE);
 			}
 	}
 

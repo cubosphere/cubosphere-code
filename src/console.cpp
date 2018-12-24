@@ -98,7 +98,7 @@ bool CuboConsole::CheckBindKey(int ident,bool down,bool toggle) {
 bool CuboConsole::Bind(std::vector<std::string>& extratoks, bool unbind) {
 	if (extratoks.size() == 0) {coutlog("Key expected!",2); return false;}
 	std::string key = extratoks[0];
-	SDLKey k=g_Game()->GetKeyboard()->GetKeyConstFor(key);
+	SDL_Keycode k=g_Game()->GetKeyboard()->GetKeyConstFor(key);
 	if (!k) {coutlog("Unknown key: "+key,2); return 0;}
 
 	bool have_binding = binds.count(k);
@@ -225,11 +225,11 @@ void CuboConsole::ParseCmdLine(std::string cmdl) {
 void CuboConsole::KeyHandle(int ident,int down,int toggle) {
 	if ((!toggle) || (!down)) { return; }
 
-	SDL_keysym sim=g_Game()->GetKeyboard()->GetLastKeySim();
+	SDL_Keysym sim=g_Game()->GetKeyboard()->GetLastKeySim();
 
-	int ident2=sim.sym;
+	SDL_Keycode ident2 = sim.sym;
 
-//cout << ident << " " << ident2 << " " << sim.unicode << endl;
+	std::cout << ident << " " << ident2 << " " << std::endl;
 
 	if (ident2==SDLK_ESCAPE ) { Toggle(); return; }
 	if (ident2==SDLK_PAGEUP && down && toggle)
@@ -255,12 +255,12 @@ void CuboConsole::KeyHandle(int ident,int down,int toggle) {
 			if (hisindex==0) { history.back()=hisbackup; }
 			else { history.back()=history[history.size()-1-hisindex]; }
 			}
-	else if (sim.unicode >0 && (sim.unicode & 0xFF80) == 0) {
+	/*else if (sim.unicode >0 && (sim.unicode & 0xFF80) == 0) { // FIXME: no unicode in SDL2
 			wchar_t c=sim.unicode & 0x7F;
 			history.back()+=c;
 
 
-			}
+			}*/
 	/*
 	string kn=g_Game()->GetKeyboard()->GetKeyName(ident);
 	if (kn.length()==1) {

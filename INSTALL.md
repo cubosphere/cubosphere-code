@@ -8,9 +8,9 @@ You will need (with headers, which often stored in `-dev` packages):
 * OpenGL (use hardware accelerated driver for better results)
 * Lua 5.1 (library)
 * GLEW
-* SDL 1.2
+* SDL 2.0
 * SDL_ttf 2.0
-* SDL_mixer 1.2
+* SDL_mixer 2.0
 * libjpeg (libturbojpeg is ok too)
 * libpng (and libpng++ for build)
 * POCO libraries (`Zip` one is used)
@@ -24,7 +24,7 @@ sudo apt-get install -y clang \
 extra-cmake-modules cmake \
 lsb-release dpkg-dev \
 libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev libpoco-dev \
-libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
+libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev
 ```
 
 # Build process

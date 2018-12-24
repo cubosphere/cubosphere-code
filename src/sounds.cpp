@@ -144,7 +144,7 @@ MusicContainer::~MusicContainer() {
 int MusicContainer::Load(const std::unique_ptr<CuboFile>& finfo) {
 	if (!finfo->IsHDDFile()) {
 			coutlog("Music from ZIP can be problematic...",2);
-			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1));
+			music = Mix_LoadMUS_RW(finfo->GetAsRWops(1), SDL_FALSE);
 			}
 	else {
 			music = Mix_LoadMUS(finfo->GetHDDName().c_str());

@@ -40,7 +40,7 @@ void Joystick::AxisMotionEvent(int axis,int value) {
 
 
 std::string Joystick::Name() {
-	return SDL_JoystickName(index);
+	return SDL_JoystickName(stick);
 	}
 
 float Joystick::SDLAxisToFloat(int sa) {
@@ -134,6 +134,21 @@ void JoystickServer::ResetButtons() {
 	for (unsigned int i=0; i<sticks.size(); i++) { sticks[i]->ResetButtons(); }
 	}
 
+void JoystickServer::AddJoystick(int mindex) {
+	auto njs = std::make_unique<Joystick>(mindex, this);
+	if (!(njs->GetSDLJoystick())) {
+			coutlog("Joystick \""+njs->Name()+"\" (" + std::to_string(mindex+1) + ") failed to initialize", 2);
+			}
+	else {
+			coutlog("Joystick \""+njs->Name()+"\" (" + std::to_string(mindex+1) + ") initialized", 2);
+			sticks.emplace(mindex, std::move(njs));
+			}
+	}
+
+void JoystickServer::RemoveJoystick(int mindex) {
+	coutlog("Joystick \""+sticks.at(mindex)->Name()+"\" (" + std::to_string(mindex+1) + ") disconnected", 2);
+	sticks.erase(mindex);
+	}
 
 void JoystickServer::Initialize() {
 	std::ostringstream oss;
@@ -142,31 +157,16 @@ void JoystickServer::Initialize() {
 	else if (ns==1) { oss << "detected a joystick"; }
 	else { oss << "detected " << ns << " joysticks"; }
 	coutlog(oss.str());
-	if (!ns) { return; }
+	if (ns == 0) { return; }
 
 
 	for (int i=0; i<ns; i++) {
-			Joystick *njs=new Joystick(i,this);
-			oss.str("");
-			if (!(njs->GetSDLJoystick())) {
-					oss.clear();
-					oss << "  ("<<(i+1)<< ")  failed to initialize " << njs->Name() ;
-					coutlog(oss.str(),2);
-					sticks.push_back(NULL);
-					}
-			else {
-					sticks.push_back(njs);
-					oss.clear();
-					oss << "  ("<<(i+1) << ")  initialized " << njs->Name() ;
-					coutlog(oss.str());
-					}
+			AddJoystick(i);
 			}
 	}
 
 void JoystickServer::Free() {
-	for (unsigned int i=0; i<sticks.size(); i++) {
-			if (sticks[i]) { delete sticks[i]; }
-			}
+	sticks.clear();
 	}
 
 
@@ -176,10 +176,7 @@ void JoystickServer::DispatchEvent(SDL_Event *ev) {
 
 
 void JoystickServer::HandleKeys() {
-	for (unsigned int i=0; i<sticks.size(); i++) {
-			if (sticks[i]) { sticks[i]->HandleKeys(); }
-
-			}
+	for (auto& stick: sticks) stick.second->HandleKeys();
 	}
 
 int JoystickServer::NumJoysticks() {

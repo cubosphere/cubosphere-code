@@ -29,8 +29,9 @@ void EventManager::HandleEvents() {
 						//	case SDL_TEXTINPUT:
 						//		case SDL_TEXTEDITING:
 						//Send it to Keyboard
-
-						if (keyb) { keyb->DispatchEvent(&event); }
+						break;
+					case SDL_TEXTINPUT:
+						keyb->DispatchEvent(&event);
 						break;
 					case SDL_MOUSEMOTION:
 					case SDL_MOUSEBUTTONDOWN:
@@ -43,6 +44,12 @@ void EventManager::HandleEvents() {
 					case SDL_JOYBUTTONDOWN:
 					case SDL_JOYBUTTONUP:
 						if (joy) { joy->DispatchEvent(&event); }
+						break;
+					case SDL_JOYDEVICEADDED:
+						joy->AddJoystick(event.jdevice.which);
+						break;
+					case SDL_JOYDEVICEREMOVED:
+						joy->RemoveJoystick(event.jdevice.which);
 						break;
 					case SDL_QUIT:
 						//Sollte das Fenster geschlossen werden, soll er auch der Loop beendet werden

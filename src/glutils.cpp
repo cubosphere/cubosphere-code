@@ -314,39 +314,28 @@ static std::vector<int> videowidths;
 static std::vector<int> videoheights;
 
 int GetModes(int hw,int fs) {
-	SDL_Rect** modes;
-	int i;
-
 	/* Get available fullscreen/hardware modes */
-	Uint32 flags=SDL_OPENGL;
-	if (fs) { flags|=SDL_FULLSCREEN; }
-	if (hw) { flags|=SDL_HWSURFACE |SDL_DOUBLEBUF; }
-	else { flags|=SDL_SWSURFACE; }
-	modes = SDL_ListModes(NULL, flags);
+	int display_index = 0; // FIXME: add many-display support
+	int modes_count = 0;
+	SDL_DisplayMode mode = { SDL_PIXELFORMAT_UNKNOWN, 0, 0, 0, 0 };
 
 	videowidths.clear();
 	videoheights.clear();
 	/* Check if there are any modes available */
-	if (modes == (SDL_Rect**)0) {
+	if ((modes_count = SDL_GetNumDisplayModes(display_index)) < 1) { // Someting is very wrong
 			return 0;
 			}
 
 	/* Check if our resolution is restricted */
-	if (modes == (SDL_Rect**)-1) {
-			///TODO: Add a few standart resolutions
-			videowidths.push_back(1024); videoheights.push_back(768);
-			videowidths.push_back(800); videoheights.push_back(600);
-			videowidths.push_back(640); videoheights.push_back(480);
-			//  videowidths.push_back(320); videoheights.push_back(240);
-
-			}
-	else {
-			/* Print valid modes */
-			for (i=0; modes[i]; ++i) {
-					videowidths.push_back(modes[i]->w);
-					videoheights.push_back(modes[i]->h);
-					}
-			}
+	videowidths.push_back(1024); videoheights.push_back(768);
+	videowidths.push_back(800); videoheights.push_back(600);
+	videowidths.push_back(640); videoheights.push_back(480);
+	videowidths.push_back(320); videoheights.push_back(240);
+	for (int i = 0; i < modes_count; ++i) {
+		SDL_GetDisplayMode(display_index, i, &mode);
+		videowidths.push_back(mode.w);
+		videoheights.push_back(mode.h);
+		}
 
 	return videoheights.size();
 
@@ -444,6 +433,17 @@ int DEVICE_Init(lua_State *state) {
 	return 1;
 	}
 
+int DEVICE_Update(lua_State *state) {
+	int bpp=LUA_GET_INT(state);
+	int fs=LUA_GET_INT(state);
+	int hw=LUA_GET_INT(state);
+	int h=LUA_GET_INT(state);
+	int w=LUA_GET_INT(state);
+	bool res=g_Game()->UpdateWindow(w,h,hw,fs,bpp);
+	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
+	return 1;
+	}
+
 int DEVICE_GetVideoHeights(lua_State *state) {
 	int index=LUA_GET_INT(state);
 	LUA_SET_NUMBER(state, videoheights[index]);
@@ -469,6 +469,7 @@ void LUA_DEVICE_RegisterLib() {
 	g_CuboLib()->AddFunc("DEVICE_UnOrtho",DEVICE_UnOrtho);
 	g_CuboLib()->AddFunc("DEVICE_Clear",DEVICE_Clear);
 	g_CuboLib()->AddFunc("DEVICE_Init",DEVICE_Init);
+	g_CuboLib()->AddFunc("DEVICE_Update",DEVICE_Update);
 	g_CuboLib()->AddFunc("DEVICE_Reload",DEVICE_Reload);
 	g_CuboLib()->AddFunc("DEVICE_GetVideoModes",DEVICE_GetVideoModes);
 	g_CuboLib()->AddFunc("DEVICE_GetVideoWidths",DEVICE_GetVideoWidths);
