@@ -65,7 +65,7 @@ void Keyboard::HandleKeys() {
 					handler(i,(keydown[i]),toggle);
 					}
 
-			//Reset everythink
+			//Reset everything
 			downbefore[i]=keydown[i];
 
 			}
@@ -73,18 +73,19 @@ void Keyboard::HandleKeys() {
 
 void Keyboard::StartTextInput() {
 	//SDL_EnableUNICODE(SDL_ENABLE);
-	textinputmode=1;
+	SDL_StartTextInput();
 	}
 
 void Keyboard::StopTextInput() {
 	//SDL_EnableUNICODE(SDL_DISABLE);
-	textinputmode=0;
+	SDL_StopTextInput();
 	}
 
 void Keyboard::DispatchEvent(SDL_Event *ev) {
-	if (!textinputmode) { return; }
-	if (ev->type==SDL_KEYDOWN) {
-			lastkeysim=ev->key.keysym;
+	if (ev->type==SDL_TEXTINPUT) {
+			if (!textHandler) { return; }
+			auto str = std::string(ev->text.text);
+			textHandler(str);
 			}
 	}
 

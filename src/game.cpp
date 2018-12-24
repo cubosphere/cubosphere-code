@@ -56,6 +56,11 @@ static void keyhandle(int key,int down,int special) {
 	if (!TheGame) { return; }
 	else { TheGame->KeyHandle(key,down,special); }
 	}
+
+static void texthandle(std::string& str) {
+	if (!TheGame) { return; }
+	else { TheGame->TextInputHandle(str); }
+	}
 /*
 static void joyaxishandle(int joys,int axis,float val,float pval)
 {
@@ -577,6 +582,15 @@ void CuboGame::KeyHandle(int ident,int down,int toggle) {
 			}
 	}
 
+void CuboGame::TextInputHandle(std::string& inp) {
+	if (MenuActive) {
+			menu.SendTextInput(inp);
+			}
+	if (GameActive) {
+			lvl.SendTextInput(inp);
+			}
+	}
+
 void CuboGame::DiscreteJoyHandle(int joy,int button,int dir,int down,int toggle) {
 	if (CuboConsole::GetInstance()->IsActive()) { return; }
 
@@ -650,6 +664,7 @@ int CuboGame::Init() {
 	RenderPassID=0;
 	keyboard.Init();
 	keyboard.SetHandler(keyhandle);
+	keyboard.SetTextHandler(texthandle);
 
 	//joysticks.SetAxisHandler(joyaxishandle);
 	joysticks.SetDiscreteHandler(joyhandle);

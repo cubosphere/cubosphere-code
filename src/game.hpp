@@ -67,6 +67,7 @@ class Game {
 		virtual void End();
 		virtual Vector2d GetScreenSize() {Vector2d res(screenwidth,screenheight); return res;}
 		virtual void KeyHandle(int ident,int down,int special) {}
+		virtual void TextInputHandle(std::string&) {}
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval) {}
 		virtual int Init();
 		virtual void SetMinFrames(float t) {minframes=t;}
@@ -125,6 +126,7 @@ class CuboGame : public Game {
 		virtual void Think();
 		virtual void ScreenShot();
 		virtual void KeyHandle(int ident,int down,int toggle);
+		virtual void TextInputHandle(std::string&);
 		virtual void JoyAxisHandle(int joys,int axis,float val,float pval);
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle);
 		virtual int Init();

@@ -22,6 +22,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 // (IDENT-CODE, PRESS or RELEASE, First-Time-Down (toggle)
 using KeyboardFunc = void(*)(int,int,int);
+using TextInputFunc = void(*)(std::string&);
 
 class Keyboard {
 	protected:
@@ -30,9 +31,9 @@ class Keyboard {
 		std::vector<Uint8> downbefore;
 		std::vector<double> pressedtime;
 		KeyboardFunc handler;
+		TextInputFunc textHandler;
 		double rep_start_time;
 		double rep_rep_time;
-		int textinputmode;
 		SDL_Keysym lastkeysim;
 	public:
 		SDL_Keysym GetLastKeySim() {return lastkeysim;}
@@ -46,6 +47,7 @@ class Keyboard {
 		int DownBefore(int ident) {return downbefore[ident];}
 		SDL_Scancode GetKeyConstFor(std::string keyname);
 		void SetHandler(KeyboardFunc h) {handler=h;}
+		void SetTextHandler(TextInputFunc h) {textHandler=h;}
 //    void RegisterKey(SDLKey key,int ident,TKeyboardFunc func, int toggle);
 		void DispatchEvent(SDL_Event *ev);
 		void HandleKeys();

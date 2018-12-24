@@ -30,6 +30,9 @@ void EventManager::HandleEvents() {
 						//		case SDL_TEXTEDITING:
 						//Send it to Keyboard
 						break;
+					case SDL_TEXTINPUT:
+						keyb->DispatchEvent(&event);
+						break;
 					case SDL_MOUSEMOTION:
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
