@@ -21,6 +21,7 @@ Goal of this project is a freeware game similar to the PSX game "Kula World" / "
 * Joystick/Gamepad support
 
 # What have I already done to improve the game?
+* **Moved to SDL2 from SDL1.2**
 * Migrated to CMake
 * Separated data and code repos with auto ZIP
 * Fixed few warnings
