@@ -15,7 +15,7 @@ You will need (with headers, which often stored in `-dev` packages):
 * libpng (and libpng++ for build)
 * POCO libraries (`Zip` one is used)
 
-Also, you will need C++ compiler (`gcc/g++`, `clang` or another one), CMake and `make`/`ninja`.
+Also, you will need C++ compiler (`clang` is officially supported, `g++` doesn't work, others may or may not), CMake and `make`/`ninja`.
 
 Optimal setpup on Ubuntu 18.04/18.10 (CI build use it):
 
