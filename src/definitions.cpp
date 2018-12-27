@@ -90,10 +90,7 @@ void Menu::PostThink() {
 	if (!finfo) { coutlog("Menudef "+name+" not found!",1); isloaded=false; return;}
 	lua.Include(g_CuboLib());
 	lua.LoadFile(finfo,FILE_MENUDEF,-1);
-	if (lua.FuncExists("Precache")) {
-
-			lua.CallVA("Precache");
-			}
+	lua.CallVAIfPresent("Precache");
 
 
 	isloaded=true;
@@ -102,28 +99,18 @@ void Menu::PostThink() {
 
 void Menu::Render() {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("Render")) {
-
-			lua.CallVA("Render");
-			}
+		lua.CallVAIfPresent("Render");
 	}
 
 
 void Menu::Think() {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("Think")) {
-
-			lua.CallVA("Think");
-			}
+			lua.CallVAIfPresent("Think");
 	}
 
 void Menu::JoyAxisChange(int joys,int axis,double val,double pval) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnJoyAxisChange")) {
-
-			lua.CallVA("OnJoyAxisChange", {{joys,axis,val,pval}});
-			}
-
+			lua.CallVAIfPresent("OnJoyAxisChange", {{joys,axis,val,pval}});
 	}
 
 
@@ -140,10 +127,7 @@ void Menu::SendTextInput(std::string& str) {
 
 void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle) {
 	if (!isloaded) { return; }
-	if (lua.FuncExists("OnJoyButton")) {
-
-			lua.CallVA("OnJoyButton", {{joy,button,dir,down,toggle}});
-			}
+			lua.CallVAIfPresent("OnJoyButton", {{joy,button,dir,down,toggle}});
 	}
 
 

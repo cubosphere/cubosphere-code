@@ -24,9 +24,6 @@ if not, see <http://www.gnu.org/licenses/>.
 
 /* Here we provide a parser for block and texture definitions */
 
-
-#define COND_LUA_CALL(nam,stret,pspec,...) if (!(lua.FuncExists(nam))) return stret; lua.CallVA(nam,pspec, ##__VA_ARGS__)
-
 class BaseLuaDef {
 	protected:
 		std::string name;

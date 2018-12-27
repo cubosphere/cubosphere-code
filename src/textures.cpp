@@ -57,9 +57,7 @@ inline std::unique_ptr<CuboFile> getTextrueFile(std::string subname,int type) {
 	}
 
 void TextureDef::Call_Render(int sideid) {
-	if (lua.FuncExists("Render")) {
-			lua.CallVA("Render", {{sideid}});
-			}
+	lua.CallVAIfPresent("Render", {{sideid}});
 	}
 
 void TextureDef::RenderPlane() {
