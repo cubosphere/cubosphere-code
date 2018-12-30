@@ -599,7 +599,7 @@ bool StartBootScript(std::string name) {
 	auto cf=gBaseFileSystem.GetFileForReading(name);
 	if (!cf) { gBaseFileSystem.PopBottom(); return false;}
 	LuaAccess acc;
-	acc.Include(g_CuboLib());
+	acc.LoadUserLibs();
 	int res=acc.LoadFile(cf,-1,-1);
 	return res;
 	}

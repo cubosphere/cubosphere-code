@@ -23,8 +23,17 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <variant>
 #include <optional>
+#include <unordered_map>
+#include <unordered_set>
+#include <any>
 #include "vectors.hpp"
 #include "filesystem.hpp"
+
+#if LUA_VERSION_NUM > 501
+#define lua_getlen(...) lua_rawlen(__VA_ARGS__);
+#else
+#define lua_getlen(...) lua_objlen(__VA_ARGS__);
+#endif
 
 using LuaVATypesIn = std::variant<
 		double,
@@ -46,6 +55,10 @@ using LuaVATypesOut = std::variant<
 
 using LuaVAListIn = std::initializer_list<LuaVATypesIn>;
 using LuaVAListOut = std::initializer_list<LuaVATypesOut>;
+
+inline bool lua_isfulluserdata(lua_State *L, int index) {
+	return lua_type(L, index) == LUA_TUSERDATA;
+	};
 
 inline std::string LUA_GET_STRING(lua_State* state, int idx = -1) { // Complicated due to zero-terminators and garbage collection
 	size_t len;
@@ -152,7 +165,138 @@ extern Vector3d Vector3FromStack(lua_State *state);
 extern Vector4d Vector4FromStack(lua_State *state);
 extern float getfloatfield (lua_State *L, const char *key);
 
+class LuaPushable;
 class LuaCFunctions;
+class LuaModule;
+
+using LuaCXXDataStorage = struct { // POD struct
+	std::any* obj; // Must contain std::shared_ptr<OBJ_TYPE>
+	};
+
+class LuaPushable {
+	public:
+		virtual void LuaPush(lua_State*) = 0;
+		virtual ~LuaPushable() {};
+	};
+
+class LuaGettable {
+	public:
+		virtual bool LuaCheckType(lua_State*, int) = 0;
+		virtual bool LuaLoad(lua_State*, int) = 0;
+		virtual bool LuaPop(lua_State* state) { bool res = LuaLoad(state, -1); if(res) lua_pop(state, 1); return res; };
+		virtual ~LuaGettable() {};
+	};
+
+class LuaType: public LuaPushable, public LuaGettable {
+	public:
+		virtual bool LuaInited(lua_State*) { return true; };
+		virtual void LuaInit(lua_State*) {};
+		virtual ~LuaType() {};
+	};
+
+constexpr auto LuaIndexMetamethod = "__index";
+constexpr auto LuaGCMetamethod = "__gc";
+constexpr auto LuaEqalityMetamethod = "__eq";
+
+inline int LuaCXXDataGC(lua_State* L) {
+	auto storage = (LuaCXXDataStorage*)lua_touserdata(L, -1);
+	delete storage->obj;
+	return 0;
+};
+
+inline int LuaCXXDataEQ(lua_State* L) { // FIXME: always false?
+	auto storage1 = (LuaCXXDataStorage*)lua_touserdata(L, -1);
+	auto storage2 = (LuaCXXDataStorage*)lua_touserdata(L, -2);
+	LUA_SET_BOOL(L, storage1->obj == storage2->obj);
+	return 1;
+};
+
+
+template<typename T> class LuaCXXData: public LuaType { // Stand back everybody! Template's black magic is coming!
+	protected:
+		virtual void UserInit(lua_State*) {}; // Override to cusomize
+		
+		std::string LuaName; // Name on lua side
+		std::shared_ptr<T> obj;
+		bool LuaTypeExtraCheck(lua_State* L, int idx) {
+			lua_getmetatable(L, idx);
+			luaL_getmetatable(L, LuaName.c_str());
+			bool res = lua_equal(L, -1, -2);
+			lua_pop(L, 2);
+			return res;
+		};
+
+		std::unordered_map<std::string, lua_CFunction> methods;
+		std::unordered_map<std::string, lua_CFunction> metamethods = {
+			{LuaGCMetamethod, LuaCXXDataGC}, // Default GC. Override with caution!
+			{LuaEqalityMetamethod, LuaCXXDataEQ} // Default comparator. Objects are eqaul if they share same C++ object.
+		};
+	public:
+		LuaCXXData(std::string name): LuaName(name) {};
+		template <typename... Ts> LuaCXXData(std::string name, Ts&&... args): LuaName(name) { emplace(std::forward<Ts>(args)...); };
+		virtual ~LuaCXXData() {};
+		std::shared_ptr<T> GetObj() { return obj; };
+		void SetObj(std::shared_ptr<T> o) { obj = o; };
+		template <typename... Ts> void emplace(Ts&&... args) { obj = std::make_shared<T>(std::forward<Ts>(args)...); };
+		virtual bool LuaCheckType(lua_State* L, int idx) override {
+			if (not (lua_isfulluserdata(L, idx) and LuaTypeExtraCheck(L, idx))) { return false; }
+			auto storage = (LuaCXXDataStorage*)lua_touserdata(L, idx);
+			return storage and storage->obj and storage->obj->type() == typeid(std::shared_ptr<T>);
+			};
+		virtual bool LuaLoad(lua_State* L, int idx) override {
+			if (LuaCheckType(L, idx)) {
+					SetObj(*std::any_cast<std::shared_ptr<T>>(((LuaCXXDataStorage*)lua_touserdata(L, idx))->obj)); // Shouldn't throw or segfault
+					return true;
+					}
+			else {
+					return false;
+					}
+			};
+		virtual void LuaPush(lua_State* L) override {
+			auto storage = (LuaCXXDataStorage*) lua_newuserdata(L, sizeof(LuaCXXDataStorage));
+			storage->obj = new std::any(obj); // Deleted by LuaCXXDataGC (lua GC)
+			luaL_getmetatable(L, LuaName.c_str());
+			lua_setmetatable(L, -2);
+			};
+
+		void AddMethod(std::string name, lua_CFunction func) { methods.emplace(name, func); }; // Call these two in your LuaInit and then call parrent one
+		void AddMetamethod(std::string name, lua_CFunction func) { metamethods.emplace(name, func); };
+		
+		bool LuaInited(lua_State* L) override {
+			luaL_getmetatable(L, LuaName.c_str());
+			bool res = lua_istable(L, -1);
+			lua_pop(L, 1);
+			return res;
+		};
+		virtual void LuaInit(lua_State* L) override {
+			if (luaL_newmetatable(L, LuaName.c_str())) { // We aren't inited yet
+				UserInit(L); // Load stuff
+				for(auto& e: metamethods) {
+					LUA_SET_STRING(L, e.first);
+					lua_pushcfunction(L, e.second);
+					lua_settable(L, -3);
+				};
+				// Lua stack: Metatable
+				if (not metamethods.count(LuaIndexMetamethod)) { // If there is no custom index method, use methods table
+					lua_createtable(L, 0, methods.size());
+					// Lua stack: Metatable, Methods table
+					lua_pushvalue(L, -1);
+					// Lua stack: Metatable, Methods table, Methods table
+					lua_setfield(L, -3, LuaIndexMetamethod);
+					// Lua stack: Metatable, Methods table
+					for(auto& e: methods) {
+						LUA_SET_STRING(L, e.first);
+						lua_pushcfunction(L, e.second);
+						lua_settable(L, -3);
+					};
+					// Lua stack: Metatable, Methods table
+					lua_pop(L, 1);
+				};
+			};
+			// Lua stack: Metatable
+			lua_pop(L, 1);
+		};
+	};
 
 class LuaBaseVar {
 	protected:
@@ -215,23 +359,25 @@ class LuaVarHolder { //Used to encapsulate member values for items etc.
 
 extern LuaVarHolder* g_Vars();
 
-class LuaAccess {
+class LuaAccess final {
 	protected:
 		lua_State *state;
 		std::string errorstring;
 		int errorline;
 		int typ;
 		std::string lfname;
-		virtual void LoadStdLibs();
+		void LoadStdLibs();
 	public:
 		lua_State * GetLuaState() {return state;}
-		static std::vector<LuaAccess*> gAllLuaStates;
+		void LoadUserLibs();
+		static std::unordered_map<std::string, LuaAccess*> gAllLuaStates;
 		LuaAccess();
 		void Reset();
 		virtual ~LuaAccess();
 		std::string GetFileName() {return lfname;}
 		bool LoadFile(const std::unique_ptr<CuboFile>& finfo,int t,int id);
 		void Include(LuaCFunctions *funcs);
+		//void Include(LuaModule &funcs);
 		bool CallVA(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
 		bool CallVAIfPresent(const char* func, std::optional<LuaVAListIn> iargs = std::nullopt, std::optional<LuaVAListOut> oargs = std::nullopt);
 		bool FuncExists (const char *func);
@@ -248,13 +394,6 @@ class LuaAccess {
 		bool ExecString(std::string s);
 	};
 
-
-
-using LuaCFunc = struct {
-	std::string name;
-	lua_CFunction func;
-	};
-
 //Class holding a bunch of C-Functions exported to LUA
 //Should be declared Virtual, so that we can add our needed funcs by Inheritance
 //Simply Add it in the Constructor
@@ -262,16 +401,27 @@ using LuaCFunc = struct {
 
 class LuaCFunctions {
 	protected:
-		std::vector<LuaCFunc> funcs;
+		std::unordered_map<std::string, lua_CFunction> funcs; // It also makes correct overriding scheme
 		// TLuaAccess *access;
 	public:
-		void RegisterToState(lua_State *state);
-		void AddFunc(std::string name, lua_CFunction func);
+		virtual void RegisterToState(lua_State *state);
+		virtual void AddFunc(const std::string& name, lua_CFunction func);
 		//void SetAccess(TLuaAccess *acc) {access=acc;}
 	};
 
+class LuaModule: public LuaCFunctions {
+	protected:
+		std::string modname;
+		std::unordered_set<std::unique_ptr<LuaType>> types;
+	public:
+		LuaModule(const std::string& name);
+		virtual ~LuaModule() {};
 
-
+		virtual void InitToState(lua_State *state);
+		virtual void RegisterToState(lua_State *state) override;
+		virtual void PushToState(lua_State *state);
+		virtual void AddType(std::unique_ptr<LuaType>&& type);
+	};
 
 class LuaCuboLib : public LuaCFunctions {
 	protected:

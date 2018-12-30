@@ -39,7 +39,7 @@ void BaseLuaDef::LoadDef() {
 	fname=fileinfo->GetName();
 
 
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 	lua.LoadFile(fileinfo,typ,myid);
 // if (lua.FuncExists("Precache")) lua.CallVA("Precache","");
 	if (SendIDWhenPrecache()==0) {
@@ -88,7 +88,7 @@ void Menu::PostThink() {
 	lua.Reset();
 	auto finfo=GetFileName(name,FILE_MENUDEF,".mdef");
 	if (!finfo) { coutlog("Menudef "+name+" not found!",1); isloaded=false; return;}
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 	lua.LoadFile(finfo,FILE_MENUDEF,-1);
 	lua.CallVAIfPresent("Precache");
 

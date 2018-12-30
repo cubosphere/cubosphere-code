@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "posteffects.hpp"
 #include "game.hpp"
 #include "cuboenemies.hpp"
-
+#include "luamodules.hpp"
 
 void CuboPlayer::AddActor(int i) {
 
@@ -2095,8 +2095,20 @@ void LUA_PLAYER_RegisterLib() {
 	g_CuboLib()->AddFunc("PLAYER_SelectActor",PLAYER_SelectActor);
 	g_CuboLib()->AddFunc("PLAYER_GetCamInterpolation",PLAYER_GetCamInterpolation);
 	g_CuboLib()->AddFunc("PLAYER_GetLastActiveActor",PLAYER_GetLastActiveActor);
-
-
-
 	}
+
+LuaModulePlayer::LuaModulePlayer(): LuaModule("player") {
+	AddFunc("GetVar",PLAYER_GetVar);
+	AddFunc("SetVar",PLAYER_SetVar);
+	AddFunc("AddActor",PLAYER_AddActor);
+	AddFunc("GetActiveActor",PLAYER_GetActiveActor);
+	AddFunc("NumActors",PLAYER_NumActors);
+	AddFunc("GetActor",PLAYER_GetActor);
+	AddFunc("NextActor",PLAYER_NextActor);
+	AddFunc("SetCameraSpeed",PLAYER_SetCameraSpeed);
+	AddFunc("InCameraPan",PLAYER_InCameraPan);
+	AddFunc("SelectActor",PLAYER_SelectActor);
+	AddFunc("GetCamInterpolation",PLAYER_GetCamInterpolation);
+	AddFunc("GetLastActiveActor",PLAYER_GetLastActiveActor);
+}
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

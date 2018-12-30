@@ -477,7 +477,7 @@ int SOUND_LoadMusic(lua_State *state) {
 	if (finfo) {
 			//Execute the Music script
 			LuaAccess acc;
-			acc.Include(g_CuboLib());
+			acc.LoadUserLibs();
 			acc.LoadFile(finfo,-1,-1);
 			}
 

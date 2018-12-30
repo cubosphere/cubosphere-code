@@ -20,6 +20,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboutils.hpp"
 #include <sstream>
 #include "luautils.hpp"
+#include "luamodules.hpp"
+#include "game.hpp"
 
 void Joystick::AxisMotionEvent(int axis,int value) {
 	if (axis>=(int)(axisvals.size())) { return ; }
@@ -182,4 +184,76 @@ void JoystickServer::HandleKeys() {
 int JoystickServer::NumJoysticks() {
 	return SDL_NumJoysticks();
 	}
+
+bool JoyWrapper::IsConnected() {
+	return g_Game()->GetJoysticks()->IsConnected(jidx);
+}
+
+std::vector<int> JoystickServer::ConnectedJoys() {
+	std::vector<int> res;
+	for (auto& e: sticks) res.push_back(e.first);
+	return res;
+}
+
+std::string JoyWrapper::GetGUID() {
+	constexpr auto bufsize = 33;
+	char buf[bufsize];
+	auto guid = SDL_JoystickGetDeviceGUID(jidx);
+	SDL_JoystickGetGUIDString(guid, buf, bufsize);
+	return std::string(buf);
+}
+
+
+static int JoystickT_IsConnected(lua_State* L) {
+	LuaJoystick joy;
+	if (joy.LuaLoad(L, 1)) {
+		LUA_SET_BOOL(L, joy.GetObj()->IsConnected());
+		return 1;
+	} else return 0;
+}
+
+static int JoystickT_GetGUID(lua_State* L) {
+	LuaJoystick joy;
+	if (joy.LuaLoad(L, 1)) {
+		LUA_SET_STRING(L, joy.GetObj()->GetGUID());
+		return 1;
+	} else return 0;
+}
+
+static int Joystick_Get(lua_State* L) {
+	auto num = LUA_GET_INT(L, 1);
+	LuaJoystick joy(num);
+	joy.LuaPush(L);
+	return 1;
+};
+
+static int Joystick_List(lua_State* L) {
+	auto joys = g_Game()->GetJoysticks()->ConnectedJoys();
+	lua_createtable(L, joys.size(), 0);
+	for (size_t i = 0; i < joys.size(); ++i) {
+		LUA_SET_NUMBER(L, i+1);
+		LUA_SET_NUMBER(L, joys.at(i));
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
+static int Joystick_Count(lua_State* L) {
+	LUA_SET_NUMBER(L, g_Game()->GetJoysticks()->NumJoysticks());
+	return 1;
+};
+
+void LuaJoystick::UserInit(lua_State* L) {
+	AddMethod("IsConnected", JoystickT_IsConnected);
+	AddMethod("GetGUID", JoystickT_GetGUID);
+}
+
+
+LuaModuleJoystick::LuaModuleJoystick(): LuaModule("Joystick") {
+	AddType(std::make_unique<LuaJoystick>());
+	AddFunc("Get", Joystick_Get);
+	AddFunc("List", Joystick_List);
+	AddFunc("Count", Joystick_Count);
+}
+
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

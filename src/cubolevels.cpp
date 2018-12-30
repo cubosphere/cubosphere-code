@@ -366,7 +366,7 @@ bool CuboLevel::LoadFromLua(std::string fname) {
 	loadnextlevel=0;
 	g_Game()->Clear();
 	lua.Reset();
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 
 	filename=fname;
 	auto finfo=GetFileName(fname,nextleveluserlevel==1 ? FILE_USERLEVEL : FILE_LEVEL,".ldef");

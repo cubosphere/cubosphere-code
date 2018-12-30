@@ -19,6 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include "luautils.hpp"
 #include "cuboutils.hpp"
 
 class JoystickServer;
@@ -61,6 +62,8 @@ class JoystickServer {
 	public:
 		void AddJoystick(int mindex);
 		void RemoveJoystick(int mindex);
+		bool IsConnected(int mindex) { return sticks.count(mindex); };
+		std::vector<int> ConnectedJoys();
 		void SetAxisHandler(JoystickAxisFunc h) {axishandler=h;}
 		void SetDiscreteHandler(JoystickButtonFunc b) {buttonhandler=b;}
 		int NumJoysticks();
@@ -70,5 +73,25 @@ class JoystickServer {
 		void HandleKeys();
 		void ResetButtons();
 	};
+
+class JoyWrapper {
+protected:
+	int jidx;
+public:
+	JoyWrapper() = delete;
+	JoyWrapper(int i): jidx(i) {};
+	bool IsConnected();
+	std::string GetGUID();
+	std::vector<int> ConnectedJoys();
+};
+
+class LuaJoystick: public LuaCXXData<JoyWrapper> {
+protected:
+	virtual void UserInit(lua_State* L) override;
+public:
+	LuaJoystick(): LuaCXXData("Joystick") {};
+	LuaJoystick(int i): LuaCXXData("Joystick", i) {};
+	virtual ~LuaJoystick() {};
+};
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

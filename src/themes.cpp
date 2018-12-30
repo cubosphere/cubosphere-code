@@ -59,7 +59,7 @@ void Theme::Load(std::string n) {
 	LuaAccess lua;
 	auto finfo=GetFileName(n,FILE_THEMEDEF,".themedef");
 	if (!finfo) {coutlog("ERROR: Cannot load theme "+n,2); return;}
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 	lua.LoadFile(finfo,FILE_THEMEDEF,-1);
 	}
 

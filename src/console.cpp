@@ -48,12 +48,12 @@ int CuboConsole::IsActive() {
 CuboConsole::CuboConsole() : isactive(false), currentline(-1), scrolloffs(0),  screenlines(23), lowerline_ypos(0.5),  togglekey(-2) {
 	history.push_back("");
 	hisbackup=""; hisindex=0;
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 	}
 
 void CuboConsole::Init() {
 	auto cscript=g_BaseFileSystem()->GetFileForReading("/user/console.cfg");
-	lua.Include(g_CuboLib());
+	lua.LoadUserLibs();
 	if (cscript) {
 			std::string c = streamToString(*cscript->GetStream());
 			std::vector<std::string> lines;

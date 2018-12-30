@@ -218,8 +218,8 @@ bool Game::UpdateWindow(int w,int h,int hw,int fs,int bpp) {
 	screenwidth=w;
 	screenheight=h;
 	SDL_SetWindowSize(sdlWindow, w, h);
-	SDL_SetWindowFullscreen(sdlWindow, fs ? SDL_WINDOW_FULLSCREEN : 0);
-	if (!sdlWindow or !sdlRenderer) return false;
+	int res = SDL_SetWindowFullscreen(sdlWindow, fs ? SDL_WINDOW_FULLSCREEN : 0);
+	if (not (sdlWindow and sdlRenderer and !res)) return false;
 	return true;
 	}
 
@@ -242,13 +242,13 @@ void Game::HandleEvents() {
 
 void Game::GameLoopFrame() {
 	if (!GameLua.CallVAIfPresent("GameLoop")) {
-			this->HandleEvents(); //This will parse keyboard and mouse input
+			HandleEvents(); //This will parse keyboard and mouse input
 			//Call the input's Handler
-			this->HandleInput();
+			HandleInput();
 			//Do the physics
-			this->Think();
+			Think();
 			//Do the Render-Work
-			this->Render();
+			Render();
 			}
 
 	}
@@ -327,8 +327,15 @@ void Game::Start() {
 
 
 
-	GameLua.Include(g_CuboLib());
-
+	GameLua.LoadUserLibs();
+	// FIXME: DEBUGGING CODE
+	{
+		std::vector<std::string> cmds;
+		cmds.push_back("local j = require 'Joystick'");
+		cmds.push_back("local joy = j.Get(0)");
+		cmds.push_back("io.write(joy:GetGUID(), '\\n')");
+		GameLua.ExecStrings(cmds);
+	}
 
 //Prepare Looper
 	if (GameLoopSource!="") {
@@ -404,14 +411,8 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 	std::string ext=fname.substr(fname.find_last_of(".") + 1);
 	if (ext=="tga") {
 			//convert to BGR format
-			unsigned char temp;
-			int i = 0;
-			while (i < nSize) {
-					temp = pixels[i];       //grab blue
-					pixels[i] = pixels[i+2];//assign red to blue
-					pixels[i+2] = temp;     //assign blue to red
-
-					i += 3;     //skip to next blue byte
+			for(int i = 0; i < nSize; i+=3) {
+					std::swap(pixels[i], pixels[i+2]);
 					}
 
 			unsigned char TGAheader[12]= {0,0,2,0,0,0,0,0,0,0,0,0};
