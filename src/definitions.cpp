@@ -99,18 +99,18 @@ void Menu::PostThink() {
 
 void Menu::Render() {
 	if (!isloaded) { return; }
-		lua.CallVAIfPresent("Render");
+	lua.CallVAIfPresent("Render");
 	}
 
 
 void Menu::Think() {
 	if (!isloaded) { return; }
-			lua.CallVAIfPresent("Think");
+	lua.CallVAIfPresent("Think");
 	}
 
 void Menu::JoyAxisChange(int joys,int axis,double val,double pval) {
 	if (!isloaded) { return; }
-			lua.CallVAIfPresent("OnJoyAxisChange", {{joys,axis,val,pval}});
+	lua.CallVAIfPresent("OnJoyAxisChange", {{joys,axis,val,pval}});
 	}
 
 
@@ -122,12 +122,12 @@ void Menu::SendKey(int key,int down, int toggle) {
 void Menu::SendTextInput(std::string& str) {
 	if (!isloaded) { return; }
 	lua.CallVAIfPresent("OnTextInput", {{str}});
-}
+	}
 
 
 void Menu::SendJoyButton(int joy, int button,int dir,int down, int toggle) {
 	if (!isloaded) { return; }
-			lua.CallVAIfPresent("OnJoyButton", {{joy,button,dir,down,toggle}});
+	lua.CallVAIfPresent("OnJoyButton", {{joy,button,dir,down,toggle}});
 	}
 
 

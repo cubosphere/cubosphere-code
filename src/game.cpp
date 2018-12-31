@@ -190,7 +190,7 @@ bool Game::SetHWRender(bool hw) {
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_TEXTURE_2D);
 			InvalidateMaterial();
-			if (SDL_GL_SetSwapInterval(-1) == -1) SDL_GL_SetSwapInterval(1); // Use (Adaptive) VSync
+			if (SDL_GL_SetSwapInterval(-1) == -1) { SDL_GL_SetSwapInterval(1); } // Use (Adaptive) VSync
 			glReady=1;
 			return sdlRenderer;
 			}

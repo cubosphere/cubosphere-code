@@ -74,7 +74,7 @@ int SizedFont::Load(std::string fontname,int fontsize) {
 
 std::shared_ptr<SizedFont> LoadedFont::GetSized(int dessize) {
 	//First attempt: The font should be the exactly right size   ///Later: add a delta value
-	if (sized.count(dessize)) return sized.at(dessize);
+	if (sized.count(dessize)) { return sized.at(dessize); }
 //Oh, none found: Add it
 	auto n = std::make_shared<SizedFont>();
 
@@ -208,7 +208,7 @@ std::unique_ptr<FontCache>& FontCaches::GetCache(std::shared_ptr<LoadedFont>& fo
 	id.fname = font->GetName();
 	id.text = text;
 	id.size = size;
-	if (caches.count(id)) return caches.at(id);
+	if (caches.count(id)) { return caches.at(id); }
 	//Test if we can add a font
 	int index=caches.size();
 	//std::unique_ptr<FontCache>& newcache;

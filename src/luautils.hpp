@@ -202,20 +202,20 @@ inline int LuaCXXDataGC(lua_State* L) {
 	auto storage = (LuaCXXDataStorage*)lua_touserdata(L, -1);
 	delete storage->obj;
 	return 0;
-};
+	};
 
 inline int LuaCXXDataEQ(lua_State* L) { // FIXME: always false?
 	auto storage1 = (LuaCXXDataStorage*)lua_touserdata(L, -1);
 	auto storage2 = (LuaCXXDataStorage*)lua_touserdata(L, -2);
 	LUA_SET_BOOL(L, storage1->obj == storage2->obj);
 	return 1;
-};
+	};
 
 
 template<typename T> class LuaCXXData: public LuaType { // Stand back everybody! Template's black magic is coming!
 	protected:
 		virtual void UserInit(lua_State*) {}; // Override to cusomize
-		
+
 		std::string LuaName; // Name on lua side
 		std::shared_ptr<T> obj;
 		bool LuaTypeExtraCheck(lua_State* L, int idx) {
@@ -224,13 +224,13 @@ template<typename T> class LuaCXXData: public LuaType { // Stand back everybody!
 			bool res = lua_equal(L, -1, -2);
 			lua_pop(L, 2);
 			return res;
-		};
+			};
 
 		std::unordered_map<std::string, lua_CFunction> methods;
 		std::unordered_map<std::string, lua_CFunction> metamethods = {
-			{LuaGCMetamethod, LuaCXXDataGC}, // Default GC. Override with caution!
-			{LuaEqalityMetamethod, LuaCXXDataEQ} // Default comparator. Objects are eqaul if they share same C++ object.
-		};
+				{LuaGCMetamethod, LuaCXXDataGC}, // Default GC. Override with caution!
+				{LuaEqalityMetamethod, LuaCXXDataEQ} // Default comparator. Objects are eqaul if they share same C++ object.
+			};
 	public:
 		LuaCXXData(std::string name): LuaName(name) {};
 		template <typename... Ts> LuaCXXData(std::string name, Ts&&... args): LuaName(name) { emplace(std::forward<Ts>(args)...); };
@@ -261,41 +261,41 @@ template<typename T> class LuaCXXData: public LuaType { // Stand back everybody!
 
 		void AddMethod(std::string name, lua_CFunction func) { methods.emplace(name, func); }; // Call these two in your LuaInit and then call parrent one
 		void AddMetamethod(std::string name, lua_CFunction func) { metamethods.emplace(name, func); };
-		
+
 		bool LuaInited(lua_State* L) override {
 			luaL_getmetatable(L, LuaName.c_str());
 			bool res = lua_istable(L, -1);
 			lua_pop(L, 1);
 			return res;
-		};
+			};
 		virtual void LuaInit(lua_State* L) override {
 			if (luaL_newmetatable(L, LuaName.c_str())) { // We aren't inited yet
-				UserInit(L); // Load stuff
-				for(auto& e: metamethods) {
-					LUA_SET_STRING(L, e.first);
-					lua_pushcfunction(L, e.second);
-					lua_settable(L, -3);
-				};
-				// Lua stack: Metatable
-				if (not metamethods.count(LuaIndexMetamethod)) { // If there is no custom index method, use methods table
-					lua_createtable(L, 0, methods.size());
-					// Lua stack: Metatable, Methods table
-					lua_pushvalue(L, -1);
-					// Lua stack: Metatable, Methods table, Methods table
-					lua_setfield(L, -3, LuaIndexMetamethod);
-					// Lua stack: Metatable, Methods table
-					for(auto& e: methods) {
-						LUA_SET_STRING(L, e.first);
-						lua_pushcfunction(L, e.second);
-						lua_settable(L, -3);
+					UserInit(L); // Load stuff
+					for(auto& e: metamethods) {
+							LUA_SET_STRING(L, e.first);
+							lua_pushcfunction(L, e.second);
+							lua_settable(L, -3);
+							};
+					// Lua stack: Metatable
+					if (not metamethods.count(LuaIndexMetamethod)) { // If there is no custom index method, use methods table
+							lua_createtable(L, 0, methods.size());
+							// Lua stack: Metatable, Methods table
+							lua_pushvalue(L, -1);
+							// Lua stack: Metatable, Methods table, Methods table
+							lua_setfield(L, -3, LuaIndexMetamethod);
+							// Lua stack: Metatable, Methods table
+							for(auto& e: methods) {
+									LUA_SET_STRING(L, e.first);
+									lua_pushcfunction(L, e.second);
+									lua_settable(L, -3);
+									};
+							// Lua stack: Metatable, Methods table
+							lua_pop(L, 1);
+							};
 					};
-					// Lua stack: Metatable, Methods table
-					lua_pop(L, 1);
-				};
-			};
 			// Lua stack: Metatable
 			lua_pop(L, 1);
-		};
+			};
 	};
 
 class LuaBaseVar {

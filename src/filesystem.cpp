@@ -159,7 +159,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 			if(openStream()) { return ifs; }
 			else { return nullptr; }
 			}
-		
+
 
 		virtual std::shared_ptr<std::string> GetData() {
 			if (data) { return data; }

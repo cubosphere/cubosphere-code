@@ -152,7 +152,7 @@ void LuaAccess::LoadStdLibs() {
 void LuaAccess::LoadUserLibs() { // In ideal world, this will be empty
 	Include(g_CuboLib()); // Old way (global functions)
 	LuaRegisterLoader(state); // New way (use require)
-}
+	}
 
 
 /*
@@ -396,40 +396,40 @@ LuaModule::LuaModule(const std::string& name): modname(name) {}
 
 void LuaModule::InitToState(lua_State* state) {
 	for(auto& e: types) {
-		e->LuaInit(state);
+			e->LuaInit(state);
+			}
 	}
-}
 
 void LuaModule::AddType(std::unique_ptr<LuaType>&& type) {
 	types.emplace(std::move(type));
-}
+	}
 
 
 void LuaModule::PushToState(lua_State* state) {
 	lua_createtable(state, 0, funcs.size());
 	for(auto& e: funcs) {
-		LUA_SET_STRING(state, e.first);
-		lua_pushcfunction(state, e.second);
-		lua_settable(state, -3);
+			LUA_SET_STRING(state, e.first);
+			lua_pushcfunction(state, e.second);
+			lua_settable(state, -3);
+			}
 	}
-}
 
 void LuaModule::RegisterToState(lua_State* state) {
 	InitToState(state);
 	PushToState(state);
 	lua_setglobal(state, modname.c_str());
-}
+	}
 
 
 std::optional<std::ofstream> g_logfile;
 
 void closelog() {
-			if (g_logfile) {
-					*g_logfile << "--------------" << std::endl
+	if (g_logfile) {
+			*g_logfile << "--------------" << std::endl
 					<<            "LOGFILE CLOSED" << std::endl;
-					g_logfile.reset();
-					}
+			g_logfile.reset();
 			}
+	}
 
 int LuaCuboLib::LOG_SetVerboseMode(lua_State *state) {
 	int m=LUA_GET_INT(state);
@@ -460,7 +460,7 @@ int LuaCuboLib::LOG_Mode(lua_State *state) {
 					}
 			else {
 					*g_logfile << "CUBOSPHERE LOGFILE" << std::endl
-					<< "-------------------" << std::endl;
+							<< "-------------------" << std::endl;
 					}
 			}
 	else if ((prior) && (!(*(g_LogMode())))) { closelog(); }
@@ -471,12 +471,13 @@ int LUA_ExecInState(lua_State *state) {
 	std::string cmd=LUA_GET_STRING(state);
 	std::string statename=LUA_GET_STRING(state);
 	if (LuaAccess::gAllLuaStates.count(statename)) {
-		int res=luaL_dostring(LuaAccess::gAllLuaStates.at(statename)->GetLuaState(),cmd.c_str());
-		LUA_SET_NUMBER(state, res);
-	} else {
-		coutlog("No Lua state with name "+statename+" loaded",2);
-		LUA_SET_NUMBER(state, 1);
-	}
+			int res=luaL_dostring(LuaAccess::gAllLuaStates.at(statename)->GetLuaState(),cmd.c_str());
+			LUA_SET_NUMBER(state, res);
+			}
+	else {
+			coutlog("No Lua state with name "+statename+" loaded",2);
+			LUA_SET_NUMBER(state, 1);
+			}
 	return 1;
 	}
 

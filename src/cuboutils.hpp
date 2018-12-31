@@ -32,13 +32,14 @@ extern void TokenizeFull(const std::string& str,
 extern void TrimSpaces( std::string& str);
 
 inline std::string streamToString(std::istream &in, size_t reserve = 0) {
-    std::string ret;
-	if (reserve > 0) ret.reserve(reserve);
-    char buffer[4096];
-    while (in.read(buffer, sizeof(buffer)))
-        ret.append(buffer, sizeof(buffer));
-    ret.append(buffer, in.gcount());
-    return ret;
-}
+	std::string ret;
+	if (reserve > 0) { ret.reserve(reserve); }
+	char buffer[4096];
+	while (in.read(buffer, sizeof(buffer))) {
+			ret.append(buffer, sizeof(buffer));
+			}
+	ret.append(buffer, in.gcount());
+	return ret;
+	}
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

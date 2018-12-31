@@ -4,10 +4,10 @@
 // All implementations are stored in correct .cpp's
 
 class LuaModuleJoystick: public LuaModule {
-public:
-	LuaModuleJoystick();
-	virtual ~LuaModuleJoystick() {};
-};
+	public:
+		LuaModuleJoystick();
+		virtual ~LuaModuleJoystick() {};
+	};
 
 class LuaModulePlayer: public LuaModule {
 	public:

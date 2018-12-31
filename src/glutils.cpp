@@ -332,10 +332,10 @@ static int GetModes(int hw,int fs) {
 	videowidths.push_back(640); videoheights.push_back(480);
 	videowidths.push_back(320); videoheights.push_back(240);
 	for (int i = 0; i < modes_count; ++i) {
-		SDL_GetDisplayMode(display_index, i, &mode);
-		videowidths.push_back(mode.w);
-		videoheights.push_back(mode.h);
-		}
+			SDL_GetDisplayMode(display_index, i, &mode);
+			videowidths.push_back(mode.w);
+			videoheights.push_back(mode.h);
+			}
 
 	return videoheights.size();
 
@@ -463,7 +463,7 @@ static int DEVICE_SetAntiAliasing(lua_State *state) {
 static int Device_SetHWRender(lua_State *L) {
 	LUA_SET_BOOL(L, g_Game()->SetHWRender(LUA_GET_BOOL(L, 1)));
 	return 1;
-};
+	};
 
 
 void LUA_DEVICE_RegisterLib() {

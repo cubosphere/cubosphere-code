@@ -76,24 +76,24 @@ class JoystickServer {
 	};
 
 class JoyWrapper {
-protected:
-	int jidx;
-public:
-	JoyWrapper() = delete;
-	JoyWrapper(int i): jidx(i) {};
-	bool IsConnected();
-	std::string GetGUID();
-	std::string GetName();
-	std::vector<int> ConnectedJoys();
-};
+	protected:
+		int jidx;
+	public:
+		JoyWrapper() = delete;
+		JoyWrapper(int i): jidx(i) {};
+		bool IsConnected();
+		std::string GetGUID();
+		std::string GetName();
+		std::vector<int> ConnectedJoys();
+	};
 
 class LuaJoystick: public LuaCXXData<JoyWrapper> {
-protected:
-	virtual void UserInit(lua_State* L) override;
-public:
-	LuaJoystick(): LuaCXXData("Joystick") {};
-	LuaJoystick(int i): LuaCXXData("Joystick", i) {};
-	virtual ~LuaJoystick() {};
-};
+	protected:
+		virtual void UserInit(lua_State* L) override;
+	public:
+		LuaJoystick(): LuaCXXData("Joystick") {};
+		LuaJoystick(int i): LuaCXXData("Joystick", i) {};
+		virtual ~LuaJoystick() {};
+	};
 
 // kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

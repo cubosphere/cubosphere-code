@@ -456,7 +456,7 @@ void CuboLevel::SendKey(int key,int down,int toggle) {
 
 void CuboLevel::SendTextInput(std::string& str) {
 	lua.CallVAIfPresent("OnTextInput", {{str}});
-}
+	}
 
 
 void CuboLevel::SendJoyButton(int joy, int button,int dir,int down, int toggle) {

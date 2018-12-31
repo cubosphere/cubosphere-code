@@ -30,7 +30,7 @@ using FontID = struct {
 
 inline bool operator==(const FontID& a, const FontID& b) {
 	return (a.fname == b.fname) and (a.text == b.text) and (a.size == b.size);
-}
+	}
 
 struct FontHasher {
 	std::size_t operator()(const FontID& k) const {
@@ -82,7 +82,7 @@ class Font;
 
 //Stores a Surface with a text
 class FontCache {
-	friend Font;
+		friend Font;
 	protected:
 		int iw,ih,sw,sh;
 		int mysize,fontsize;
