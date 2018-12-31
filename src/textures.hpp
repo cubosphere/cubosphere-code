@@ -23,7 +23,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <GL/glew.h>
 #include <SDL.h>
-#include <png.hpp>
+#include <SDL_image.h>
 
 #include "definitions.hpp"
 #include "filesystem.hpp"
@@ -70,37 +70,15 @@ class Texture {
 	};
 
 
-class JPEGTexture: public Texture { // WARNING: JPEG code is not supported and will be removed in 0.4
+class SDLTexture: public Texture { // Uniform loader using SDL_Image
 	protected:
-		void * raw;
-		int trans,channels;
-		void shrink_blur(int ammount);
-		void shrink_half_blur();
+		SDL_Surface* img = nullptr;
 	public:
-		virtual ~JPEGTexture() {if (raw) free(raw);}
-		JPEGTexture() : Texture(), raw(NULL), trans(0) {}
-		JPEGTexture(int w,int h) : Texture(w,h), raw(NULL), trans(0) {}
-		virtual void* getRGBPointer() {return raw;}
-		virtual bool loadFromFile(const std::unique_ptr<CuboFile>& finfo);
-		virtual int LoadAlphaTexture(const std::unique_ptr<CuboFile>& finfo);
-		virtual int GetChannels() {return channels;}
-		virtual int HasAlpha() {return trans;}
-		virtual void ColorKeyTransparency(unsigned int ckey);
-		virtual int CanFastResize(int maxdim);
-		virtual void FastResize(int maxdim);
+		virtual ~SDLTexture() { if(img) SDL_FreeSurface(img); };
+		virtual void* getRGBPointer() override {return img->pixels;}; // Happy segfaults…
+		virtual bool loadFromFile(const std::unique_ptr<CuboFile>& finfo) override;
+		virtual int HasAlpha() override {return img->format->BytesPerPixel == 4;}
 	};
-
-class PNGTexture: public Texture {
-		std::vector<png::byte> data;
-	public:
-		virtual void* getRGBPointer() {return data.data();}
-		virtual bool loadFromFile(const std::unique_ptr<CuboFile>& finfo);
-		virtual int HasAlpha() {return 1;}
-		// TODO: always alpha, no fast resize for png… or not?
-		virtual ~PNGTexture() {};
-	};
-
-
 
 using FontExtend = struct {
 	float u1,v1,u2,v2;

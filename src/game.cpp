@@ -39,8 +39,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "spriteutils.hpp"
 #include "sounds.hpp"
 #include "glutils.hpp"
-#include <jpeglib.h>
-#include <png.hpp>
 
 
 #ifdef PARALLELIZE
@@ -413,6 +411,22 @@ void Game::Start() {
 
 ////////////////////////////////////////////////////////////////7
 
+static SDL_Surface* flip_vertical(SDL_Surface* sfc) {
+     SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
+         sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+         sfc->format->Bmask, sfc->format->Amask);
+     const auto pitch = sfc->pitch;
+     const auto pxlength = pitch*sfc->h;
+     auto pixels = static_cast<unsigned char*>(sfc->pixels) + pxlength;
+     auto rpixels = static_cast<unsigned char*>(result->pixels) ;
+     for(auto line = 0; line < sfc->h; ++line) {
+         memcpy(rpixels,pixels,pitch);
+         pixels -= pitch;
+         rpixels += pitch;
+     }
+     return result;
+}
+
 void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
 	GLint viewport[4];
@@ -421,13 +435,10 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 	int w=viewport[2];
 	int h=viewport[3];
 
-	FILE *fScreenshot; // FIXME: no need to create it here
 	int nSize = w*h*3;
 
 	auto pixels = std::make_unique<GLubyte[]>(nSize);
 	//GLubyte *pixels = new GLubyte [nSize];
-
-	fScreenshot = fopen(fname.c_str(),"wb");
 
 	glReadPixels(0, 0, w, h, GL_RGB,
 			GL_UNSIGNED_BYTE, pixels.get());
@@ -445,6 +456,7 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
 	std::string ext=fname.substr(fname.find_last_of(".") + 1);
 	if (ext=="tga") {
+			auto fScreenshot = fopen(fname.c_str(),"wb");
 			//convert to BGR format
 			for(int i = 0; i < nSize; i+=3) {
 					std::swap(pixels[i], pixels[i+2]);
@@ -464,54 +476,19 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
 			}
 	else if (ext=="jpg") {
-			struct jpeg_compress_struct cinfo;
-			struct jpeg_error_mgr jerr;
-
-			JSAMPROW row_pointer[1];
-			FILE *outfile;
-			outfile = fopen( fname.c_str(), "wb" );
-			cinfo.err = jpeg_std_error( &jerr );
-			jpeg_create_compress(&cinfo);
-			jpeg_stdio_dest(&cinfo, outfile);
-
-			cinfo.image_width      = w;
-			cinfo.image_height     = h;
-			cinfo.input_components = 3;
-			cinfo.in_color_space   = JCS_RGB;
-			jpeg_set_defaults( &cinfo );
-			jpeg_set_quality(&cinfo, 100, false);
-			jpeg_start_compress( &cinfo, TRUE );
-			while( cinfo.next_scanline < cinfo.image_height ) {
-					row_pointer[0] = &pixels[ (h-1-cinfo.next_scanline) * cinfo.image_width *  cinfo.input_components];
-					jpeg_write_scanlines( &cinfo, row_pointer, 1 );
-					}
-			/* similar to read file, clean up after we're done compressing */
-			jpeg_finish_compress( &cinfo );
-			jpeg_destroy_compress( &cinfo );
-			fclose( outfile );
-
-
-
+			SDL_Surface* img = SDL_CreateRGBSurfaceFrom(pixels.get(), w, h, 24, w*3, 0x000000ff, 0x0000ff00, 0x00ff0000, 0);
+			auto img2 = flip_vertical(img);
+			IMG_SaveJPG(img2, fname.c_str(), 100);
+			SDL_FreeSurface(img);
+			SDL_FreeSurface(img2);
 			}
 	else if (ext=="png") {
-			try {
-					png::image<png::rgb_pixel> img(w,h);
-					std::cout << "Saving "<< w << "x" << h << " preview" << std::endl;
-					for(int y=0; y<img.get_height(); ++y) {
-							for(int x=0; x<img.get_width(); ++x) {
-									//std::cout << "setting pixel (" << x << "," << y << ") " << y*img.get_width()+x << std::endl;
-									png::rgb_pixel px;
-									auto datapx = &pixels[(y*img.get_width()+x)*3];
-									px.red = *datapx++;
-									px.green = *datapx++;
-									px.blue = *datapx++;
-									img.set_pixel(x, img.get_height()-y-1, px);
-									}
-							}
-					img.write(fname);
-					}
-			catch(png::error) {}
-			}
+			SDL_Surface* img = SDL_CreateRGBSurfaceFrom(pixels.get(), w, h, 24, w*3, 0x000000ff, 0x0000ff00, 0x00ff0000, 0);
+			auto img2 = flip_vertical(img);
+			IMG_SavePNG(img2, fname.c_str());
+			SDL_FreeSurface(img);
+			SDL_FreeSurface(img2);
+	}
 
 	}
 

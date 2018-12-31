@@ -11,8 +11,7 @@ You will need (with headers, which often stored in `-dev` packages):
 * SDL 2.0
 * SDL_ttf 2.0
 * SDL_mixer 2.0
-* libjpeg (libturbojpeg is ok too)
-* libpng (and libpng++ for build)
+* SDL_image 2.0
 * POCO libraries (`Zip` one is used)
 
 Also, you will need C++ compiler (`clang` is officially supported, `g++` doesn't work, others may or may not), CMake and `make`/`ninja`.
@@ -23,8 +22,8 @@ Optimal setpup on Ubuntu 18.04/18.10 (CI build use it):
 sudo apt-get install -y clang \
 extra-cmake-modules cmake \
 lsb-release dpkg-dev \
-libglvnd-dev liblua5.1-0-dev libglew-dev libjpeg-turbo8-dev libpng++-dev libpoco-dev \
-libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev
+libglvnd-dev liblua5.1-0-dev libglew-dev libpoco-dev \
+libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev libsdl2-image-dev
 ```
 
 # Build process

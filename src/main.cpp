@@ -21,6 +21,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <GL/glew.h>
 #include <SDL.h>
+#include <SDL_image.h>
 #include <libgen.h>
 
 #include <stdlib.h>
@@ -102,6 +103,7 @@ int main(int argc, char *argv[]) {
 
 	std::cout << "STARTING in basedir: " << dir << std::endl << "SDL_Init returns: "<<
 			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << std::endl;
+	IMG_Init(IMG_INIT_PNG);
 
 	//SDL_Init( SDL_INIT_EVERYTHING) << endl;
 

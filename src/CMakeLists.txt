@@ -6,14 +6,13 @@ find_package(OpenGL     REQUIRED COMPONENTS OpenGL)
 find_package(Lua51      REQUIRED)
 find_package(GLEW       REQUIRED)
 #find_package(GLUT      REQUIRED)
-find_package(JPEG       REQUIRED)
-find_package(PNG++      REQUIRED)
 find_package(Poco       REQUIRED COMPONENTS Zip Foundation)
 
 # SDL
 find_package(SDL2       REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(SDL2_ttf   REQUIRED)
+find_package(SDL2_image REQUIRED)
 
 file(GLOB SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
@@ -33,13 +32,12 @@ target_include_directories(cubosphere PRIVATE
 	${LUA_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
 #	${GLUT_INCLUDE_DIR}
-	${JPEG_INCLUDE_DIRS}
-	${PNG++_INCLUDE_DIRS}
 
 # SDL
 	${SDL2_INCLUDE_DIR}
 	${SDL2_MIXER_INCLUDE_DIRS}
 	${SDL2_TTF_INCLUDE_DIRS}
+	${SDL2_IMAGE_INCLUDE_DIRS}
 )
 
 target_link_libraries(cubosphere
@@ -48,20 +46,13 @@ target_link_libraries(cubosphere
 	${LUA_LIBRARIES}
 	${GLEW_LIBRARIES}
 #	${GLUT_LIBRARIES}
-	${JPEG_LIBRARIES}
-	${PNG++_LIBRARIES}
 	${Poco_LIBRARIES}
 
 # SDL
 	${SDL2_LIBRARY}
 	${SDL2_MIXER_LIBRARIES}
 	${SDL2_TTF_LIBRARIES}
-)
-
-target_compile_definitions(cubosphere PRIVATE
-	# Various libs
-	${PNG++_DEFINITIONS}
-	-DPNGPP_HAS_STD_MOVE # Should always work in C++17
+	${SDL2_IMAGE_LIBRARIES}
 )
 
 target_compile_options(cubosphere PRIVATE "$<$<CONFIG:DEBUG>:-fstandalone-debug>")

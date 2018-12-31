@@ -31,6 +31,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <algorithm>
 #include <numeric>
+#include <fstream>
 
 #include "luautils.hpp"
 #include <stdarg.h>
