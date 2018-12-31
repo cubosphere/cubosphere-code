@@ -3,11 +3,12 @@ cmake_minimum_required(VERSION 3.8)
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(GNUInstallDirs)
 
 project(cubosphere
 DESCRIPTION "3D puzzle, open source remake of Kula world"
 LANGUAGES CXX)
+
+include(GNUInstallDirs)
 
 set(PROJECT_HOMEPAGE_URL "https://github.com/cubosphere")
 

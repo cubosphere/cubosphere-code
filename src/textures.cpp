@@ -85,17 +85,18 @@ bool SDLTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 	if (img) {SDL_FreeSurface(img); img = nullptr;}
 	SDL_Surface* tmpimg;
 	if (finfo->IsHDDFile()) {
-		tmpimg = IMG_Load(finfo->GetHDDName().c_str());
-	} else {
-		tmpimg = IMG_Load_RW(finfo->GetAsRWops(), 1);
-	}
+			tmpimg = IMG_Load(finfo->GetHDDName().c_str());
+			}
+	else {
+			tmpimg = IMG_Load_RW(finfo->GetAsRWops(), 1);
+			}
 	if (not tmpimg) {
-		std::cout << "IMG_Load failed: " << SDL_GetError() << std::endl;
-		return false;
-	}
+			std::cout << "IMG_Load failed: " << SDL_GetError() << std::endl;
+			return false;
+			}
 	img = SDL_ConvertSurfaceFormat(tmpimg, SDL_PIXELFORMAT_ABGR8888, 0);
 	SDL_FreeSurface(tmpimg);
-	if (not img) std::cout << "SDL_ConvertSurfaceFormat failed: " << SDL_GetError() << std::endl;
+	if (not img) { std::cout << "SDL_ConvertSurfaceFormat failed: " << SDL_GetError() << std::endl; }
 	width = img->w;
 	height = img->h;
 	return img;

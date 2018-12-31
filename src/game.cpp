@@ -412,20 +412,20 @@ void Game::Start() {
 ////////////////////////////////////////////////////////////////7
 
 static SDL_Surface* flip_vertical(SDL_Surface* sfc) {
-     SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
-         sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
-         sfc->format->Bmask, sfc->format->Amask);
-     const auto pitch = sfc->pitch;
-     const auto pxlength = pitch*sfc->h;
-     auto pixels = static_cast<unsigned char*>(sfc->pixels) + pxlength;
-     auto rpixels = static_cast<unsigned char*>(result->pixels) ;
-     for(auto line = 0; line < sfc->h; ++line) {
-         memcpy(rpixels,pixels,pitch);
-         pixels -= pitch;
-         rpixels += pitch;
-     }
-     return result;
-}
+	SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
+			sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+			sfc->format->Bmask, sfc->format->Amask);
+	const auto pitch = sfc->pitch;
+	const auto pxlength = pitch*sfc->h;
+	auto pixels = static_cast<unsigned char*>(sfc->pixels) + pxlength;
+	auto rpixels = static_cast<unsigned char*>(result->pixels) ;
+	for(auto line = 0; line < sfc->h; ++line) {
+			memcpy(rpixels,pixels,pitch);
+			pixels -= pitch;
+			rpixels += pitch;
+			}
+	return result;
+	}
 
 void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
@@ -488,7 +488,7 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 			IMG_SavePNG(img2, fname.c_str());
 			SDL_FreeSurface(img);
 			SDL_FreeSurface(img2);
-	}
+			}
 
 	}
 
