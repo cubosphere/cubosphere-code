@@ -63,6 +63,7 @@ class JoystickServer {
 		void AddJoystick(int mindex);
 		void RemoveJoystick(int mindex);
 		bool IsConnected(int mindex) { return sticks.count(mindex); };
+		std::string GetName(int mindex);
 		std::vector<int> ConnectedJoys();
 		void SetAxisHandler(JoystickAxisFunc h) {axishandler=h;}
 		void SetDiscreteHandler(JoystickButtonFunc b) {buttonhandler=b;}
@@ -82,6 +83,7 @@ public:
 	JoyWrapper(int i): jidx(i) {};
 	bool IsConnected();
 	std::string GetGUID();
+	std::string GetName();
 	std::vector<int> ConnectedJoys();
 };
 

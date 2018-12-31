@@ -20,19 +20,21 @@ static int LuaModuleLoader(lua_State* L) {
 		LUA_SET_STRING(L, modname);
 		lua_pushcclosure(L, LuaModuleEcho, 1);
 		return 1;
+	} else {
+		LUA_SET_STRING(L, "\n\tno built-in module '"+modname+"'");
+		return 1;
 	}
-	return 0;
 };
 
+// FIXME: we replace package.preload searcher. It isn't important, but still…
 void LuaRegisterLoader(lua_State* L) {
 	lua_getfield(L, LUA_GLOBALSINDEX, "package");
 	// +1
 	lua_getfield(L, -1, "loaders");
 	// +2
-	auto len = lua_getlen(L, -1);
 	lua_pushcfunction(L, LuaModuleLoader);
 	// +3
-	lua_rawseti(L, -2, len + 1);
+	lua_rawseti(L, -2, 1);
 	// +2
 	lua_pop(L, 2);
 }

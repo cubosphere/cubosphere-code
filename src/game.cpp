@@ -328,14 +328,21 @@ void Game::Start() {
 
 
 	GameLua.LoadUserLibs();
-	// FIXME: DEBUGGING CODE
+	// DEBUGGING CODE
+	/*
 	{
 		std::vector<std::string> cmds;
 		cmds.push_back("local j = require 'Joystick'");
 		cmds.push_back("local joy = j.Get(0)");
-		cmds.push_back("io.write(joy:GetGUID(), '\\n')");
+		cmds.push_back("io.write('Joy count: ', j.Count(), '\\n')");
+		cmds.push_back("if joy:IsConnected() then");
+		cmds.push_back("io.write('Name: ', joy:GetName(), '\\n')");
+		cmds.push_back("io.write('GUID: ', joy:GetGUID(), '\\n')");
+		cmds.push_back("else");
+		cmds.push_back("io.write('No joys connected\\n')");
+		cmds.push_back("end");
 		GameLua.ExecStrings(cmds);
-	}
+	}*/
 
 //Prepare Looper
 	if (GameLoopSource!="") {

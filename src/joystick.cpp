@@ -203,6 +203,19 @@ std::string JoyWrapper::GetGUID() {
 	return std::string(buf);
 }
 
+std::string JoystickServer::GetName(int mindex) {
+	if (IsConnected(mindex)) {
+		return sticks.at(mindex)->Name();
+	} else {
+		return "<ERROR>"; // You should check it on lua side
+	}
+}
+
+
+std::string JoyWrapper::GetName() {
+	return g_Game()->GetJoysticks()->GetName(jidx);
+}
+
 
 static int JoystickT_IsConnected(lua_State* L) {
 	LuaJoystick joy;
@@ -216,6 +229,14 @@ static int JoystickT_GetGUID(lua_State* L) {
 	LuaJoystick joy;
 	if (joy.LuaLoad(L, 1)) {
 		LUA_SET_STRING(L, joy.GetObj()->GetGUID());
+		return 1;
+	} else return 0;
+}
+
+static int JoystickT_GetName(lua_State* L) {
+	LuaJoystick joy;
+	if (joy.LuaLoad(L, 1)) {
+		LUA_SET_STRING(L, joy.GetObj()->GetName());
 		return 1;
 	} else return 0;
 }
@@ -246,6 +267,7 @@ static int Joystick_Count(lua_State* L) {
 void LuaJoystick::UserInit(lua_State* L) {
 	AddMethod("IsConnected", JoystickT_IsConnected);
 	AddMethod("GetGUID", JoystickT_GetGUID);
+	AddMethod("GetName", JoystickT_GetName);
 }
 
 
