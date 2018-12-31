@@ -207,12 +207,12 @@ LuaCFunctions* g_GLLib() {return &g_gllib;}
 
 //////////////LUA-IMPLEMENT///////////////////
 
-int BLEND_Activate(lua_State *state) {
+static int BLEND_Activate(lua_State *state) {
 	glEnable(GL_BLEND);
 	return 0;
 	}
 
-int BLEND_Function(lua_State *state) {
+static int BLEND_Function(lua_State *state) {
 	int v2=LUA_GET_INT(state);
 	int v1=LUA_GET_INT(state);
 	glBlendFunc(v1,v2);
@@ -220,7 +220,7 @@ int BLEND_Function(lua_State *state) {
 	}
 
 
-int BLEND_Deactivate(lua_State *state) {
+static int BLEND_Deactivate(lua_State *state) {
 	glDisable(GL_BLEND);
 	return 0;
 	}
@@ -235,7 +235,7 @@ void LUA_BLEND_RegisterLib() {
 
 //////////////////////////
 
-int CULL_Mode(lua_State *state) { //0: Disable, 1: Backfaces culled, 2: Front faces
+static int CULL_Mode(lua_State *state) { //0: Disable, 1: Backfaces culled, 2: Front faces
 	int m=LUA_GET_INT(state);
 	if (!m) { glDisable(GL_CULL_FACE); }
 	else {
@@ -257,7 +257,7 @@ void LUA_CULL_RegisterLib() {
 //////////////////////////
 
 
-int DEPTH_Offset(lua_State *state) {
+static int DEPTH_Offset(lua_State *state) {
 	float v2=LUA_GET_DOUBLE(state);
 	float v1=LUA_GET_DOUBLE(state);
 	if ((v1*v1<0.0000001) && (v2*v2<0.0000001)) {
@@ -270,29 +270,29 @@ int DEPTH_Offset(lua_State *state) {
 	return 0;
 	}
 
-int DEPTH_Enable(lua_State *state) {
+static int DEPTH_Enable(lua_State *state) {
 	glEnable(GL_DEPTH_TEST);
 	return 0;
 	}
 
-int DEPTH_Disable(lua_State *state) {
+static int DEPTH_Disable(lua_State *state) {
 	glDisable(GL_DEPTH_TEST);
 	return 0;
 	}
 
-int DEPTH_Mask(lua_State *state) {
+static int DEPTH_Mask(lua_State *state) {
 	int i=LUA_GET_INT(state);
 	glDepthMask(i);
 	return 0;
 	}
 
-int DEPTH_Func(lua_State *state) {
+static int DEPTH_Func(lua_State *state) {
 	int i=LUA_GET_INT(state);
 	glDepthFunc(i);
 	return 0;
 	}
 
-int DEPTH_Clear(lua_State *state) {
+static int DEPTH_Clear(lua_State *state) {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	return 0;
 	}
@@ -313,7 +313,7 @@ void LUA_DEPTH_RegisterLib() {
 static std::vector<int> videowidths;
 static std::vector<int> videoheights;
 
-int GetModes(int hw,int fs) {
+static int GetModes(int hw,int fs) {
 	/* Get available fullscreen/hardware modes */
 	int display_index = 0; // FIXME: add many-display support
 	int modes_count = 0;
@@ -341,14 +341,14 @@ int GetModes(int hw,int fs) {
 
 	}
 
-int DEVICE_Viewport(lua_State *state) {
+static int DEVICE_Viewport(lua_State *state) {
 	int h=LUA_GET_INT(state);
 	int w=LUA_GET_INT(state);
 	glViewport(0,0,w,h);
 	return 0;
 	}
 
-int DEVICE_Ortho(lua_State *state) {
+static int DEVICE_Ortho(lua_State *state) {
 	glMatrixMode(GL_PROJECTION);								// Select Projection
 	glPushMatrix();												// Push The Matrix
 	glLoadIdentity();											// Reset The Matrix
@@ -360,7 +360,7 @@ int DEVICE_Ortho(lua_State *state) {
 	return 0;
 	}
 
-int DEVICE_UnOrtho(lua_State *state) {
+static int DEVICE_UnOrtho(lua_State *state) {
 	glMatrixMode( GL_PROJECTION );								// Select Projection
 	glPopMatrix();												// Pop The Matrix
 	glMatrixMode( GL_MODELVIEW );								// Select Modelview
@@ -368,7 +368,7 @@ int DEVICE_UnOrtho(lua_State *state) {
 	return 0;
 	}
 
-int DEVICE_Clear(lua_State *state) {
+static int DEVICE_Clear(lua_State *state) {
 	float vs[4]= {0,0,0,0};
 //vs[0]=cv.x; vs[1]=cv.y; vs[2]=cv.z; vs[3]=cv.w;
 	vs[0]=getfloatfield(state,"r");
@@ -384,7 +384,7 @@ int DEVICE_Clear(lua_State *state) {
 	return 0;
 	}
 
-int DEVICE_GetVideoModes(lua_State *state) {
+static int DEVICE_GetVideoModes(lua_State *state) {
 	//Make the Video-Modes
 	int fs=LUA_GET_INT(state);
 	int hw=LUA_GET_INT(state);
@@ -393,18 +393,18 @@ int DEVICE_GetVideoModes(lua_State *state) {
 	return 1;
 	}
 
-int DEVICE_GetVideoWidths(lua_State *state) {
+static int DEVICE_GetVideoWidths(lua_State *state) {
 	int index=LUA_GET_INT(state);
 	LUA_SET_NUMBER(state, videowidths[index]);
 	return 1;
 	}
 
-int DEVICE_ScreenShot(lua_State *state) {
+static int DEVICE_ScreenShot(lua_State *state) {
 	g_Game()->ScreenShot();
 	return 0;
 	}
 
-int DEVICE_SaveFramePic(lua_State *state) {
+static int DEVICE_SaveFramePic(lua_State *state) {
 	int h=LUA_GET_INT(state);
 	int w=LUA_GET_INT(state);
 	std::string s=LUA_GET_STRING(state);
@@ -416,51 +416,54 @@ int DEVICE_SaveFramePic(lua_State *state) {
 	}
 
 
-int DEVICE_HasGLSL(lua_State *state) {
+static int DEVICE_HasGLSL(lua_State *state) {
 	LUA_SET_NUMBER(state, g_Game()->HasGLSL());
 	return 1;
 	}
 
 
-int DEVICE_Init(lua_State *state) {
-	int bpp=LUA_GET_INT(state);
-	int fs=LUA_GET_INT(state);
-	int hw=LUA_GET_INT(state);
-	int h=LUA_GET_INT(state);
-	int w=LUA_GET_INT(state);
-	bool res=g_Game()->InitGL(w,h,hw,fs,bpp);
+static int DEVICE_Init(lua_State *state) {
+	int w=LUA_GET_INT(state, 1);
+	int h=LUA_GET_INT(state, 2);
+	int hw=LUA_GET_INT(state, 3);
+	int fs=LUA_GET_INT(state, 4);
+	bool res=g_Game()->InitGL(w,h,hw,fs);
 	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
 	return 1;
 	}
 
-int DEVICE_Update(lua_State *state) {
-	int bpp=LUA_GET_INT(state);
-	int fs=LUA_GET_INT(state);
-	int hw=LUA_GET_INT(state);
-	int h=LUA_GET_INT(state);
-	int w=LUA_GET_INT(state);
-	bool res=g_Game()->UpdateWindow(w,h,hw,fs,bpp);
+static int DEVICE_Update(lua_State *state) {
+	int w=LUA_GET_INT(state, 1);
+	int h=LUA_GET_INT(state, 2);
+	int hw=LUA_GET_INT(state, 3);
+	int fs=LUA_GET_INT(state, 4);
+	bool res=g_Game()->UpdateWindow(w,h,hw,fs);
 	LUA_SET_NUMBER(state, (res==true ? 1 : 0));
 	return 1;
 	}
 
-int DEVICE_GetVideoHeights(lua_State *state) {
+static int DEVICE_GetVideoHeights(lua_State *state) {
 	int index=LUA_GET_INT(state);
 	LUA_SET_NUMBER(state, videoheights[index]);
 	return 1;
 	}
 
-int DEVICE_Reload(lua_State *state) {
+static int DEVICE_Reload(lua_State *state) {
 	g_Game()->FreeMedia();
 	return 0;
 	}
 
 
-int DEVICE_SetAntiAliasing(lua_State *state) {
+static int DEVICE_SetAntiAliasing(lua_State *state) {
 	int aa=LUA_GET_INT(state);
 	g_Game()->SetAntiAliasing(aa);
 	return 0;
 	}
+
+static int Device_SetHWRender(lua_State *L) {
+	LUA_SET_BOOL(L, g_Game()->SetHWRender(LUA_GET_BOOL(L, 1)));
+	return 1;
+};
 
 
 void LUA_DEVICE_RegisterLib() {
@@ -478,6 +481,7 @@ void LUA_DEVICE_RegisterLib() {
 	g_CuboLib()->AddFunc("DEVICE_ScreenShot",DEVICE_ScreenShot);
 	g_CuboLib()->AddFunc("DEVICE_SaveFramePic",DEVICE_SaveFramePic);
 	g_CuboLib()->AddFunc("DEVICE_SetAntiAliasing",DEVICE_SetAntiAliasing);
+	g_CuboLib()->AddFunc("DEVICE_SetHWRender",Device_SetHWRender);
 	}
 
 

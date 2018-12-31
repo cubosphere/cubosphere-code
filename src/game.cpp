@@ -139,13 +139,72 @@ void OutVideoInfo()
 
 }*/
 
-bool Game::InitGL(int w,int h,int hw,int fs,int bpp) {
+/*
+ * 0 = No VSync
+ * 1 = VSync
+ * -1 = Adaptive VSync
+*/
+/*
+void Game::SetVSync(bool type) {
+	if (type) {
+		if (SDL_GL_SetSwapInterval(-1) == -1) { // Try adaptive VSync first
+			SDL_GL_SetSwapInterval(1);
+		}
+	} else {
+		SDL_GL_SetSwapInterval(0);
+	}
+};*/
+
+bool Game::SetHWRender(bool hw) {
+	if (sdlWindow and (not sdlRenderer or hw != IsHWRender)) {
+			IsHWRender = hw;
+			if (sdlRenderer) { SDL_DestroyRenderer(sdlRenderer); }
+			sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, (hw ? (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) : SDL_RENDERER_SOFTWARE));
+			glewInit();
+			CheckNeededExtensions();
+
+			glClearColor(1,1,1,1);
+			//glClearColor(0,0,0,1);
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LESS);
+
+			glEnable(GL_LIGHT0);
+			glEnable(GL_NORMALIZE);
+			glDisable(GL_COLOR_MATERIAL);
+			glEnable(GL_LIGHTING);
+
+			glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+			glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
+			glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+//    glLightfv(GL_LIGHT0, GL_EMISSION, light_emission);
+			glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+			glMaterialfv(GL_FRONT, GL_AMBIENT,   mat_ambient);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE,   mat_diffuse);
+			glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
+			glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_TEXTURE_2D);
+			InvalidateMaterial();
+			if (SDL_GL_SetSwapInterval(-1) == -1) SDL_GL_SetSwapInterval(1); // Use (Adaptive) VSync
+			glReady=1;
+			return sdlRenderer;
+			}
+	return false;
+	}
+
+
+bool Game::InitGL(int w, int h, int hw, int fs) {
 //  PrintModes();
 	textures.clear();
 	Uint32 flags = SDL_WINDOW_OPENGL  ;
 	if (fs) { flags|= SDL_WINDOW_FULLSCREEN; }
 //	if (hw) { flags|= SDL_HWSURFACE | SDL_DOUBLEBUF; } // TODO: anything like this in sdl2?
-	else { flags|=SDL_SWSURFACE; }
+//	else { flags|=SDL_SWSURFACE; }
 
 	if (AntiAliasing) {
 // SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -162,46 +221,14 @@ bool Game::InitGL(int w,int h,int hw,int fs,int bpp) {
 	//OutVideoInfo();
 	screenwidth=w;
 	screenheight=h;
-	SDL_CreateWindowAndRenderer(w, h, flags, &sdlWindow, &sdlRenderer);
-	if (!sdlWindow or !sdlRenderer) return false;
-	SDL_SetWindowTitle(sdlWindow, "Cubosphere");
+	//SDL_CreateWindowAndRenderer(w, h, flags, &sdlWindow, &sdlRenderer);
+	sdlWindow = SDL_CreateWindow("Cubosphere", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
+	SetHWRender(hw);
 
-	glewInit();
-
-	CheckNeededExtensions();
-
-	glClearColor(1,1,1,1);
-	//glClearColor(0,0,0,1);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	glEnable(GL_LIGHT0);
-	glEnable(GL_NORMALIZE);
-	glDisable(GL_COLOR_MATERIAL);
-	glEnable(GL_LIGHTING);
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-//    glLightfv(GL_LIGHT0, GL_EMISSION, light_emission);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT,   mat_ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE,   mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_TEXTURE_2D);
-	InvalidateMaterial();
-	glReady=1;
 	return true;
 	}
 
-bool Game::UpdateWindow(int w,int h,int hw,int fs,int bpp) {
+bool Game::UpdateWindow(int w,int h,int hw,int fs) {
 	textures.clear();
 
 	if (AntiAliasing) {
@@ -219,7 +246,8 @@ bool Game::UpdateWindow(int w,int h,int hw,int fs,int bpp) {
 	screenheight=h;
 	int res = SDL_SetWindowFullscreen(sdlWindow, fs ? SDL_WINDOW_FULLSCREEN : 0);
 	SDL_SetWindowSize(sdlWindow, w, h);
-	if (not (sdlWindow and sdlRenderer and !res)) return false;
+	SetHWRender(hw);
+	if (not (sdlWindow and sdlRenderer and !res)) { return false; }
 	return true;
 	}
 
@@ -798,7 +826,7 @@ void CuboGame::PreRender(int wo,int ho) {
 	//const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
 	int w,h;
 	SDL_GetWindowSize(sdlWindow, &w, &h);
-	
+
 	Vector2d widthheight;
 
 	if (wo<=0) { wo=w; }
@@ -989,15 +1017,15 @@ void CuboGame::FreeMedia() {
 	if (g_PostEffect()) { g_PostEffect()->UnPrecache(); }
 	}
 
-bool CuboGame::InitGL(int w,int h,int hw,int fs,int bpp) {
+bool CuboGame::InitGL(int w,int h,int hw,int fs) {
 	FreeMedia();
-	return Game::InitGL(w,h,hw,fs,bpp);
+	return Game::InitGL(w,h,hw,fs);
 	}
 
-bool CuboGame::UpdateWindow(int w, int h, int hw, int fs, int bpp) {
+bool CuboGame::UpdateWindow(int w, int h, int hw, int fs) {
 	FreeMedia(); // FIXME: is required?
-	return Game::UpdateWindow(w,h,hw,fs,bpp);
-}
+	return Game::UpdateWindow(w,h,hw,fs);
+	}
 
 
 CuboGame::~CuboGame() {

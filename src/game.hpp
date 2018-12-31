@@ -39,6 +39,7 @@ class Game {
 		EventManager events;
 		ShaderServer shaders;
 		Font font;
+		bool IsHWRender = true;
 		int screenwidth;
 		int screenheight;
 		int supportingShaders;
@@ -63,6 +64,7 @@ class Game {
 		virtual void Render() {};
 		virtual void HandleEvents();
 		virtual void SetAntiAliasing(int aa) {AntiAliasing=aa;}
+		//void SetVSync(bool type);
 
 		virtual void End();
 		virtual Vector2d GetScreenSize() {Vector2d res(screenwidth,screenheight); return res;}
@@ -82,8 +84,9 @@ class Game {
 		virtual int GetFPS() {return FPS;}
 		virtual Keyboard *GetKeyboard() {return &keyboard;}
 		virtual JoystickServer *GetJoysticks() {return &joysticks;}
-		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
-		virtual bool UpdateWindow(int w,int h,int hw,int fs,int bpp);
+		virtual bool InitGL(int w,int h,int hw,int fs);
+		bool UpdateWindow(int w, int h, int hw, int fs);
+		virtual bool SetHWRender(bool hw);
 		virtual int HasGLSL() {return supportingShaders;}
 		virtual void DiscreteJoyHandle(int joys,int button,int dir,int down,int toggle) {}
 		virtual void SetMaxPhysElapsed(double t) {if (t>0) maxphyselapsed=t; else maxphyselapsed=100000;}
@@ -151,8 +154,8 @@ class CuboGame : public Game {
 		virtual CuboBasis *GetBasis(int i) {return &(basis[i]);}
 		virtual Font* GetFont() {return &font;}
 		virtual Menu* GetMenu() {return &menu;}
-		virtual bool InitGL(int w,int h,int hw,int fs,int bpp);
-		virtual bool UpdateWindow(int w,int h,int hw,int fs,int bpp);
+		bool InitGL(int w, int h, int hw, int fs);
+		virtual bool UpdateWindow(int w,int h,int hw,int fs);
 		virtual void FreeMedia();
 		virtual void RenderPass();
 		virtual void SpecialRenderPass(std::string nam,int defrender);
