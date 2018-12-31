@@ -217,8 +217,8 @@ bool Game::UpdateWindow(int w,int h,int hw,int fs,int bpp) {
 	//OutVideoInfo();
 	screenwidth=w;
 	screenheight=h;
-	SDL_SetWindowSize(sdlWindow, w, h);
 	int res = SDL_SetWindowFullscreen(sdlWindow, fs ? SDL_WINDOW_FULLSCREEN : 0);
+	SDL_SetWindowSize(sdlWindow, w, h);
 	if (not (sdlWindow and sdlRenderer and !res)) return false;
 	return true;
 	}
