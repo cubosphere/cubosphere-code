@@ -59,19 +59,19 @@ int FileTypeFromString(std::string which,std::string *exte) {
 	int d=-1;
 	std::string ext="";
 	if (which=="blockdefs")    { d=FILE_BLOCKDEF; ext="lua";}
-	else if (which=="itemdefs")    { d=FILE_ITEMDEF; ext="idef";}
+	else if (which=="itemdefs")    { d=FILE_ITEMDEF; ext="lua";}
 	else if (which=="userlevels")  { d=FILE_USERLEVEL; ext="ldef";}
-	else if (which=="themes")      { d=FILE_THEMEDEF; ext="themedef";}
+	else if (which=="themes")      { d=FILE_THEMEDEF; ext="lua";}
 	else if (which=="actordefs")   { d=FILE_ACTORDEF; ext="lua";}
 	else if (which=="language")    { d=FILE_LANGDEF; ext="ldef";}
 	else if (which=="music")       { d=FILE_MUSIC; ext="mp3";}
 	else if (which=="savegame")    { d=FILE_SAVEGAME; ext="sdef";}
-	else if (which=="enemydefs")   { d=FILE_ENEMYDEF; ext="edef";}
+	else if (which=="enemydefs")   { d=FILE_ENEMYDEF; ext="lua";}
 	else if (which=="menudefs")   { d=FILE_MENUDEF; ext="mdef";}
 	else if (which=="levels")   { d=FILE_LEVEL; ext="ldef";}
 	else if (which=="editor")   { d=FILE_EDITOR; ext="";}
 	else if (which=="particles")   { d=FILE_PARTICLEDEF; ext="pdef";}
-	else if (which=="texdefs")   { d=FILE_TEXTUREDEF; ext="tdef";}
+	else if (which=="texdefs")   { d=FILE_TEXTUREDEF; ext="lua";}
 	else if (which=="mdldefs")   { d=FILE_MDLDEF; ext="mdef";}
 	else if (which=="posteffects")   { d=FILE_POSTEFFECTDEF; ext="pdef";}
 	else if (which=="skyboxes")   { d=FILE_SKYBOX; ext="sdef";}
