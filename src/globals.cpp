@@ -65,7 +65,7 @@ int FileTypeFromString(std::string which,std::string *exte) {
 	else if (which=="actordefs")   { d=FILE_ACTORDEF; ext="lua";}
 	else if (which=="language")    { d=FILE_LANGDEF; ext="ldef";}
 	else if (which=="music")       { d=FILE_MUSIC; ext="mp3";}
-	else if (which=="savegame")    { d=FILE_SAVEGAME; ext="sdef";}
+	else if (which=="savegame")    { d=FILE_SAVEGAME; ext="lua";}
 	else if (which=="enemydefs")   { d=FILE_ENEMYDEF; ext="lua";}
 	else if (which=="menudefs")   { d=FILE_MENUDEF; ext="mdef";}
 	else if (which=="levels")   { d=FILE_LEVEL; ext="ldef";}
@@ -74,7 +74,7 @@ int FileTypeFromString(std::string which,std::string *exte) {
 	else if (which=="texdefs")   { d=FILE_TEXTUREDEF; ext="lua";}
 	else if (which=="mdldefs")   { d=FILE_MDLDEF; ext="mdef";}
 	else if (which=="posteffects")   { d=FILE_POSTEFFECTDEF; ext="pdef";}
-	else if (which=="skyboxes")   { d=FILE_SKYBOX; ext="sdef";}
+	else if (which=="skyboxes")   { d=FILE_SKYBOX; ext="lua";}
 
 	if (exte) {(*exte)=ext;}
 	if (d<0) { coutlog("Warning: <FileTypeFromString> does not know the type "+which,2); }
@@ -226,7 +226,7 @@ std::unique_ptr<CuboFile> GetFileName(std::string subname,int type,std::string e
 	else {
 			std::string res="";
 			if (type==FILE_USERLEVEL) { res="/user/levels/"+subname+".ldef"; }
-			else if (type==FILE_SAVEGAME) { res="/user/saves/"+subname+".sdef"; }
+			else if (type==FILE_SAVEGAME) { res="/user/saves/"+subname+".lua"; }
 			return gBaseFileSystem.GetFileForReading(res);
 			};
 

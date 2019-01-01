@@ -795,7 +795,7 @@ int LuaCuboLib::SAVE_Close(lua_State *state) {
 int LuaCuboLib::SAVE_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 
-	auto finfo=GetFileName(s,FILE_SAVEGAME,".sdef");
+	auto finfo=GetFileName(s,FILE_SAVEGAME,".lua");
 	if (!finfo) {
 			LUA_SET_NUMBER(state, 0);
 			return 1;
