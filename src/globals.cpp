@@ -58,11 +58,11 @@ std::string g_ProfileDir() {
 int FileTypeFromString(std::string which,std::string *exte) {
 	int d=-1;
 	std::string ext="";
-	if (which=="blockdefs")    { d=FILE_BLOCKDEF; ext="bdef";}
+	if (which=="blockdefs")    { d=FILE_BLOCKDEF; ext="lua";}
 	else if (which=="itemdefs")    { d=FILE_ITEMDEF; ext="idef";}
 	else if (which=="userlevels")  { d=FILE_USERLEVEL; ext="ldef";}
 	else if (which=="themes")      { d=FILE_THEMEDEF; ext="themedef";}
-	else if (which=="actordefs")   { d=FILE_ACTORDEF; ext="adef";}
+	else if (which=="actordefs")   { d=FILE_ACTORDEF; ext="lua";}
 	else if (which=="language")    { d=FILE_LANGDEF; ext="ldef";}
 	else if (which=="music")       { d=FILE_MUSIC; ext="mp3";}
 	else if (which=="savegame")    { d=FILE_SAVEGAME; ext="sdef";}
