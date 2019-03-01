@@ -1254,7 +1254,7 @@ void ReloadLanguage() {
 int LuaCuboLib::TRANS_Load(lua_State *state) {
 	std::string s=LUA_GET_STRING(state);
 	LuaAccess lua;
-	auto finfo=GetFileName(s,FILE_LANGDEF,".ldef");
+	auto finfo=GetFileName(s,FILE_LANGDEF,".lua");
 	if (!finfo) {coutlog("Cannot load translation "+s+ ", since it was not found!",1); return 0;}
 	lua.LoadUserLibs();
 	lua.LoadFile(finfo,FILE_LANGDEF,-1);
