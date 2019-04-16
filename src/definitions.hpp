@@ -96,5 +96,3 @@ class Menu : public BaseLuaDef {
 	};
 
 extern void LUA_MENU_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

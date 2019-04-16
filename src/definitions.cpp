@@ -155,6 +155,3 @@ void LUA_MENU_RegisterLib() {
 	g_CuboLib()->AddFunc("MENU_Activate",MENU_Activate);
 	g_CuboLib()->AddFunc("MENU_Deactivate",MENU_Deactivate);
 	}
-
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

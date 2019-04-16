@@ -55,5 +55,3 @@ class CuboConsole {
 		void Render();
 		void KeyHandle(int ident,int down,int toggle);
 	};
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

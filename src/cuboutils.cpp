@@ -66,5 +66,3 @@ void TokenizeFull(const std::string& str,
 bool BeginsWith(const std::string& str,const std::string& with) {
 	return str.substr(0, with.length()) == with;
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

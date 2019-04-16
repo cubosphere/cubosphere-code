@@ -481,4 +481,3 @@ void LUA_FONT_RegisterLib() {
 	g_CuboLib()->AddFunc("FONT_AddRemap",FONT_AddRemap);
 	g_CuboLib()->AddFunc("FONT_ClearRemaps",FONT_ClearRemaps);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

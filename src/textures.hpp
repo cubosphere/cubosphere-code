@@ -140,5 +140,3 @@ class TextureServer { // FIXME: Use unordered_map
 
 extern void LUA_TEXDEF_RegisterLib();
 extern void LUA_TEXTURE_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

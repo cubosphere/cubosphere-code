@@ -167,4 +167,3 @@ void LUA_MOUSE_RegisterLib() {
 	g_CuboLib()->AddFunc("MOUSE_GetState",MOUSE_GetState);
 	g_CuboLib()->AddFunc("MOUSE_Snap",MOUSE_Snap);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -16,5 +16,3 @@ class LuaModulePlayer: public LuaModule {
 	};
 
 void LuaRegisterLoader(lua_State*);
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

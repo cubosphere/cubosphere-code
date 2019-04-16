@@ -281,5 +281,3 @@ LuaModuleJoystick::LuaModuleJoystick(): LuaModule("Joystick") {
 	AddFunc("List", Joystick_List);
 	AddFunc("Count", Joystick_Count);
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

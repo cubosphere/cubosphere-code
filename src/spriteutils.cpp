@@ -705,4 +705,3 @@ LuaParticleLib::LuaParticleLib() {
 	AddFunc("SPRITE_SetPos",SPRITE_SetPos);
 	AddFunc("SPRITE_SetPhase",SPRITE_SetPhase);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

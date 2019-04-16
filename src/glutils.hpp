@@ -27,5 +27,3 @@ extern void LUA_LIGHT_RegisterLib();
 extern void LUA_MATERIAL_RegisterLib();
 
 extern void InvalidateMaterial();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

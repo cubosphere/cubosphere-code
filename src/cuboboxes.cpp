@@ -974,4 +974,3 @@ void LUA_BLOCK_RegisterLib() {
 	g_CuboLib()->AddFunc("BLOCK_GetEditorInfo",BLOCK_GetEditorInfo);
 	g_CuboLib()->AddFunc("BLOCK_SetCullRadius",BLOCK_SetCullRadius);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

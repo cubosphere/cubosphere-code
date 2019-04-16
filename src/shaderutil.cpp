@@ -393,4 +393,3 @@ void LUA_SHADER_RegisterLib() {
 	g_CuboLib()->AddFunc("SHADER_SetVector3",SHADER_SetVector3);
 	g_CuboLib()->AddFunc("SHADER_SetVector4",SHADER_SetVector4);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -603,4 +603,3 @@ void LUA_SOUND_RegisterLib() {
 	g_CuboLib()->AddFunc("SOUND_StopChannel",SOUND_StopChannel);
 	g_CuboLib()->AddFunc("SOUND_Set3dFromCam",SOUND_Set3dFromCam);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

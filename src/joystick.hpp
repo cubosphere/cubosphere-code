@@ -95,5 +95,3 @@ class LuaJoystick: public LuaCXXData<JoyWrapper> {
 		LuaJoystick(int i): LuaCXXData("Joystick", i) {};
 		virtual ~LuaJoystick() {};
 	};
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

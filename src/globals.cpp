@@ -603,4 +603,3 @@ bool StartBootScript(std::string name) {
 	int res=acc.LoadFile(cf,-1,-1);
 	return res;
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

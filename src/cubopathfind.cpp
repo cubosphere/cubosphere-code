@@ -508,6 +508,3 @@ LuaPathfindingLib::LuaPathfindingLib() {
 
 static LuaPathfindingLib g_pflib;
 LuaPathfindingLib* g_PathFindingLib() {return &g_pflib;}
-
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

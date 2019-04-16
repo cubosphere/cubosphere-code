@@ -182,5 +182,3 @@ static Vector4d g_4dVectorW(0,0,0,1);
 
 extern void LUA_VECTOR_RegisterLib();
 extern void LUA_COLOR_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

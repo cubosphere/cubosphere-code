@@ -222,5 +222,3 @@ extern void g_LastDiffuse(float * ld);
 extern void LUA_ITEM_RegisterLib();
 extern void LUA_BLOCK_RegisterLib();
 extern void LUA_SIDE_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

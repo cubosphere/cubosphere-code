@@ -533,5 +533,3 @@ extern void closelog();
 extern void  ReloadLanguage();
 
 extern LuaAccess* g_CallAccess();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

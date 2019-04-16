@@ -28,5 +28,3 @@ class SkyBox: public BaseLuaDef {
 		void Render();
 		void SpecialRender(std::string nam,int defrender);
 	};
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

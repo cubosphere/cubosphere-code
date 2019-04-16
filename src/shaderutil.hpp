@@ -97,5 +97,3 @@ class ShaderServer {
 	};
 
 extern void LUA_SHADER_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

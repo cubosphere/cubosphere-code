@@ -118,4 +118,3 @@ void LUA_KEYB_RegisterLib() {
 	g_CuboLib()->AddFunc("KEYB_GetKeyConst",KEYB_GetKeyConst);
 	g_CuboLib()->AddFunc("KEYB_GetKeyName",KEYB_GetKeyName);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

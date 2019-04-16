@@ -52,5 +52,3 @@ class Mouse {
 	};
 
 extern void LUA_MOUSE_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

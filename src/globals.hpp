@@ -98,5 +98,3 @@ extern LuaCFunctions* g_FileSysLib();
 
 extern bool StartBootScript(std::string name="boot.lua");
 extern cls_FileSystem * g_BaseFileSystem();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

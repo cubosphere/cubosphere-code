@@ -812,8 +812,3 @@ int COLOR_New(lua_State *state) {
 void LUA_COLOR_RegisterLib() {
 	g_CuboLib()->AddFunc("COLOR_New",COLOR_New);
 	}
-
-
-
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

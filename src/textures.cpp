@@ -701,4 +701,3 @@ void LUA_TEXTURE_RegisterLib() {
 	g_CuboLib()->AddFunc("TEXTURE_SetClamp",TEXTURE_SetClamp);
 	g_CuboLib()->AddFunc("TEXTURE_LoadSkyTexture",TEXTURE_LoadSkyTexture);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

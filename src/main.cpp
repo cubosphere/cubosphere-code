@@ -144,5 +144,3 @@ int main(int argc, char *argv[]) {
 	if (g_VerboseMode()) { coutlog("-> Good bye!"); }
 	return EXIT_SUCCESS;
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

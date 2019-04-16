@@ -1057,5 +1057,3 @@ void LUA_LEVEL_RegisterLib() {
 	g_CuboLib()->AddFunc("LEVEL_Render",LEVEL_Render);
 	g_CuboLib()->AddFunc("LEVEL_SetCollisionChecksActive",LEVEL_SetCollisionChecksActive);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 
-

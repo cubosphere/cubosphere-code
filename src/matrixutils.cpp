@@ -141,4 +141,3 @@ void LUA_MATRIX_RegisterLib() {
 	g_CuboLib()->AddFunc("MATRIX_Identity",MATRIX_Identity);
 	g_CuboLib()->AddFunc("MATRIX_Scale",MATRIX_Scale);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

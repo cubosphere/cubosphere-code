@@ -34,5 +34,3 @@ class GlutMatrix4d: public Matrix4d {
 
 
 extern void LUA_MATRIX_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -254,4 +254,3 @@ void LUA_EFFECT_RegisterLib() {
 	g_CuboLib()->AddFunc("EFFECT_DrawQuad",EFFECT_DrawQuad);
 	g_CuboLib()->AddFunc("EFFECT_DoRenderPart",EFFECT_DoRenderPart);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

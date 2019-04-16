@@ -1261,5 +1261,3 @@ int LuaCuboLib::TRANS_Load(lua_State *state) {
 	g_languagefile=finfo->GetName();
 	return 0;
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -37,4 +37,3 @@ int ENEMY_New(lua_State *state) {
 void LUA_ENEMY_RegisterLib() {
 	g_CuboLib()->AddFunc("ENEMY_New",ENEMY_New);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

@@ -284,5 +284,3 @@ class TCuboMovement {
 
 extern void LUA_ACTOR_RegisterLib();
 extern void LUA_PLAYER_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

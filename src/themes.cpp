@@ -96,4 +96,3 @@ void LUA_THEME_RegisterLib() {
 	g_CuboLib()->AddFunc("THEME_Load",THEME_Load);
 	g_CuboLib()->AddFunc("THEME_GetName",THEME_GetName);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

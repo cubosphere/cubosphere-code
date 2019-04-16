@@ -39,5 +39,3 @@ void LuaRegisterLoader(lua_State* L) {
 	// +2
 	lua_pop(L, 2);
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

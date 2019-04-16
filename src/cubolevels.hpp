@@ -155,5 +155,3 @@ class CuboLevel {
 	};
 
 extern void LUA_LEVEL_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

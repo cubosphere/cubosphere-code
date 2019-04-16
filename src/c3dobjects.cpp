@@ -764,4 +764,3 @@ void LUA_CAM_RegisterLib() {
 	g_CuboLib()->AddFunc("CAM_Think",CAM_Think);
 	g_CuboLib()->AddFunc("CAM_SetDistortionBase",CAM_SetDistortionBase);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

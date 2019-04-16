@@ -41,5 +41,3 @@ inline std::string streamToString(std::istream &in, size_t reserve = 0) {
 	ret.append(buffer, in.gcount());
 	return ret;
 	}
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

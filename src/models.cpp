@@ -601,4 +601,3 @@ void LUA_MODEL_RegisterLib() {
 	g_CuboLib()->AddFunc("MODEL_DrawGroup",MODEL_DrawGroup);
 	g_CuboLib()->AddFunc("MODEL_DrawGroupWithTangent",MODEL_DrawGroupWithTangent);
 	}
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 

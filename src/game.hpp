@@ -168,5 +168,3 @@ CuboGame *g_Game();
 
 void LUA_BASIS_RegisterLib();
 void LUA_GAME_RegisterLib();
-
-// kate: indent-mode cstyle; indent-width 4; replace-tabs off; tab-width 4; 
