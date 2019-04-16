@@ -30,7 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define DIST_RENDER_CUSTOM 4
 
 
-using TraceResult = struct {
+struct TraceResult {
 	int hit;
 	float dist;
 	int block;

@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <GL/glew.h>
 #include <SDL.h>
 
-using TempTexture = struct {
+struct TempTexture {
 	GLuint tindex;
 	GLuint fbo;
 	GLuint depth;

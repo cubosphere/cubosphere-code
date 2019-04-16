@@ -39,7 +39,7 @@ class MdlDef : public BaseLuaDef {
 
 using MdlDefServer = BaseDefServer<MdlDef>;
 
-using IntVect = struct {
+struct IntVect {
 	int x,y,z;
 	};
 
@@ -81,12 +81,12 @@ class BaseModel {
 		virtual void Reload();
 	};
 
-using OBJFace = struct {
+struct OBJFace {
 	int vert[3],norm[3],texcoord[3];
 	int tangent;
 	};
 
-using OBJGroup = struct {
+struct OBJGroup {
 	std::string name,materialname;
 	std::vector<OBJFace> faces;
 	GLuint renderlist;

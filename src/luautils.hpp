@@ -169,7 +169,7 @@ class LuaPushable;
 class LuaCFunctions;
 class LuaModule;
 
-using LuaCXXDataStorage = struct { // POD struct
+struct LuaCXXDataStorage { // POD struct
 	std::any* obj; // Must contain std::shared_ptr<OBJ_TYPE>
 	};
 

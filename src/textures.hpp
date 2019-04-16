@@ -80,7 +80,7 @@ class SDLTexture: public Texture { // Uniform loader using SDL_Image
 		virtual int HasAlpha() override {return img->format->BytesPerPixel == 4;}
 	};
 
-using FontExtend = struct {
+struct FontExtend {
 	float u1,v1,u2,v2;
 	};
 

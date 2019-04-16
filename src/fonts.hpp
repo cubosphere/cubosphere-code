@@ -22,7 +22,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <SDL_ttf.h>
 
-using FontID = struct {
+struct FontID {
 	std::string fname;
 	std::string text;
 	int size;
@@ -118,7 +118,7 @@ class FontCaches {
 		std::unique_ptr<FontCache>& GetCache(std::shared_ptr<LoadedFont>& font,std::string text, int size);
 	};
 
-using FontRemap = struct {
+struct FontRemap {
 	std::string oldc;
 	std::string newc;
 	};

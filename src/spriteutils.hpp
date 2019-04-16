@@ -68,7 +68,7 @@ class SpriteEnvironment {
 	};
 
 
-using Sprite = struct {
+struct Sprite {
 	int typ;
 	Vector3d pos,vel;
 	Vector4d col;

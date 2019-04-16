@@ -248,7 +248,7 @@ std::unique_ptr<CuboFile> GetFileName(std::string subname,int type,std::string e
 	}
 
 
-using TCommandLineEntry = struct {
+struct TCommandLineEntry {
 	std::string spec;
 	std::string val;
 	};
