@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Downloading submodules
-          command: 'git submodule update --init --recursive --depth 1'
+          command: 'git submodule update --init --recursive --depth 50'
       - run:
           name: Installing deps
           command: './.circleci/install-deps.sh'
