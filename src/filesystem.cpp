@@ -13,32 +13,43 @@ if not, see <http://www.gnu.org/licenses/>.
 **/
 
 #include "filesystem.hpp"
+
+#ifdef USE_POCO
+#include <Poco/Zip/ZipArchive.h>
+#include <Poco/Zip/ZipStream.h>
+#include <Poco/StreamCopier.h>
+#endif
+
 #include <fstream>
 #include <cstdlib>
 #include <dirent.h>
 #include <algorithm>
 #include <cstdio>
-#include <Poco/Zip/ZipArchive.h>
-#include <Poco/Zip/ZipStream.h>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#include "globals.hpp"
-
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <regex>
-#include <Poco/StreamCopier.h>
 
-#ifdef USE_CPP_FILESYSTEM
-#include <filesystem>
+#ifdef USE_POCO
+#  include <Poco/File.h>
 #else
-#include <Poco/File.h>
+#  ifdef __GNUC__
+#    include <experimental/filesystem>
+     namespace filesystem = std::experimental::filesystem;
+#  else
+#    include <filesystem>
+     namespace filesystem = std::filesystem;
+#  endif
 #endif
 
+#ifdef USE_POCO
 using namespace Poco::Zip;
+#endif
+
 using namespace std::string_literals;
 
 #ifdef __unix__
@@ -47,7 +58,7 @@ constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
 constexpr auto CLS_PATH_SEPARATOR_SYS = "\\";
 #else
 constexpr auto CLS_PATH_SEPARATOR_SYS = "/";
-#warning "Can't get the system architecture... Don't know, which path separator should be taken"
+#warning "Can't get the system architecture.  Don't know which path separator should be used, defaulting to '/'"
 #endif
 
 constexpr auto CLS_PATH_SEPARATOR = "/";
@@ -92,14 +103,14 @@ std::unique_ptr<TO> static_unique_pointer_cast (std::unique_ptr<FROM>&& old) {
 	//conversion: unique_ptr<FROM>->FROM*->TO*->unique_ptr<TO>
 	}
 
-#ifdef USE_CPP_FILESYSTEM
+#ifndef USE_POCO
 bool cls_DirectoryExists(const std::string& d) {
-	return std::filesystem::is_directory(std::filesystem::path(d));
+	return filesystem::is_directory(filesystem::path(d));
 	}
 
 
-std::filesystem::path vecToPath(const std::vector<std::string>& vec) { // FIXME: use it when Windows will be working
-	std::filesystem::path res;
+filesystem::path vecToPath(const std::vector<std::string>& vec) { // FIXME: use it when Windows will be working
+	filesystem::path res;
 	for(auto const& elem: vec) {
 			res = res / elem;
 			}
@@ -217,6 +228,7 @@ class cls_FileDirMountedForWriting : public cls_FileWriteable {
 //       FILE FROM ZIPMOUNT CLASS          //
 /////////////////////////////////////////////
 
+#ifdef USE_POCO
 class cls_FileZipMountedForReading : public cls_FileReadable {
 	protected:
 		std::string zipname;
@@ -259,6 +271,7 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 
 		virtual unsigned long GetSize(const int binary=1) const { return size; }
 	};
+#endif
 
 /////////////////////////////////////////////
 //     SUB FILE SYSTEM BASE CLASS          //
@@ -490,7 +503,7 @@ class cls_FileSubSystemDirMount : public cls_FileSubSystemBase {
 #else
 					struct stat statres;
 					int isdir=0;
-					string path=dname+CLS_PATH_SEPARATOR_SYS+curr;
+					std::string path=dname+CLS_PATH_SEPARATOR_SYS+curr;
 					if( stat(path.c_str(),&statres) == 0 )  if( statres.st_mode & S_IFDIR ) { isdir=1; }
 					// DIR *tdip;
 					// int isdir=0;
@@ -565,7 +578,7 @@ class cls_ZipMountDirEntry {
 
 
 
-
+#ifdef USE_POCO
 // Zip Mount Sub System class
 
 class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
@@ -674,7 +687,7 @@ class cls_FileSubSystemZipMount : public cls_FileSubSystemBase {
 			}
 
 	};
-
+#endif
 
 /////////////////////////////////////////////
 //         FILE SYSTEM CLASS               //
@@ -800,6 +813,7 @@ class cls_FileSystem_Info_ {
 			return true;
 			}
 
+#ifdef USE_POCO
 		bool MountZipFile(std::string zipf,std::string mountbase="") {
 			std::vector<std::string> mntb;
 			if (!StrToElems(mountbase,mntb)) {ErrorF("cannot mount zip-file (( "+zipf+" )) at invalid mountpoint (( "+mountbase+" ))"); return false;}
@@ -831,6 +845,7 @@ class cls_FileSystem_Info_ {
 			subsys.push_back(static_unique_pointer_cast<cls_FileSubSystemBase, cls_FileSubSystemZipMount>(std::move(md)));
 			return true;
 			}
+#endif
 
 		bool DirExists(const std::string d,const bool for_write_only, const bool uselisting_deny_mask) const {
 			std::vector<std::string> elems;
@@ -955,15 +970,24 @@ bool cls_FileSystem::MountHDDDir(std::string dir,std::string mountbase) const {
 	}
 
 bool cls_FileSystem::MountZipFile(std::string zipfile, std::string mountbase) const {
+#ifdef USE_POCO
 	return FSINFO->MountZipFile(zipfile,mountbase);
+#else
+	std::cout << "Error: Cannot mount zip, Cubosphere was compiled without zip support!" << std::endl;
+	return false;
+#endif
 	}
 
 bool cls_FileSystem::MountZipFile(const std::unique_ptr<cls_FileReadable>& fr,std::string mountbase) const {
+#ifdef USE_POCO
 	if (!fr) { CLS_FILE_ERROR("try to mount a NULL pointer ZIP file at mountbase "+mountbase, CLS_FILE_ERROR_TYPE_ERROR); return false;}
 	if (!fr->IsHDDFile())  { CLS_FILE_ERROR("can only mount ZIP files from HDD, not from location "+fr->GetNameForLog(), CLS_FILE_ERROR_TYPE_ERROR);  return false;}
 	return MountZipFile(fr->GetHDDName(),mountbase);
+#else
+	std::cout << "Error: Cannot mount zip, Cubosphere was compiled without zip support!" << std::endl;
+	return false;
+#endif
 	}
-
 
 std::string cls_FileSystem::GetLastError(int reset) const {
 	return FSINFO->GetError(reset);
