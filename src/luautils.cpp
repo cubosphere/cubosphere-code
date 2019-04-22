@@ -52,7 +52,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "console.hpp"
 #include "luamodules.hpp"
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 
 using namespace std::string_literals;
@@ -635,7 +635,7 @@ LuaCuboLib::LuaCuboLib() {
 	AddFunc("TRANS_StrD",TRANS_StrD);
 	AddFunc("TRANS_Load",TRANS_Load);
 
-	AddFunc("DEBUG",DEBUG);
+	AddFunc("DEBUG",GLDEBUG);
 
 	AddFunc("LUA_ExecInState",LUA_ExecInState);
 
@@ -643,7 +643,7 @@ LuaCuboLib::LuaCuboLib() {
 
 
 
-int LuaCuboLib::DEBUG(lua_State *state) {
+int LuaCuboLib::GLDEBUG(lua_State *state) {
 	GLfloat v[4];
 	glGetMaterialfv(GL_FRONT,GL_AMBIENT,v);
 	std::cout << "Ambient : " << v[0] << "  " << v[1] << "  "<< v[2] << "  " << v[3] << std::endl;

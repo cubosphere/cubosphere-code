@@ -18,7 +18,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "vectors.hpp"
 #include "matrixutils.hpp"
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 
 #define BASE_DIR_SIDE 0

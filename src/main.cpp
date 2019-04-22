@@ -16,10 +16,11 @@ if not, see <http://www.gnu.org/licenses/>.
 
 
 #ifdef WIN32
+#define SDL_MAIN_HANDLED
 #include <windows.h>
 #endif
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <libgen.h>
@@ -67,6 +68,9 @@ void KillConsole() {
 	}
 
 int main(int argc, char *argv[]) {
+#ifdef WIN32
+	SDL_SetMainReady();
+#endif
 	SetCmdLine(argc,argv);
 	std::string dir = dirname(argv[0]);
 

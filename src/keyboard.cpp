@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 //#include <GL/glut.h>
 #endif
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 
 #include <vector>

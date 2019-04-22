@@ -13,11 +13,11 @@ This project is a freeware game similar to the PSX game "Kula World" / "Roll Awa
 ## Features
 * Game similar to Kula World
 * Over 450 levels in 34 different designs!
-* Starting from beta 0.3 — a lot of new stuff like magnets, gravity changers and so on
+* Starting from beta 0.3 — a lot of new stuff like magnets, gravity changers, and so on
 * Multiball feature and two-player-mode
 * Internal level editor!
 * 3D engine via OpenGL
-* GLSL-Shaders
+* GLSL Shaders
 * Joystick/Gamepad support
 
 # What have I already done to improve the game?
@@ -47,7 +47,7 @@ Some notes on the Ubuntu packages:
 2. It is OK that their versions differ, data is stored in another repo and updates with it
 3. When updating, download only `BIN` package: download `DATA` only if deps can't be resolved 
     1. You'll probably be reqested to remove `cubosphere` when updating `cubosphere-data`, do so and install new version later
-    2. Use `dpkg -i` from the command line to avoid this issues (google it for more info)
+    2. Use `dpkg -i` from the command line to avoid this issue (google it for more info)
 
 # What will/should be done?
 [Check out the projects page!](https://github.com/cubosphere/cubosphere-code/projects)

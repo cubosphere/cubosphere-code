@@ -458,7 +458,7 @@ class LuaCuboLib : public LuaCFunctions {
 
 
 
-		static int DEBUG(lua_State *state);
+		static int GLDEBUG(lua_State *state);
 
 		static int GLOBAL_StartDeveloperMode(lua_State *state);
 		static int GLOBAL_GetTime(lua_State *state);

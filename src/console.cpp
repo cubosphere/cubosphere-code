@@ -14,7 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "console.hpp"
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 
 #include <iostream>

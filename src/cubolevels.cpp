@@ -28,23 +28,14 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 
 #ifdef WIN32
-#ifdef VCPP
-#include <time.h>
-#endif
-#ifdef MINGW_CROSS_COMPILE
-#include <ctime>
-#endif
+#  ifdef VCPP
+#    include <time.h>
+#  else
+#    include <ctime>
+#  endif
 #endif
 
-
-#ifdef WIN32
-#ifdef VCPP
-
-#else
-#include <libgen.h>
-#include <dirent.h>
-#endif
-#else
+#ifndef VCPP
 #include <libgen.h>
 #include <dirent.h>
 #endif

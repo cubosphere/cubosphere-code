@@ -19,7 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <memory>
 
 ///Added for Cubo
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 #include <libgen.h>
 

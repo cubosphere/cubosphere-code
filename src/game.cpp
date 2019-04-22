@@ -21,7 +21,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <windows.h>
 #endif
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
 
 #include "vectors.hpp"
@@ -260,7 +260,7 @@ void Game::HandleInput() {
 
 
 static int framecounter=0;
-static double ftime=0;
+static double frametime=0;
 
 void Game::HandleEvents() {
 	events.HandleEvents();
@@ -301,12 +301,12 @@ void Game::GameLoop() {
 					}
 
 			framecounter++;
-			ftime+=elapsed;
-			if (ftime>=1.0) {
-					double fps=framecounter/ftime;
+			frametime+=elapsed;
+			if (frametime>=1.0) {
+					double fps=framecounter/frametime;
 
 					FPS=(int)fps;
-					ftime=0;
+					frametime=0;
 					framecounter=0;
 					}
 

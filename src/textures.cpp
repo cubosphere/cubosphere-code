@@ -24,8 +24,16 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
 
-#include <GL/glew.h>
+#include <GL/glew.hpp>
 #include <SDL.h>
+
+#ifdef WIN32
+#  ifdef VCPP
+#    include <time.h>
+#  else
+#    include <ctime>
+#  endif
+#endif
 
 #include "game.hpp"
 #include "luautils.hpp"
