@@ -1,9 +1,7 @@
 ---
 name: Wiki edit request
-about: Report about problem on cubosphere wiki
-title: "[WIKI]"
-labels: wiki
-assignees: cddepppp256
+about: Report a problem on the Cubosphere wiki
+labels: "T: Wiki"
 
 ---
 
