@@ -45,6 +45,14 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <list>
 
+#if defined(__GNUC__) && __GNUC__ < 8
+#  include <experimental/filesystem>
+   namespace filesystem = std::experimental::filesystem;
+#else
+#  include <filesystem>
+   namespace filesystem = std::filesystem;
+#endif
+
 CuboGame game;
 
 void MakeConsole() {
@@ -97,11 +105,27 @@ int main(int argc, char *argv[]) {
 	SetProfileDir(dir+PlattformFilename("/user"));
 #endif
 
+	if (filesystem::exists(filesystem::path(dir+PlattformFilename("/data/boot.lua")))) {
+		SetDataDir(dir+PlattformFilename("/data"));
+	}
+	else if (filesystem::exists(filesystem::path(dir+PlattformFilename("/../data/boot.lua")))) {
+		SetDataDir(dir+PlattformFilename("/../data"));
+	}
+	else if (filesystem::exists(filesystem::path(dir+PlattformFilename("/../../data/boot.lua")))) {
+		SetDataDir(dir+PlattformFilename("/../../data"));
+	}
+	else if (filesystem::exists(filesystem::path(dir+PlattformFilename("/../../../data/boot.lua")))) {
+		SetDataDir(dir+PlattformFilename("/../../../data"));
+	}
 #ifdef DATADIR
-	SetDataDir(DATADIR);
-#else
-	SetDataDir(dir+PlattformFilename("/data"));
+	else if (filesystem::exists(filesystem::path(DATADIR))) {
+		SetDataDir(dir+PlattformFilename(DATADIR));
+	}
 #endif
+	else {
+		std::cout << "Fatal: Could not find data directory!" << std::endl;
+		exit(-1);
+	}
 
 	MakeConsole();
 

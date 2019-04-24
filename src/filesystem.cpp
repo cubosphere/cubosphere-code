@@ -37,7 +37,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_POCO
 #  include <Poco/File.h>
 #else
-#  ifdef __GNUC__
+#  if defined(__GNUC__) && __GNUC__ < 8
 #    include <experimental/filesystem>
      namespace filesystem = std::experimental::filesystem;
 #  else
