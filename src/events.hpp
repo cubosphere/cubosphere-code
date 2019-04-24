@@ -14,7 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 #include "mouse.hpp"

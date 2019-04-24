@@ -23,7 +23,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include <sstream>
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 #include <SDL_ttf.h>
 

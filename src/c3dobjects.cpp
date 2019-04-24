@@ -15,7 +15,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "c3dobjects.hpp"
 #include <iostream>
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 #include "luautils.hpp"

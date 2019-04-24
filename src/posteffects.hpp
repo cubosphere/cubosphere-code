@@ -17,7 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "definitions.hpp"
 #include <vector>
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 struct TempTexture {

@@ -24,7 +24,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 #ifdef WIN32

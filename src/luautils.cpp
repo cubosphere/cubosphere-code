@@ -52,7 +52,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "console.hpp"
 #include "luamodules.hpp"
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 using namespace std::string_literals;

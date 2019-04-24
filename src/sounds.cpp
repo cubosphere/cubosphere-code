@@ -17,7 +17,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 #include "game.hpp"
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 #include <SDL_mixer.h>
 

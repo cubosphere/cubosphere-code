@@ -21,7 +21,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cuboutils.hpp"
 #include "game.hpp"
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 
 void BaseLuaDef::LoadDef() {

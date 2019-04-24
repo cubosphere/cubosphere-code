@@ -21,7 +21,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #define GL_GLEXT_PROTOTYPES 1
 
-#include <GL/glew.hpp>
+#include "glew.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 

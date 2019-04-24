@@ -18,8 +18,7 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
 
-# FIXME: When enabled, compiler will probably will fail to find glew.hpp.  Needs testing/fixing.
-option(USE_SYSTEM_GLEW "Use system GLEW instead of the built-in version, when available." OFF)
+option(USE_SYSTEM_GLEW "Use system GLEW instead of the built-in version, when available." ON)
 
 set(BINDIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE STRING "Where to install binary")
 set(DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/cubosphere" CACHE STRING "Data location (install-time)")
