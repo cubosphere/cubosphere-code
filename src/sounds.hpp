@@ -15,8 +15,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "glew.hpp"
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <string>
 #include <vector>

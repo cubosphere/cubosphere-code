@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string_view>
 #include <array>
 
-#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
 struct FontID {
 	std::string fname;

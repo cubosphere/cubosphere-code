@@ -16,7 +16,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 #include "glew.hpp"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "luautils.hpp"
 #include "game.hpp"

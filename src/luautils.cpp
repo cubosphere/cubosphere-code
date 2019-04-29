@@ -53,7 +53,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luamodules.hpp"
 
 #include "glew.hpp"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 using namespace std::string_literals;
 

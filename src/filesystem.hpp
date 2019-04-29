@@ -20,7 +20,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 ///Added for Cubo
 #include "glew.hpp"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <libgen.h>
 
 class cls_FileBaseClass {

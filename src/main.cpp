@@ -21,8 +21,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include "glew.hpp"
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <libgen.h>
 
 #include <stdlib.h>

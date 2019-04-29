@@ -16,7 +16,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 #include "glew.hpp"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "skyboxes.hpp"
 #include "posteffects.hpp"

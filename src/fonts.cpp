@@ -24,8 +24,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 
 #include "glew.hpp"
-#include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #define CHAR_SPACE_DIST 0.7
 
