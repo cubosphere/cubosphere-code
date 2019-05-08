@@ -18,8 +18,8 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "game.hpp"
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
 
 #include <vector>
 #include <string>

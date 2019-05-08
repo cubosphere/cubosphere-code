@@ -22,7 +22,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "luautils.hpp"
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "game.hpp"
 #include "cuboactors.hpp"

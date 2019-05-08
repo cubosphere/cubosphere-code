@@ -18,7 +18,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 struct TempTexture {
 	GLuint tindex;

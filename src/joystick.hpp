@@ -14,7 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <vector>
 #include <memory>

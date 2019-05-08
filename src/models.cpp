@@ -19,7 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #define GL_GLEXT_PROTOTYPES 1
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <iostream>
 #include <vector>

@@ -13,7 +13,7 @@ if not, see <http://www.gnu.org/licenses/>.
 **/
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "mouse.hpp"
 #include "game.hpp"

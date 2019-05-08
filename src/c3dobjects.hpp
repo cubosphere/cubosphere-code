@@ -19,7 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "matrixutils.hpp"
 
 #include "glew.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #define BASE_DIR_SIDE 0
 #define BASE_DIR_UP 1
