@@ -51,6 +51,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "cubopathfind.hpp"
 #include "console.hpp"
 #include "luamodules.hpp"
+#include "log.hpp"
 
 #include "glew.hpp"
 #include <SDL.h>
@@ -452,11 +453,11 @@ int LuaCuboLib::LOG_Mode(lua_State *state) {
 			std::string s=g_ProfileDir()+"/logfile.txt";
 
 			s=PlattformFilename(s);
-			std::cout << "Start logging to " << s << std::endl;
+			Log::info("Logging", "Start logging to %s", s.c_str());
 			//g_logfile=fopen(s.c_str(),"w");
 			g_logfile.emplace(s);
 			if (!g_logfile or !g_logfile->good()) {
-					std::cout << "Could not write to logfile " << s << std::endl;
+					Log::error("Logging", "Could not write to logfile %s", s.c_str());
 					*(g_LogMode())=0;
 					}
 			else {
@@ -483,13 +484,21 @@ int LUA_ExecInState(lua_State *state) {
 	}
 
 void coutlog(std::string s,int typ) {
-	std::cout << s << std::endl;
+	if (typ == 2) {
+		Log::error("General", s.c_str());
+	}
+	else if (typ == 1) {
+		Log::warn("General", s.c_str());
+	}
+	else {
+		Log::info("General", s.c_str());
+	}
 
 	if (*(g_LogMode())) {
 			//  string fn=g_ProfileDir()+"/logfile.txt";
 			//  FILE *f=fopen(fn.c_str(),"a");
 			if (!g_logfile) {
-					std::cout << "Could not write to logfile " << s << std::endl;
+					Log::error("Logging", "Could not write to logfile %s", s.c_str());
 					*(g_LogMode())=0;
 					}
 			else {
@@ -646,7 +655,7 @@ LuaCuboLib::LuaCuboLib() {
 int LuaCuboLib::GLDEBUG(lua_State *state) {
 	GLfloat v[4];
 	glGetMaterialfv(GL_FRONT,GL_AMBIENT,v);
-	std::cout << "Ambient : " << v[0] << "  " << v[1] << "  "<< v[2] << "  " << v[3] << std::endl;
+	Log::debug("Renderer", "Ambient: %s %s %s %s", v[0], v[1], v[2], v[3]);
 	return 0;
 	}
 

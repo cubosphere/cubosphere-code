@@ -14,6 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "posteffects.hpp"
 #include "globals.hpp"
+#include "log.hpp"
 #include "luautils.hpp"
 #include "game.hpp"
 
@@ -59,7 +60,7 @@ int PostEffect::CreateTempTexture(int w, int h,int withdepth) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h,  0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 	///TODO: Set Active Texture
 	glBindTexture(GL_TEXTURE_2D, 0);
-	std::cout << "Currently CreateTempTexture not supported" << std::endl;
+	Log::warn("Renderer", "CreateTempTexture is currently unsupported");
 	GLuint depth=0;
 	if (withdepth) {
 			/* glGenRenderbuffers(1, &depth);
@@ -152,7 +153,7 @@ void PostEffect::DepthToStage(int ttex,int stage) {
 	if (!isprecached) { Precache(); }
 	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) { return; }
 
-	std::cout << "Temp Depth to Stage not defined" << std::endl;
+	Log::error("Renderer", "Temp Depth to Stage not defined");
 ///TODO: Set the active Texture g_lastActiveTexture
 	// if (g_Game()->HasGLSL())
 	//glActiveTexture(GL_TEXTURE0+stage);
@@ -162,7 +163,7 @@ void PostEffect::DepthToStage(int ttex,int stage) {
 void PostEffect::TempTextureToStage(int ttex,int stage) {
 	if (!isprecached) { Precache(); }
 	if ((ttex<0) || (ttex>=(int)(ttexts.size()))) { return; }
-	std::cout << "Temp Texture to Stage not defined" << std::endl;
+	Log::error("Renderer", "Temp Texture to Stage not defined");
 ///TODO: Set the active Texture g_lastActiveTexture
 	//if (g_Game()->HasGLSL())
 //    glActiveTexture(GL_TEXTURE0+stage);

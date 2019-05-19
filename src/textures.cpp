@@ -15,6 +15,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <csetjmp>
 #include "textures.hpp"
 #include "globals.hpp"
+#include "log.hpp"
 
 #include <stdio.h>
 #include <iostream>
@@ -99,12 +100,12 @@ bool SDLTexture::loadFromFile(const std::unique_ptr<CuboFile>& finfo) {
 			tmpimg = IMG_Load_RW(finfo->GetAsRWops(), 1);
 			}
 	if (not tmpimg) {
-			std::cout << "IMG_Load failed: " << SDL_GetError() << std::endl;
+			Log::error("SDL", "IMG_Load failed: %s", SDL_GetError());
 			return false;
 			}
 	img = SDL_ConvertSurfaceFormat(tmpimg, SDL_PIXELFORMAT_ABGR8888, 0);
 	SDL_FreeSurface(tmpimg);
-	if (not img) { std::cout << "SDL_ConvertSurfaceFormat failed: " << SDL_GetError() << std::endl; }
+	if (not img) { Log::error("SDL", "SDL_ConvertSurfaceFormat failed: %s", SDL_GetError()); }
 	width = img->w;
 	height = img->h;
 	return img;

@@ -15,6 +15,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "models.hpp"
 #include "globals.hpp"
 #include "glutils.hpp"
+#include "log.hpp"
 
 #define GL_GLEXT_PROTOTYPES 1
 
@@ -108,7 +109,7 @@ bool TextFileReader::LoadFile(const std::unique_ptr<CuboFile>& finfo) {
 
 
 void TextFileReader::OutToTTY() {
-	for(unsigned i=0; i<lines.size(); i++) { std::cout << lines[i] << std::endl; }
+	for(unsigned i=0; i<lines.size(); i++) { Log::info("General", lines[i].c_str()); }
 	}
 
 

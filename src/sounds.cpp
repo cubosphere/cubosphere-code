@@ -14,6 +14,7 @@ if not, see <http://www.gnu.org/licenses/>.
 
 #include "sounds.hpp"
 #include "globals.hpp"
+#include "log.hpp"
 #include "luautils.hpp"
 #include "game.hpp"
 
@@ -117,7 +118,7 @@ SoundContainer::~SoundContainer() {
 int SoundContainer::Load(const std::unique_ptr<CuboFile>& finfo) {
 	sound = Mix_LoadWAV_RW(finfo->GetAsRWops(1),1);
 	if(sound == NULL) {
-			printf("Unable to load WAV file %s : %s\n", finfo->GetNameForLog().c_str(), Mix_GetError());
+			Log::warn("Sound", "Unable to load WAV file %s : %s\n", finfo->GetNameForLog().c_str(), Mix_GetError());
 			return 0;
 			}
 	fname=finfo->GetName();
@@ -226,25 +227,23 @@ void SoundServer::KillSound() {
 
 int SoundServer::InitSound(int freq,int bits,int stereo,int buffsize) {
 
-	printf("Sound init with Freq(%d), Bits(%d), Stereo(%d), Buffer(%d) \n",freq,bits,stereo,buffsize);
+	Log::info("Sound", "Initializing with Freq(%d), Bits(%d), Stereo(%d), Buffer(%d)",freq,bits,stereo,buffsize);
 	KillSound();
 	if (bits==8) { bits=AUDIO_S8; }
 	else { bits=AUDIO_S16SYS; }
 	//else bits=AUDIO_S16;
-	printf("... \n");
 	if(Mix_OpenAudio(freq, bits, stereo, buffsize) != 0) {
-			printf("Unable to initialize audio: %s\n", Mix_GetError());
+			Log::error("Sound", "Unable to initialize audio: %s", Mix_GetError());
 			initialized=0;
 			return 0;
 			}
 	bitsps=bits;
-	printf("... \n");
 	Mix_ChannelFinished(s_ChannelFinished);
 	initialized=1;
 	SetNumChannels(16);
 	currenteffect="";
 	effectbuffer.resize(256*buffsize,0);
-	printf("ok\n");
+	Log::info("Sound", "Successfully initialized");
 	return 1;
 
 	}
@@ -254,7 +253,7 @@ int SoundServer::SetNumChannels(int nchan) {
 			int oldsize=playchannels.size();
 			if (nchan<oldsize) { playchannels.resize(nchan); }
 			else for (int i=oldsize; i<nchan; i++) { playchannels.push_back(-1); }
-			std::cout << "Channels are " << playchannels.size() << std::endl;
+			Log::info("Sound", "Number of channels: %i", playchannels.size());
 			}
 	return Mix_AllocateChannels(nchan);
 	}

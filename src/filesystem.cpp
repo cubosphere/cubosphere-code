@@ -973,7 +973,7 @@ bool cls_FileSystem::MountZipFile(std::string zipfile, std::string mountbase) co
 #ifdef USE_POCO
 	return FSINFO->MountZipFile(zipfile,mountbase);
 #else
-	std::cout << "Error: Cannot mount zip, Cubosphere was compiled without zip support!" << std::endl;
+	Log::error("Filesystem", "Cannot mount zip, Cubosphere was compiled without zip support!");
 	return false;
 #endif
 	}
@@ -984,7 +984,7 @@ bool cls_FileSystem::MountZipFile(const std::unique_ptr<cls_FileReadable>& fr,st
 	if (!fr->IsHDDFile())  { CLS_FILE_ERROR("can only mount ZIP files from HDD, not from location "+fr->GetNameForLog(), CLS_FILE_ERROR_TYPE_ERROR);  return false;}
 	return MountZipFile(fr->GetHDDName(),mountbase);
 #else
-	std::cout << "Error: Cannot mount zip, Cubosphere was compiled without zip support!" << std::endl;
+	Log::error("Filesystem", "Cannot mount zip, Cubosphere was compiled without zip support!");
 	return false;
 #endif
 	}

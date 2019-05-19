@@ -30,6 +30,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include "globals.hpp"
 #include "game.hpp"
 #include "sounds.hpp"
+#include "log.hpp"
 
 #ifdef WIN32
 #include <cstdio>
@@ -95,12 +96,12 @@ int main(int argc, char *argv[]) {
 			auto cdir = dir.c_str();
 			if (stat(cdir, &s) != 0) {
 					mkdir(cdir, S_IRWXU);
-					std::cout << "Creating dir: " << dir << std::endl;
+					Log::info("Init", "Creating dir: %s", dir.c_str());
 					}
 			}
 
 	SetProfileDir(ConfigDir);
-	printf("Using config dir: %s\n", ConfigDir.c_str());
+	Log::info("Init", "Using config directory: %s", ConfigDir.c_str());
 #else
 	SetProfileDir(dir+PlattformFilename("/user"));
 #endif
@@ -123,17 +124,14 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 	else {
-		std::cout << "Fatal: Could not find data directory!" << std::endl;
-		exit(-1);
+		Log::fatal("Init", "Could not find data directory!");
 	}
 
 	MakeConsole();
 
-	std::cout << "STARTING in basedir: " << dir << std::endl << "SDL_Init returns: "<<
-			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) << std::endl;
+	Log::info("Init", "SDL_Init returned status %i",
+			SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK));
 	IMG_Init(IMG_INIT_PNG);
-
-	//SDL_Init( SDL_INIT_EVERYTHING) << endl;
 
 	/*
 	SDL_WM_SetCaption("Cubosphere","Cubosphere");

@@ -19,6 +19,7 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "cuboutils.hpp"
 #include <sstream>
+#include "log.hpp"
 #include "luautils.hpp"
 #include "luamodules.hpp"
 #include "game.hpp"
@@ -153,12 +154,10 @@ void JoystickServer::RemoveJoystick(int mindex) {
 	}
 
 void JoystickServer::Initialize() {
-	std::ostringstream oss;
-	int ns=NumJoysticks();
-	if (!ns) { oss << "no joystick found"; }
-	else if (ns==1) { oss << "detected a joystick"; }
-	else { oss << "detected " << ns << " joysticks"; }
-	coutlog(oss.str());
+	int ns = NumJoysticks();
+	if (!ns) { Log::info("Input", "No joysticks found"); }
+	else { Log::info("Input", "Found %i joystick(s)", ns); }
+
 	if (ns == 0) { return; }
 
 
