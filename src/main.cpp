@@ -106,6 +106,8 @@ int main(int argc, char *argv[]) {
 	SetProfileDir(dir+PlattformFilename("/user"));
 #endif
 
+    Log::openOutputFiles(g_ProfileDir()+"/stdout.log");
+
 	if (filesystem::exists(filesystem::path(dir+PlattformFilename("/data/boot.lua")))) {
 		SetDataDir(dir+PlattformFilename("/data"));
 	}
