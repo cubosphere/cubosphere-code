@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 	}
 #ifdef DATADIR
 	else if (filesystem::exists(filesystem::path(DATADIR))) {
-		SetDataDir(dir+PlattformFilename(DATADIR));
+		SetDataDir(DATADIR);
 	}
 #endif
 	else {
