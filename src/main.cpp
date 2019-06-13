@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 		SetDataDir(dir+PlattformFilename("/../../../data"));
 	}
 #ifdef DATADIR
-	else if (filesystem::exists(filesystem::path(DATADIR))) {
+	else if (filesystem::exists(DATADIR)) {
 		SetDataDir(DATADIR);
 	}
 #endif

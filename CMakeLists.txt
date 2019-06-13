@@ -98,6 +98,8 @@ add_executable(cubosphere
 	${HEADER_FILES}
 )
 
+target_compile_definitions(cubosphere PRIVATE "DATADIR=\"${RUNTIME_DATADIR}\"")
+
 # Find POCO library and enable it if present
 if(NOT WIN32)
     find_package(Poco COMPONENTS Zip Foundation)
