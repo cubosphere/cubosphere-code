@@ -115,7 +115,7 @@ endif()
 
 # Various libs
 find_package(OpenGL     REQUIRED COMPONENTS OpenGL)
-find_package(Lua51      REQUIRED)
+find_package(Lua "5.1" EXACT REQUIRED)
 
 # SDL
 find_package(SDL2       REQUIRED)
