@@ -8,6 +8,7 @@ extraction:
     prepare:
       packages:
       - "libglvnd-dev"
+      - "lua5.1"
       - "liblua5.1-0-dev"
       - "libglew-dev"
       - "libpoco-dev"
