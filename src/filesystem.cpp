@@ -155,7 +155,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 							}
 					return true;
 					}
-			catch(std::exception) { return false; }
+			catch(const std::exception&) { return false; }
 			}
 	public:
 		cls_FileDirMountedForReading(const std::string nam,const std::string dnam,const std::string fnameOnHD) : cls_FileReadable(nam,dnam), fname(fnameOnHD), data(NULL), size(0) {}
@@ -182,7 +182,7 @@ class cls_FileDirMountedForReading : public cls_FileReadable {
 			try {
 					data = std::make_shared<std::string>(streamToString(*ifs, size+1));
 					}
-			catch(std::exception) {
+			catch(const std::exception&) {
 					CLS_FILE_ERROR("failed reading file (("+fname+"))",CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL;
 					}
 			return data;
@@ -265,7 +265,7 @@ class cls_FileZipMountedForReading : public cls_FileReadable {
 			try {
 					data = std::make_shared<std::string>(streamToString(*zipin, size));
 					}
-			catch(std::exception) {CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
+			catch(const std::exception&) {CLS_FILE_ERROR("cannot unzip zip-file entry "+GetNameForLog(),CLS_FILE_ERROR_TYPE_ERROR)  ; return NULL; }
 			return data;
 			}
 
@@ -821,7 +821,7 @@ class cls_FileSystem_Info_ {
 			try {
 					md = std::make_unique<cls_FileSubSystemZipMount>(mntb,zipf);
 					}
-			catch(std::exception) { return false; }
+			catch(const std::exception&) { return false; }
 
 			//Now check the version
 			std::vector<std::string> elems;
