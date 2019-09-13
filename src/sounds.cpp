@@ -253,7 +253,7 @@ int SoundServer::SetNumChannels(int nchan) {
 			int oldsize=playchannels.size();
 			if (nchan<oldsize) { playchannels.resize(nchan); }
 			else for (int i=oldsize; i<nchan; i++) { playchannels.push_back(-1); }
-			Log::info("Sound", "Number of channels: %i", playchannels.size());
+			Log::info("Sound", "Number of channels: %zu", playchannels.size());
 			}
 	return Mix_AllocateChannels(nchan);
 	}

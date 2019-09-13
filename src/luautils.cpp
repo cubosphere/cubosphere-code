@@ -655,7 +655,7 @@ LuaCuboLib::LuaCuboLib() {
 int LuaCuboLib::GLDEBUG(lua_State *state) {
 	GLfloat v[4];
 	glGetMaterialfv(GL_FRONT,GL_AMBIENT,v);
-	Log::debug("Renderer", "Ambient: %s %s %s %s", v[0], v[1], v[2], v[3]);
+	Log::debug("Renderer", "Ambient: %e %e %e %e", v[0], v[1], v[2], v[3]);
 	return 0;
 	}
 
