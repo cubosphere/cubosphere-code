@@ -1,0 +1,17 @@
+path_classifiers:
+  library:
+    - lib
+queries:
+  include: "*"
+extraction:
+  cpp:
+    prepare:
+      packages:
+      - "libglvnd-dev"
+      - "liblua5.1-0-dev"
+      - "libglew-dev"
+      - "libpoco-dev"
+      - "libsdl2-dev"
+      - "libsdl2-mixer-dev"
+      - "libsdl2-ttf-dev"
+      - "libsdl2-image-dev"
