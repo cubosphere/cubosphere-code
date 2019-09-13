@@ -124,9 +124,9 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 //Link the nodes
 	for (size_t j=0; j<N; j++)
 		for (size_t m=0; m<4; m++) {
-				size_t ns=nodes[j].GetNextSideID(m);
+				auto ns=nodes[j].GetNextSideID(m);
 				if (ns<0) { continue; }
-				size_t mn=GetNodeIDFromSideID(ns);
+				auto mn=GetNodeIDFromSideID(ns);
 				if (mn<0) { continue; }
 				nodes[j].SetNext(m,mn);
 				}
