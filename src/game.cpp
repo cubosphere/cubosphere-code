@@ -494,34 +494,23 @@ void CuboGame::SaveFramePic(std::string fname, int nw,int nh) {
 
 
 void CuboGame::ScreenShot(void) {
-
-	std::string ext="jpg";
+	const std::string ext="jpg";
 
 	char cFileName[64];
 	std::string fname;
-	int nShot=1;
-	while (nShot < 128) {
-			std::string form="screenshot%03d."+ext;
+	for(unsigned int nShot = 1; nShot < 128; ++nShot) {
+			std::string form="screenshot%03u."+ext;
 			sprintf(cFileName,form.c_str(),nShot);
 			fname=cFileName;
 			auto fw = g_BaseFileSystem()->GetFileForWriting("/user/"+fname);
 			if (!fw) { return; }
-			if (fw->WillOverwrite()) {
-					++nShot;
-					if (nShot > 127) {
-							coutlog("Screenshot limit of 128 reached! Delete some in your Cubosphere User dir",2);
-							return;
-							}
-					continue;
-					}
-			fname=fw->GetHDDName();
-			break;
+			if (!fw->WillOverwrite()) {
+				SaveFramePic(fw->GetHDDName());
+				return;
+				}
+		}
 
-
-
-			}
-	SaveFramePic(fname);
-
+	coutlog("Screenshot limit of 128 reached! Delete some in your Cubosphere User dir",2);
 	}
 
 void CuboGame::JoyAxisHandle(int joys,int axis,float val,float pval) {
