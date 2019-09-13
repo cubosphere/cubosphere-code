@@ -49,13 +49,13 @@ class DistRenderObj {
 
 	public:
 		DistRenderObj(int tid,int ttype,float tdist,lua_State *ccallstate) : dist(tdist), id(tid), type(ttype), callstate(ccallstate), CullRadius(-1) {};
-		const float GetDist() const {return dist;}
-		const int GetID() const {return id;}
-		const int GetType() const {return type;}
-		const std::string GetHint() const {return myhint;}
+		float GetDist() const {return dist;}
+		int GetID() const {return id;}
+		int GetType() const {return type;}
+		std::string GetHint() const {return myhint;}
 		void SetHint(std::string h) {myhint=h;}
 		void SetCulling(Vector3d cc,double cr) {CullCenter=cc; CullRadius=cr;}
-		bool operator < (DistRenderObj b ) const {return dist > b.dist;}
+		bool operator < (const DistRenderObj& b ) const {return dist > b.dist;}
 		void DistRender(Camera *cam);
 		void Render(Camera *cam);
 		void SpecialRender(Camera *cam,std::string nam,int defrender);
