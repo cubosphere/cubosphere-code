@@ -119,14 +119,14 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 
 	AddNode(startindex);
 
-	int N=nodes.size();
+	auto N=nodes.size();
 
 //Link the nodes
-	for (int j=0; j<N; j++)
-		for (int m=0; m<4; m++) {
-				int ns=nodes[j].GetNextSideID(m);
+	for (size_t j=0; j<N; j++)
+		for (size_t m=0; m<4; m++) {
+				size_t ns=nodes[j].GetNextSideID(m);
 				if (ns<0) { continue; }
-				int mn=GetNodeIDFromSideID(ns);
+				size_t mn=GetNodeIDFromSideID(ns);
 				if (mn<0) { continue; }
 				nodes[j].SetNext(m,mn);
 				}
@@ -137,8 +137,8 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 	path.resize(N*N); next.resize(N*N);
 
 //Fill the initial path array
-	for (int j=0; j<N; j++) {
-			for (int i=0; i<N; i++) {
+	for (size_t j=0; j<N; j++) {
+			for (size_t i=0; i<N; i++) {
 					if (i==j) { path[i+N*j]=0; }
 					else if (EdgeBetween(i,j)) { path[i+N*j]=1; }
 					else { path[i+N*j]=PATH_INFINITY; }
@@ -149,9 +149,9 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 
 	//Floyd-Algo
 
-	for (int k=0; k<N; k++)
-		for (int i=0; i<N; i++)
-			for (int j=0; j<N; j++) {
+	for (size_t k=0; k<N; k++)
+		for (size_t i=0; i<N; i++)
+			for (size_t j=0; j<N; j++) {
 					if (path[i+k*N] + path[k+j*N] < path[i+j*N]) {
 							path[i+j*N] = path[i+k*N]+path[k+N*j];
 							next[i+j*N] = k;
@@ -160,7 +160,7 @@ void CuboPathGraph::GraphFromSide(int startindex,lua_State *state,std::string ad
 	}
 
 std::string CuboPathGraph::GetPath(int i,int j) {
-	int N=nodes.size();
+	size_t N=nodes.size();
 	if (path[i+N*j]>=PATH_INFINITY) {
 			return "no path";
 			}

@@ -177,8 +177,8 @@ void TextureContainer::makeFromTexture(Texture* texture,int asfont,int maxsize) 
 			}
 	void *data=texture->getRGBPointer();
 
-	int width=texture->getWidth();
-	int height=texture->getHeight();
+	size_t width=texture->getWidth();
+	size_t height=texture->getHeight();
 	int scaled=0;
 	if (  ((width>maxsize) || (height>maxsize)) && (!asfont) && (!canfastresize)) {
 			//Rescale it

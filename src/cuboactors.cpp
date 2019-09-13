@@ -1071,7 +1071,7 @@ void TCuboMovement::Rebounce(TCuboMovement *other) {
 	Vector3d diff=(this->GetPos()-other->GetPos());
 	double proj=diff*this->GetUp();
 	double h=other->GetRadius()-this->GetRadius()+proj;
-	double disc=CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL-2*CUBO_GRAVITY_G*h;
+	double disc=((double)CUBO_FARJUMP_UPVEL)*((double)CUBO_FARJUMP_UPVEL)-2.0*CUBO_GRAVITY_G*h;
 	if (disc<0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL) { disc=0.1*CUBO_FARJUMP_UPVEL*CUBO_FARJUMP_UPVEL; }
 	yvel=sqrt(disc);
 	j_heightoverground=h;
