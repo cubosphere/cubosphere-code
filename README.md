@@ -1,5 +1,5 @@
 # Cubosphere [reborn] :basketball: :video_game:
-[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code/master.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the Freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://kiwiirc.com/client/irc.freenode.net#cubosphere) [![linux downloads](https://img.shields.io/badge/downloads-linux-brightgreen.svg)](http://cubosphere.vallua.ru/artifacts)
+[![CircleCI (all branches)](https://img.shields.io/circleci/project/github/cubosphere/cubosphere-code/master.svg)](https://circleci.com/gh/cubosphere/cubosphere-code) [![#cubosphere on the Freenode IRC network](https://img.shields.io/badge/FreeNode-%23cubosphere-brightgreen.svg)](https://kiwiirc.com/client/irc.freenode.net#cubosphere) [![linux downloads](https://img.shields.io/badge/downloads-linux-brightgreen.svg)](http://cubosphere.vallua.ru/artifacts) [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/cubosphere/cubosphere-code.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cubosphere/cubosphere-code/context:cpp)
 ## A little story behind it
 One upon a time on planet called Earth one man found a very very cool game called "cubosphere", but it was abandoned in 2011-12. He enjoyed it and dreamed that some day it could become great.
 
