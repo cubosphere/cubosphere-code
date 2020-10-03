@@ -24,7 +24,6 @@ if not, see <http://www.gnu.org/licenses/>.
 #include <SDL.h>
 #include <SDL_image.h>
 #include <libgen.h>
-
 #include <stdlib.h>
 
 #include "globals.hpp"
