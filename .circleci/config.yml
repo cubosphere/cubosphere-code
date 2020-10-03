@@ -1,8 +1,8 @@
 version: 2
 jobs:
-  build.lts:
+  build.focal:
     docker:
-      - image: "ubuntu:latest"
+      - image: "ubuntu:focal"
     steps:
       - run:
           name: Reloading apt indexes
@@ -27,9 +27,9 @@ jobs:
           root: /tmp/artifacts
           paths: './*'
 
-  build.rolling:
+  build.bionic:
     docker:
-      - image: "ubuntu:rolling"
+      - image: "ubuntu:bionic"
     steps:
       - run:
           name: Reloading apt indexes
@@ -59,7 +59,7 @@ jobs:
 
   artifacts:
     docker:
-      - image: "ubuntu:rolling"
+      - image: "ubuntu:focal"
     steps:
       - run: apt-get update
       - run: apt-get install -y ca-certificates
@@ -70,7 +70,7 @@ jobs:
 
   deploy:
     docker:
-      - image: "ubuntu:rolling"
+      - image: "ubuntu:focal"
     steps:
       - run: apt-get update
       - run: apt-get install -y ca-certificates lftp
@@ -90,16 +90,16 @@ workflows:
   version: 2
   build-all:
     jobs:
-      - build.lts
-      - build.rolling
+      - build.focal
+      - build.bionic
       - artifacts:
           requires:
-            - build.lts
-            - build.rolling
+            - build.focal
+            - build.bionic
       - deploy:
           requires:
-            - build.lts
-            - build.rolling
+            - build.focal
+            - build.bionic
           filters:
             branches:
               only: master
