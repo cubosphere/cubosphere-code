@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-apt-get install -y clang \
+env DEBIAN_FRONTEND="noninteractive" apt-get install -y clang \
 extra-cmake-modules cmake \
 lsb-release dpkg-dev \
 libglvnd-dev liblua5.1-0-dev libglew-dev libpoco-dev \
